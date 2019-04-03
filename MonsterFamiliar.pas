@@ -444,12 +444,6 @@ begin
   begin
     TruncMove := True;
     Tag := 1;
-  //  var TagNum := GetImgEntry('Character.wz/Accessory/' + ItemID + '.img/info').Get('medalTag', '');
-  //  Entry := GetImgEntry('UI.wz/NameTag.img/medal/' + string(TagNum));
-  //  DumpData(Entry, EquipData, EquipImages);
-   // InitData;
-
-
     var TagNum := GetImgEntry('Character.WZ/Ring/' + ItemID + '.img/info').Get('nameTag', '');
     Entry := GetImgEntry('UI.wz/NameTag.img/' + string(TagNum));
     DumpData(Entry, EquipData, EquipImages);
