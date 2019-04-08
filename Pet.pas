@@ -64,6 +64,7 @@ begin
   if Pet <> nil then
   begin
     Pet.Dead;
+    Pet := nil;
     for var Iter in EquipImages.Keys do
       if LeftStr(Iter.GetPath, 11) = 'Item.wz/Pet' then
       begin

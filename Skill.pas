@@ -3,10 +3,17 @@ unit Skill;
 interface
 
 uses
-  Windows, System.types, SysUtils, StrUtils, AsphyreSprite, Generics.Collections,
-  WZIMGFile, Global, DamageNumber, Footholds, Tools,WzUtils;
+  Windows, System.Types, SysUtils, StrUtils, AsphyreSprite, Generics.Collections,
+  WZIMGFile, Global, DamageNumber, Footholds, Tools, WzUtils;
 
 type
+  TSkill = class(TSprite)
+  public
+    class var
+      Skill: TSkill;
+      HotKeyList: TDictionary<Cardinal, string>;
+    class procedure Load(AID:string);
+  end;
 
   TSkillSprite = class(TSpriteEx)
   private
@@ -24,22 +31,24 @@ type
     procedure DoCollision(const Sprite: TSprite); override;
   end;
 
-procedure LoadSkill(AID: string);
+
+
 procedure CreateSKill(AID: string; X, Y: Integer);
 
 implementation
 
-uses MainUnit, MapleCharacter;
+uses
+  MainUnit, MapleCharacter;
 
 function GetJobID(ID: string): string;
 begin
   Result := IntToStr(StrToInt(ID) div 10000);
 end;
 
-procedure LoadSkill(AID: string);
+class procedure TSkill.Load(AID: string);
 var
   Iter, Entry: TWZImgEntry;
- begin
+begin
   Entry := GetImgEntry('Skill/' + GetJobID(AID) + '.img/skill/' + AID);
   DumpData(Entry, EquipData, EquipImages);
   for Iter in Entry.Children do
@@ -61,7 +70,7 @@ var
   Below: TPoint;
   BelowFH: TFoothold;
 const
-  Effects: array [0 .. 6] of string = ('effect', 'effect0', 'effect1', 'effect2', 'effect3', 'screen', 'ball');
+  Effects: array[0..6] of string = ('effect', 'effect0', 'effect1', 'effect2', 'effect3', 'screen', 'ball');
 begin
   SkillID := AID;
   SkillEnded := False;
@@ -117,7 +126,6 @@ begin
 
       Below := TFootholdTree.This.FindBelow(Point(40 + WX + I * 120, WY + MoveY), BelowFH);
       if BelowFH <> nil then
-
         with TSkillSprite.Create(SpriteEngine) do
         begin
           Rnd := CharData[AID + '/tileCount'];
@@ -177,8 +185,10 @@ begin
   end;
 
   case MirrorX of
-    True: Offset.X := ImageEntry.Get('origin').Vector.X - ImageWidth;
-    False: Offset.X := -ImageEntry.Get('origin').Vector.X;
+    True:
+      Offset.X := ImageEntry.Get('origin').Vector.X - ImageWidth;
+    False:
+      Offset.X := -ImageEntry.Get('origin').Vector.X;
   end;
   Offset.Y := -ImageEntry.Get('origin').Vector.Y;
 
@@ -235,4 +245,11 @@ begin
   }
 end;
 
+initialization
+  TSkill.HotKeyList := TDictionary<Cardinal, string>.Create;
+
+finalization
+  TSkill.HotKeyList.Free;
+
 end.
+

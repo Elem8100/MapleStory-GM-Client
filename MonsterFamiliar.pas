@@ -65,6 +65,7 @@ begin
   if MonsterFamiliar <> nil then
   begin
     MonsterFamiliar.Dead;
+    MonsterFamiliar:=nil;
     for var Iter in EquipImages.Keys do
       if (LeftStr(Iter.GetPath, 7) = 'Mob.wz/') or (LeftStr(Iter.GetPath, 8) = 'Mob2.wz/') then
       begin
@@ -444,6 +445,12 @@ begin
   begin
     TruncMove := True;
     Tag := 1;
+  //  var TagNum := GetImgEntry('Character.wz/Accessory/' + ItemID + '.img/info').Get('medalTag', '');
+  //  Entry := GetImgEntry('UI.wz/NameTag.img/medal/' + string(TagNum));
+  //  DumpData(Entry, EquipData, EquipImages);
+   // InitData;
+
+
     var TagNum := GetImgEntry('Character.WZ/Ring/' + ItemID + '.img/info').Get('nameTag', '');
     Entry := GetImgEntry('UI.wz/NameTag.img/' + string(TagNum));
     DumpData(Entry, EquipData, EquipImages);
