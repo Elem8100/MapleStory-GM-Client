@@ -34,7 +34,6 @@ type
     NameWidth: Integer;
     FAttack: Boolean;
     SkillDone: Boolean;
-    sTime: Integer;
     NameTagTargetIndex: Integer;
     CurrentPortal: TPortalInfo;
     Portal: TPortalInfo;
@@ -413,19 +412,6 @@ begin
   TAfterImage.Load(AfterImageStr, '0');
   TDamageNumber.Style := 'NoRed1';
   TDamageNumber.Load('');
-  {
-    LoadSkill('2321008');
-    LoadSkill('2121007');
-    LoadSkill('2221007');
-    LoadSkill('5121001');
-    LoadSkill('2301005');
-    LoadSkill('1121008');
-    LoadSkill('21120005');
-    LoadSkill('21110006');
-    LoadSkill('12111005');
-    LoadSkill('3111003');
-  }
-
 end;
 
 destructor TPlayer.Destroy;
@@ -672,7 +658,7 @@ begin
     if (X < TMap.Left + 20) or (FAttack) and (JumpState = jsNone) then
       SpeedL := 0;
     if not TTamingMob.IsUse then
-      if (FState = 'prone') or (FState = 'proneStab') or (not SkillEnded) then
+      if (FState = 'prone') or (FState = 'proneStab') or (not TSkill.PlayEnded) then
         SpeedL := 0;
 
     Direction := GetAngle256(X1, Y1, X2, Y2);
@@ -724,7 +710,7 @@ begin
       SpeedR := 0;
 
     if not TTamingMob.IsUse then
-      if (FState = 'prone') or (FState = 'proneStab') or (not SkillEnded) then
+      if (FState = 'prone') or (FState = 'proneStab') or (not TSkill.PlayEnded) then
         SpeedR := 0;
 
     Direction := GetAngle256(X2, Y2, X1, Y1);
@@ -946,11 +932,13 @@ procedure TAvatarParts.DoMove(const Movecount: Single);
 
   function IsSkillAttack: Boolean;
   begin
-    if (CharData.ContainsKey(SkillID + '/action')) and (State = CharData[SkillID + '/action']) then
+    if (CharData.ContainsKey(SkillID + '/action')) and (FState = CharData[SkillID + '/action']) then
       Result := True
     else
       Result := False;
   end;
+
+
 
   function ArrowKeyDown: Boolean;
   begin
@@ -1032,7 +1020,7 @@ begin
 
   if ((Keyboard.Key[DIK_LEFT]) or (Keyboard.Key[DIK_RIGHT])) and (not TTamingMob.IsUse) then
   begin
-    if (LeftStr(State, 4) <> 'walk') and (Owner.JumpState = jsNone) and (not Owner.InLadder) and (not IsAttack) and (SkillEnded) then
+    if (LeftStr(State, 4) <> 'walk') and (Owner.JumpState = jsNone) and (not Owner.InLadder) and (not IsAttack) and (TSkill.PlayEnded) then
     begin
       FTime := 0;
       Frame := 0;
@@ -1046,7 +1034,7 @@ begin
   end;
 
   if (Keyboard.KeyReleased[DIK_LEFT]) or (Keyboard.KeyReleased[DIK_RIGHT]) then
-    if (not Owner.InLadder) and (Owner.JumpState = jsNone) and (not IsAttack) and (SkillEnded) then
+    if (not Owner.InLadder) and (Owner.JumpState = jsNone) and (not IsAttack) and (TSkill.PlayEnded) then
     begin
       Frame := 0;
       //State := 'stand1';
@@ -1082,12 +1070,12 @@ begin
 
   if (not Owner.InLadder) and (Owner.JumpState = jsNone) and (not TTamingMob.IsUse) then
   begin
-    if (not IsAttack) and (SkillEnded) then
+    if (not IsAttack) and (TSkill.PlayEnded) then
     begin
       if (Keyboard.Key[DIK_DOWN]) and (not Keyboard.Key[DIK_LCONTROL]) and (State <> 'proneStab') then
         State := 'prone';
 
-      if (Keyboard.Key[DIK_LCONTROL]) and (State <> 'proneStab') and (SkillEnded) then
+      if (Keyboard.Key[DIK_LCONTROL]) and (State <> 'proneStab') and (TSkill.PlayEnded) then
       begin
         AnimEnd := False;
         Frame := 0;
@@ -1096,7 +1084,7 @@ begin
       end;
     end;
 
-    if (Keyboard.KeyReleased[DIK_DOWN]) and (SkillEnded) then
+    if (Keyboard.KeyReleased[DIK_DOWN]) and (TSkill.PlayEnded) then
       if WeaponWalkType.contains('stand2') then
         State := 'stand2'
       else
@@ -1140,7 +1128,7 @@ begin
       Frame := 0;
       State := 'alert';
       AlertCount := 0;
-      StartSkill := False;
+      TSkill.Start := False;
     end;
     if State = 'proneStab' then
     begin
@@ -1167,7 +1155,7 @@ begin
   else
     AnimZigzag := False;
 
-  if (Keyboard.Key[DIK_LCONTROL]) and (not Keyboard.Key[DIK_DOWN]) and (not IsAttack) and (not Owner.InLadder) and (SkillEnded) and (not TTamingMob.IsUse) then
+  if (Keyboard.Key[DIK_LCONTROL]) and (not Keyboard.Key[DIK_DOWN]) and (not IsAttack) and (not Owner.InLadder) and (TSkill.PlayEnded) and (not TTamingMob.IsUse) then
   begin
     AnimEnd := False;
     Frame := 0;
@@ -1175,41 +1163,8 @@ begin
     State := AttackAction;
   end;
 
-  Inc(Owner.sTime);
-  if Owner.sTime > 100 then
-    Owner.sTime := 0;
-  {
-    if (SkillEnded) and (not IsSkillAttack) and (not InLadder) and (sTime = 0) then
-    begin
-    if (Keyboard.Key[DIK_F]) then
-    CreateSkill('2321008', 0, 0);
 
-    if (Keyboard.Key[DIK_G]) then
-    CreateSkill('2121007', 0, 0);
-
-    if (Keyboard.Key[DIK_B]) then
-    CreateSkill('2221007', 0, 0);
-
-    if (Keyboard.Key[DIK_V]) then
-    CreateSkill('5121001', 0, 0);
-
-    if (Keyboard.Key[DIK_A]) then
-    CreateSkill('2301005', 0, 0);
-    if (Keyboard.Key[DIK_S]) then
-    CreateSkill('1121008', 0, 0);
-
-    if (Keyboard.Key[DIK_D]) then
-    CreateSkill('21110006', 0, 0);
-    if (Keyboard.Key[DIK_Z]) then
-    CreateSkill('21120005', 0, 0);
-    if (Keyboard.Key[DIK_X]) then
-    CreateSkill('12111005', 0, 0);
-
-    if (Keyboard.Key[DIK_C]) then
-    CreateSkill('3111003', 0, 0);
-    end;
-  }
-  if (StartSkill) and (not SkillEnded) then
+  if (TSkill.Start) and (not TSkill.PlayEnded) then
   begin
     if CharData.ContainsKey(SkillID + '/action') then
       if State <> CharData[SkillID + '/action'] then
@@ -1253,7 +1208,7 @@ begin
   end;
 
   // MirrorX := NewFlip;
-  if (not Owner.InLadder) and (not IsAttack) and (SkillEnded) then
+  if (not Owner.InLadder) and (not IsAttack) and (TSkill.PlayEnded) then
   begin
     if Keyboard.Key[DIK_LEFT] then
     begin

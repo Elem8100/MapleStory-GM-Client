@@ -9,7 +9,6 @@ uses
 
 type
   TSkillForm = class(TForm)
-    HotKeySetGrid: TAdvStringGrid;
     SkillGrid: TAdvStringGrid;
     SelectGrid: TAdvStringGrid;
     Label1: TLabel;
@@ -21,7 +20,6 @@ type
     HasLoaded: Boolean;
     IDs: array of string;
     SelectRow: Integer;
-    Entry: TWZIMGEntry;
     { Private declarations }
   public
     { Public declarations }
@@ -33,32 +31,118 @@ var
 implementation
 
 uses
-  Skill, WzUtils,AsphyreSprite,Global;
+  Skill, WzUtils, AsphyreSprite, Global;
 {$R *.dfm}
+
+function GetJobID(ID: string): string;
+begin
+  Result := (ID.ToInteger div 10000).toString;
+end;
+
+function KeyNameToInt(Key: string): Integer;
+begin
+  case Key[1] of
+    'A':
+      Result := $1E;
+    'B':
+      Result := $30;
+    'C':
+      Result := $2E;
+    'D':
+      Result := $20;
+    'E':
+      Result := $12;
+    'F':
+      Result := $21;
+    'G':
+      Result := $22;
+    'H':
+      Result := $23;
+    'I':
+      Result := $17;
+    'J':
+      Result := $24;
+    'K':
+      Result := $25;
+    'L':
+      Result := $26;
+    'M':
+      Result := $32;
+    'N':
+      Result := $31;
+    'O':
+      Result := $18;
+    'P':
+      Result := $19;
+    'Q':
+      Result := $10;
+    'R':
+      Result := $13;
+    'S':
+      Result := $1F;
+    'T':
+      Result := $14;
+    'U':
+      Result := $16;
+    'V':
+      Result := $2F;
+    'W':
+      Result := $11;
+    'X':
+      Result := $2D;
+    'Y':
+      Result := $15;
+    'Z':
+      Result := $2C;
+  end;
+
+  if Key.Length > 1 then
+  begin
+    case Key[1] of
+      'i':  //insert
+        Result := $D2;
+      'h':  //home
+        Result := $C7;
+      'P':  //pgup
+        if Key[3] = 'U' then
+          Result := $C9
+        else  //pgdn
+          Result := $D1;
+      'd':  //delete
+        Result := $D3;
+      'e':  //end
+        Result := $CF;
+    end;
+  end;
+
+end;
 
 procedure TSkillForm.ComBobox1CloseUp(Sender: TObject);
 begin
   if ComBobox1.ItemIndex = 32 then
     Exit;
 
-  for var r := SkillGrid.RowCount-1 downto 1 do
+  for var r := SkillGrid.RowCount - 1 downto 1 do
   begin
     if SkillGrid.cells[4, r] = ComBobox1.Text then
       SkillGrid.RemoveRows(r, 1);
-
-    if SkillGrid.cells[1, r] = HotKeySetGrid.Cells[1, 1] then
+    if SkillGrid.cells[1, r] = SelectGrid.Cells[1, SelectRow] then
       SkillGrid.RemoveRows(r, 1);
-
   end;
 
   SkillGrid.Cells[1, SkillGrid.RowCount] := SelectGrid.Cells[1, SelectRow];
+  var ID := SelectGrid.Cells[1, SelectRow];
+  var Entry := GetImgEntry('Skill.wz/' + GetJobID(ID) + '.img/skill/' + ID);
   var Bmp := Entry.Get2('icon').Canvas.DumpBmp;
   var RowCount := SkillGrid.RowCount;
   SkillGrid.CreateBitmap(2, RowCount, False, haCenter, vaCenter).Assign(Bmp);
-  SkillGrid.Cells[3, RowCount] := SelectGrid.Cells[2, SelectRow];
+  SkillGrid.Cells[3, RowCount] := SelectGrid.Cells[3, SelectRow];
   SkillGrid.Cells[4, RowCount] := ComBobox1.Text;
   SkillGrid.RowCount := SkillGrid.RowCount + 1;
   Bmp.Free;
+
+  for var i := 0 to SkillGrid.RowCount - 1 do
+    SkillGrid.CellProperties[4, i].Alignment := taCenter;
 
   //ComBobox1.ClearSelection;
   TSkill.HotKeyList.Clear;
@@ -66,28 +150,13 @@ begin
   begin
     var KeyName := SkillGrid.cells[4, i];
     var SkillID := SkillGrid.cells[1, i];
-    if Length(KeyName) > 1 then
-    begin
-      case KeyName[1] of
-        'i':
-          TSkill.HotKeyList.AddOrSetValue(45, SkillID);
-        'h':
-          TSkill.HotKeyList.AddOrSetValue(36, SkillID);
-        'P':
-          if KeyName[3] = 'U' then
-            TSkill.HotKeyList.AddOrSetValue(33, SkillID)
-          else
-            TSkill.HotKeyList.AddOrSetValue(34, SkillID);
-        'd':
-          TSkill.HotKeyList.AddOrSetValue(46, SkillID);
-        'e':
-          TSkill.HotKeyList.AddOrSetValue(35, SkillID);
-      end;
-    end
-    else
-      TSkill.HotKeyList.AddOrSetValue(Ord(KeyName[1]), SkillID);
+    TSkill.HotKeyList.AddOrSetValue(KeyNameToInt(KeyName), SkillID);
   end;
 
+
+  if not TSkill.LoadedList.Contains(ID) then
+    TSkill.Load(ID);
+  TSkill.LoadedList.Add(ID);
 end;
 
 procedure TSkillForm.FormShow(Sender: TObject);
@@ -95,57 +164,43 @@ begin
   if HasLoaded then
     Exit;
   HasLoaded := True;
-  TSkill.Skill:= TSkill.Create(SpriteEngine);
-
+  with TSkill.Create(SpriteEngine) do
+  begin
+  end;
 
   IDs := ['2321008', '2121007', '2221007', '5121001', '2301005', '1121008', '21120005', '21110006',
     '12111005', '3111003'];
   var RowCount := -1;
   SelectGrid.BeginUpdate;
-  for var i in IDs do
+  for var ID in IDs do
   begin
     Inc(RowCount);
     SelectGrid.RowCount := RowCount + 1;
-    SelectGrid.Cells[1, RowCount] := i;
-    SelectGrid.Cells[2, RowCount] := GetImgEntry('String.wz/Skill.img/' + i).Get('name', '');
+    SelectGrid.Cells[1, RowCount] := ID;
+    var Entry := GetImgEntry('Skill.wz/' + GetJobID(ID) + '.img/skill/' + ID);
+    var Bmp := Entry.Get2('icon').Canvas.DumpBmp;
+    SelectGrid.CreateBitmap(2, RowCount, False, haCenter, vaCenter).Assign(Bmp);
+    Bmp.Free;
+    SelectGrid.Cells[3, RowCount] := GetImgEntry('String.wz/Skill.img/' + ID).Get('name', '');
   end;
   SelectGrid.SortByColumn(1);
   SelectGrid.EndUpdate;
-
-  {
-   LoadSkill('2321008');
-    LoadSkill('2121007');
-    LoadSkill('2221007');
-    LoadSkill('5121001');
-    LoadSkill('2301005');
-    LoadSkill('1121008');
-    LoadSkill('21120005');
-    LoadSkill('21110006');
-    LoadSkill('12111005');
-    LoadSkill('3111003');
-    }
-end;
-
-function GetJobID(ID: string): string;
-begin
-  Result := (ID.ToInteger div 10000).ToString;
+  SkillGrid.Cells[1, 0] := 'ID';
+  SkillGrid.Cells[2, 0] := '圖示';
+  SkillGrid.Cells[3, 0] := '名稱';
+  SkillGrid.Cells[4, 0] := '快捷鍵';
+  for var i := 0 to SkillGrid.ColCount - 1 do
+    SkillGrid.CellProperties[i, 0].Alignment := taCenter;
 end;
 
 procedure TSkillForm.SelectGridClickCell(Sender: TObject; ARow, ACol: Integer);
 begin
-  ComBobox1.Left:=273;
-  ComBobox1.Top := SelectGrid.CellRect(ACol,ARow).Location.Y+2;
-
+  ComBobox1.Left := 312;
+  ComBobox1.Top := SelectGrid.CellRect(ACol, ARow).Location.Y + 7;
   ComBobox1.ItemIndex := 32;
   ComBobox1.Enabled := True;
   SelectRow := ARow;
-  var ID := SelectGrid.Cells[1, ARow];
-  Entry := GetImgEntry('Skill.wz/' + GetJobID(ID) + '.img/skill/' + ID);
-  var Bmp := Entry.Get2('icon').Canvas.DumpBmp;
-  HotKeySetGrid.Cells[1, 1] := SelectGrid.Cells[1, ARow];
-  HotKeySetGrid.CreateBitmap(2, 1, False, haCenter, vaCenter).Assign(Bmp);
-  HotKeySetGrid.Cells[3, 1] := SelectGrid.Cells[2, ARow];
-  Bmp.Free;
+
 end;
 
 end.

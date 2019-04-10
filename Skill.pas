@@ -3,16 +3,19 @@ unit Skill;
 interface
 
 uses
-  Windows, System.Types, SysUtils, StrUtils, AsphyreSprite, Generics.Collections,
-  WZIMGFile, Global, DamageNumber, Footholds, Tools, WzUtils;
+  Windows, System.Types, SysUtils, StrUtils, AsphyreSprite, Generics.Collections, WZIMGFile, Global,
+  DamageNumber, Footholds, Tools, WzUtils;
 
 type
   TSkill = class(TSprite)
   public
     class var
-      Skill: TSkill;
       HotKeyList: TDictionary<Cardinal, string>;
-    class procedure Load(AID:string);
+      LoadedList:TList<string>;
+      PlayEnded: Boolean;
+      Start: Boolean;
+    class procedure Load(ID: string);
+    procedure DoMove(const Movecount: Single); override;
   end;
 
   TSkillSprite = class(TSpriteEx)
@@ -31,8 +34,6 @@ type
     procedure DoCollision(const Sprite: TSprite); override;
   end;
 
-
-
 procedure CreateSKill(AID: string; X, Y: Integer);
 
 implementation
@@ -45,26 +46,46 @@ begin
   Result := IntToStr(StrToInt(ID) div 10000);
 end;
 
-class procedure TSkill.Load(AID: string);
-var
-  Iter, Entry: TWZImgEntry;
+function IsSkillAttack: Boolean;
 begin
-  Entry := GetImgEntry('Skill/' + GetJobID(AID) + '.img/skill/' + AID);
+  if (CharData.ContainsKey(SkillID + '/action')) and (FState = CharData[SkillID + '/action']) then
+    Result := True
+  else
+    Result := False;
+end;
+
+procedure TSkill.DoMove(const Movecount: Single);
+begin
+  if (TSkill.PlayEnded) {and (not IsSkillAttack)}    and (not Player.InLadder) {and (player.sTime = 0)} then
+  begin
+    for var KeyName in TSkill.HotKeyList.Keys do
+      if Keyboard.Key[KeyName] then
+        createskill(TSkill.hotkeylist[KeyName], 0, 0);
+
+  end;
+
+end;
+
+class procedure TSkill.Load(ID: string);
+var
+  Iter, Entry: TWZIMGEntry;
+begin
+  Entry := GetImgEntry('Skill/' + GetJobID(ID) + '.img/skill/' + ID);
   DumpData(Entry, EquipData, EquipImages);
   for Iter in Entry.Children do
   begin
     if Iter.Name = 'action' then
-      CharData.AddOrSetValue(AID + '/action', Iter.Get('0', 'alert'));
+      CharData.AddOrSetValue(ID + '/action', Iter.Get('0', 'alert'));
 
     if Iter.Name = 'tile' then
-      CharData.Add(AID + '/tileCount', Iter.Children.Count - 1);
+      CharData.Add(ID + '/tileCount', Iter.Children.Count - 1);
   end;
 
 end;
 
 procedure CreateSKill(AID: string; X, Y: Integer);
 var
-  Entry: TWZImgEntry;
+  Entry: TWZIMGEntry;
   I: Integer;
   WX, WY, MoveY, Rnd: Integer;
   Below: TPoint;
@@ -73,10 +94,10 @@ const
   Effects: array[0..6] of string = ('effect', 'effect0', 'effect1', 'effect2', 'effect3', 'screen', 'ball');
 begin
   SkillID := AID;
-  SkillEnded := False;
+  TSkill.PlayEnded := False;
   PlaySounds('Skill', AID + '/Use');
   Entry := GetImgEntry('Skill/' + GetJobID(AID) + '.img/skill/' + AID);
-  for I := 0 to 7 do
+  for I := 0 to 6 do
   begin
     if Entry.Get(Effects[I]) <> nil then
       with TSkillSprite.Create(SpriteEngine) do
@@ -156,8 +177,8 @@ begin
 
   inherited;
   Visible := True;
-  if (FTime = 0) and (Frame = 0) and (not SkillEnded) then
-    StartSkill := True;
+  if (FTime = 0) and (Frame = 0) and (not TSkill.PlayEnded) then
+    TSkill.Start := True;
 
   ImageEntry := EquipData[ParentPath + '/' + IntToStr(Frame)];
   AnimDelay := ImageEntry.Get('delay', 100);
@@ -194,7 +215,7 @@ begin
 
   if EffectName <> 'ball' then
   begin
-    SkillEnded := AnimEnd;
+    TSkill.PlayEnded := AnimEnd;
     if AnimEnd then
       Dead;
   end;
@@ -247,9 +268,12 @@ end;
 
 initialization
   TSkill.HotKeyList := TDictionary<Cardinal, string>.Create;
+  TSkill.LoadedList:=TList<string>.Create;
+
+  TSkill.PlayEnded := True;
 
 finalization
   TSkill.HotKeyList.Free;
-
+  TSkill.LoadedList.Free;
 end.
 
