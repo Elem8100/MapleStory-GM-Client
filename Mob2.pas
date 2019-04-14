@@ -12,6 +12,7 @@ type
   TMoveDirection = (mdLeft, mdRight, mdNone);
   tdir = (dLeft, dRight, no);
   TMoveType = (mtStand, mtMove, mtJump, mtFly);
+  TMobCollision=class;
 
   TMob = class(TJumperSprite)
   private
@@ -52,8 +53,11 @@ type
     FDie: Boolean;
     TargetIndex: Integer;
     FPathW: string;
+    HitIndex: Integer;
+    HeadX:Integer;
   public
     Head: TPoint;
+    MobCollision:array[1..6] of TMobCollision;
     property GetHit1: Boolean read FGetHit1 write FGetHit1;
     property Hit: Boolean read FHit write FHit;
     property Frame: Integer read FFrame write FFrame;
@@ -69,8 +73,19 @@ type
     class procedure CreateMapMobs;
     class var MobList: TList<string>;
   end;
+   //collision with skill
+  TMobCollision=class(TSpriteEx)
+    Owner: TMob;
+    Left, Top, Right, Bottom: Integer;
+    Counter: Integer;
+    Index: Integer;
+    StartTime: Integer;
+    procedure DoMove(const Movecount: Single); override;
+    procedure DoCollision(const Sprite: TSprite); override;
+  end;
 
 implementation
+   uses Skill;
 
 function IDToInt(ID: string): string;
 var
@@ -122,6 +137,7 @@ begin
 
   with TMob.Create(SpriteEngine) do
   begin
+
     FPathW := PathW;
     InfoID := ID;
     if Entry <> nil then
@@ -259,6 +275,7 @@ begin
   end;
 
 end;
+
 
 procedure TMob.DoMove(const Movecount: Single);
 var
@@ -434,7 +451,10 @@ begin
       if (Action = 'hit1') or (Action = 'die1') then
       begin
         if Frame = 0 then
-          TDamageNumber.Create(Damage, Head.X, Head.Y);
+        begin
+
+          TDamageNumber.Create(Damage, HeadX, Head.Y+HitIndex*(-25));
+        end;
         Hit := False;
       end;
     end;
@@ -514,7 +534,7 @@ begin
 
   if (AnimEnd) and (Action = 'die1') then
   begin
-    TMobDrop.Drop(Trunc(X), Trunc(Y), Random(6), DropList);
+    TMobDrop.Drop(Trunc(X), Trunc(Y), Random(1), DropList);
     Dead;
   end;
 
@@ -803,6 +823,64 @@ begin
   GameCanvas.Flush;
   FontsAlt[1].TextOut('Lv.' + IntToStr(Level) + '  ' + FMobName, 2, 0, clWhite1);
 end;
+
+
+procedure TMobCollision.DoMove(const Movecount: Single);
+begin
+  inherited;
+
+  CollideRect := Rect(Owner.Left, Owner.Top, Owner.Right, Owner.Bottom);
+  Inc(Counter);
+  if Counter >= StartTime then
+  begin
+    Collision;
+    Dead;
+  end;
+
+end;
+
+procedure TMobCollision.DoCollision(const Sprite: TSprite);
+begin
+
+  if Sprite is TSkillCollision then
+  begin
+    with Owner do
+    begin
+    //  Collisioned := False;
+      if HP > 0 then
+      begin
+        HitIndex := Index;
+        if Index=0 then
+          HeadX:=Head.X;
+        Hit := True;
+        Damage := 500000 + Random(70000);
+        HP := HP - Damage;
+        if HasImgEntry('Sound.wz/Mob.img/' + SelfID + '/Damage') then
+          PlaySounds('Mob', SelfID + '/Damage')
+        else if HasImgEntry('Sound.wz/Mob.img/' + SelfID + '/Hit1') then
+          PlaySounds('Mob', SelfID + '/Hit1');
+               // if can pushed
+        if WzData.ContainsKey('Mob.wz/' + SelfID + '.img/hit1') or WzData.ContainsKey('Mob2.wz/' +
+          SelfID + '.img/hit1') then
+          GetHit1 := True;
+
+      end;
+      if (HP <= 0) and (not Die) then
+      begin
+        PlaySounds('Mob', SelfID + '/Die');
+        Die := True;
+        //  Collisioned := False;
+          // Dead;
+      end;
+
+    end;
+
+   // Collisioned := False;
+   // Dead;
+  end;
+
+end;
+
 
 initialization
 

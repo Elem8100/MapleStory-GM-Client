@@ -11,35 +11,53 @@ type
   public
     class var
       HotKeyList: TDictionary<Cardinal, string>;
-      LoadedList:TList<string>;
+      LoadedList: TList<string>;
       PlayEnded: Boolean;
       Start: Boolean;
+      Has001Wz: Boolean;
+      ID: string;
+      MultiStrike: Boolean;
     class procedure Load(ID: string);
+    class procedure Create(ID:string);overload;
     procedure DoMove(const Movecount: Single); override;
   end;
 
+  //only play animation
   TSkillSprite = class(TSpriteEx)
   private
     FTime: Integer;
     Frame: Integer;
-    ID: string;
+    FID: string;
     BallSpeed: Integer;
     EffectName: string;
     ParentPath: string;
     Counter: Integer;
     AnimRepeat, AnimEnd: Boolean;
     Left, Top, Right, Bottom: Integer;
+    MoveWithPlayer: Boolean;
   public
+    procedure DoMove(const Movecount: Single); override;
+  end;
+
+  // collision wit Mob
+  TSkillCollision = class(TSpriteEx)
+    ID: string;
+    IDEntry: TWZIMGEntry;
+    LT, RB: TPoint;
+    Left, Top, Right, Bottom: Integer;
+    Counter: Integer;
+    Num: Integer;
+    StartTime: Integer;
     procedure DoMove(const Movecount: Single); override;
     procedure DoCollision(const Sprite: TSprite); override;
   end;
 
-procedure CreateSKill(AID: string; X, Y: Integer);
+
 
 implementation
 
 uses
-  MainUnit, MapleCharacter;
+  MainUnit, MapleCharacter, Mob2;
 
 function GetJobID(ID: string): string;
 begin
@@ -48,7 +66,7 @@ end;
 
 function IsSkillAttack: Boolean;
 begin
-  if (CharData.ContainsKey(SkillID + '/action')) and (FState = CharData[SkillID + '/action']) then
+  if (CharData.ContainsKey(TSkill.ID + '/action')) and (FState = CharData[TSkill.ID + '/action']) then
     Result := True
   else
     Result := False;
@@ -60,7 +78,7 @@ begin
   begin
     for var KeyName in TSkill.HotKeyList.Keys do
       if Keyboard.Key[KeyName] then
-        createskill(TSkill.hotkeylist[KeyName], 0, 0);
+        TSKill.Create(TSkill.hotkeylist[KeyName]);
 
   end;
 
@@ -70,7 +88,11 @@ class procedure TSkill.Load(ID: string);
 var
   Iter, Entry: TWZIMGEntry;
 begin
-  Entry := GetImgEntry('Skill/' + GetJobID(ID) + '.img/skill/' + ID);
+  if HasImgFile('Skill.wz/' + GetJobID(ID) + '.img') then
+    Entry := GetImgEntry('Skill.wz/' + GetJobID(ID) + '.img/skill/' + ID)
+  else
+    Entry := GetImgEntry('Skill001.wz/' + GetJobID(ID) + '.img/skill/' + ID);
+
   DumpData(Entry, EquipData, EquipImages);
   for Iter in Entry.Children do
   begin
@@ -83,34 +105,79 @@ begin
 
 end;
 
-procedure CreateSKill(AID: string; X, Y: Integer);
+class procedure TSkill.Create(ID: string);
 var
   Entry: TWZIMGEntry;
-  I: Integer;
   WX, WY, MoveY, Rnd: Integer;
   Below: TPoint;
   BelowFH: TFoothold;
 const
   Effects: array[0..6] of string = ('effect', 'effect0', 'effect1', 'effect2', 'effect3', 'screen', 'ball');
 begin
-  SkillID := AID;
+  Randomize;
+  TSkill.ID := ID;
   TSkill.PlayEnded := False;
-  PlaySounds('Skill', AID + '/Use');
-  Entry := GetImgEntry('Skill/' + GetJobID(AID) + '.img/skill/' + AID);
-  for I := 0 to 6 do
+  PlaySounds('Skill', ID + '/Use');
+ // Entry := GetImgEntry('Skill/' + GetJobID(AID) + '.img/skill/' + AID);
+  if HasImgFile('Skill.wz/' + GetJobID(ID) + '.img') then
+    Entry := GetImgEntry('Skill.wz/' + GetJobID(ID) + '.img/skill/' + ID)
+  else
+    Entry := GetImgEntry('Skill001.wz/' + GetJobID(ID) + '.img/skill/' + ID);
+  TSkill.MultiStrike := True;
+
+  var Count: Integer;
+
+  if TSkill.MultiStrike then
   begin
-    if Entry.Get(Effects[I]) <> nil then
+    Count := 1;
+    for var Iter in SpriteEngine.SpriteList do
+      if Iter is TMob then
+      begin
+        for var i := 1 to 6 do
+        begin
+          TMob(Iter).MobCollision[i] := TMobCollision.Create(SpriteEngine);
+          TMob(Iter).MobCollision[i].ImageLib := EquipImages;
+          TMob(Iter).MobCollision[i].Owner := TMob(Iter);
+          TMob(Iter).MobCollision[i].StartTime := 20 + i * 7;
+          TMob(Iter).MobCollision[i].Index := i-1;
+          TMob(Iter).MobCollision[i].Collisioned := True;
+        end;
+      end;
+  end
+  else
+    Count := 6;
+
+  for var i := 1 to Count do
+  begin
+    with TSkillCollision.Create(SpriteEngine) do
+    begin
+      ImageLib := EquipImages;
+      Collisioned := True;
+      //ID := ID;
+      IDEntry := Entry;
+      StartTime := 20 + i * 6;
+    end;
+  end;
+
+  for var Iter in SpriteEngine.SpriteList do
+    if Iter is TMob then
+      Iter.Collisioned := True;
+
+  for var i := 0 to 6 do
+  begin
+    if Entry.Get(Effects[i]) <> nil then
       with TSkillSprite.Create(SpriteEngine) do
       begin
-        ParentPath := GetEntryPath(Entry.Get(Effects[I]));
-        if Entry.Get(Effects[I] + '/0/0') <> nil then
-          ParentPath := GetEntryPath(Entry.Get(Effects[I] + '/0'));
+        MoveWithPlayer := True;
+        ParentPath := GetEntryPath(Entry.Get(Effects[i]));
+        if Entry.Get(Effects[i] + '/0/0') <> nil then
+          ParentPath := GetEntryPath(Entry.Get(Effects[i] + '/0'));
 
         ImageLib := EquipImages;
         ImageEntry := EquipData[ParentPath + '/0'];
         X := Player.X;
         Y := Player.Y;
-        if Effects[I] = 'ball' then
+        if Effects[i] = 'ball' then
         begin
           Y := Player.Y - 27;
           if CharFlip then
@@ -122,8 +189,8 @@ begin
         Width := 800;
         Height := 800;
         Visible := False;
-        ID := AID;
-        EffectName := Effects[I];
+        FID := ID;
+        EffectName := Effects[i];
 
         if EffectName = 'effect' then
           Z := 150 + Player.Z
@@ -139,17 +206,19 @@ begin
 
   if Entry.Get('tile') <> nil then // ' + '/0/0') then
   begin
-    for I := 0 to 6 do
+    for var i := 0 to 6 do
     begin
       MoveY := 20;
-      if (I mod 2) = 0 then
+      if (i mod 2) = 0 then
         MoveY := 300;
 
-      Below := TFootholdTree.This.FindBelow(Point(40 + WX + I * 120, WY + MoveY), BelowFH);
+      Below := TFootholdTree.This.FindBelow(Point(240 + WX + i * 120, WY + MoveY), BelowFH);
       if BelowFH <> nil then
         with TSkillSprite.Create(SpriteEngine) do
         begin
-          Rnd := CharData[AID + '/tileCount'];
+          FID:=ID;
+          MoveWithPlayer := False;
+          Rnd := CharData[ID + '/tileCount'];
           ImageLib := EquipImages;
           ParentPath := GetEntryPath(Entry.Get('tile/' + IntToStr(Random(Rnd))));
           ImageEntry := EquipData[ParentPath + '/0'];
@@ -157,11 +226,9 @@ begin
           Height := 400;
           X := Below.X;
           Y := Below.Y;
-          Z := 20000;
+          Z := Player.Z;
           Visible := False;
-          ID := AID;
           EffectName := 'tile';
-          // Collisioned := True;
         end;
 
     end;
@@ -180,18 +247,22 @@ begin
   if (FTime = 0) and (Frame = 0) and (not TSkill.PlayEnded) then
     TSkill.Start := True;
 
-  ImageEntry := EquipData[ParentPath + '/' + IntToStr(Frame)];
+  ImageEntry := EquipData[ParentPath + '/' + Frame.ToString];
   AnimDelay := ImageEntry.Get('delay', 100);
 
   MirrorX := CharFlip;
-
+  if MoveWithPlayer then
+  begin
+    X:=Player.X;
+    Y:=player.Y;
+  end;
   FTime := FTime + 17;
   if FTime > AnimDelay then
   begin
     FTime := 0;
     Frame := Frame + 1;
     AnimEnd := False;
-    if not EquipData.ContainsKey(ParentPath + '/' + IntToStr(Frame)) then
+    if not EquipData.ContainsKey(ParentPath + '/' + Frame.ToString) then
     begin
       // if Frame> FrameCount then
       // Frame := 0;
@@ -231,49 +302,99 @@ begin
 
 end;
 
-procedure TSkillSprite.DoCollision(const Sprite: TSprite);
+procedure TSkillCollision.DoMove(const Movecount: Single);
 begin
-  {
-    if (FTime=0) and (Frame=0) then
+  inherited;
+  MirrorX := CharFlip;
 
-    if Sprite is TMob then
+  if EquipData.ContainsKey(IDEntry.GetPath + '/common/lt') then
+  begin
+    LT := EquipData[IDEntry.GetPath + '/common/lt'].Vector;
+    RB := EquipData[IDEntry.GetPath + '/common/rb'].Vector;
+    case CharFlip of
+      True:
+        begin
+          Right := Round(Player.X) - LT.X + 18;
+          Left := Round(Player.X) - RB.X;
+          ;
+        end;
+      False:
+        begin
+          Left := Round(Player.X) + LT.X;
+          Right := Round(Player.X) + RB.X;
+        end;
+    end;
+    Top := Round(Player.Y) + LT.Y;
+    Bottom := Round(Player.Y) + RB.Y;
+  end;
+  CollideRect := Rect(Left, Top, Right, Bottom);
+  Inc(Counter);
+  if TSkill.MultiStrike then
+  begin
+    if Counter >= 80 then
+      Dead;
+  end
+  else
+  begin
+    if Counter >= StartTime then
     begin
+      Collision;
+      Dead;
+    end;
+  end;
+
+end;
+
+procedure TSkillCollision.DoCollision(const Sprite: TSprite);
+begin
+  if TSkill.MultiStrike then
+    Exit;
+
+  if Sprite is TMob then
+  begin
     with TMob(Sprite) do
     begin
-    if HP > 0 then
-    begin
-    Hit := True;
-    Damage := 5000 + Random(7000);
-    HP := HP - Damage;
-    PlaySounds('Mob',SelfID + '/Damage');
-    //if can pushed
-    if WZData.ContainsKey(SelfID + '/hit1') then
-    GetHit1 := True;
+      Collisioned := False;
+      if HP > 0 then
+      begin
+        Hit := True;
+        Damage := 500000 + Random(700000);
+        HP := HP - Damage;
+        if HasImgEntry('Sound.wz/Mob.img/' + SelfID + '/Damage') then
+          PlaySounds('Mob', SelfID + '/Damage')
+        else if HasImgEntry('Sound.wz/Mob.img/' + SelfID + '/Hit1') then
+          PlaySounds('Mob', SelfID + '/Hit1');
+               // if can pushed
+        if WzData.ContainsKey('Mob.wz/' + SelfID + '.img/hit1') or WzData.ContainsKey('Mob2.wz/' +
+          SelfID + '.img/hit1') then
+          GetHit1 := True;
+
+      end;
+      if (HP <= 0) and (not Die) then
+      begin
+        PlaySounds('Mob', SelfID + '/Die');
+        Die := True;
+        //  Collisioned := False;
+          // Dead;
+      end;
 
     end;
-    if (HP <=0) and (not Die) then
-    begin
-    PlaySounds('Mob', SelfID + '/Die');
-    Die := True;
+
     Collisioned := False;
-    //Dead;
-    end;
+    Dead;
+  end;
 
-    end;
-
-    Collisioned := False;
-    end;
-  }
 end;
 
 initialization
   TSkill.HotKeyList := TDictionary<Cardinal, string>.Create;
-  TSkill.LoadedList:=TList<string>.Create;
+  TSkill.LoadedList := TList<string>.Create;
 
   TSkill.PlayEnded := True;
 
 finalization
   TSkill.HotKeyList.Free;
   TSkill.LoadedList.Free;
+
 end.
 
