@@ -3,19 +3,22 @@ unit Mob2;
 interface
 
 uses
-  Windows, System.types, SysUtils, StrUtils, AsphyreSprite, Generics.Collections,
-  WZIMGFile, Math, Footholds, LadderRopes, AsphyreTypes, DX9Textures, WZArchive,
-  ChatBalloon, MapPortal, MapleCharacter, DamageNumber, MobDrop, Global, Tools,WzUtils, MapleMap;
+  Windows, System.Types, SysUtils, StrUtils, AsphyreSprite, Generics.Collections, WZIMGFile, Math,
+  Footholds, LadderRopes, AsphyreTypes, DX9Textures, WZArchive, ChatBalloon, MapPortal,
+  MapleCharacter, DamageNumber, MobDrop, Global, Tools, WzUtils, MapleMap;
 
 type
-
   TMoveDirection = (mdLeft, mdRight, mdNone);
+
   tdir = (dLeft, dRight, no);
+
   TMoveType = (mtStand, mtMove, mtJump, mtFly);
-  TMobCollision=class;
+
+  TMobCollision = class;
 
   TMob = class(TJumperSprite)
   private
+    Mob:TMob;
     FFrame: Integer;
     FTime: Integer;
     FID: string;
@@ -54,10 +57,10 @@ type
     TargetIndex: Integer;
     FPathW: string;
     HitIndex: Integer;
-    HeadX:Integer;
+    HeadX: Integer;
   public
     Head: TPoint;
-    MobCollision:array[1..6] of TMobCollision;
+    MobCollision: array[1..6] of TMobCollision;
     property GetHit1: Boolean read FGetHit1 write FGetHit1;
     property Hit: Boolean read FHit write FHit;
     property Frame: Integer read FFrame write FFrame;
@@ -68,13 +71,16 @@ type
     destructor Destroy; override;
     procedure DoMove(const Movecount: Single); override;
     procedure DoDraw; override;
+    constructor Create(const AParent: TSprite); override;
     procedure TargetEvent(Sender: TObject);
     class procedure Drop(ID: string; PosX, PosY: Integer; aRX0: Integer = 0; aRX1: Integer = 0);
     class procedure CreateMapMobs;
-    class var MobList: TList<string>;
+    class var
+      MobList: TList<string>;
   end;
    //collision with skill
-  TMobCollision=class(TSpriteEx)
+
+  TMobCollision = class(TSpriteEx)
     Owner: TMob;
     Left, Top, Right, Bottom: Integer;
     Counter: Integer;
@@ -85,7 +91,63 @@ type
   end;
 
 implementation
-   uses Skill;
+
+uses
+  Skill;
+
+type
+  TSkillHitEffect = class(TSpriteEx)
+    Owner: TMob;
+    Entry: TWZIMGEntry;
+    FTime: Integer;
+    Frame: Integer;
+    EntryPath:string;
+    AnimDelay:Integer;
+    AnimRepeat, AnimEnd: Boolean;
+    class procedure Create(AOwner: TMob); overload;
+    procedure DoMove(const Movecount: Single); override;
+  end;
+
+class procedure TSkillHitEffect.Create(AOwner: TMob);
+begin
+  with TSkillHitEffect.Create(SpriteEngine) do
+  begin
+    ImageLib := EquipImages;
+    EntryPath:=  TSkill.Entry.GetPath;
+    ImageEntry:= EquipData[EntryPath+'/hit/0/0'];
+    Owner:= AOwner;
+  end;
+end;
+
+procedure TSkillHitEffect.DoMove(const Movecount: Single);
+begin
+  X:= Owner.X-70;
+  Y:= Owner.Y-100;
+  Z:= Owner.Z;
+  ImageEntry := EquipData[EntryPath + '/hit/0/' + Frame.ToString];
+  AnimDelay := ImageEntry.Get('delay', 100);
+
+  FTime := FTime + 17;
+  if FTime > AnimDelay then
+  begin
+    FTime := 0;
+    Frame := Frame + 1;
+    AnimEnd := False;
+    if not EquipData.ContainsKey(EntryPath + '/hit/0/' + Frame.ToString) then
+    begin
+      if AnimRepeat then
+        Frame := 0
+      else
+      begin
+        Frame := Frame - 1;
+        AnimEnd := True;
+      end;
+    end;
+  end;
+
+  if AnimEnd then
+    Dead;
+end;
 
 function IDToInt(ID: string): string;
 var
@@ -93,6 +155,12 @@ var
 begin
   s := StrToInt(ID);
   Result := IntToStr(s);
+end;
+
+constructor TMob.Create(const AParent: TSprite);
+begin
+  inherited;
+  Mob:= Self;
 end;
 
 class procedure TMob.Drop(ID: string; PosX, PosY: Integer; aRX0: Integer = 0; aRX1: Integer = 0);
@@ -106,21 +174,21 @@ var
 begin
   Randomize;
 
-  if MobWz.GetImgFile(ID + '.img') <> nil then
+  if MobWZ.GetImgFile(ID + '.img') <> nil then
   begin
     Path1 := 'Mob/';
     PathW := 'Mob.wz/';
-    WZ := MobWz;
+    WZ := MobWZ;
   end
   else
   begin
     Path1 := 'Mob2/';
     PathW := 'Mob2.wz/';
-    WZ := Mob2Wz;
+    WZ := Mob2WZ;
   end;
 
   Entry := GetImgEntry(Path1 + ID + '.img/info/link');
-  if not MobList.Contains(ID) then
+  if not MobList.contains(ID) then
   begin
     MobList.Add(ID);
     DumpData(WZ.GetImgFile(ID + '.img').Root, WzData, Images);
@@ -132,7 +200,8 @@ begin
     TestID := Entry.Data
   else
     TestID := ID;
-  if (WZ.GetImgFile(TestID + '.img').Root.Get('stand/0') = nil) and (WZ.GetImgFile(TestID + '.img').Root.Get('fly/0') = nil) then
+  if (WZ.GetImgFile(TestID + '.img').Root.Get('stand/0') = nil) and (WZ.GetImgFile(TestID + '.img').Root.Get
+    ('fly/0') = nil) then
     Exit;
 
   with TMob.Create(SpriteEngine) do
@@ -151,7 +220,7 @@ begin
     begin
       c := 0;
       for Iter2 in Iter.Children do
-        if CharInSet(Iter2.Name[1], ['0' .. '9']) then
+        if CharInSet(Iter2.Name[1], ['0'..'9']) then
           Inc(c);
       Data.AddOrSetValue(FID + Iter.Name + '/FrameCount', c - 1);
     end;
@@ -205,7 +274,7 @@ begin
     Y := Pos.Y;
     SrcY := Trunc(Y);
     FH := BelowFH;
-    Z := FH.Z * 100000+6000;
+    Z := FH.Z * 100000 + 6000;
     JumpSpeed := 0.6;
     JumpHeight := 9;
     MaxFallSpeed := 8;
@@ -270,12 +339,12 @@ begin
     begin
       for Iter2 in Iter.Children do
         if Iter2.Get('type', '') = 'm' then
-          TMob.Drop(Iter2.Get('id', ''), Iter2.Get('x', ''), Iter2.Get('cy', ''), Iter2.Get('rx0', ''), Iter2.Get('rx1', ''));
+          TMob.Drop(Iter2.Get('id', ''), Iter2.Get('x', ''), Iter2.Get('cy', ''), Iter2.Get('rx0',
+            ''), Iter2.Get('rx1', ''));
     end;
   end;
 
 end;
-
 
 procedure TMob.DoMove(const Movecount: Single);
 var
@@ -388,7 +457,6 @@ begin
   end;
 
   if (not Die) then
-
     if (MoveType <> mtStand) and (MoveType <> mtFly) then
       case Random(200) of
 
@@ -421,7 +489,6 @@ begin
       end;
 
   if (not GetHit1) and (not Die) then
-
     if JumpState <> jsNone then
     begin
       NewAction := 'jump';
@@ -452,8 +519,11 @@ begin
       begin
         if Frame = 0 then
         begin
-
-          TDamageNumber.Create(Damage, HeadX, Head.Y+HitIndex*(-25));
+          if TSkill.MultiStrike then
+            TDamageNumber.Create(Damage, HeadX, Head.Y + HitIndex * (-30))
+          else
+            TDamageNumber.Create(Damage, Head.X, Head.Y);
+          TSkillHitEffect.Create(Mob);
         end;
         Hit := False;
       end;
@@ -570,8 +640,8 @@ begin
 
         if (GetHit1) and (not Die) and (FTime < 300) then
         begin
-          X := X + (Sin256(Direction) * -1.3);
-          Y := Y - (Cos256(Direction) * -1.3);
+          X := X + (Sin256(Direction) *  - 1.3);
+          Y := Y - (Cos256(Direction) *  - 1.3);
         end;
 
         FallEdge := -999999;
@@ -656,8 +726,8 @@ begin
 
         if (GetHit1) and (not Die) and (FTime < 300) then
         begin
-          X := X + (Sin256(Direction) * -1.3);
-          Y := Y - (Cos256(Direction) * -1.3);
+          X := X + (Sin256(Direction) *  - 1.3);
+          Y := Y - (Cos256(Direction) *  - 1.3);
         end;
         FallEdge := 999999;
         JumpEdge := 999999;
@@ -824,7 +894,6 @@ begin
   FontsAlt[1].TextOut('Lv.' + IntToStr(Level) + '  ' + FMobName, 2, 0, clWhite1);
 end;
 
-
 procedure TMobCollision.DoMove(const Movecount: Single);
 begin
   inherited;
@@ -850,8 +919,8 @@ begin
       if HP > 0 then
       begin
         HitIndex := Index;
-        if Index=0 then
-          HeadX:=Head.X;
+        if Index = 0 then
+          HeadX := Head.X;
         Hit := True;
         Damage := 500000 + Random(70000);
         HP := HP - Damage;
@@ -881,15 +950,13 @@ begin
 
 end;
 
-
 initialization
-
-TMob.MobList := TList<string>.Create;
-DropList := TList<string>.Create;
+  TMob.MobList := TList<string>.Create;
+  DropList := TList<string>.Create;
 
 finalization
- TMob.MobList.Free;
- DropList.Free;
-
+  TMob.MobList.Free;
+  DropList.Free;
 
 end.
+

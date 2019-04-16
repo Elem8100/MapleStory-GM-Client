@@ -15,6 +15,7 @@ type
       PlayEnded: Boolean;
       Start: Boolean;
       Has001Wz: Boolean;
+      Entry: TWZIMGEntry;
       ID: string;
       MultiStrike: Boolean;
     class procedure Load(ID: string);
@@ -123,7 +124,8 @@ begin
     Entry := GetImgEntry('Skill.wz/' + GetJobID(ID) + '.img/skill/' + ID)
   else
     Entry := GetImgEntry('Skill001.wz/' + GetJobID(ID) + '.img/skill/' + ID);
-  TSkill.MultiStrike := True;
+  TSkill.Entry := Entry;
+  TSkill.MultiStrike := true;
 
   var Count: Integer;
 
@@ -196,6 +198,9 @@ begin
           Z := 150 + Player.Z
         else
           Z := Player.Z - 150;
+
+       // if HasImgEntry(Entry.Get(Effects[i] + '/z').GetPath) then
+        //  Z:=Player.Z+ Entry.Get(Effects[i] + '/z').Data;
 
         // Collisioned := True;
       end;

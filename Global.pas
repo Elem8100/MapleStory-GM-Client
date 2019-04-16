@@ -33,11 +33,9 @@ var
   BackEngine: array [0 .. 1] of TSpriteEngine;
   FontsAlt: TAsphyreFontsAlt;
   Keyboard: TAsphyreKeyboard;
-  MobWZ, Mob2WZ, NPCWZ, MapWz, Map2Wz,Map001Wz,MorphWz, StringWZ, SoundWZ,Sound2Wz, CharacterWZ, BaseWZ, UIWZ, ReactorWz, EffectWz, SkillWZ, ItemWZ,EtcWz: TWZArchive;
+  MobWZ, Mob2WZ, NPCWZ, MapWz, Map2Wz,Map001Wz,MorphWz, StringWZ, SoundWZ,Sound2Wz, CharacterWZ, BaseWZ, UIWZ, ReactorWz, EffectWz, SkillWZ,Skill001Wz, ItemWZ,EtcWZ: TWZArchive;
   GameMode: TGameMode;
-  SkillEnded: Boolean = True;
-  StartSkill: Boolean;
-  SkillID: string;
+
   Sounds: TObjectList<TBassHandler>;
   Damage: Integer;
   NewPosition, CurrentPosition, SpriteEngineVelX: Double;
