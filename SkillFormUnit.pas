@@ -13,9 +13,9 @@ type
     SelectGrid: TAdvStringGrid;
     Label1: TLabel;
     ComBobox1: TscAdvancedComboEdit;
-    procedure FormShow(Sender: TObject);
     procedure SelectGridClickCell(Sender: TObject; ARow, ACol: Integer);
     procedure ComBobox1CloseUp(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
   private
     HasLoaded: Boolean;
     IDs: array of string;
@@ -132,7 +132,11 @@ begin
 
   SkillGrid.Cells[1, SkillGrid.RowCount] := SelectGrid.Cells[1, SelectRow];
   var ID := SelectGrid.Cells[1, SelectRow];
-  var Entry := GetImgEntry('Skill.wz/' + GetJobID(ID) + '.img/skill/' + ID);
+  var Entry: TWZIMGEntry;
+  if HasImgFile('Skill.wz/' + GetJobID(ID) + '.img') then
+    Entry := GetImgEntry('Skill.wz/' + GetJobID(ID) + '.img/skill/' + ID)
+  else
+    Entry := GetImgEntry('Skill001.wz/' + GetJobID(ID) + '.img/skill/' + ID);
   var Bmp := Entry.Get2('icon').Canvas.DumpBmp;
   var RowCount := SkillGrid.RowCount;
   SkillGrid.CreateBitmap(2, RowCount, False, haCenter, vaCenter).Assign(Bmp);
@@ -153,36 +157,62 @@ begin
     TSkill.HotKeyList.AddOrSetValue(KeyNameToInt(KeyName), SkillID);
   end;
 
-
-  if not TSkill.LoadedList.Contains(ID) then
+  if not TSkill.LoadedList.contains(ID) then
     TSkill.Load(ID);
   TSkill.LoadedList.Add(ID);
 end;
 
-procedure TSkillForm.FormShow(Sender: TObject);
+procedure TSkillForm.FormActivate(Sender: TObject);
 begin
   if HasLoaded then
     Exit;
   HasLoaded := True;
+  SelectGrid.Canvas.Font.Size := 18;
+  SelectGrid.Canvas.TextOut(90, 100, '¸ü¤J¤¤...');
+
   with TSkill.Create(SpriteEngine) do
   begin
+    Tag := 1;
   end;
 
   IDs := ['2321008', '2121007', '2221007', '5121001', '2301005', '1121008', '21120005', '21110006',
-    '12111005', '3111003'];
+    '12111005', '3111003', '41001000','155111211','2211010','36121052','36121011','400041021','4331000',
+    '155121202','101110202','101120102','101120202','101100100','15121052','15121002','15111022',
+    '31221052','31221002'];
   var RowCount := -1;
   SelectGrid.BeginUpdate;
+
   for var ID in IDs do
   begin
-    Inc(RowCount);
-    SelectGrid.RowCount := RowCount + 1;
-    SelectGrid.Cells[1, RowCount] := ID;
-    var Entry := GetImgEntry('Skill.wz/' + GetJobID(ID) + '.img/skill/' + ID);
-    var Bmp := Entry.Get2('icon').Canvas.DumpBmp;
-    SelectGrid.CreateBitmap(2, RowCount, False, haCenter, vaCenter).Assign(Bmp);
-    Bmp.Free;
-    SelectGrid.Cells[3, RowCount] := GetImgEntry('String.wz/Skill.img/' + ID).Get('name', '');
+    if HasImgFile('Skill.wz/' + GetJobID(ID) + '.img') and HasImgEntry('Skill.wz/' + GetJobID(ID) +
+      '.img/skill/' + ID) then
+    begin
+      Inc(RowCount);
+      SelectGrid.RowCount := RowCount + 1;
+      SelectGrid.Cells[1, RowCount] := ID;
+      var Entry := GetImgEntry('Skill.wz/' + GetJobID(ID) + '.img/skill/' + ID);
+      var Bmp := Entry.Get2('icon').Canvas.DumpBmp;
+      SelectGrid.CreateBitmap(2, RowCount, False, haCenter, vaCenter).Assign(Bmp);
+      Bmp.Free;
+      SelectGrid.Cells[3, RowCount] := GetImgEntry('String.wz/Skill.img/' + ID).Get('name', '');
+    end;
+
+    if TSkill.Has001Wz then
+      if HasImgFile('Skill001.wz/' + GetJobID(ID) + '.img') and HasImgEntry('Skill001.wz/' +
+        GetJobID(ID) + '.img/skill/' + ID) then
+      begin
+        Inc(RowCount);
+        SelectGrid.RowCount := RowCount + 1;
+        SelectGrid.Cells[1, RowCount] := ID;
+        var Entry := GetImgEntry('Skill01.wz/' + GetJobID(ID) + '.img/skill/' + ID);
+        var Bmp := Entry.Get2('icon').Canvas.DumpBmp;
+        SelectGrid.CreateBitmap(2, RowCount, False, haCenter, vaCenter).Assign(Bmp);
+        Bmp.Free;
+        SelectGrid.Cells[3, RowCount] := GetImgEntry('String.wz/Skill.img/' + ID).Get('name', '');
+      end;
+
   end;
+
   SelectGrid.SortByColumn(1);
   SelectGrid.EndUpdate;
   SkillGrid.Cells[1, 0] := 'ID';

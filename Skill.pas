@@ -18,8 +18,11 @@ type
       Entry: TWZIMGEntry;
       ID: string;
       MultiStrike: Boolean;
+      DamageWaitTime:Integer;
+      TotalTime:Integer;
+      Attacking:Boolean;
     class procedure Load(ID: string);
-    class procedure Create(ID:string);overload;
+    class procedure Create(ID: string); overload;
     procedure DoMove(const Movecount: Single); override;
   end;
 
@@ -28,6 +31,7 @@ type
   private
     FTime: Integer;
     Frame: Integer;
+    Origin:TPoint;
     FID: string;
     BallSpeed: Integer;
     EffectName: string;
@@ -53,8 +57,6 @@ type
     procedure DoCollision(const Sprite: TSprite); override;
   end;
 
-
-
 implementation
 
 uses
@@ -75,12 +77,14 @@ end;
 
 procedure TSkill.DoMove(const Movecount: Single);
 begin
-  if (TSkill.PlayEnded) {and (not IsSkillAttack)}    and (not Player.InLadder) {and (player.sTime = 0)} then
+  if (TSkill.PlayEnded) {and (not IsSkillAttack)}     and (not Player.InLadder) {and (player.sTime = 0)} then
   begin
     for var KeyName in TSkill.HotKeyList.Keys do
       if Keyboard.Key[KeyName] then
-        TSKill.Create(TSkill.hotkeylist[KeyName]);
-
+      begin
+        TSkill.Attacking := True;
+        TSkill.Create(TSkill.hotkeylist[KeyName]);
+      end;
   end;
 
 end;
@@ -106,6 +110,17 @@ begin
 
 end;
 
+function GetDamageWaitTime(ID:string):Integer;
+begin
+  case ID.ToInteger of
+     1121008:Result:=25;
+     2321008: Result:=70;
+     36121052:Result:=160;
+     36121011:Result:=40;
+  end;
+
+end;
+
 class procedure TSkill.Create(ID: string);
 var
   Entry: TWZIMGEntry;
@@ -125,13 +140,15 @@ begin
   else
     Entry := GetImgEntry('Skill001.wz/' + GetJobID(ID) + '.img/skill/' + ID);
   TSkill.Entry := Entry;
-  TSkill.MultiStrike := true;
+  TSkill.MultiStrike := True;
 
   var Count: Integer;
-
+  DamageWaitTime := GetDamageWaitTime(ID);
+  //連打6次
   if TSkill.MultiStrike then
   begin
     Count := 1;
+    TotalTime:=  DamageWaitTime +6*7;
     for var Iter in SpriteEngine.SpriteList do
       if Iter is TMob then
       begin
@@ -140,8 +157,8 @@ begin
           TMob(Iter).MobCollision[i] := TMobCollision.Create(SpriteEngine);
           TMob(Iter).MobCollision[i].ImageLib := EquipImages;
           TMob(Iter).MobCollision[i].Owner := TMob(Iter);
-          TMob(Iter).MobCollision[i].StartTime := 20 + i * 7;
-          TMob(Iter).MobCollision[i].Index := i-1;
+          TMob(Iter).MobCollision[i].StartTime :=  DamageWaitTime + i * 7;
+          TMob(Iter).MobCollision[i].Index := i - 1;
           TMob(Iter).MobCollision[i].Collisioned := True;
         end;
       end;
@@ -149,6 +166,7 @@ begin
   else
     Count := 6;
 
+  //順序打
   for var i := 1 to Count do
   begin
     with TSkillCollision.Create(SpriteEngine) do
@@ -157,7 +175,7 @@ begin
       Collisioned := True;
       //ID := ID;
       IDEntry := Entry;
-      StartTime := 20 + i * 6;
+      StartTime := DamageWaitTime + i * 6;
     end;
   end;
 
@@ -194,15 +212,11 @@ begin
         FID := ID;
         EffectName := Effects[i];
 
-        if EffectName = 'effect' then
+        if Entry.Get(Effects[i]).Get('z', '-999') = '-999' then
           Z := 150 + Player.Z
         else
-          Z := Player.Z - 150;
+          Z := Player.Z + Entry.Get(Effects[i]).Get('z', 0);
 
-       // if HasImgEntry(Entry.Get(Effects[i] + '/z').GetPath) then
-        //  Z:=Player.Z+ Entry.Get(Effects[i] + '/z').Data;
-
-        // Collisioned := True;
       end;
   end;
 
@@ -221,7 +235,7 @@ begin
       if BelowFH <> nil then
         with TSkillSprite.Create(SpriteEngine) do
         begin
-          FID:=ID;
+          FID := ID;
           MoveWithPlayer := False;
           Rnd := CharData[ID + '/tileCount'];
           ImageLib := EquipImages;
@@ -258,8 +272,8 @@ begin
   MirrorX := CharFlip;
   if MoveWithPlayer then
   begin
-    X:=Player.X;
-    Y:=player.Y;
+    X := Player.X;
+    Y := Player.Y;
   end;
   FTime := FTime + 17;
   if FTime > AnimDelay then
@@ -281,13 +295,18 @@ begin
     end;
   end;
 
+   if ImageEntry.Get('origin') <> nil then
+    Origin := ImageEntry.Get('origin').Vector;
+
   case MirrorX of
     True:
-      Offset.X := ImageEntry.Get('origin').Vector.X - ImageWidth;
+      Offset.X := Origin.X - PatternWidth;
     False:
-      Offset.X := -ImageEntry.Get('origin').Vector.X;
+      Offset.X := -Origin.X;
   end;
-  Offset.Y := -ImageEntry.Get('origin').Vector.Y;
+  Offset.Y := -Origin.Y;
+
+
 
   if EffectName <> 'ball' then
   begin
@@ -336,12 +355,12 @@ begin
   Inc(Counter);
   if TSkill.MultiStrike then
   begin
-    if Counter >= 80 then
+    if Counter > TSkill.TotalTime+1 then
       Dead;
   end
   else
   begin
-    if Counter >= StartTime then
+    if Counter >  StartTime then
     begin
       Collision;
       Dead;

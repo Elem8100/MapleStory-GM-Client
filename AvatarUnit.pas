@@ -3,12 +3,11 @@ unit AvatarUnit;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.Buttons,
-  AdvUtil, PNGMapleCanvasEx, WZArchive, Vcl.Grids, AdvObj, BaseGrid, AdvGrid,
-  Vcl.StdCtrls, StrUtils, Generics.Collections, Generics.Defaults, hyieutils,
-  iexBitmaps, hyiedefs, iesettings, iexLayers, iexRulers, ieview, pngimage,
-  iemview, Vcl.ComCtrls;
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.Buttons, AdvUtil, PNGMapleCanvasEx,
+  WZArchive, Vcl.Grids, AdvObj, BaseGrid, AdvGrid, Vcl.StdCtrls, StrUtils, Generics.Collections,
+  Generics.Defaults, hyieutils, iexBitmaps, hyiedefs, iesettings, iexLayers, iexRulers, ieview,
+  pngimage, iemview, Vcl.ComCtrls;
 
 type
   TAvatarForm = class(TForm)
@@ -75,8 +74,8 @@ var
 implementation
 
 uses
-  WZIMGFile, WZDirectory, MapleEffect, Global, MapleCharacter, LockRenderTarget,
-  AsphyreTypes, WzUtils;
+  WZIMGFile, WZDirectory, MapleEffect, Global, MapleCharacter, LockRenderTarget, AsphyreTypes,
+  WzUtils;
 
 {$R *.dfm}
 
@@ -89,7 +88,8 @@ begin
   Inventory.Cells[0, ARow] := ID;
   Inventory.CreatePicture(1, ARow, True, noStretch, 0, haCenter, vaCenter).Assign(Icon);
   Inventory.Cells[2, ARow] := Name;
-  Inventory.AddButton(3, ARow, 20, 20, 'X', haCenter, vaCenter);
+  if (Leftstr(ID,4)<>'0000')  and (Leftstr(ID,4)<>'0001')then
+     Inventory.AddButton(3, ARow, 20, 20, 'X', haCenter, vaCenter);
 end;
 
 procedure TAvatarForm.AddEqps(EqpID: string);
@@ -200,7 +200,6 @@ begin
       DressFace := True;
   end;
 
-
   if Part = SitTamingMob then
     Exit;
   ChangeState := True;
@@ -221,12 +220,18 @@ begin
   var Entry := CharacterWZ.GetImgFile(Dir + EqpID + '.img').Root;
 
   var Bmp: TBitmap;
-  if Part = Hair then
-    Bmp := Entry.Get2('default/hairOverHead').Canvas.DumpBmp
-  else if Part = Face then
-    Bmp := Entry.Get2('default/face').Canvas.DumpBmp
+  case Part of
+    Head:
+      Bmp := Entry.Get2('front/head').Canvas.DumpBmp;
+    Body:
+      Bmp := Entry.Get2('stand1/0/body').Canvas.DumpBmp;
+    Hair:
+      Bmp := Entry.Get2('default/hairOverHead').Canvas.DumpBmp;
+    Face:
+      Bmp := Entry.Get2('default/face').Canvas.DumpBmp;
   else
     Bmp := Entry.Get2('info/icon').Canvas.DumpBmp;
+  end;
 
   var Row := 0;
   for var i := 1 to Inventory.RowCount - 1 do
@@ -455,7 +460,8 @@ begin
     ImageGrids[i].Background := clWhite;
     ImageGrids[i].ThumbWidth := 35;
     ImageGrids[i].ThumbHeight := 35;
-    ImageGrids[i].ThumbnailOptionsEx := [ietxShowIconForUnknownFormat, ietxShowIconWhileLoading, ietxEnableInternalIcons];
+    ImageGrids[i].ThumbnailOptionsEx := [ietxShowIconForUnknownFormat, ietxShowIconWhileLoading,
+      ietxEnableInternalIcons];
     ImageGrids[i].DefaultInfoText := iedtNone;
     ImageGrids[i].MultiSelectionOptions := [];
     ImageGrids[i].ShowText := False;
@@ -480,15 +486,15 @@ begin
   AvatarView.DefaultInfoText := iedtNone;
   AvatarView.MultiSelectionOptions := [];
   AvatarView.ShowText := False;
-  AvatarView.ThumbnailsBackground:=RGB(200,200,200);
-  AvatarView.ThumbsRounded:=100;
+  AvatarView.ThumbnailsBackground := RGB(200, 200, 200);
+  AvatarView.ThumbsRounded := 100;
   AvatarView.SelectionColor := clRed;
   AvatarView.OnImageSelect := AvatarViewImageSelect;
 
   Inventory.ColumnHeaders.Add('ID');
-  Inventory.ColumnHeaders.Add('Icon');
-  Inventory.ColumnHeaders.Add('Name');
-  Inventory.ColumnHeaders.Add('Delete');
+  Inventory.ColumnHeaders.Add('圖示');
+  Inventory.ColumnHeaders.Add('名稱');
+  Inventory.ColumnHeaders.Add('刪除');
   Inventory.RowHeights[0] := 22;
   Inventory.ColWidths[0] := 80;
   Inventory.ColWidths[1] := 40;  //icon
@@ -520,11 +526,11 @@ begin
   if HasShow then
     Exit;
   HasShow := True;
-  var DefaultEqps := ['01302030', '01062055', '01072054', '01040005', '00030020', '00020000'];
+  var DefaultEqps := ['01302030', '01062055', '01072054', '01040005', '00030020', '00020000', '00002000', '00012000'];
   var TrimID: string;
   var Bmp: TBitmap;
 
-  for var i := 0 to 5 do
+  for var i := 0 to 7 do
   begin
     if LeftStr(DefaultEqps[i], 3) = '000' then
       TrimID := RightStr(DefaultEqps[i], 5)
@@ -533,15 +539,25 @@ begin
 
     var Dir := GetDir(DefaultEqps[i]);
     var Name := StringWZ.GetImgFile('Eqp.img').Root.Get('Eqp/' + Dir + TrimID + '/name', '');
+
     var Entry := CharacterWZ.GetImgFile(Dir + DefaultEqps[i] + '.img').Root;
 
-    if Dir = 'Hair/' then
-      Bmp := Entry.Get2('default/hairOverHead').Canvas.DumpBmp
-    else if Dir = 'Face/' then
-      Bmp := Entry.Get2('default/face').Canvas.DumpBmp
+    if Dir = '' then
+    begin
+      if LeftStr(DefaultEqps[i], 4) = '0000' then
+        Bmp := Entry.Get2('stand1/0/body').Canvas.DumpBmp
+      else
+        Bmp := Entry.Get2('front/head').Canvas.DumpBmp;
+    end
     else
-      Bmp := Entry.Get2('info/icon').Canvas.DumpBmp;
-
+    begin
+      if Dir = 'Hair/' then
+        Bmp := Entry.Get2('default/hairOverHead').Canvas.DumpBmp
+      else if Dir = 'Face/' then
+        Bmp := Entry.Get2('default/face').Canvas.DumpBmp
+      else
+        Bmp := Entry.Get2('info/icon').Canvas.DumpBmp;
+    end;
     AddInventory(DefaultEqps[i], Bmp, Name, i + 1);
     Bmp.Free;
   end;
@@ -577,15 +593,15 @@ begin
   PageControl1.TabIndex := 0;
   SaveButton.Enabled := True;
   case TSpeedButton(Sender).Tag of
-    0:
+    20:
       begin
-        CharacterDir := 'Weapon';
-        Part := 'Weapon1';
+        CharacterDir := '';
+        Part := 'Head';
       end;
     1:
       begin
-        CharacterDir := 'Weapon';
-        Part := 'Weapon2';
+        CharacterDir := '';
+        Part := 'Body';
       end;
 
     2:
@@ -687,7 +703,7 @@ begin
   with ImageGrids[PartIndex].GetCanvas do
   begin
     Font.Size := 24;
-    TextOut(100, 100, 'Loading...')
+    TextOut(100, 100, '載入中...')
   end;
 
   if (PartIndex = 13) or (PartIndex = 14) then
@@ -707,10 +723,16 @@ begin
       Wz.Free;
     Wz := TWZArchive.Create(WzPath + '\Character.wz');
     var List := TObjectList<TBmpEx>.Create;
-    Dir := TWZDirectory(Wz.Root.Entry[CharacterDir]);
+   // Dir := TWZDirectory(Wz.Root.Entry[CharacterDir]);
+
+    if CharacterDir = '' then
+      Dir := TWZDirectory(Wz.Root)
+    else
+      Dir := TWZDirectory(Wz.Root.Entry[CharacterDir]);
     for img in Dir.Files do
     begin
-      if img.Name = 'CommonFaceCN.img' then
+
+      if not IsNumber(img.Name[1]) then
         Continue;
       ID := Trim(NoIMG(img.Name));
       if (ID = '01702653') or (ID = '01702700') or (ID = '01702220') then
@@ -730,11 +752,11 @@ begin
       if PartIndex in [4, 5, 13, 14, 15, 16] then
         Num := ID.ToInteger div 1000;
       case PartIndex of
-        0:
-          if Left4 <> '0121' then
+        20:
+          if Left4 <> '0001' then
             Continue;
         1:
-          if Left4 <> '0131' then
+          if Left4 <> '0000' then
             Continue;
         2: // weapon
           if Left4 = '0170' then
@@ -774,6 +796,22 @@ begin
       with Wz.ParseFile(img) do
       begin
         for var Iter in Root.Children do
+        begin
+          if (Iter.Name = 'front') and (PartIndex = 20) then
+          begin
+            Bmp := Iter.Get2('head').Canvas.DumpBmpEx;
+            Bmp.ID := ID;
+            Bmp.Name := Name;
+            List.Add(Bmp);
+          end;
+          if (Iter.Name = 'stand1') and (PartIndex = 1) then
+          begin
+            Bmp := Iter.Get2('0/body').Canvas.DumpBmpEx;
+            Bmp.ID := ID;
+            Bmp.Name := Name;
+            List.Add(Bmp);
+          end;
+
           for var i := 0 to 2 do
           begin
             if Iter.Child[Icons[i]] <> nil then
@@ -784,6 +822,7 @@ begin
               List.Add(Bmp);
             end;
           end;
+        end;
         Free;
       end;
 
