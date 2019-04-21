@@ -3,13 +3,16 @@ unit WZIMGFile;
 interface
 
 uses
-  Windows, Classes, SysUtils, Variants, Generics.Collections, Tools, Dialogs,
-  WZReader, WZDirectory, PNGMapleCanvasEx, MP3MapleSound, StrUtils, System.Types;
+  Windows, Classes, SysUtils, Variants, Generics.Collections, Tools, Dialogs, WZReader, WZDirectory,
+  PNGMapleCanvasEx, MP3MapleSound, StrUtils, System.Types;
 
 type
-  tagVARENUM = (VT_EMPTY, VT_NULL, VT_I2, VT_I4, VT_R4, VT_R8, VT_CY, VT_DATE, VT_BSTR, VT_DISPATCH, VT_ERROR, VT_BOOL, VT_VARIANT, VT_UNKNOWN, VT_DECIMAL, VT_UNDEFINED0xF, VT_I1, VT_UI1, VT_UI2, VT_UI4, VT_I8, VT_UI8);
+  tagVARENUM = (VT_EMPTY, VT_NULL, VT_I2, VT_I4, VT_R4, VT_R8, VT_CY, VT_DATE, VT_BSTR, VT_DISPATCH,
+    VT_ERROR, VT_BOOL, VT_VARIANT, VT_UNKNOWN, VT_DECIMAL, VT_UNDEFINED0xF, VT_I1, VT_UI1, VT_UI2,
+    VT_UI4, VT_I8, VT_UI8);
 
-  TMapleDataType = (mdtNone, mdtIMG_0x00, mdtShort, mdtInt, mdtFloat, mdtDouble, mdtString, mdtExtended, mdtProperty, mdtCanvas, mdtVector, mdtConvex, mdtSound, mdtUOL, mdtInt64);
+  TMapleDataType = (mdtNone, mdtIMG_0x00, mdtShort, mdtInt, mdtFloat, mdtDouble, mdtString,
+    mdtExtended, mdtProperty, mdtCanvas, mdtVector, mdtConvex, mdtSound, mdtUOL, mdtInt64);
 
   TWZIMGEntry = class(TWZEntry)
   private
@@ -227,7 +230,7 @@ begin
         begin
 
           OutLink := Result.Child['_outlink'].Data;
-          var S:TArray<string>:=OutLink.Split(['/']);
+          var S: TArray<string> := OutLink.Split(['/']);
           if LeftStr(Result.GetPath, 4) = 'Map2' then
           begin
             OutLink := StringReplace(OutLink, 'Map', 'Map2', [rfReplaceAll]);
@@ -235,7 +238,7 @@ begin
           end
           else if LeftStr(GetEntryPath(Result), 4) = 'Map0' then
           begin
-            if S[1]='Back' then
+            if S[1] = 'Back' then
             begin
               OutLink := StringReplace(OutLink, 'Map', 'Map0', [rfReplaceAll]);
               Result := GetImgEntry(OutLink, True);
@@ -244,6 +247,11 @@ begin
           else if LeftStr(GetEntryPath(Result), 4) = 'Mob2' then
           begin
             OutLink := StringReplace(OutLink, 'Mob', 'Mob2', [rfReplaceAll]);
+            Result := GetImgEntry(OutLink, True);
+          end
+          else if (LeftStr(GetEntryPath(Result), 8) = 'Skill001') and (not HasImgFile(S[0] + '/' + S[1])) then
+          begin
+            OutLink := StringReplace(OutLink, 'Skill', 'Skill001', [rfReplaceAll]);
             Result := GetImgEntry(OutLink, True);
           end
           else
@@ -278,7 +286,8 @@ begin
       else
         Exit(Default)
     else
-      ShowMessage(VarTypeAsText(VarType(E.Data)) + '  --->  ' + IntToStr(Byte(E.DataType)) + '  ||  ' + VarTypeAsText(VarType(Default)));
+      ShowMessage(VarTypeAsText(VarType(E.Data)) + '  --->  ' + IntToStr(Byte(E.DataType)) +
+        '  ||  ' + VarTypeAsText(VarType(Default)));
 
     Exit(Default);
   end;
