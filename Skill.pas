@@ -18,9 +18,9 @@ type
       Entry: TWZIMGEntry;
       ID: string;
       MultiStrike: Boolean;
-      DamageWaitTime:Integer;
-      TotalTime:Integer;
-      Attacking:Boolean;
+      DamageWaitTime: Integer;
+      TotalTime: Integer;
+      Attacking: Boolean;
     class procedure Load(ID: string);
     class procedure Create(ID: string); overload;
     procedure DoMove(const Movecount: Single); override;
@@ -31,9 +31,9 @@ type
   private
     FTime: Integer;
     Frame: Integer;
-    Origin:TPoint;
+    Origin: TPoint;
     FID: string;
-    BallSpeed: Integer;
+    BallSpeed: Single;
     EffectName: string;
     ParentPath: string;
     Counter: Integer;
@@ -77,7 +77,7 @@ end;
 
 procedure TSkill.DoMove(const Movecount: Single);
 begin
-  if (TSkill.PlayEnded) {and (not IsSkillAttack)}     and (not Player.InLadder) {and (player.sTime = 0)} then
+  if (TSkill.PlayEnded) {and (not IsSkillAttack)}        and (not Player.InLadder) {and (player.sTime = 0)} then
   begin
     for var KeyName in TSkill.HotKeyList.Keys do
       if Keyboard.Key[KeyName] then
@@ -110,13 +110,17 @@ begin
 
 end;
 
-function GetDamageWaitTime(ID:string):Integer;
+function GetDamageWaitTime(ID: string): Integer;
 begin
   case ID.ToInteger of
-     1121008:Result:=25;
-     2321008: Result:=70;
-     36121052:Result:=160;
-     36121011:Result:=40;
+    1121008:
+      Result := 25;
+    2321008:
+      Result := 70;
+    36121052:
+      Result := 160;
+    36121011:
+      Result := 40;
   end;
 
 end;
@@ -128,7 +132,8 @@ var
   Below: TPoint;
   BelowFH: TFoothold;
 const
-  Effects: array[0..6] of string = ('effect', 'effect0', 'effect1', 'effect2', 'effect3', 'screen', 'ball');
+  Effects: array[0..10] of string = ('effect', 'effect0', 'effect1', 'effect2', 'effect3', 'screen',
+    'screen0', 'ball', 'keydown','keydown0','keydowned');
 begin
   Randomize;
   TSkill.ID := ID;
@@ -148,7 +153,7 @@ begin
   if TSkill.MultiStrike then
   begin
     Count := 1;
-    TotalTime:=  DamageWaitTime +6*7;
+    TotalTime := DamageWaitTime + 6 * 7;
     for var Iter in SpriteEngine.SpriteList do
       if Iter is TMob then
       begin
@@ -157,7 +162,7 @@ begin
           TMob(Iter).MobCollision[i] := TMobCollision.Create(SpriteEngine);
           TMob(Iter).MobCollision[i].ImageLib := EquipImages;
           TMob(Iter).MobCollision[i].Owner := TMob(Iter);
-          TMob(Iter).MobCollision[i].StartTime :=  DamageWaitTime + i * 7;
+          TMob(Iter).MobCollision[i].StartTime := DamageWaitTime + i * 7;
           TMob(Iter).MobCollision[i].Index := i - 1;
           TMob(Iter).MobCollision[i].Collisioned := True;
         end;
@@ -183,7 +188,7 @@ begin
     if Iter is TMob then
       Iter.Collisioned := True;
 
-  for var i := 0 to 6 do
+  for var i := 0 to 10 do
   begin
     if Entry.Get(Effects[i]) <> nil then
       with TSkillSprite.Create(SpriteEngine) do
@@ -199,11 +204,14 @@ begin
         Y := Player.Y;
         if Effects[i] = 'ball' then
         begin
+          if Entry.Get('common/bulletSpeed') <> nil then
+            BallSpeed := 1000 / Integer(Entry.Get('common/bulletSpeed').Data);
+
           Y := Player.Y - 27;
           if CharFlip then
-            BallSpeed := 5
+            BallSpeed := BallSpeed
           else
-            BallSpeed := -5;
+            BallSpeed := -BallSpeed;
           AnimRepeat := True;
         end;
         Width := 800;
@@ -270,7 +278,7 @@ begin
   AnimDelay := ImageEntry.Get('delay', 100);
 
   MirrorX := CharFlip;
-  if MoveWithPlayer then
+  if (MoveWithPlayer) and (EffectName <> 'ball') then
   begin
     X := Player.X;
     Y := Player.Y;
@@ -295,7 +303,7 @@ begin
     end;
   end;
 
-   if ImageEntry.Get('origin') <> nil then
+  if ImageEntry.Get('origin') <> nil then
     Origin := ImageEntry.Get('origin').Vector;
 
   case MirrorX of
@@ -305,8 +313,6 @@ begin
       Offset.X := -Origin.X;
   end;
   Offset.Y := -Origin.Y;
-
-
 
   if EffectName <> 'ball' then
   begin
@@ -320,7 +326,7 @@ begin
     Inc(Counter);
     if Counter > 15 then
       X := X + BallSpeed;
-    if Counter > 80 then
+    if Counter > 180 then
       Dead;
   end;
 
@@ -355,12 +361,12 @@ begin
   Inc(Counter);
   if TSkill.MultiStrike then
   begin
-    if Counter > TSkill.TotalTime+1 then
+    if Counter > TSkill.TotalTime + 1 then
       Dead;
   end
   else
   begin
-    if Counter >  StartTime then
+    if Counter > StartTime then
     begin
       Collision;
       Dead;

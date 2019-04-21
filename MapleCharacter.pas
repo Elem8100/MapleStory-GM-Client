@@ -3,17 +3,18 @@ unit MapleCharacter;
 interface
 
 uses
-  Windows, SysUtils, StrUtils, Generics.Collections, System.Types, WZIMGFile,
-  Math, AsphyreSprite, Footholds, LadderRopes, ChatBalloon, MapPortal,
-  DirectInput, Classes, AsphyreKeyboard, AsphyreRenderTargets, DamageNumber,
-  Skill, AsphyreTypes, AbstractTextures, Global, Tools, MapleMap, WzUtils;
+  Windows, SysUtils, StrUtils, Generics.Collections, System.Types, WZIMGFile, Math, AsphyreSprite,
+  Footholds, LadderRopes, ChatBalloon, MapPortal, DirectInput, Classes, AsphyreKeyboard,
+  AsphyreRenderTargets, DamageNumber, Skill, AsphyreTypes, AbstractTextures, Global, Tools, MapleMap,
+  WzUtils;
 
 type
   TDir = (dLeft, dRight, no);
 
   TLadderType = (rtLadder, rtRope);
 
-  TPartName = (Head, Body, Cap, Face, Hair, Glove, FaceAcc, Glass, EarRing, Cape, Coat, Longcoat, Pants, Shield, Shoes, Weapon, CashWeapon, Chairs, SitTamingMob, WalkTamingMob, TamingMob);
+  TPartName = (Head, Body, Cap, Face, Hair, Glove, FaceAcc, Glass, EarRing, Cape, Coat, Longcoat,
+    Pants, Shield, Shoes, Weapon, CashWeapon, Chairs, SitTamingMob, WalkTamingMob, TamingMob);
 
   TAvatarParts = class;
 
@@ -119,7 +120,7 @@ var
 implementation
 
 uses
-  MainUnit, Morph, AfterImage, MapleChair, MapleEffect, TamingMob,Pet,MonsterFamiliar;
+  MainUnit, Morph, AfterImage, MapleChair, MapleEffect, TamingMob, Pet, MonsterFamiliar;
 
 procedure CreatePlayer;
 var
@@ -293,7 +294,8 @@ var
   Iter: TWZIMGEntry;
   S: TStringArray;
 const
-  DefaultEqps: array[0..7] of string = ('01302030', '00002000', '01062055', '01072054', '01040005', '00020000', '00030020', '00012000');
+  DefaultEqps: array[0..7] of string = ('01302030', '00002000', '01062055', '01072054', '01040005',
+    '00020000', '00030020', '00012000');
 begin
   inherited;
   AvatarTargets := TAsphyreRenderTargets.Create();
@@ -551,15 +553,15 @@ begin
           Y := PY - 2;
           if TPet.Pet <> nil then
           begin
-            TPet.Pet.X := x;
-            TPet.Pet.Y := y-50;
-            Tpet.Pet.JumpState := jsFalling;
+            TPet.Pet.X := X;
+            TPet.Pet.Y := Y - 50;
+            TPet.Pet.JumpState := jsFalling;
           end;
 
           if TMonsterFamiliar.MonsterFamiliar <> nil then
           begin
-            TMonsterFamiliar.MonsterFamiliar.X := x;
-            TMonsterFamiliar.MonsterFamiliar.Y := y-50;
+            TMonsterFamiliar.MonsterFamiliar.X := X;
+            TMonsterFamiliar.MonsterFamiliar.Y := Y - 50;
             TMonsterFamiliar.MonsterFamiliar.JumpState := jsFalling;
           end;
 
@@ -847,7 +849,8 @@ begin
 
       if (Iter2.Child['action'] <> nil) and (Iter2.Child['frame'] <> nil) then
       begin
-        CharData.AddOrSetValue(Iter.Name + '/' + Iter2.Name, Iter2.Get('action', '') + '/' + IntToStr(Iter2.Get('frame', '')));
+        CharData.AddOrSetValue(Iter.Name + '/' + Iter2.Name, Iter2.Get('action', '') + '/' +
+          IntToStr(Iter2.Get('frame', '')));
       end;
     end;
   end;
@@ -932,17 +935,16 @@ procedure TAvatarParts.DoMove(const Movecount: Single);
 
   function IsSkillAttack: Boolean;
   begin
-    if (CharData.ContainsKey(SkillID + '/action')) and (FState = CharData[SkillID + '/action']) then
+    if (CharData.ContainsKey(TSkill.ID + '/action')) and (FState = CharData[TSkill.ID + '/action']) then
       Result := True
     else
       Result := False;
   end;
 
-
-
   function ArrowKeyDown: Boolean;
   begin
-    if (not Keyboard.Key[DIK_LEFT]) and (not Keyboard.Key[DIK_RIGHT]) and (not Keyboard.Key[DIK_UP]) and (not Keyboard.Key[DIK_DOWN]) then
+    if (not Keyboard.Key[DIK_LEFT]) and (not Keyboard.Key[DIK_RIGHT]) and (not Keyboard.Key[DIK_UP])
+      and (not Keyboard.Key[DIK_DOWN]) then
       Result := False
     else
       Result := True;
@@ -957,6 +959,7 @@ var
   Move: TPoint;
   Dir: string;
   Part: TPartName;
+  SkillAction: string;
 const
   C = 'Character.wz/';
 begin
@@ -1020,7 +1023,8 @@ begin
 
   if ((Keyboard.Key[DIK_LEFT]) or (Keyboard.Key[DIK_RIGHT])) and (not TTamingMob.IsUse) then
   begin
-    if (LeftStr(State, 4) <> 'walk') and (Owner.JumpState = jsNone) and (not Owner.InLadder) and (not IsAttack) and (TSkill.PlayEnded) then
+    if (LeftStr(State, 4) <> 'walk') and (Owner.JumpState = jsNone) and (not Owner.InLadder) and (not
+      IsAttack) and (TSkill.PlayEnded) then
     begin
       FTime := 0;
       Frame := 0;
@@ -1077,6 +1081,7 @@ begin
 
       if (Keyboard.Key[DIK_LCONTROL]) and (State <> 'proneStab') and (TSkill.PlayEnded) then
       begin
+        TSkill.Attacking := False;
         AnimEnd := False;
         Frame := 0;
         FTime := 0;
@@ -1155,24 +1160,25 @@ begin
   else
     AnimZigzag := False;
 
-  if (Keyboard.Key[DIK_LCONTROL]) and (not Keyboard.Key[DIK_DOWN]) and (not IsAttack) and (not Owner.InLadder) and (TSkill.PlayEnded) and (not TTamingMob.IsUse) then
+  if (Keyboard.Key[DIK_LCONTROL]) and (not Keyboard.Key[DIK_DOWN]) and (not IsAttack) and (not Owner.InLadder)
+    and (TSkill.PlayEnded) and (not TTamingMob.IsUse) then
   begin
+    TSkill.Attacking := False;
     AnimEnd := False;
     Frame := 0;
     FTime := 0;
     State := AttackAction;
   end;
 
-
   if (TSkill.Start) and (not TSkill.PlayEnded) then
   begin
-    if CharData.ContainsKey(SkillID + '/action') then
-      if State <> CharData[SkillID + '/action'] then
+    if CharData.ContainsKey(TSkill.ID + '/action') then
+      if State <> CharData[TSkill.ID + '/action'] then
       begin
         AnimEnd := False;
         Frame := 0;
         FTime := 0;
-        State := CharData[SkillID + '/action'];
+        State := CharData[TSkill.ID + '/action'];
       end;
   end;
 
@@ -1236,7 +1242,8 @@ begin
     Inc(Counter);
   end;
 
-  if not HasEntry(C + GetDir(ID) + ID + '.img/' + WpNum + State + '/' + IntToStr(Frame) + '/' + Image) and (not IsAttack) and (not CharData.ContainsKey(State + '/' + IntToStr(Frame))) then
+  if not HasEntry(C + GetDir(ID) + ID + '.img/' + WpNum + State + '/' + IntToStr(Frame) + '/' +
+    Image) and (not IsAttack) and (not CharData.ContainsKey(State + '/' + IntToStr(Frame))) then
     Frame := 0;
 
   FrameCount := CharData['body/' + State + '/FrameCount'];
@@ -1306,7 +1313,8 @@ begin
 
   if (Image = 'face') or (Part = Glass) or (Part = FaceAcc) then
   begin
-    if (State = 'ladder') or (State = 'rope') or (MidStr(Path, 10, 9) = 'swingOF/1') or (MidStr(Path, 10, 9) = 'swingTF/0') then
+    if (State = 'ladder') or (State = 'rope') or (MidStr(Path, 10, 9) = 'swingOF/1') or (MidStr(Path,
+      10, 9) = 'swingTF/0') then
       Alpha := 0
     else
       Alpha := 255;
@@ -1524,6 +1532,18 @@ begin
       end;
     end;
     FaceTime := 0;
+  end;
+
+  if CharData.ContainsKey(State + '/' + Frame.ToString) then
+  begin
+    SkillAction := CharData[State + '/' + Frame.ToString];
+    if (SkillAction = 'hide/0') or  (SkillAction = 'blink/0')then
+      Alpha := 0;
+    if (Image = 'face') or (Part = Glass) or (Part = FaceAcc) then
+    begin
+      if (SkillAction = 'swingOF/1') or (SkillAction = 'swingTF/0') then
+        Alpha := 0
+    end;
   end;
 
   if HasEntry(Path + '/origin') then

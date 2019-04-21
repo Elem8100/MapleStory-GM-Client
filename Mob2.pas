@@ -18,7 +18,7 @@ type
 
   TMob = class(TJumperSprite)
   private
-    Mob:TMob;
+    Mob: TMob;
     FFrame: Integer;
     FTime: Integer;
     FID: string;
@@ -101,30 +101,42 @@ type
     Entry: TWZIMGEntry;
     FTime: Integer;
     Frame: Integer;
-    EntryPath:string;
-    AnimDelay:Integer;
+    EntryPath: string;
+    AnimDelay: Integer;
     AnimRepeat, AnimEnd: Boolean;
+    HitL1: Boolean;
+    HitPath: string;
     class procedure Create(AOwner: TMob); overload;
     procedure DoMove(const Movecount: Single); override;
   end;
 
 class procedure TSkillHitEffect.Create(AOwner: TMob);
 begin
-  with TSkillHitEffect.Create(SpriteEngine) do
+  if HasEntryE(TSkill.Entry.GetPath + '/hit/0') then
   begin
-    ImageLib := EquipImages;
-    EntryPath:=  TSkill.Entry.GetPath;
-    ImageEntry:= EquipData[EntryPath+'/hit/0/0'];
-    Owner:= AOwner;
+    with TSkillHitEffect.Create(SpriteEngine) do
+    begin
+      ImageLib := EquipImages;
+      EntryPath := TSkill.Entry.GetPath;
+      if GetEntryE(TSkill.Entry.GetPath + '/hit/0').DataType = mdtCanvas then
+        HitPath := '/hit/'
+      else
+        HitPath := '/hit/0/';
+
+      ImageEntry := EquipData[EntryPath + HitPath + '0'];
+      Owner := AOwner;
+    end;
   end;
 end;
 
 procedure TSkillHitEffect.DoMove(const Movecount: Single);
 begin
-  X:= Owner.X-70;
-  Y:= Owner.Y-100;
-  Z:= Owner.Z;
-  ImageEntry := EquipData[EntryPath + '/hit/0/' + Frame.ToString];
+  X := Owner.X - 70;
+  Y := Owner.Y - 100;
+  Z := Owner.Z;
+
+  ImageEntry := EquipData[EntryPath + HitPath + Frame.ToString];
+
   AnimDelay := ImageEntry.Get('delay', 100);
 
   FTime := FTime + 17;
@@ -133,7 +145,8 @@ begin
     FTime := 0;
     Frame := Frame + 1;
     AnimEnd := False;
-    if not EquipData.ContainsKey(EntryPath + '/hit/0/' + Frame.ToString) then
+
+    if not EquipData.ContainsKey(EntryPath + HitPath + Frame.ToString) then
     begin
       if AnimRepeat then
         Frame := 0
@@ -143,6 +156,7 @@ begin
         AnimEnd := True;
       end;
     end;
+
   end;
 
   if AnimEnd then
@@ -160,7 +174,7 @@ end;
 constructor TMob.Create(const AParent: TSprite);
 begin
   inherited;
-  Mob:= Self;
+  Mob := Self;
 end;
 
 class procedure TMob.Drop(ID: string; PosX, PosY: Integer; aRX0: Integer = 0; aRX1: Integer = 0);
@@ -519,11 +533,17 @@ begin
       begin
         if Frame = 0 then
         begin
-          if TSkill.MultiStrike then
-            TDamageNumber.Create(Damage, HeadX, Head.Y + HitIndex * (-30))
+          if TSkill.Attacking then
+          begin
+            if TSkill.MultiStrike then
+              TDamageNumber.Create(Damage, HeadX, Head.Y + HitIndex * (-30))
+            else
+              TDamageNumber.Create(Damage, Head.X, Head.Y);
+            TSkillHitEffect.Create(Mob);
+          end
           else
             TDamageNumber.Create(Damage, Head.X, Head.Y);
-          TSkillHitEffect.Create(Mob);
+
         end;
         Hit := False;
       end;

@@ -148,7 +148,7 @@ begin
   for var i := 0 to SkillGrid.RowCount - 1 do
     SkillGrid.CellProperties[4, i].Alignment := taCenter;
 
-  //ComBobox1.ClearSelection;
+
   TSkill.HotKeyList.Clear;
   for var i := 1 to SkillGrid.RowCount - 1 do
   begin
@@ -160,6 +160,7 @@ begin
   if not TSkill.LoadedList.contains(ID) then
     TSkill.Load(ID);
   TSkill.LoadedList.Add(ID);
+   ComBobox1.Visible:=false;
 end;
 
 procedure TSkillForm.FormActivate(Sender: TObject);
@@ -176,9 +177,14 @@ begin
   end;
 
   IDs := ['2321008', '2121007', '2221007', '5121001', '2301005', '1121008', '21120005', '21110006',
-    '12111005', '3111003', '41001000','155111211','2211010','36121052','36121011','400041021','4331000',
-    '155121202','101110202','101120102','101120202','101100100','15121052','15121002','15111022',
-    '31221052','31221002'];
+    '12111005', '3111003', '41001000', '155111211', '2211010', '36121052', '36121011', '400041021',
+     '155121202', '101110202', '101120102', '101120202', '101100100', '15121052',
+    '15121002', '15111022', '31221052', '31221002', '142121031', '5221052', '400051040', '5221026',
+    '400001014', '61121052', '61121104', '61121105', '61111101','27111303','27121202',
+    '27111101','101110203','400021002','2211002','1311012','1321012','32121004','25121005','25121007',
+    '1121015','1001005','11101008','65121002','65121100','65111100','65121008','3121015',
+    '400051042','5121017','5121020','5121052','5121013','5121016','5101004','5321000','400040006',
+    '400041024','4341052','400041006','4341011','41121018','41121017','41121052'];
   var RowCount := -1;
   SelectGrid.BeginUpdate;
 
@@ -194,7 +200,10 @@ begin
       var Bmp := Entry.Get2('icon').Canvas.DumpBmp;
       SelectGrid.CreateBitmap(2, RowCount, False, haCenter, vaCenter).Assign(Bmp);
       Bmp.Free;
+      if HasImgEntry('String.wz/Skill.img/' + ID) then
+
       SelectGrid.Cells[3, RowCount] := GetImgEntry('String.wz/Skill.img/' + ID).Get('name', '');
+
     end;
 
     if TSkill.Has001Wz then
@@ -225,6 +234,7 @@ end;
 
 procedure TSkillForm.SelectGridClickCell(Sender: TObject; ARow, ACol: Integer);
 begin
+  ComBobox1.Visible:=True;
   ComBobox1.Left := 312;
   ComBobox1.Top := SelectGrid.CellRect(ACol, ARow).Location.Y + 7;
   ComBobox1.ItemIndex := 32;
