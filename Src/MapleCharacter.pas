@@ -43,6 +43,7 @@ type
     class var
       AvatarTargetIndex: Integer;
       AvatarPanelIndex: Integer;
+      EquipLoadedList:TList<string>;
     procedure LoadEquip(EquipID: string);
     procedure TargetEvent(Sender: TObject);
     procedure DoMove(const Movecount: Single); override;
@@ -808,7 +809,11 @@ begin
   Part := GetPart(EquipID);
   Entry := CharacterWZ.GetImgFile(Dir + EquipID + '.img').Root;
  // if not EquipImages.ContainsKey(Entry) then
-  DumpData(Entry, EquipData, EquipImages);
+  if not EquipLoadedList.Contains(EquipID) then
+  begin
+    DumpData(Entry, EquipData, EquipImages);
+    EquipLoadedList.Add(EquipID);
+  end;
 
   if Part = Weapon then
   begin
@@ -1666,12 +1671,13 @@ initialization
   AttackOFs := TList<string>.Create;
   WeaponWalkType := TList<string>.Create;
   PlayerEqpList := TList<string>.Create;
+  TPlayer.EquipLoadedList:=TList<string>.Create;
 
 finalization
   AttackActions.Free;
   AttackOFs.Free;
   WeaponWalkType.Free;
   PlayerEqpList.Free;
-
+  TPlayer.EquipLoadedList.Free;
 end.
 
