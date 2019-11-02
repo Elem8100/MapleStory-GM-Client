@@ -259,8 +259,11 @@ begin
 
         end
         else if Result.Child['_inlink'] <> nil then
-          Result := GetTopEntry(Result).Get(Result.Child['_inlink'].Data)
-
+        begin
+          Result := GetTopEntry(Result).Get(Result.Child['_inlink'].Data);
+           if Result = nil then
+              Exit(GetImgEntry('Character/00002000.img/alert/0/arm'));
+        end
         else if Result.Child['source'] <> nil then
           Result := GetImgEntry(Result.Child['source'].Data, True);
       end;
