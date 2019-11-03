@@ -3,8 +3,8 @@ unit WzUtils;
 interface
 
 uses
-  Windows, SysUtils, StrUtils, AsphyreSprite, Generics.Collections, WZIMGFile,
-  Global, Tools, DX9Textures, WZArchive, WZDirectory;
+  Windows, SysUtils, StrUtils, AsphyreSprite, Generics.Collections, WZIMGFile, Global, Tools,
+  DX9Textures, WZArchive, WZDirectory;
 
 function NoIMG(const Name: string): string; inline;
 
@@ -24,7 +24,8 @@ function HasEntryE(Path: string): Boolean;
 
 function GetUOL(Entry: TWZIMGEntry): TWZIMGEntry;
 
-procedure DumpData(Entry: TWZIMGEntry; ToData: TObjectDictionary<string, TWZIMGEntry>; ToImageLib: TObjectDictionary<TWZIMGEntry, TDX9LockableTexture>);
+procedure DumpData(Entry: TWZIMGEntry; ToData: TObjectDictionary<string, TWZIMGEntry>; ToImageLib:
+  TObjectDictionary<TWZIMGEntry, TDX9LockableTexture>);
 
 implementation
 
@@ -62,14 +63,17 @@ begin
     'h':
       Result := CharacterWZ;
     'k':
-      Result := SkillWZ;
+      if Path[6] = '0' then
+        Result := Skill001Wz
+      else
+        Result := SkillWZ;
     'I':
       Result := UIWZ;
     'e':
       Result := ReactorWz;
     'f':
       Result := EffectWz;
-     't':
+    't':
       if Path[1] = 'I' then
         Result := ItemWZ
       else if Path[3] = 'c' then
@@ -87,7 +91,7 @@ end;
 function GetUOL(Entry: TWZIMGEntry): TWZIMGEntry;
 begin
 
-  result := TWZIMGEntry(Entry.Parent).Get2(Entry.GetPath);
+  Result := TWZIMGEntry(Entry.Parent).Get2(Entry.GetPath);
 end;
 
 function GetImgEntry(Path: string; UseGet2: Boolean = False): TWZIMGEntry;
@@ -156,7 +160,8 @@ begin
   Result := Path;
 end;
 
-procedure Scan1(IE: TWZIMGEntry; ToData: TObjectDictionary<string, TWZIMGEntry>; ToImageLib: TObjectDictionary<TWZIMGEntry, TDX9LockableTexture>);
+procedure Scan1(IE: TWZIMGEntry; ToData: TObjectDictionary<string, TWZIMGEntry>; ToImageLib:
+  TObjectDictionary<TWZIMGEntry, TDX9LockableTexture>);
 var
   C, Child, Entry: TWZIMGEntry;
   NodeInfo: TNodeInfo;
@@ -170,6 +175,8 @@ begin
           Exit;
         if Child.DataType = mdtUOL then
           Child := TWZIMGEntry(Child.Parent).Get(Child.Data);
+        if Child = nil then
+          Exit;
         NodeInfo.OriNode := IE.GetPath;
         NodeInfo.UOLNode := Child.GetPath;
         NodeInfo.UOLEntry := Child;
@@ -191,7 +198,8 @@ begin
     Scan1(C, ToData, ToImageLib);
 end;
 
-procedure Scan2(OriNode, UOLNode: string; IE: TWZIMGEntry; ToData: TObjectDictionary<string, TWZIMGEntry>; ToImageLib: TObjectDictionary<TWZIMGEntry, TDX9LockableTexture>);
+procedure Scan2(OriNode, UOLNode: string; IE: TWZIMGEntry; ToData: TObjectDictionary<string,
+  TWZIMGEntry>; ToImageLib: TObjectDictionary<TWZIMGEntry, TDX9LockableTexture>);
 var
   C: TWZIMGEntry;
   Child, Entry: TWZIMGEntry;
@@ -202,8 +210,12 @@ begin
   begin
     Entry := TWZIMGEntry(IE.Parent);
     Child := Entry.Get(IE.Data);
+    if Child = nil then
+      Exit;
     if Child.DataType = mdtUOL then
       Child := TWZIMGEntry(Child.Parent).Get(Child.Data);
+  //  if Child = nil then
+    //  Exit;
   end
   else
     Child := IE;
@@ -244,7 +256,8 @@ begin
     Scan3(OriNode, UOLNode, C, ToData);
 end;
 
-procedure DumpData(Entry: TWZIMGEntry; ToData: TObjectDictionary<string, TWZIMGEntry>; ToImageLib: TObjectDictionary<TWZIMGEntry, TDX9LockableTexture>);
+procedure DumpData(Entry: TWZIMGEntry; ToData: TObjectDictionary<string, TWZIMGEntry>; ToImageLib:
+  TObjectDictionary<TWZIMGEntry, TDX9LockableTexture>);
 var
   P: TNodeInfo;
 begin
