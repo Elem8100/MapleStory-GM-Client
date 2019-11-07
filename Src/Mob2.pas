@@ -195,6 +195,12 @@ begin
     PathW := 'Mob.wz/';
     WZ := MobWZ;
   end
+  else if Mob001WZ.GetImgFile(ID + '.img') <> nil then
+  begin
+    Path1 := 'Mob001/';
+    PathW := 'Mob001.wz/';
+    WZ := Mob001WZ;
+  end
   else
   begin
     Path1 := 'Mob2/';
@@ -252,10 +258,13 @@ begin
       FlySpeed := 2;
 
     var _HP := Entry.Get('maxHP').Data;
-    if _HP < 2000000 then
-      HP := 2000000
+    if LeftStr(_HP, 1) = '?' then
+      HP := 100000
     else
-      HP := _HP;
+      HP := Entry.Get('maxHP').Data;
+
+    if HP < 2000000 then
+      HP := 2000000;
 
     Level := Entry.Get('level', '1');
     FMobName := StringWZ.GetImgFile('Mob.img').Root.Get(IDToInt(InfoID) + '/' + 'name', '');

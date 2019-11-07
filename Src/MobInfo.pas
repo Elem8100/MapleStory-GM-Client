@@ -3,16 +3,16 @@ unit MobInfo;
 interface
 
 uses
-  Windows, SysUtils, StrUtils, AsphyreSprite, Generics.Collections,
-  WZIMGFile, Global, Tools, WzUtils;
+  Windows, SysUtils, StrUtils, AsphyreSprite, Generics.Collections, WZIMGFile, Global, Tools,
+  WzUtils;
 
 type
   TMobInfo = class
   private
-  class var
-    TargetIndex: Integer;
-    ToName: TDictionary<string, string>;
-    Category: TDictionary<string, string>;
+    class var
+      TargetIndex: Integer;
+      ToName: TDictionary<string, string>;
+      Category: TDictionary<string, string>;
   public
     class procedure TargetEvent(Sender: TObject);
     class procedure ReDrawTarget;
@@ -21,27 +21,38 @@ type
 
 implementation
 
-uses MapleMap, Mob2, AsphyreRenderTargets, WZArchive, AsphyreTypes;
+uses
+  MapleMap, Mob2, AsphyreRenderTargets, WZArchive, AsphyreTypes;
 
 function S1(S: string): string;
 begin
   case S[1] of
-    'L': Result := '雷';
-    'F': Result := '火';
-    'I': Result := '冰';
-    'S': Result := '毒';
-    'D': Result := '暗';
-    'P': Result := '物理';
-    'H': Result := '聖';
+    'L':
+      Result := '雷';
+    'F':
+      Result := '火';
+    'I':
+      Result := '冰';
+    'S':
+      Result := '毒';
+    'D':
+      Result := '暗';
+    'P':
+      Result := '物理';
+    'H':
+      Result := '聖';
   end;
 end;
 
 function S2(S: string): string;
 begin
   case S[2] of
-    '1': Result := '免疫';
-    '2': Result := '抵抗';
-    '3': Result := '弱點';
+    '1':
+      Result := '免疫';
+    '2':
+      Result := '抵抗';
+    '3':
+      Result := '弱點';
   end;
 end;
 
@@ -69,7 +80,7 @@ var
   I, j: Integer;
   Iter: TWZIMGEntry;
   mData, D, ID, Name, str: string;
-  Wz: TWzArchive;
+  Wz: TWZArchive;
 begin
   for I := 0 to TMob.Moblist.Count - 1 do
   begin
@@ -78,12 +89,14 @@ begin
     GameCanvas.Flush;
     ID := TMob.Moblist[I];
     FontsAlt[1].TextOut('ID: ' + ID, 70 + I * 160, 10, $FFFFFFFF);
-    Name := StringWz.GetImgFile('Mob.img').Root.Get(IDToInt(ID) + '/' + 'name', '');
-    FontsAlt[1].TextOut('Name: ' + Name, 70 + I * 160, 26, $FFFFFFFF);
-    if Mobwz.GetImgFile(ID + '.img') <> nil then
-      Wz := Mobwz
+    Name := StringWZ.GetImgFile('Mob.img').Root.Get(IDToInt(ID) + '/' + 'name', '');
+    FontsAlt[1].TextOut('名稱: ' + Name, 70 + I * 160, 26, $FFFFFFFF);
+    if MobWZ.GetImgFile(ID + '.img') <> nil then
+      Wz := MobWZ
+    else if Mob2WZ.GetImgFile(ID + '.img') <> nil then
+      Wz := Mob2wz
     else
-      Wz := Mob2WZ;
+      Wz := Mob001WZ;
 
     for Iter in Wz.GetImgFile(TMob.Moblist[I] + '.img').Root.Get('info').Children do
     begin
@@ -130,35 +143,35 @@ begin
   Category.Add('7', '不死型');
   Category.Add('8', '無機物型');
 
-  ToName.Add('level', 'Lv: ');
-  ToName.Add('exp', 'Exp: ');
+  ToName.Add('level', '等級: ');
+  ToName.Add('exp', '經驗值: ');
   ToName.Add('maxMP', 'MP: ');
   ToName.Add('maxHP', 'HP: ');
-  ToName.Add('speed', 'Speed: ');
-  ToName.Add('acc', 'Acc: ');
+  ToName.Add('speed', '速度: ');
+  ToName.Add('acc', '命中率: ');
   ToName.Add('pushed', 'KB: ');
-  ToName.Add('category', 'Category: ');
-  ToName.Add('eva', 'Eva: ');
-  ToName.Add('elemAttr', 'elemAttr: ');
-  ToName.Add('MADamage', 'MAD: ');
-  ToName.Add('MDDamage', 'MDD: ');
-  ToName.Add('PADamage', 'PAD: ');
-  ToName.Add('PDDamage', 'PDD: ');
-  ToName.Add('PDRate', 'PDrate: ');
-  ToName.Add('MDRate', 'MDrate: ');
+  ToName.Add('category', '分類: ');
+  ToName.Add('eva', '迴避率: ');
+  ToName.Add('elemAttr', '屬性: ');
+  ToName.Add('MADamage', '魔法攻擊: ');
+  ToName.Add('MDDamage', '魔法防禦: ');
+  ToName.Add('PADamage', '物理攻擊: ');
+  ToName.Add('PDDamage', '物理防禦: ');
+  ToName.Add('PDRate', '物理減傷: ');
+  ToName.Add('MDRate', '魔法減傷: ');
   ToName.Add('boss', 'Boss');
-  ToName.Add('firstAttack', 'firstAttack');
+  ToName.Add('firstAttack', '主動攻擊');
   ToName.Add('charismaEXP', '領導經驗: ');
-  ToName.Add('hpRecovery', 'hpRecovery: ');
-  ToName.Add('mpRecovery', 'mpRecovery: ');
+  ToName.Add('hpRecovery', '每10秒HP回復: ');
+  ToName.Add('mpRecovery', '每10秒MP回復: ');
 end;
 
 initialization
 
 finalization
-
-TMobInfo.ToName.Free;
-TMobInfo.Category.Free;
-FreeAndNil(GameTargetMobInfo);
+  TMobInfo.ToName.Free;
+  TMobInfo.Category.Free;
+  FreeAndNil(GameTargetMobInfo);
 
 end.
+
