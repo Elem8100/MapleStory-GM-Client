@@ -2,21 +2,15 @@ unit PNGMapleCanvasEx;
 
 interface
 
-uses Windows, Classes, SysUtils, WZReader, ZLIBex, Graphics, DX9Textures,
-  PNGImage, AsphyreFactory, AsphyreTypes,System.Types, iexBitmaps,iesettings, hyiedefs,hyieutils;
+uses
+  Windows, Classes, SysUtils, WZReader, ZLIBex, Graphics, DX9Textures, PNGImage, AsphyreFactory,
+  AsphyreTypes, System.Types, iexBitmaps, iesettings, hyiedefs, hyieutils, Math, ColorUtils;
 
 type
-  TBmpEx=class(TIEBitmap)
+  TBmpEx = class(TIEBitmap)
   public
-    ID,Name:string;
+    ID, Name: string;
   end;
-
-  TRGB32 = record
-    B, G, R, A: Byte;
-  end;
-
-  TRGB32Array = array [0 .. MaxInt div SizeOf(TRGB32) - 1] of TRGB32;
-  PRGB32Array = ^TRGB32Array;
 
   TPNGMapleCanvas = class
   private
@@ -26,37 +20,33 @@ type
     FOffset: Int64;
     FFormat: Integer;
     FWZReader: TWZReader;
-
     function Parse1(Input: TMemoryStream): TDX9LockableTexture;
     function Parse2(Input: TMemoryStream): TDX9LockableTexture;
+    function Parse1Hue(Input: TMemoryStream; Hue: Integer): TDX9LockableTexture;
+    function Parse2Hue(Input: TMemoryStream; Hue: Integer): TDX9LockableTexture;
     function Parse513(Input: TMemoryStream): TDX9LockableTexture;
     function Parse517(Input: TMemoryStream): TDX9LockableTexture;
     function Parse1026(Input: TMemoryStream): TDX9LockableTexture;
     function Parse2050(Input: TMemoryStream): TDX9LockableTexture;
-
     function Parse1Bmp(Input: TMemoryStream): TBitmap;
     function Parse2Bmp(Input: TMemoryStream): TBitmap;
     function Parse1026Bmp(Input: TMemoryStream): TBitmap;
     function Parse2050Bmp(Input: TMemoryStream): TBitmap;
-
     function Parse1BmpEx(Input: TMemoryStream): TBmpEx;
     function Parse2BmpEx(Input: TMemoryStream): TBmpEx;
-
-    function Parse1PNG(Input: TMemoryStream): TPNGImage;
-    function Parse2PNG(Input: TMemoryStream): TPNGImage;
-    function Parse513Png(Input: TMemoryStream): TPNGImage;
-    function Parse517Png(Input: TMemoryStream): TPNGImage;
-    function Parse1026Png(Input: TMemoryStream): TPNGImage;
-    function Parse2050Png(Input: TMemoryStream): TPNGImage;
-
+    function Parse1PNG(Input: TMemoryStream): TPngImage;
+    function Parse2PNG(Input: TMemoryStream): TPngImage;
+    function Parse513Png(Input: TMemoryStream): TPngImage;
+    function Parse517Png(Input: TMemoryStream): TPngImage;
+    function Parse1026Png(Input: TMemoryStream): TPngImage;
+    function Parse2050Png(Input: TMemoryStream): TPngImage;
   public
     constructor Create(Width, Height, DataLength: Integer; Offset: Int64; Format: Integer; var WZReader: TWZReader);
-
     function Decompress: TMemoryStream;
-    function Dump: TDX9LockableTexture;
+    function Dump(ColorEffect: TColorEffect; Value: Integer): TDX9LockableTexture;
     function DumpBmp: TBitmap;
     function DumpBmpEx: TBmpEx;
-    function DumpPNG: TPNGImage;
+    function DumpPNG: TPngImage;
     property Height: Integer read FHeight;
     property Width: Integer read FWidth;
     property Format: Integer read FFormat;
@@ -64,11 +54,14 @@ type
 
 implementation
 
-procedure DecompressDDS(RGBA: PByte; Width, Height: Integer; Blocks: PByte; Flags: Integer); stdcall; external 'libdds.dll' index 1;
+procedure DecompressDDS(RGBA: PByte; Width, Height: Integer; Blocks: PByte; Flags: Integer); stdcall;
+  external 'libdds.dll' index 1;
+
 
 { TPNGMapleCanvas }
 
-constructor TPNGMapleCanvas.Create(Width, Height, DataLength: Integer; Offset: Int64; Format: Integer; var WZReader: TWZReader);
+constructor TPNGMapleCanvas.Create(Width, Height, DataLength: Integer; Offset: Int64; Format:
+  Integer; var WZReader: TWZReader);
 begin
   FHeight := Height;
   FWidth := Width;
@@ -166,7 +159,7 @@ begin
   end;
 end;
 
-function TPNGMapleCanvas.Dump: TDX9LockableTexture;
+function TPNGMapleCanvas.Dump(ColorEffect: TColorEffect; Value: Integer): TDX9LockableTexture;
 var
   Decompressed: TMemoryStream;
 begin
@@ -175,9 +168,25 @@ begin
   try
     case FFormat of
       1:
-        Result := Parse1(Decompressed);
+        begin
+          case ColorEffect of
+            ceNone:
+              begin
+                Result := Parse1(Decompressed);
+              end;
+            ceHue:
+              begin
+                var Texture := Parse1(Decompressed);
+                HSVvar(Texture, Value, 1, 0);
+                Result := Texture;
+              end;
+          end;
+        end;
+
       2:
+
         Result := Parse2(Decompressed);
+
       513:
         Result := Parse513(Decompressed); // $201
       517:
@@ -214,7 +223,7 @@ begin
   end;
 end;
 
-function TPNGMapleCanvas.DumpBmpex: TBmpEx;
+function TPNGMapleCanvas.DumpBmpEx: TBmpEx;
 var
   Decompressed: TMemoryStream;
 begin
@@ -223,9 +232,9 @@ begin
   try
     case FFormat of
       1:
-        Result := Parse1Bmpex(Decompressed);
+        Result := Parse1BmpEx(Decompressed);
       2:
-        Result := Parse2Bmpex(Decompressed);
+        Result := Parse2BmpEx(Decompressed);
 
     end;
   finally
@@ -233,7 +242,7 @@ begin
   end;
 end;
 
-function TPNGMapleCanvas.DumpPNG: TPNGImage;
+function TPNGMapleCanvas.DumpPNG: TPngImage;
 var
   Decompressed: TMemoryStream;
 begin
@@ -262,7 +271,7 @@ end;
 function TPNGMapleCanvas.Parse1(Input: TMemoryStream): TDX9LockableTexture;
 var
   x, y: Integer;
-  b1: array [0 .. 1] of Byte;
+  b1: array[0..1] of Byte;
   A, R, G, B: Word;
   P: PLongWord;
   pDest: Pointer;
@@ -302,6 +311,129 @@ begin
 end;
 
 function TPNGMapleCanvas.Parse2(Input: TMemoryStream): TDX9LockableTexture;
+var
+  x, y: Integer;
+  b1, b2, b3, b4: Byte;
+  A, R, G, B: Word;
+  P: PLongWord;
+  pDest: Pointer;
+  nPitch: Integer;
+  ARGB: PByte;
+  bytes: array of PByte;
+begin
+  Result := TDX9LockableTexture.Create;
+  Result.Width := FWidth;
+  Result.Height := FHeight;
+  Result.Format := apf_A8R8G8B8;
+  Result.Initialize;
+  // SetLength(bytes, Input.Size);
+
+  Result.Lock(Rect(0, 0, FWidth, FHeight), pDest, nPitch);
+  P := pDest;
+
+  // for official wz--ultra fast
+  {
+   ARGB :=pDest;
+   Input.Read(bytes[0], Input.Size);
+   Move(bytes[0], ARGB[0], Input.Size);
+  }
+
+  // for custom-- fast
+  {
+    for y := 0 to FHeight - 1 do
+    begin
+    for x := 0 to FWidth - 1 do
+    begin
+    Input.Read(bytes[0], 4);
+    P^ := Cardinal(bytes[0]);
+    Inc(P);
+    end;
+    end;
+  }
+  for y := 0 to FHeight - 1 do
+  begin
+    for x := 0 to FWidth - 1 do
+    begin
+      Input.Read(b1, 1);
+      Input.Read(b2, 1);
+      Input.Read(b3, 1);
+      Input.Read(b4, 1);
+      P^ := cRGB1(b3, b2, b1, b4);
+      Inc(P);
+    end;
+  end;
+
+  Result.Unlock;
+end;
+
+
+{
+procedure Hh(bitmap: TIEBitmap; oHue, oSat, oVal: Integer);
+var
+  x, y: Integer;
+  Hue, Sat, Val: Integer;
+  ppx: pRGB;
+  per1: Double;
+begin
+
+  for y := 0 to bitmap.Height-1 do
+  begin
+    ppx := bitmap.ScanLine[y];
+
+    for x := 0 to bitmap.Width-1 do
+    begin
+      RGB2HSV(ppx^, Hue, Sat, Val);
+      HSV2RGB(ppx^, Hue + oHue, Sat + oSat, Val + oVal);
+      inc(ppx);
+    end;
+  end;
+end;
+ }
+
+function TPNGMapleCanvas.Parse1Hue(Input: TMemoryStream; Hue: Integer): TDX9LockableTexture;
+var
+  x, y: Integer;
+  b1: array[0..1] of Byte;
+  A, R, G, B: Word;
+  P: PLongWord;
+  pDest, pDest2: Pointer;
+  nPitch: Integer;
+begin
+
+  Result := TDX9LockableTexture.Create;
+  Result.Width := FWidth;
+  Result.Height := FHeight;
+  Result.Format := apf_A8R8G8B8;
+  Result.Initialize;
+
+  Result.Lock(Rect(0, 0, FWidth, FHeight), pDest, nPitch);
+  P := pDest;
+  for y := 0 to Height - 1 do
+  begin
+    for x := 0 to Width - 1 do
+    begin
+      Input.Read(b1[0], 2);
+      B := b1[0] and 15;
+      B := B or (B shl 4);
+
+      G := b1[0] and 240;
+      G := G or (G shr 4);
+
+      R := b1[1] and 15;
+      R := R or (R shl 4);
+
+      A := b1[1] and 240;
+      A := A or (A shr 4);
+
+      P^ := cRGB1(R, G, B, A);
+      Inc(P);
+    end;
+  end;
+  Result.Unlock;
+
+end;
+
+function TPNGMapleCanvas.Parse2Hue(Input: TMemoryStream; Hue: Integer): TDX9LockableTexture;
 var
   x, y: Integer;
   b1, b2, b3, b4: Byte;
@@ -479,7 +611,7 @@ var
   Line: PRGB32Array;
 begin
   Result := TBitmap.Create;
-  Result.PixelFormat := pf32Bit;
+  Result.PixelFormat := pf32bit;
   Result.AlphaFormat := afPremultiplied;
   Result.Width := FWidth;
   Result.Height := FHeight;
@@ -515,7 +647,7 @@ var
   Line: PRGB32Array;
 begin
   Result := TBitmap.Create;
-  Result.PixelFormat := pf32Bit;
+  Result.PixelFormat := pf32bit;
   Result.AlphaFormat := afPremultiplied;
   Result.Width := FWidth;
   Result.Height := FHeight;
@@ -536,7 +668,7 @@ begin
   end;
 end;
 
-function TPNGMapleCanvas.Parse1Bmpex(Input: TMemoryStream): TBmpEx;
+function TPNGMapleCanvas.Parse1BmpEx(Input: TMemoryStream): TBmpEx;
 var
   x, y: Integer;
   b1, b2: Byte;
@@ -544,7 +676,7 @@ var
   Line: PRGB32Array;
 begin
   Result := TBmpEx.Create;
-  Result.PixelFormat:=ie32rgb;
+  Result.PixelFormat := ie32RGB;
   Result.Width := FWidth;
   Result.Height := FHeight;
 
@@ -568,7 +700,7 @@ begin
       Line[x].G := G;
       Line[x].R := R;
     // Line[x].A := A;
-      Result.Alpha[x,y]:=A;
+      Result.Alpha[x, y] := A;
     end;
   end;
 end;
@@ -580,7 +712,7 @@ var
   Line: PRGB32Array;
 begin
   Result := TBmpEx.Create;
-  Result.PixelFormat:=ie32RGB;
+  Result.PixelFormat := ie32RGB;
 
   Result.Width := FWidth;
   Result.Height := FHeight;
@@ -594,7 +726,7 @@ begin
       Input.Read(b3, 1);
       Input.Read(b4, 1);
      // Line[x].A := b4;
-      Result.Alpha[x,y]:=b4;
+      Result.Alpha[x, y] := b4;
       Line[x].R := b3;
       Line[x].G := b2;
       Line[x].B := b1;
@@ -608,7 +740,7 @@ var
   bytes: array of PByte;
 begin
   Result := TBitmap.Create;
-  Result.PixelFormat := pf32Bit;
+  Result.PixelFormat := pf32bit;
   Result.AlphaFormat := afPremultiplied;
   Result.Width := FWidth;
   Result.Height := -FHeight;
@@ -644,7 +776,7 @@ var
   bytes: array of PByte;
 begin
   Result := TBitmap.Create;
-  Result.PixelFormat := pf32Bit;
+  Result.PixelFormat := pf32bit;
   Result.AlphaFormat := afPremultiplied;
   Result.Width := FWidth;
   Result.Height := -FHeight;
@@ -674,15 +806,15 @@ begin
   DecompressDDS(ARGB, Width, Height, PByte(bytes), 4);
 end;
 
-function TPNGMapleCanvas.Parse1PNG(Input: TMemoryStream): TPNGImage;
+function TPNGMapleCanvas.Parse1PNG(Input: TMemoryStream): TPngImage;
 var
   x, y: Integer;
   b1, b2: Byte;
   A, R, G, B: Word;
-  RGBLine: PRGBLine;
+  RGBLine: pRGBLine;
   AlphaLine: PByteArray;
 begin
-  Result := TPNGImage.CreateBlank(COLOR_RGBALPHA, 16, FWidth, FHeight);
+  Result := TPngImage.CreateBlank(COLOR_RGBALPHA, 16, FWidth, FHeight);
 
   for y := 0 to FHeight - 1 do
   begin
@@ -710,13 +842,13 @@ begin
   end;
 end;
 
-function TPNGMapleCanvas.Parse2PNG(Input: TMemoryStream): TPNGImage;
+function TPNGMapleCanvas.Parse2PNG(Input: TMemoryStream): TPngImage;
 var
   x, y: Integer;
-  RGBLine: PRGBLine;
+  RGBLine: pRGBLine;
   AlphaLine: PByteArray;
 begin
-  Result := TPNGImage.CreateBlank(COLOR_RGBALPHA, 16, FWidth, FHeight);
+  Result := TPngImage.CreateBlank(COLOR_RGBALPHA, 16, FWidth, FHeight);
 
   for y := 0 to FHeight - 1 do
   begin
@@ -730,15 +862,15 @@ begin
   end;
 end;
 
-function TPNGMapleCanvas.Parse513Png(Input: TMemoryStream): TPNGImage;
+function TPNGMapleCanvas.Parse513Png(Input: TMemoryStream): TPngImage;
 var
   x, y: Integer;
   b1, b2: Byte;
   R, G, B: Word;
-  RGBLine: PRGBLine;
+  RGBLine: pRGBLine;
   AlphaLine: PByteArray;
 begin
-  Result := TPNGImage.CreateBlank(COLOR_RGBALPHA, 16, FWidth, FHeight);
+  Result := TPngImage.CreateBlank(COLOR_RGBALPHA, 16, FWidth, FHeight);
 
   for y := 0 to FHeight - 1 do
   begin
@@ -761,12 +893,12 @@ begin
   end;
 end;
 
-function TPNGMapleCanvas.Parse517Png(Input: TMemoryStream): TPNGImage;
+function TPNGMapleCanvas.Parse517Png(Input: TMemoryStream): TPngImage;
 var
   j, k, x, y: Integer;
   B, Col: Byte;
 begin
-  Result := TPNGImage.CreateBlank(COLOR_RGBALPHA, 16, FWidth, FHeight);
+  Result := TPngImage.CreateBlank(COLOR_RGBALPHA, 16, FWidth, FHeight);
 
   x := 0;
   y := 0;
@@ -781,27 +913,27 @@ begin
         if x = FWidth then
         begin
           x := 0;
-          inc(y);
+          Inc(y);
         end;
-        Result.Pixels[x, y] := rgb(Col, Col, Col);
+        Result.Pixels[x, y] := RGB(Col, Col, Col);
         Result.AlphaScanline[y][x] := $FF;
-        inc(x);
+        Inc(x);
       end;
     end;
   end;
 end;
 
-function TPNGMapleCanvas.Parse1026Png(Input: TMemoryStream): TPNGImage;
+function TPNGMapleCanvas.Parse1026Png(Input: TMemoryStream): TPngImage;
 var
   ARGB: PRGB32Array;
   Bytes: array of PByte;
   Bmp: TBitmap;
   x, y: Integer;
-  RGBLine: PRGBLine;
+  RGBLine: pRGBLine;
   AlphaLine: PByteArray;
 begin
   Bmp := TBitmap.Create;
-  Bmp.PixelFormat := pf32Bit;
+  Bmp.PixelFormat := pf32bit;
   Bmp.AlphaFormat := afPremultiplied;
   Bmp.Width := FWidth;
   Bmp.Height := FHeight;
@@ -812,7 +944,7 @@ begin
   Input.Read(Bytes[0], Input.Size);
   DecompressDDS(PByte(ARGB), Width, Height, PByte(Bytes), 2);
 
-  Result := TPNGImage.CreateBlank(COLOR_RGBALPHA, 16, FWidth, FHeight);
+  Result := TPngImage.CreateBlank(COLOR_RGBALPHA, 16, FWidth, FHeight);
 
   for y := 0 to FHeight - 1 do
   begin
@@ -832,17 +964,17 @@ begin
 
 end;
 
-function TPNGMapleCanvas.Parse2050Png(Input: TMemoryStream): TPNGImage;
+function TPNGMapleCanvas.Parse2050Png(Input: TMemoryStream): TPngImage;
 var
   ARGB: PRGB32Array;
   Bytes: array of PByte;
   Bmp: TBitmap;
   x, y: Integer;
-  RGBLine: PRGBLine;
+  RGBLine: pRGBLine;
   AlphaLine: PByteArray;
 begin
   Bmp := TBitmap.Create;
-  Bmp.PixelFormat := pf32Bit;
+  Bmp.PixelFormat := pf32bit;
   Bmp.AlphaFormat := afPremultiplied;
   Bmp.Width := FWidth;
   Bmp.Height := FHeight;
@@ -853,7 +985,7 @@ begin
   Input.Read(Bytes[0], Input.Size);
   DecompressDDS(PByte(ARGB), Width, Height, PByte(Bytes), 4);
 
-  Result := TPNGImage.CreateBlank(COLOR_RGBALPHA, 16, FWidth, FHeight);
+  Result := TPngImage.CreateBlank(COLOR_RGBALPHA, 16, FWidth, FHeight);
 
   for y := 0 to FHeight - 1 do
   begin
@@ -873,5 +1005,5 @@ begin
 
 end;
 
-
 end.
+
