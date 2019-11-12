@@ -7,7 +7,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.Buttons, AdvUtil, PNGMapleCanvasEx,
   WZArchive, Vcl.Grids, AdvObj, BaseGrid, AdvGrid, Vcl.StdCtrls, StrUtils, Generics.Collections,
   Generics.Defaults, hyieutils, iexBitmaps, hyiedefs, iesettings, iexLayers, iexRulers, ieview,
-  pngimage, iemview, Vcl.ComCtrls;
+  pngimage, iemview, Vcl.ComCtrls, ColorUtils;
 
 type
   TAvatarForm = class(TForm)
@@ -39,6 +39,8 @@ type
     TabSheet1: TTabSheet;
     TabSheet2: TTabSheet;
     Shape1: TShape;
+    TabSheet3: TTabSheet;
+    ColorGrid: TAdvStringGrid;
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure SpeedButton9Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -49,6 +51,8 @@ type
     procedure AvatarViewImageSelect(Sender: TObject; idx: Integer);
     procedure PageControl1Change(Sender: TObject);
     procedure DeleteButtonClick(Sender: TObject);
+    procedure ColorGridClickCell(Sender: TObject; ARow, ACol: Integer);
+    procedure Button1Click(Sender: TObject);
   private
     HasShow: Boolean;
     Wz: TWZArchive;
@@ -62,6 +66,7 @@ type
     procedure ImageGridSelect(Sender: TObject; idx: Integer);
     procedure AddInventory(ID: string; Icon: TBitmap; Name: string; ARow: Integer);
     procedure AvatarTargetEvent(Sender: TObject);
+    procedure ResetColorGrid;
      { Private declarations }
   public
     procedure AddEqps(EqpID: string);
@@ -88,8 +93,8 @@ begin
   Inventory.Cells[0, ARow] := ID;
   Inventory.CreatePicture(1, ARow, True, noStretch, 0, haCenter, vaCenter).Assign(Icon);
   Inventory.Cells[2, ARow] := Name;
-  if (Leftstr(ID,4)<>'0000')  and (Leftstr(ID,4)<>'0001')then
-     Inventory.AddButton(3, ARow, 20, 20, 'X', haCenter, vaCenter);
+  if (LeftStr(ID, 4) <> '0000') and (LeftStr(ID, 4) <> '0001') then
+    Inventory.AddButton(3, ARow, 20, 20, 'X', haCenter, vaCenter);
 end;
 
 procedure TAvatarForm.AddEqps(EqpID: string);
@@ -282,6 +287,7 @@ end;
 procedure TAvatarForm.ImageGridSelect(Sender: TObject; idx: Integer);
 begin
   AddEqps(ImageGrids[PartIndex].ImageInfoText[idx]);
+  ResetColorGrid;
   ActiveControl := nil;
 end;
 
@@ -300,6 +306,7 @@ begin
     TSetEffect.Delete(DeleteID);
 
   Inventory.RemoveRows(ARow, 1);
+  ResetColorGrid;
 end;
 
 procedure TAvatarForm.DeleteButtonClick(Sender: TObject);
@@ -372,18 +379,61 @@ begin
 
   for var i := 0 to High(Explode) - 1 do
     AvatarForm.AddEqps(Explode[i]);
+  ResetColorGrid;
   ActiveControl := nil;
 end;
 
-procedure TAvatarForm.SaveButtonClick(Sender: TObject);
-type
-  TRGB32 = record
-    B, G, R, A: Byte;
+procedure TAvatarForm.Button1Click(Sender: TObject);
+begin
+  ColorGrid.Clear;
+end;
+
+procedure TAvatarForm.ResetColorGrid;
+begin
+  ColorGrid.Clear;
+  for var Row := 1 to Inventory.RowCount - 1 do
+  begin
+    if Inventory.CellTypes[1, Row] = ctPicture then
+    begin
+
+      for var Col := 0 to 18 do
+      begin
+        ColorGrid.CreateBitmap(Col, Row, False, haLeft, vaCenter).Assign(Inventory.CellGraphics[1, Row].CellBitmap);
+        case Col of
+          0..10:
+            HSVvar(ColorGrid.CellGraphics[Col, Row].CellBitmap, Col * 30, 0, 0);
+          11:
+            HSVvar(ColorGrid.CellGraphics[Col, Row].CellBitmap, 0, 25, 0);
+          12:
+            HSVvar(ColorGrid.CellGraphics[Col, Row].CellBitmap, 0, -100, 0);
+          13:
+            Contrast3(ColorGrid.CellGraphics[Col, Row].CellBitmap, 50, -90, True, False, False);
+          14:
+            Contrast3(ColorGrid.CellGraphics[Col, Row].CellBitmap, 50, -90, False, True, False);
+          15:
+            Contrast3(ColorGrid.CellGraphics[Col, Row].CellBitmap, 50, -90, False, False, True);
+          16:
+            Contrast3(ColorGrid.CellGraphics[Col, Row].CellBitmap, 50, -90, True, True, False);
+          17:
+            Contrast3(ColorGrid.CellGraphics[Col, Row].CellBitmap, 50, -90, True, False, True);
+          18:
+           Negative(ColorGrid.CellGraphics[Col, Row].CellBitmap);
+        end;
+
+      end;
+
+    end;
   end;
 
-  TRGB32Array = array[0..MaxInt div SizeOf(TRGB32) - 1] of TRGB32;
+end;
 
-  PRGB32Array = ^TRGB32Array;
+procedure TAvatarForm.ColorGridClickCell(Sender: TObject; ARow, ACol: Integer);
+begin
+  var Top := ColorGrid.CellRect(ACol, ARow).Location.Y;
+
+end;
+
+procedure TAvatarForm.SaveButtonClick(Sender: TObject);
 var
   Index: Integer;
   pDest: Pointer;
@@ -492,9 +542,9 @@ begin
   AvatarView.OnImageSelect := AvatarViewImageSelect;
 
   Inventory.ColumnHeaders.Add('ID');
-  Inventory.ColumnHeaders.Add('Icon');
-  Inventory.ColumnHeaders.Add('Name');
-  Inventory.ColumnHeaders.Add('Delete');
+  Inventory.ColumnHeaders.Add('圖示');
+  Inventory.ColumnHeaders.Add('名稱');
+  Inventory.ColumnHeaders.Add('刪除');
   Inventory.RowHeights[0] := 22;
   Inventory.ColWidths[0] := 80;
   Inventory.ColWidths[1] := 40;  //icon
@@ -505,6 +555,9 @@ begin
     Inventory.CellProperties[i, 0].Alignment := taCenter;
     Inventory.CellProperties[i, 0].FontSize := 15;
   end;
+  //
+
+
 end;
 
 procedure TAvatarForm.FormDestroy(Sender: TObject);
@@ -561,6 +614,7 @@ begin
     AddInventory(DefaultEqps[i], Bmp, Name, i + 1);
     Bmp.Free;
   end;
+  ResetColorGrid;
 
 end;
 
