@@ -3,20 +3,21 @@ unit ChairformUnit;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, AdvObj,
-  BaseGrid, AdvGrid, Generics.Collections, StrUtils, Vcl.StdCtrls;
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, AdvObj, BaseGrid, AdvGrid, Generics.Collections,
+  StrUtils, Vcl.StdCtrls, AdvUtil;
 
 type
   TChairForm = class(TForm)
     ChairGrid: TAdvStringGrid;
-    procedure FormShow(Sender: TObject);
     procedure ChairGridClickCell(Sender: TObject; ARow, ACol: Integer);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormCreate(Sender: TObject);
     procedure FormClick(Sender: TObject);
     procedure ChairGridClick(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
   private
+    HasLoad: Boolean;
     { Private declarations }
   public
     { Public declarations }
@@ -30,8 +31,7 @@ implementation
 {$R *.dfm}
 
 uses
-  MapleChair, Global, MapleEffect, MapleCharacter, WZIMGFile, WZDirectory,
-  WZUtils,TamingMob,Morph;
+  MapleChair, Global, MapleEffect, MapleCharacter, WZIMGFile, WZDirectory, WzUtils, TamingMob, Morph;
 
 function IDToInt(ID: string): string;
 begin
@@ -55,30 +55,13 @@ begin
   TMapleChair.Create(ChairID);
 
   if TItemEffect.AllList.contains(ChairID) then
-      TItemEffect.Create(ChairID, True);
+    TItemEffect.Create(ChairID, True);
   TMapleChair.IsUse := True;
 
   ActiveControl := nil;
 end;
 
-procedure TChairForm.FormClick(Sender: TObject);
-begin
-  ActiveControl := nil;
-end;
-
-procedure TChairForm.FormCreate(Sender: TObject);
-begin
-  Left := (Screen.Width - Width) div 2;
-  Top := (Screen.Height - Height) div 2;
-end;
-
-procedure TChairForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
-begin
-  if Key = VK_MENU then
-    Key := 0;
-end;
-
-procedure TChairForm.FormShow(Sender: TObject);
+procedure TChairForm.FormActivate(Sender: TObject);
 type
   TRec = record
     Desc, Name: string;
@@ -86,8 +69,11 @@ type
 var
   Rec: TRec;
 begin
-  if ChairGrid.Cells[1, 1] <> '' then
+  if HasLoad then
     Exit;
+  HasLoad := True;
+  ChairGrid.Canvas.Font.Size := 18;
+  ChairGrid.Canvas.TextOut(60, 0, 'Loading...');
 
   var Dict := TDictionary<string, TRec>.Create;
 
@@ -110,12 +96,10 @@ begin
     if LeftStr(img.Name, 4) <> '0301' then
       Continue;
 
-
-
     for var Iter in ItemWZ.GetImgFile('Install/' + img.Name).Root.Children do
     begin
-      if Iter.Name='03018051' then
-         Continue;
+      if Iter.Name = '03018051' then
+        Continue;
       Inc(Row);
       ChairGrid.RowCount := Row + 1;
       ChairGrid.Cells[1, Row] := Iter.Name;
@@ -138,6 +122,24 @@ begin
   ChairGrid.EndUpdate;
 
   Dict.Free;
+
+end;
+
+procedure TChairForm.FormClick(Sender: TObject);
+begin
+  ActiveControl := nil;
+end;
+
+procedure TChairForm.FormCreate(Sender: TObject);
+begin
+  Left := (Screen.Width - Width) div 2;
+  Top := (Screen.Height - Height) div 2;
+end;
+
+procedure TChairForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  if Key = VK_MENU then
+    Key := 0;
 end;
 
 end.

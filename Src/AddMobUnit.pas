@@ -14,6 +14,7 @@ type
     Label1: TLabel;
     Label2: TLabel;
     Edit1: TEdit;
+    Label3: TLabel;
     Button1: TButton;
     Edit2: TEdit;
     MobGrid: TAdvStringGrid;
@@ -59,15 +60,22 @@ begin
   MobID := MobGrid.Cells[1, ARow];
   Label1.Caption := MobGrid.Cells[2, ARow];
   Image1.Picture := nil;
-  if MobWz.GetImgFile(MobID + '.img') <> nil then
+
+
+  if MobWZ.GetImgFile(MobID + '.img') <> nil then
   begin
     Path := 'Mob/';
-    WZ := MobWz;
+    WZ := MobWZ;
+  end
+  else if Mob001WZ.GetImgFile(MobID + '.img') <> nil then
+  begin
+    Path := 'Mob001/';
+    WZ := Mob001WZ;
   end
   else
   begin
     Path := 'Mob2/';
-    WZ := Mob2Wz;
+    WZ := Mob2WZ;
   end;
   if WZ.GetImgFile(MobID + '.img') = nil then
     Exit;

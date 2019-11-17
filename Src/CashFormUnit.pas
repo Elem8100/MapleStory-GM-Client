@@ -3,22 +3,22 @@ unit CashFormUnit;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, AdvObj,
-  BaseGrid, AdvGrid, Vcl.StdCtrls;
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, AdvObj, BaseGrid, AdvGrid, Vcl.StdCtrls, AdvUtil;
 
 type
   TCashForm = class(TForm)
     CashGrid: TAdvStringGrid;
     Button1: TButton;
-    procedure FormShow(Sender: TObject);
     procedure CashGridClickCell(Sender: TObject; ARow, ACol: Integer);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure Button1Click(Sender: TObject);
     procedure FormClick(Sender: TObject);
     procedure CashGridClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
   private
+    HasLoad: Boolean;
     { Private declarations }
   public
     { Public declarations }
@@ -47,7 +47,7 @@ end;
 
 procedure TCashForm.CashGridClick(Sender: TObject);
 begin
- ActiveControl := nil;
+  ActiveControl := nil;
 end;
 
 procedure TCashForm.CashGridClickCell(Sender: TObject; ARow, ACol: Integer);
@@ -60,27 +60,14 @@ begin
   ActiveControl := nil;
 end;
 
-procedure TCashForm.FormClick(Sender: TObject);
+procedure TCashForm.FormActivate(Sender: TObject);
 begin
-   ActiveControl := nil;
-end;
-
-procedure TCashForm.FormCreate(Sender: TObject);
-begin
-   Left := (Screen.Width - Width) div 2;
-  Top := (Screen.Height - Height) div 2;
-end;
-
-procedure TCashForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
-begin
-  if Key = VK_MENU then
-    Key := 0;
-end;
-
-procedure TCashForm.FormShow(Sender: TObject);
-begin
-  if CashGrid.Cells[1, 1] <> '' then
+  if HasLoad then
     Exit;
+  HasLoad := True;
+  CashGrid.Canvas.Font.Size := 18;
+  CashGrid.Canvas.TextOut(60, 0, 'Loading...');
+
   var Entry := GetImgEntry('Item.wz/Cash/0501.img/');
   var RowCount := -1;
 
@@ -108,7 +95,23 @@ begin
     end;
 
   end;
+end;
 
+procedure TCashForm.FormClick(Sender: TObject);
+begin
+  ActiveControl := nil;
+end;
+
+procedure TCashForm.FormCreate(Sender: TObject);
+begin
+  Left := (Screen.Width - Width) div 2;
+  Top := (Screen.Height - Height) div 2;
+end;
+
+procedure TCashForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  if Key = VK_MENU then
+    Key := 0;
 end;
 
 end.

@@ -3,22 +3,23 @@ unit TamingMobFormUnit;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, AdvObj,
-  BaseGrid, AdvGrid, StrUtils, Vcl.StdCtrls;
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, AdvObj, BaseGrid, AdvGrid, StrUtils, Vcl.StdCtrls,
+  AdvUtil;
 
 type
   TTamingMobForm = class(TForm)
     TamingMobGrid: TAdvStringGrid;
     Button1: TButton;
-    procedure FormShow(Sender: TObject);
     procedure TamingMobGridClickCell(Sender: TObject; ARow, ACol: Integer);
     procedure Button1Click(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormClick(Sender: TObject);
     procedure TamingMobGridClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
   private
+    HasLoad: Boolean;
     { Private declarations }
   public
     { Public declarations }
@@ -31,8 +32,7 @@ implementation
 
 {$R *.dfm}
 uses
-  TamingMob, MapleChair, Morph, MapleEffect, Global, MapleCharacter, WZIMGFile,
-  WZDirectory, WzUtils;
+  TamingMob, MapleChair, Morph, MapleEffect, Global, MapleCharacter, WZIMGFile, WZDirectory, WzUtils;
 
 function NoIMG(const Name: string): string; inline;
 begin
@@ -53,27 +53,13 @@ begin
   ActiveControl := nil;
 end;
 
-procedure TTamingMobForm.FormClick(Sender: TObject);
+procedure TTamingMobForm.FormActivate(Sender: TObject);
 begin
-  ActiveControl := nil;
-end;
-
-procedure TTamingMobForm.FormCreate(Sender: TObject);
-begin
-  Left := (Screen.Width - Width) div 2;
-  Top := (Screen.Height - Height) div 2;
-end;
-
-procedure TTamingMobForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
-begin
-  if Key = VK_MENU then
-    Key := 0;
-end;
-
-procedure TTamingMobForm.FormShow(Sender: TObject);
-begin
-  if TamingMobGrid.Cells[1, 1] <> '' then
+  if HasLoad then
     Exit;
+  HasLoad := True;
+  TamingMobGrid.Canvas.Font.Size := 18;
+  TamingMobGrid.Canvas.TextOut(60, 0, 'Loading...');
 
   var RowCount := -1;
   TamingMobGrid.BeginUpdate;
@@ -102,6 +88,23 @@ begin
   end;
   TamingMobGrid.SortByColumn(1);
   TamingMobGrid.EndUpdate;
+end;
+
+procedure TTamingMobForm.FormClick(Sender: TObject);
+begin
+  ActiveControl := nil;
+end;
+
+procedure TTamingMobForm.FormCreate(Sender: TObject);
+begin
+  Left := (Screen.Width - Width) div 2;
+  Top := (Screen.Height - Height) div 2;
+end;
+
+procedure TTamingMobForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  if Key = VK_MENU then
+    Key := 0;
 end;
 
 procedure TTamingMobForm.TamingMobGridClick(Sender: TObject);

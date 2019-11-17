@@ -3,11 +3,10 @@ unit MapObj;
 interface
 
 uses
-  Windows, SysUtils, StrUtils, AsphyreSprite, Generics.Collections,
-  WZIMGFile, Global, AbstractCanvas, Tools, Math, WzUtils;
+  Windows, SysUtils, StrUtils, AsphyreSprite, Generics.Collections, WZIMGFile, Global,
+  AbstractCanvas, Tools, Math, WzUtils;
 
 type
-
   TMapObj = class(TSpriteEx)
   private
     FDelta: Real;
@@ -38,7 +37,8 @@ type
 
 implementation
 
-uses MapleMap;
+uses
+  MapleMap;
 
 class procedure TMapObj.Create;
 var
@@ -61,11 +61,14 @@ begin
         Continue;
 
       if HasImgFile('Map.wz/Obj/' + oS + '.img') then
-       Entry := GetImgEntry('Map.wz/Obj/' + oS + '.img/' + L0 + '/' + L1 + '/' + L2)
+        Entry := GetImgEntry('Map.wz/Obj/' + oS + '.img/' + L0 + '/' + L1 + '/' + L2)
+
+      else if HasImgFile('Map001.wz/Obj/' + oS + '.img') then
+        Entry := GetImgEntry('Map001.wz/Obj/' + oS + '.img/' + L0 + '/' + L1 + '/' + L2)
       else
         Entry := GetImgEntry('Map2.wz/Obj/' + oS + '.img/' + L0 + '/' + L1 + '/' + L2);
       if not WzData.ContainsKey(Entry.GetPath) then
-         DumpData(Entry, WzData, Images);
+        DumpData(Entry, WzData, Images);
 
       _Flow := Iter.Get('flow', '0');
 
@@ -193,14 +196,14 @@ begin
       1:
         begin
           if Boolean(MoveP) then
-            X := X + -MoveW * Cos(FDelta * 1000 * 2 * PI / MoveP) / 60
+            X := X + -MoveW * Cos(FDelta * 1000 * 2 * Pi / MoveP) / 60
           else
             X := X + -MoveW * Cos(FDelta) / 60;
         end;
       2:
         begin
           if Boolean(MoveP) then
-            Y := Y + -MoveH * Cos(FDelta * 2 * PI * 1000 / MoveP) / 60
+            Y := Y + -MoveH * Cos(FDelta * 2 * Pi * 1000 / MoveP) / 60
           else
             Y := Y + -MoveH * Cos(FDelta) / 60;
         end;
@@ -225,7 +228,7 @@ begin
 
   if Boolean(MoveR) then
   begin
-    Angle := Angle + (17 / MoveR) * PI * 2;
+    Angle := Angle + (17 / MoveR) * Pi * 2;
     Offset.X := 0;
     Offset.Y := 0;
   end;
@@ -277,4 +280,6 @@ end;
 
 initialization
 
+
 end.
+

@@ -15,10 +15,10 @@ object ChairForm: TChairForm
   KeyPreview = True
   OldCreateOrder = False
   Scaled = False
+  OnActivate = FormActivate
   OnClick = FormClick
   OnCreate = FormCreate
   OnKeyDown = FormKeyDown
-  OnShow = FormShow
   PixelsPerInch = 120
   TextHeight = 16
   object ChairGrid: TAdvStringGrid

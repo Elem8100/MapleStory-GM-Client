@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, SysUtils, StrUtils, AsphyreSprite, Generics.Collections, WZIMGFile, Global, Tools,
-  DX9Textures, WZArchive, WZDirectory;
+  DX9Textures, WZArchive, WZDirectory,ColorUtils;
 
 function NoIMG(const Name: string): string; inline;
 
@@ -25,7 +25,7 @@ function HasEntryE(Path: string): Boolean;
 function GetUOL(Entry: TWZIMGEntry): TWZIMGEntry;
 
 procedure DumpData(Entry: TWZIMGEntry; ToData: TObjectDictionary<string, TWZIMGEntry>; ToImageLib:
-  TObjectDictionary<TWZIMGEntry, TDX9LockableTexture>);
+  TObjectDictionary<TWZIMGEntry, TDX9LockableTexture>;ColorEffect: TColorEffect = ceNone; Value: Integer = 0);
 
 implementation
 
@@ -56,6 +56,8 @@ begin
         Result := MorphWz
       else if Path[4] = '2' then
         Result := Mob2WZ
+      else if Path[4] = '0' then
+        Result := Mob001WZ
       else
         Result := MobWZ;
     'p':
@@ -161,7 +163,7 @@ begin
 end;
 
 procedure Scan1(IE: TWZIMGEntry; ToData: TObjectDictionary<string, TWZIMGEntry>; ToImageLib:
-  TObjectDictionary<TWZIMGEntry, TDX9LockableTexture>);
+  TObjectDictionary<TWZIMGEntry, TDX9LockableTexture>;ColorEffect: TColorEffect; Value: Integer );
 var
   C, Child, Entry: TWZIMGEntry;
   NodeInfo: TNodeInfo;
@@ -190,16 +192,16 @@ begin
     mdtCanvas:
       begin
         ToData.AddOrSetValue(IE.GetPath, IE);
-        ToImageLib.AddOrSetValue(IE, GetImgEntry(IE.GetPath, True).Canvas.Dump);
+        ToImageLib.AddOrSetValue(IE, GetImgEntry(IE.GetPath, True).Canvas.Dump(ColorEffect,Value));
       end;
   end;
 
   for C in IE.Children do
-    Scan1(C, ToData, ToImageLib);
+    Scan1(C, ToData, ToImageLib,ColorEffect,Value);
 end;
 
 procedure Scan2(OriNode, UOLNode: string; IE: TWZIMGEntry; ToData: TObjectDictionary<string,
-  TWZIMGEntry>; ToImageLib: TObjectDictionary<TWZIMGEntry, TDX9LockableTexture>);
+  TWZIMGEntry>; ToImageLib: TObjectDictionary<TWZIMGEntry, TDX9LockableTexture>;ColorEffect: TColorEffect ; Value: Integer);
 var
   C: TWZIMGEntry;
   Child, Entry: TWZIMGEntry;
@@ -237,12 +239,12 @@ begin
     if not ToData.ContainsKey(IE.GetPath) then
     begin
       ToData.AddOrSetValue(IE.GetPath, IE);
-      ToImageLib.AddOrSetValue(IE, GetImgEntry(IE.GetPath, True).Canvas.Dump);
+      ToImageLib.AddOrSetValue(IE, GetImgEntry(IE.GetPath, True).Canvas.Dump(ColorEffect,Value));
     end;
   end;
 
   for C in IE.Children do
-    Scan2(OriNode, UOLNode, C, ToData, ToImageLib);
+    Scan2(OriNode, UOLNode, C, ToData, ToImageLib,ColorEffect,Value);
 end;
 
 procedure Scan3(OriNode, UOLNode: string; IE: TWZIMGEntry; ToData: TObjectDictionary<string, TWZIMGEntry>);
@@ -257,15 +259,15 @@ begin
 end;
 
 procedure DumpData(Entry: TWZIMGEntry; ToData: TObjectDictionary<string, TWZIMGEntry>; ToImageLib:
-  TObjectDictionary<TWZIMGEntry, TDX9LockableTexture>);
+  TObjectDictionary<TWZIMGEntry, TDX9LockableTexture>;ColorEffect: TColorEffect = ceNone; Value: Integer = 0);
 var
   P: TNodeInfo;
 begin
   NodeList1.Clear;
   NodeList2.Clear;
-  Scan1(Entry, ToData, ToImageLib);
+  Scan1(Entry, ToData, ToImageLib,ColorEffect, Value);
   for P in NodeList1 do
-    Scan2(P.OriNode, P.UOLNode, P.UOLEntry, ToData, ToImageLib);
+    Scan2(P.OriNode, P.UOLNode, P.UOLEntry, ToData, ToImageLib,ColorEffect, Value);
   for P in NodeList2 do
     Scan3(P.OriNode, P.UOLNode, P.UOLEntry, ToData);
 end;

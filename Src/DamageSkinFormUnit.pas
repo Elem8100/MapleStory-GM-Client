@@ -3,9 +3,9 @@ unit DamageSkinFormUnit;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, WZIMGFile, WZArchive,
-  WzUtils, Vcl.Grids, AdvObj, BaseGrid, AdvGrid, Vcl.ExtCtrls, Vcl.StdCtrls;
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, WZIMGFile, WZArchive, WzUtils, Vcl.Grids, AdvObj, BaseGrid,
+  AdvGrid, Vcl.ExtCtrls, Vcl.StdCtrls, AdvUtil;
 
 type
   TDamageSkinForm = class(TForm)
@@ -13,13 +13,14 @@ type
     Image1: TImage;
     Label1: TLabel;
     Label2: TLabel;
-    procedure FormShow(Sender: TObject);
     procedure DamageGridClickCell(Sender: TObject; ARow, ACol: Integer);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure DamageGridClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormClick(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
   private
+    HasLoad: Boolean;
     { Private declarations }
   public
     { Public declarations }
@@ -29,57 +30,42 @@ var
   DamageSkinForm: TDamageSkinForm;
 
 implementation
-   uses DamageNumber;
+
+uses
+  DamageNumber;
 {$R *.dfm}
 
 procedure TDamageSkinForm.DamageGridClick(Sender: TObject);
 begin
-   ActiveControl:= nil;
+  ActiveControl := nil;
 end;
 
-procedure TDamageSkinForm.DamageGridClickCell(Sender: TObject; ARow,
-  ACol: Integer);
+procedure TDamageSkinForm.DamageGridClickCell(Sender: TObject; ARow, ACol: Integer);
 begin
-  TDamageNumber.UseNewDamage:=True;
-  var DamageStyle:=DamageGrid.Cells[1, ARow];
+  TDamageNumber.UseNewDamage := True;
+  var DamageStyle := DamageGrid.Cells[1, ARow];
 
   //style=1/Red1
-  TDamageNumber.Style:=DamageStyle;
+  TDamageNumber.Style := DamageStyle;
   TDamageNumber.Load(DamageStyle);
-  Label1.Caption:=DamageStyle;
-  Image1.Picture.Assign(DamageGrid.CellGraphics[2,ARow].CellBitmap);
-  ActiveControl:= nil;
+  Label1.Caption := DamageStyle;
+  Image1.Picture.Assign(DamageGrid.CellGraphics[2, ARow].CellBitmap);
+  ActiveControl := nil;
 end;
 
-procedure TDamageSkinForm.FormClick(Sender: TObject);
+procedure TDamageSkinForm.FormActivate(Sender: TObject);
 begin
- ActiveControl := nil;
-end;
-
-procedure TDamageSkinForm.FormCreate(Sender: TObject);
-begin
-  Left := (Screen.Width - Width) div 2;
-  Top := (Screen.Height - Height) div 2;
-end;
-
-procedure TDamageSkinForm.FormKeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
-begin
-   if Key = VK_MENU then
-    Key := 0;
-end;
-
-procedure TDamageSkinForm.FormShow(Sender: TObject);
-begin
-   if DamageGrid.Cells[1, 1] <> '' then
+  if HasLoad then
     Exit;
+  HasLoad := True;
+  DamageGrid.Canvas.Font.Size := 18;
+  DamageGrid.Canvas.TextOut(60, 0, 'Loading...');
   var Entry := GetImgEntry('Effect.wz/BasicEff.img/damageSkin');
-  if Entry=nil then
+  if Entry = nil then
   begin
-    MessageDlg('Old WZ not supported', mtinformation, [mbOk], 0);
+    MessageDlg('ÂÂª©wz¤£¤ä´©', mtinformation, [mbOk], 0);
     Exit;
   end;
-
 
   var Rowcount := -1;
 
@@ -91,14 +77,31 @@ begin
         DamageGrid.RowCount := Rowcount + 1;
         DamageGrid.Cells[1, Rowcount] := Iter.Name + '/' + Iter2.Name;
 
-        if Iter2.Child['5']<> nil then
+        if Iter2.Child['5'] <> nil then
         begin
-          var Bmp:=Iter2.Get2('5').Canvas.DumpBmp;
-          DamageGrid.CreateBitmap(2, RowCount, False, haCenter, vaCenter).Assign(Bmp);
+          var Bmp := Iter2.Get2('5').Canvas.DumpBmp;
+          DamageGrid.CreateBitmap(2, Rowcount, False, haCenter, vaCenter).Assign(Bmp);
           Bmp.Free;
         end;
       end;
 
+end;
+
+procedure TDamageSkinForm.FormClick(Sender: TObject);
+begin
+  ActiveControl := nil;
+end;
+
+procedure TDamageSkinForm.FormCreate(Sender: TObject);
+begin
+  Left := (Screen.Width - Width) div 2;
+  Top := (Screen.Height - Height) div 2;
+end;
+
+procedure TDamageSkinForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  if Key = VK_MENU then
+    Key := 0;
 end;
 
 end.

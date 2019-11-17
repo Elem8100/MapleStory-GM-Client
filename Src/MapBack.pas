@@ -3,8 +3,8 @@ unit MapBack;
 interface
 
 uses
-  Windows, SysUtils, StrUtils, AsphyreSprite, Generics.Collections, WZIMGFile,
-  Global, AbstractCanvas, Tools, MapleCharacter, MapleMap, WzUtils, System.Types;
+  Windows, SysUtils, StrUtils, AsphyreSprite, Generics.Collections, WZIMGFile, Global,
+  AbstractCanvas, Tools, MapleCharacter, MapleMap, WzUtils, System.Types;
 
 type
   TMapBack = class(TBackgroundSprite)
@@ -34,7 +34,7 @@ type
 implementation
 
 uses
-  SaveMapUnit, mainunit;
+  SaveMapUnit, MainUnit;
 
 var
   cc: Integer;
@@ -72,10 +72,11 @@ begin
     begin
       if MapWz.GetImgFile('Back/' + bS + '.img') <> nil then
         Entry := GetImgEntry('Map/Back/' + bS + '.img/back/' + No)
-      else if Map2Wz.GetImgFile('Back/' + bS + '.img') <> nil then
-        Entry := GetImgEntry('Map2/Back/' + bS + '.img/back/' + No)
+
+      else if Map001Wz.GetImgFile('Back/' + bS + '.img') <> nil then
+        Entry := GetImgEntry('Map001/Back/' + bS + '.img/back/' + No)
       else
-        Entry := GetImgEntry('Map001/Back/' + bS + '.img/back/' + No);
+        Entry := GetImgEntry('Map2/Back/' + bS + '.img/back/' + No);
 
       if Entry = nil then
         Continue;
@@ -87,15 +88,15 @@ begin
       end;
     end;
 
-
     if Ani = 1 then
     begin
       if MapWz.GetImgFile('Back/' + bS + '.img') <> nil then
         AniEntry := GetImgEntry('Map/Back/' + bS + '.img/ani/' + No)
-      else if Map2Wz.GetImgFile('Back/' + bS + '.img') <> nil then
-        AniEntry := GetImgEntry('Map2/Back/' + bS + '.img/ani/' + No)
+      else if Map001Wz.GetImgFile('Back/' + bS + '.img') <> nil then
+        AniEntry := GetImgEntry('Map001/Back/' + bS + '.img/ani/' + No)
       else
-        AniEntry := GetImgEntry('Map001/Back/' + bS + '.img/ani/' + No);
+        AniEntry := GetImgEntry('Map2/Back/' + bS + '.img/ani/' + No);
+
       if AniEntry = nil then
         Continue;
 
@@ -279,9 +280,11 @@ begin
     else
     begin
       if TMap.Info.ContainsKey('VRLeft') then
-        Y := -PosY - (100 + RY * StrToFloat(SaveMapForm.ComboBox2.Text)) / 100 * (TMap.Bottom - 600 + (600 / 2)) + TMap.Top - StrToInt(SaveMapForm.ComboBox1.Text)
+        Y := -PosY - (100 + RY * StrToFloat(SaveMapForm.ComboBox2.Text)) / 100 * (TMap.Bottom - 600
+          + (600 / 2)) + TMap.Top - StrToInt(SaveMapForm.ComboBox1.Text)
       else
-        Y := -PosY - (100 + RY * StrToFloat(SaveMapForm.ComboBox2.Text)) / 100 * (TMap.SaveMapBottom - 600 + (600 / 2) - 100) + TMap.Top - StrToInt(SaveMapForm.ComboBox1.Text);
+        Y := -PosY - (100 + RY * StrToFloat(SaveMapForm.ComboBox2.Text)) / 100 * (TMap.SaveMapBottom
+          - 600 + (600 / 2) - 100) + TMap.Top - StrToInt(SaveMapForm.ComboBox1.Text);
     end;
   end;
 

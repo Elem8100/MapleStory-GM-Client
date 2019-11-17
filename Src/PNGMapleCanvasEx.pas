@@ -22,8 +22,6 @@ type
     FWZReader: TWZReader;
     function Parse1(Input: TMemoryStream): TDX9LockableTexture;
     function Parse2(Input: TMemoryStream): TDX9LockableTexture;
-    function Parse1Hue(Input: TMemoryStream; Hue: Integer): TDX9LockableTexture;
-    function Parse2Hue(Input: TMemoryStream; Hue: Integer): TDX9LockableTexture;
     function Parse513(Input: TMemoryStream): TDX9LockableTexture;
     function Parse517(Input: TMemoryStream): TDX9LockableTexture;
     function Parse1026(Input: TMemoryStream): TDX9LockableTexture;
@@ -162,6 +160,7 @@ end;
 function TPNGMapleCanvas.Dump(ColorEffect: TColorEffect; Value: Integer): TDX9LockableTexture;
 var
   Decompressed: TMemoryStream;
+  Texture:TDX9LockableTexture;
 begin
   Result := nil;
   Decompressed := Decompress;
@@ -176,10 +175,59 @@ begin
               end;
             ceHue:
               begin
-                var Texture := Parse1(Decompressed);
+                Texture := Parse1(Decompressed);
                 HSVvar(Texture, Value, 1, 0);
                 Result := Texture;
               end;
+                ceSaturation:
+              begin
+                Texture := Parse1(Decompressed);
+                HSVvar(Texture, 0, Value, 0);
+                Result := Texture;
+              end;
+                ceContrast1:
+              begin
+                Texture := Parse1(Decompressed);
+                Contrast3(Texture,50,-90,True,False,False);
+                Result := Texture;
+              end;
+                ceContrast2:
+              begin
+                Texture := Parse1(Decompressed);
+                Contrast3(Texture,50,-90,False,True,False);
+                Result := Texture;
+              end;
+
+               ceContrast3:
+              begin
+                Texture := Parse1(Decompressed);
+                Contrast3(Texture,50,-90,False,False,True);
+                Result := Texture;
+              end;
+
+               ceContrast4:
+              begin
+                Texture := Parse1(Decompressed);
+                Contrast3(Texture,50,-90,True,True,False);
+                Result := Texture;
+              end;
+
+                ceContrast5:
+              begin
+                Texture := Parse1(Decompressed);
+                Contrast3(Texture,50,-90,True,False,True);
+                Result := Texture;
+              end;
+
+              ceNegative:
+              begin
+                Texture := Parse1(Decompressed);
+                Negative(Texture);
+                Result := Texture;
+              end;
+
+
+
           end;
         end;
 
@@ -367,127 +415,6 @@ begin
 end;
 
 
-{
-procedure Hh(bitmap: TIEBitmap; oHue, oSat, oVal: Integer);
-var
-  x, y: Integer;
-  Hue, Sat, Val: Integer;
-  ppx: pRGB;
-  per1: Double;
-begin
-
-  for y := 0 to bitmap.Height-1 do
-  begin
-    ppx := bitmap.ScanLine[y];
-
-    for x := 0 to bitmap.Width-1 do
-    begin
-      RGB2HSV(ppx^, Hue, Sat, Val);
-      HSV2RGB(ppx^, Hue + oHue, Sat + oSat, Val + oVal);
-      inc(ppx);
-    end;
-  end;
-end;
- }
-
-function TPNGMapleCanvas.Parse1Hue(Input: TMemoryStream; Hue: Integer): TDX9LockableTexture;
-var
-  x, y: Integer;
-  b1: array[0..1] of Byte;
-  A, R, G, B: Word;
-  P: PLongWord;
-  pDest, pDest2: Pointer;
-  nPitch: Integer;
-begin
-
-  Result := TDX9LockableTexture.Create;
-  Result.Width := FWidth;
-  Result.Height := FHeight;
-  Result.Format := apf_A8R8G8B8;
-  Result.Initialize;
-
-  Result.Lock(Rect(0, 0, FWidth, FHeight), pDest, nPitch);
-  P := pDest;
-  for y := 0 to Height - 1 do
-  begin
-    for x := 0 to Width - 1 do
-    begin
-      Input.Read(b1[0], 2);
-      B := b1[0] and 15;
-      B := B or (B shl 4);
-
-      G := b1[0] and 240;
-      G := G or (G shr 4);
-
-      R := b1[1] and 15;
-      R := R or (R shl 4);
-
-      A := b1[1] and 240;
-      A := A or (A shr 4);
-
-      P^ := cRGB1(R, G, B, A);
-      Inc(P);
-    end;
-  end;
-  Result.Unlock;
-
-end;
-
-function TPNGMapleCanvas.Parse2Hue(Input: TMemoryStream; Hue: Integer): TDX9LockableTexture;
-var
-  x, y: Integer;
-  b1, b2, b3, b4: Byte;
-  A, R, G, B: Word;
-  P: PLongWord;
-  pDest: Pointer;
-  nPitch: Integer;
-  ARGB: PByte;
-  bytes: array of PByte;
-begin
-  Result := TDX9LockableTexture.Create;
-  Result.Width := FWidth;
-  Result.Height := FHeight;
-  Result.Format := apf_A8R8G8B8;
-  Result.Initialize;
-  // SetLength(bytes, Input.Size);
-
-  Result.Lock(Rect(0, 0, FWidth, FHeight), pDest, nPitch);
-  P := pDest;
-
-  // for official wz--ultra fast
-  {
-   ARGB :=pDest;
-   Input.Read(bytes[0], Input.Size);
-   Move(bytes[0], ARGB[0], Input.Size);
-  }
-
-  // for custom-- fast
-  {
-    for y := 0 to FHeight - 1 do
-    begin
-    for x := 0 to FWidth - 1 do
-    begin
-    Input.Read(bytes[0], 4);
-    P^ := Cardinal(bytes[0]);
-    Inc(P);
-    end;
-    end;
-  }
-  for y := 0 to FHeight - 1 do
-  begin
-    for x := 0 to FWidth - 1 do
-    begin
-      Input.Read(b1, 1);
-      Input.Read(b2, 1);
-      Input.Read(b3, 1);
-      Input.Read(b4, 1);
-      P^ := cRGB1(b3, b2, b1, b4);
-      Inc(P);
-    end;
-  end;
-
-  Result.Unlock;
-end;
 
 function TPNGMapleCanvas.Parse513(Input: TMemoryStream): TDX9LockableTexture;
 var

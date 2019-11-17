@@ -5,7 +5,7 @@ interface
 uses
   Windows, System.Types, SysUtils, StrUtils, AsphyreSprite, Generics.Collections, WZIMGFile, Math,
   Footholds, LadderRopes, AsphyreTypes, DX9Textures, WZArchive, ChatBalloon, MapPortal,
-  MapleCharacter, DamageNumber, MobDrop, Global, Tools, WzUtils, MapleMap;
+  MapleCharacter, DamageNumber, MobDrop, Global, Tools, WzUtils, MapleMap,ColorUtils;
 
 type
   TMoveDirection = (mdLeft, mdRight, mdNone);
@@ -74,7 +74,7 @@ type
     procedure DoDraw; override;
     constructor Create(const AParent: TSprite); override;
     procedure TargetEvent(Sender: TObject);
-    class procedure Drop(ID: string; PosX, PosY: Integer; aRX0: Integer = 0; aRX1: Integer = 0);
+    class procedure Drop(ID: string; PosX, PosY: Integer; aRX0: Integer = 0; aRX1: Integer = 0;ColorEffect: TColorEffect = ceNone; Value: Integer = 0);
     class procedure CreateMapMobs;
     class var
       MobList: TList<string>;
@@ -178,7 +178,7 @@ begin
   Mob := Self;
 end;
 
-class procedure TMob.Drop(ID: string; PosX, PosY: Integer; aRX0: Integer = 0; aRX1: Integer = 0);
+class procedure TMob.Drop(ID: string; PosX, PosY: Integer; aRX0: Integer = 0; aRX1: Integer = 0;ColorEffect: TColorEffect = ceNone; Value: Integer = 0);
 var
   c: Integer;
   Entry, Iter, Iter2: TWZIMGEntry;
@@ -212,9 +212,9 @@ begin
   if not MobList.contains(ID) then
   begin
     MobList.Add(ID);
-    DumpData(WZ.GetImgFile(ID + '.img').Root, WzData, Images);
+    DumpData(WZ.GetImgFile(ID + '.img').Root, WzData, Images,ColorEffect,Value);
     if Entry <> nil then
-      DumpData(WZ.GetImgFile(Entry.Data + '.img').Root, WzData, Images);
+      DumpData(WZ.GetImgFile(Entry.Data + '.img').Root, WzData, Images,ColorEffect,Value);
   end;
 
   if Entry <> nil then

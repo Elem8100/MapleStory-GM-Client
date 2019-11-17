@@ -93,10 +93,10 @@ begin
     FontsAlt[1].TextOut('¦WºÙ: ' + Name, 70 + I * 160, 26, $FFFFFFFF);
     if MobWZ.GetImgFile(ID + '.img') <> nil then
       Wz := MobWZ
-    else if Mob2WZ.GetImgFile(ID + '.img') <> nil then
-      Wz := Mob2wz
+    else if Mob001wZ.GetImgFile(ID + '.img') <> nil then
+      Wz := Mob001wz
     else
-      Wz := Mob001WZ;
+      Wz := Mob2WZ;
 
     for Iter in Wz.GetImgFile(TMob.Moblist[I] + '.img').Root.Get('info').Children do
     begin

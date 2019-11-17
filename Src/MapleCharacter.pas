@@ -6,7 +6,7 @@ uses
   Windows, SysUtils, StrUtils, Generics.Collections, System.Types, WZIMGFile, Math, AsphyreSprite,
   Footholds, LadderRopes, ChatBalloon, MapPortal, DirectInput, Classes, AsphyreKeyboard,
   AsphyreRenderTargets, DamageNumber, Skill, AsphyreTypes, AbstractTextures, Global, Tools, MapleMap,
-  WzUtils;
+  WzUtils, ColorUtils;
 
 type
   TDir = (dLeft, dRight, no);
@@ -43,8 +43,9 @@ type
     class var
       AvatarTargetIndex: Integer;
       AvatarPanelIndex: Integer;
-      EquipLoadedList:TList<string>;
-    procedure LoadEquip(EquipID: string);
+      EquipLoadedList: TList<string>;
+      ReDumpTexture: Boolean;
+    procedure LoadEquip(EquipID: string; ColorEffect: TColorEffect = ceNone; Value: Integer = 0);
     procedure TargetEvent(Sender: TObject);
     procedure DoMove(const Movecount: Single); override;
     procedure DoDraw; override;
@@ -797,7 +798,7 @@ begin
 
 end;
 
-procedure TPlayer.LoadEquip(EquipID: string);
+procedure TPlayer.LoadEquip(EquipID: string; ColorEffect: TColorEffect = ceNone; Value: Integer = 0);
 var
   Child: TWZIMGEntry;
   Iter, Iter2, Iter3, Iter4, Entry: TWZIMGEntry;
@@ -809,10 +810,15 @@ begin
   Part := GetPart(EquipID);
   Entry := CharacterWZ.GetImgFile(Dir + EquipID + '.img').Root;
  // if not EquipImages.ContainsKey(Entry) then
-  if not EquipLoadedList.Contains(EquipID) then
+  if TPlayer.ReDumpTexture then
+    DumpData(Entry, EquipData, EquipImages, ColorEffect, Value)
+  else
   begin
-    DumpData(Entry, EquipData, EquipImages);
-    EquipLoadedList.Add(EquipID);
+    if not EquipLoadedList.contains(EquipID) then
+    begin
+      DumpData(Entry, EquipData, EquipImages, ColorEffect, Value);
+      EquipLoadedList.Add(EquipID);
+    end;
   end;
 
   if Part = Weapon then
@@ -1542,7 +1548,7 @@ begin
   if CharData.ContainsKey(State + '/' + Frame.ToString) then
   begin
     SkillAction := CharData[State + '/' + Frame.ToString];
-    if (SkillAction = 'hide/0') or  (SkillAction = 'blink/0')then
+    if (SkillAction = 'hide/0') or (SkillAction = 'blink/0') then
       Alpha := 0;
     if (Image = 'face') or (Part = Glass) or (Part = FaceAcc) then
     begin
@@ -1671,7 +1677,7 @@ initialization
   AttackOFs := TList<string>.Create;
   WeaponWalkType := TList<string>.Create;
   PlayerEqpList := TList<string>.Create;
-  TPlayer.EquipLoadedList:=TList<string>.Create;
+  TPlayer.EquipLoadedList := TList<string>.Create;
 
 finalization
   AttackActions.Free;
@@ -1679,5 +1685,6 @@ finalization
   WeaponWalkType.Free;
   PlayerEqpList.Free;
   TPlayer.EquipLoadedList.Free;
+
 end.
 

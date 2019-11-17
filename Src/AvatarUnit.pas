@@ -417,7 +417,7 @@ begin
           17:
             Contrast3(ColorGrid.CellGraphics[Col, Row].CellBitmap, 50, -90, True, False, True);
           18:
-           Negative(ColorGrid.CellGraphics[Col, Row].CellBitmap);
+            Negative(ColorGrid.CellGraphics[Col, Row].CellBitmap);
         end;
 
       end;
@@ -430,7 +430,52 @@ end;
 procedure TAvatarForm.ColorGridClickCell(Sender: TObject; ARow, ACol: Integer);
 begin
   var Top := ColorGrid.CellRect(ACol, ARow).Location.Y;
-
+  var ID := Inventory.Cells[0, ARow];
+  Player.ReDumpTexture := True;
+  if Length(ID) > 2 then
+  begin
+    case ACol of
+      0:
+        Player.LoadEquip(ID, ceHue, 0);
+      1:
+        Player.LoadEquip(ID, ceHue, 30);
+      2:
+        Player.LoadEquip(ID, ceHue, 60);
+      3:
+        Player.LoadEquip(ID, ceHue, 90);
+      4:
+        Player.LoadEquip(ID, ceHue, 120);
+      5:
+        Player.LoadEquip(ID, ceHue, 150);
+      6:
+        Player.LoadEquip(ID, ceHue, 180);
+      7:
+        Player.LoadEquip(ID, ceHue, 210);
+      8:
+        Player.LoadEquip(ID, ceHue, 240);
+      9:
+        Player.LoadEquip(ID, ceHue, 270);
+      10:
+        Player.LoadEquip(ID, ceHue, 300);
+      11:
+        Player.LoadEquip(ID, ceSaturation, 25);
+      12:
+        Player.LoadEquip(ID, ceSaturation, -100);
+      13:
+        Player.LoadEquip(ID, ceContrast1);
+      14:
+        Player.LoadEquip(ID, ceContrast2);
+      15:
+        Player.LoadEquip(ID, ceContrast3);
+      16:
+        Player.LoadEquip(ID, ceContrast4);
+      17:
+        Player.LoadEquip(ID, ceContrast5);
+      18:
+         Player.LoadEquip(ID, ceNegative);
+    end;
+  end;
+    Player.ReDumpTexture := False;
 end;
 
 procedure TAvatarForm.SaveButtonClick(Sender: TObject);

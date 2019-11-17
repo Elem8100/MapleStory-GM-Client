@@ -3,12 +3,11 @@ unit MapTile;
 interface
 
 uses
-  Windows, SysUtils, StrUtils, AsphyreSprite, Generics.Collections,
-  WZIMGFile, Global, Tools,WzUtils;
+  Windows, SysUtils, StrUtils, AsphyreSprite, Generics.Collections, WZIMGFile, Global, Tools,
+  WzUtils;
 
 type
-
-  TMapTile = class(TSpriteEX)
+  TMapTile = class(TSpriteEx)
   public
     procedure DoDraw; override;
     class procedure Create; overload;
@@ -16,7 +15,8 @@ type
 
 implementation
 
-uses MapleMap;
+uses
+  MapleMap;
 
 class procedure TMapTile.Create;
 var
@@ -32,9 +32,10 @@ begin
     begin
       u := Iter.Get('u', '');
       no := Iter.Get('no', '');
-      Entry := MapWZ.GetImgFile('Tile/' + tS + '.img').Root.Child[u].Child[no];
+     // Entry := MapWZ.GetImgFile('Tile/' + tS + '.img').Root.Child[u].Child[no];
+      Entry := GetImgEntry('Map.wz/Tile/' + tS + '.img/' + u + '/' + no);
       if not WzData.ContainsKey(Entry.GetPath) then
-         DumpData(Entry, WzData, Images);
+        DumpData(Entry, WzData, Images);
 
       with TMapTile.Create(SpriteEngine) do
       begin
@@ -64,3 +65,4 @@ begin
 end;
 
 end.
+
