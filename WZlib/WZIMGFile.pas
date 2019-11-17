@@ -231,7 +231,19 @@ begin
 
           OutLink := Result.Child['_outlink'].Data;
           var S: TArray<string> := OutLink.Split(['/']);
-          if LeftStr(Result.GetPath, 4) = 'Map2' then
+
+          if LeftStr(Result.GetPath, 6) = 'Map.wz' then
+          begin
+            if S[1] = 'Back' then
+            begin
+               //kMS   Map.wz/obj/acc1.img/MapleIsland/burningMapleIsland/0/0=
+              OutLink := StringReplace(OutLink, 'Map', 'Map0', [rfReplaceAll]);
+              Result := GetImgEntry(OutLink, True);
+            end;
+            if (S[1] = 'Tile') or ((S[1] = 'Obj')) then
+              Result := GetImgEntry(OutLink, True);
+          end
+          else if LeftStr(Result.GetPath, 4) = 'Map2' then
           begin
             OutLink := StringReplace(OutLink, 'Map', 'Map2', [rfReplaceAll]);
             Result := GetImgEntry(OutLink, True);
@@ -249,6 +261,28 @@ begin
             OutLink := StringReplace(OutLink, 'Mob', 'Mob2', [rfReplaceAll]);
             Result := GetImgEntry(OutLink, True);
           end
+          else if LeftStr(GetEntryPath(Result), 6) = 'Mob001' then
+          begin
+
+            if HasImgFile('Mob.wz/' + S[1]) then
+            begin
+              OutLink := StringReplace(OutLink, 'Mob', 'Mob', [rfReplaceAll]);
+              Result := GetImgEntry(OutLink, True);
+            end
+            else if HasImgFile('Mob001.wz/' + S[1]) then
+            begin
+              OutLink := StringReplace(OutLink, 'Mob', 'Mob001', [rfReplaceAll]);
+              Result := GetImgEntry(OutLink, True);
+            end
+            else if HasImgFile('Mob2.wz/' + S[1]) then
+            begin
+              OutLink := StringReplace(OutLink, 'Mob', 'Mob2', [rfReplaceAll]);
+              Result := GetImgEntry(OutLink, True);
+            end
+            else
+              Result := GetImgEntry(Result.Child['_outlink'].Data, True);
+
+          end
           else if (LeftStr(GetEntryPath(Result), 8) = 'Skill001') and (not HasImgFile(S[0] + '/' + S[1])) then
           begin
             OutLink := StringReplace(OutLink, 'Skill', 'Skill001', [rfReplaceAll]);
@@ -261,8 +295,8 @@ begin
         else if Result.Child['_inlink'] <> nil then
         begin
           Result := GetTopEntry(Result).Get(Result.Child['_inlink'].Data);
-           if Result = nil then
-              Exit(GetImgEntry('Character/00002000.img/alert/0/arm'));
+          if Result = nil then
+            Exit(GetImgEntry('Character/00002000.img/alert/0/arm'));
         end
         else if Result.Child['source'] <> nil then
           Result := GetImgEntry(Result.Child['source'].Data, True);
