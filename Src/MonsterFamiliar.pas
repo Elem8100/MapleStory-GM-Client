@@ -78,10 +78,13 @@ end;
 class procedure TMonsterFamiliar.Create(ID: string);
 begin
   var Entry : TWZImgEntry;
-  if HasImgFile('Mob.wz/'+ID +'.img') then
-    Entry:=  GetImgEntry('Mob.wz/' + ID + '.img/')
+  if HasImgFile('Mob.wz/' + ID + '.img') then
+    Entry := GetImgEntry('Mob.wz/' + ID + '.img/')
+  else if HasImgFile('Mob001.wz/' + ID + '.img') then
+    Entry := GetImgEntry('Mob001.wz/' + ID + '.img/')
   else
-    Entry :=GetImgEntry('Mob2.wz/' + ID + '.img/');
+    Entry := GetImgEntry('Mob2.wz/' + ID + '.img/');
+
   DumpData(Entry, EquipData, EquipImages);
 
   for var Iter in EquipData[Entry.GetPath].Children do
