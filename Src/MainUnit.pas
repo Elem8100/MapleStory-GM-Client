@@ -257,6 +257,8 @@ begin
   MobWZ.Free;
   if Mob2WZ <> nil then
     Mob2WZ.Free;
+  if Mob001WZ <> nil then
+    Mob001WZ.Free;
   ItemWZ.Free;
   CharacterWZ.Free;
   EffectWz.Free;
@@ -277,7 +279,7 @@ begin
   // DropList
   StringIDs.Free;
 
-  ReportMemoryLeaksOnShutdown := True;
+  //ReportMemoryLeaksOnShutdown := True;
 end;
 
 procedure TMainForm.OnDeviceCreate(Sender: TObject; Param: Pointer; var Handled: Boolean);
@@ -758,6 +760,8 @@ begin
       MobWZ := TWZArchive.Create(Path + '\Mob.wz');
       if FileExists(Path + '\Mob2.wz') then
         Mob2WZ := TWZArchive.Create(Path + '\Mob2.wz');
+      if FileExists(Path + '\Mob001.wz') then
+        Mob001WZ := TWZArchive.Create(Path + '\Mob001.wz');
 
       NPCWZ := TWZArchive.Create(Path + '\Npc.wz');
       SoundWZ := TWZArchive.Create(Path + '\Sound.wz');
