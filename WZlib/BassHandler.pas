@@ -2,7 +2,8 @@ unit BassHandler;
 
 interface
 
-uses Windows, Classes, SysUtils, Bass;
+uses
+  Windows, Classes, SysUtils, Bass;
 
 type
   TBassHandler = class
@@ -10,25 +11,28 @@ type
     MWND: HSTREAM;
     MS: TMemoryStream;
     FStart: Boolean;
+    Volume: FLOAT;
    //procedure BassInit;
     function GetIsPlaying: Boolean;
     function GetPosition: Double;
     function GetLength: Double;
   public
     constructor Create(Media: TMemoryStream); overload;
-    constructor Create(Media: TStream; Offset, Size: Int64); overload;
+    constructor Create(Media: TStream; Offset, SIZE: Int64); overload;
     destructor Destroy; override;
-
     procedure Play;
     procedure PlayLoop;
+    procedure Mute;
+    procedure NotMute;
     property Position: Double read GetPosition;
     property Length: Double read GetLength;
     property IsPlaying: Boolean read GetIsPlaying;
     property Start: Boolean read FStart write FStart;
   end;
 
-  procedure BassInit;
-  procedure BassFree;
+procedure BassInit;
+
+procedure BassFree;
 
 implementation
 
@@ -36,7 +40,7 @@ implementation
 
 procedure BassInit;
 begin
-  if (HIWORD(BASS_GetVersion) <> BASSVERSION) then
+  if (HiWord(BASS_GetVersion) <> BASSVERSION) then
     raise Exception.Create('Bass.dll version not supported!');
 
   if not BASS_Init(-1, 44100, 0, 0, nil) then
@@ -83,13 +87,24 @@ end;
 
 procedure TBassHandler.Play;
 begin
-  BASS_ChannelPlay(MWND, true);
+  BASS_ChannelPlay(MWND, True);
 end;
 
 procedure TBassHandler.PlayLoop;
 begin
   BASS_ChannelPlay(MWND, False);
-  BASS_ChannelFlags(MWND,BASS_SAMPLE_LOOP , BASS_SAMPLE_LOOP);
+  BASS_ChannelFlags(MWND, BASS_SAMPLE_LOOP, BASS_SAMPLE_LOOP);
+end;
+
+procedure TBassHandler.Mute;
+begin
+  BASS_Pause;
+end;
+
+procedure TBassHandler.NotMute;
+begin
+  BASS_Start;
+  PlayLoop;
 end;
 
 function TBassHandler.GetLength: Double;
@@ -122,8 +137,9 @@ function TBassHandler.GetIsPlaying;
 begin
   Result := False;
   if BASS_ChannelIsActive(MWND) = BASS_ACTIVE_PLAYING then
-    Result:= True;
+    Result := True;
 
 end;
 
 end.
+
