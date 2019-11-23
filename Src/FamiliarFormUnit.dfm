@@ -167,7 +167,7 @@ object FamiliarForm: TFamiliarForm
     Top = 5
     Width = 145
     Height = 30
-    Caption = 'Delete'
+    Caption = 'Remove'
     TabOrder = 1
     OnClick = Button1Click
   end
