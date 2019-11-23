@@ -1,0 +1,53 @@
+object OptionsForm: TOptionsForm
+  Left = 0
+  Top = 0
+  BorderStyle = bsDialog
+  Caption = 'Options'
+  ClientHeight = 194
+  ClientWidth = 298
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -13
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  KeyPreview = True
+  OldCreateOrder = False
+  Position = poDesigned
+  Scaled = False
+  OnClick = FormClick
+  OnCreate = FormCreate
+  OnKeyDown = FormKeyDown
+  PixelsPerInch = 120
+  TextHeight = 16
+  object CheckBox1: TCheckBox
+    Left = 80
+    Top = 31
+    Width = 65
+    Height = 25
+    Caption = 'Mute'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -15
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 0
+    OnClick = CheckBox1Click
+  end
+  object CheckBox2: TCheckBox
+    Left = 80
+    Top = 70
+    Width = 129
+    Height = 25
+    Caption = 'Grayscale Map'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -15
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 1
+    OnClick = CheckBox2Click
+  end
+end
