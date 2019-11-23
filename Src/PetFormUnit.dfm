@@ -167,7 +167,7 @@ object PetForm: TPetForm
     Top = 4
     Width = 177
     Height = 33
-    Caption = 'Delete'
+    Caption = 'Remove'
     TabOrder = 1
     OnClick = Button1Click
   end
