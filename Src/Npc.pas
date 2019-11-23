@@ -1,18 +1,16 @@
-unit NPC;
+unit Npc;
 
 interface
 
 uses
-  Windows, System.types, SysUtils, StrUtils, AsphyreSprite, Generics.Collections,
-  WZIMGFile, Global, Math, Footholds, LadderRopes,
-  ChatBalloon, MapPortal, MapleTV, AsphyreTypes, DX9Textures, Tools, MapleMap, WzUtils;
+  Windows, System.Types, SysUtils, StrUtils, AsphyreSprite, Generics.Collections, WZIMGFile, Global,
+  Math, Footholds, LadderRopes, ChatBalloon, MapPortal, MapleTV, AsphyreTypes, DX9Textures, Tools,
+  MapleMap, WzUtils;
 
 type
-
   TNpc = class(TSpriteEx)
   private
     SpriteID: string;
-    LocalID: string;
     Action: string;
     FTime: Integer;
     Frame: Integer;
@@ -33,18 +31,22 @@ type
     TargetIndex: Integer;
     TargetWidth: Integer;
   public
+    LocalID: string;
     procedure DoMove(const Movecount: Single); override;
     procedure DoDraw; override;
     procedure TargetEvent(Sender: TObject);
     destructor Destroy; override;
-    class var ReDrawTarget: Boolean;
+    class var
+      ReDrawTarget: Boolean;
+      SummonedList: TList<string>;
     class procedure Create; overload;
     class procedure Drop(ID: string; PosX, PosY: Integer; Flip: Integer);
   end;
 
 implementation
 
-uses System.Character, MainUnit;
+uses
+  System.Character, MainUnit;
 
 class procedure TNpc.Drop(ID: string; PosX, PosY, Flip: Integer);
 var
@@ -65,17 +67,18 @@ begin
 
   Entry := GetImgEntry('Npc.wz/' + ID + '.img/info/link');
   NpcEntry := GetImgEntry('Npc.wz/' + ID + '.img/');
-  if not DumpList.Contains(ID) then
+  if not DumpList.contains(ID) then
   begin
     DumpList.Add(ID);
     DumpData(NpcEntry, WzData, Images);
     if Entry <> nil then
-      DumpData(NpcWz.GetImgFile(Entry.Data + '.img').Root, WzData, Images);
+      DumpData(NPCWZ.GetImgFile(Entry.Data + '.img').Root, WzData, Images);
   end;
 
   with TNpc.Create(SpriteEngine) do
   begin
     LocalID := ID;
+
     if Entry <> nil then
       SpriteID := Entry.Data
     else
@@ -84,7 +87,7 @@ begin
     Frame := 0;
     Actions := TList<string>.Create;
 
-    for Iter2 in NpcWz.GetImgFile(SpriteID + '.img').Root.Children do
+    for Iter2 in NPCWZ.GetImgFile(SpriteID + '.img').Root.Children do
       if (Iter2.Name <> 'info') and (LeftStr(Iter2.Name, 9) <> 'condition') and (Iter2.Get('0', '-1') <> '-1') then
         Actions.Add(Iter2.Name);
 
@@ -129,7 +132,7 @@ begin
     end;
     Counter := Random(750);
 
-    Entry := NpcWz.GetImgFile(SpriteID + '.img').Root;
+    Entry := NPCWZ.GetImgFile(SpriteID + '.img').Root;
     if Entry.Get('info/MapleTV', '0') = 1 then
     begin
       msgX := Entry.Get('info/MapleTVmsgX', '0');
@@ -204,8 +207,10 @@ begin
   if ImageEntry.Get('origin') <> nil then
     Origin := ImageEntry.Get('origin').Vector;
   case MirrorX of
-    True: Offset.X := Origin.X - PatternWidth;
-    False: Offset.X := -Origin.X;
+    True:
+      Offset.X := Origin.X - PatternWidth;
+    False:
+      Offset.X := -Origin.X;
   end;
   Offset.Y := -Origin.Y;
 end;
@@ -282,4 +287,11 @@ begin
   inherited;
 end;
 
+initialization
+  TNpc.SummonedList := TList<string>.Create;
+
+finalization
+  TNpc.SummonedList.Free;
+
 end.
+

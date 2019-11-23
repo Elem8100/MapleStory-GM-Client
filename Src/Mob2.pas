@@ -22,7 +22,6 @@ type
     FFrame: Integer;
     FTime: Integer;
     FID: string;
-    InfoID: string;
     Action: string;
     FH: TFoothold;
     WallFH: TFoothold;
@@ -52,7 +51,7 @@ type
     Left, Top, Right, Bottom: Integer;
     FHead: TPoint;
     Origin: TPoint;
-    FHP: Integer;
+    FHP: Int64;
     FDie: Boolean;
     DieActionName: string;
     TargetIndex: Integer;
@@ -61,13 +60,14 @@ type
     HeadX: Integer;
   public
     Head: TPoint;
+    InfoID: string;
     MobCollision: array[1..6] of TMobCollision;
     property GetHit1: Boolean read FGetHit1 write FGetHit1;
     property Hit: Boolean read FHit write FHit;
     property Frame: Integer read FFrame write FFrame;
     property SelfID: string read FID write FID;
     // property Head: TPoint read FHead write FHead;
-    property HP: Integer read FHP write FHP;
+    property HP: Int64 read FHP write FHP;
     property Die: Boolean read FDie write FDie;
     destructor Destroy; override;
     procedure DoMove(const Movecount: Single); override;
@@ -78,6 +78,7 @@ type
     class procedure CreateMapMobs;
     class var
       MobList: TList<string>;
+      SummonedList: TList<string>;
   end;
    //collision with skill
 
@@ -1009,11 +1010,12 @@ end;
 
 initialization
   TMob.MobList := TList<string>.Create;
+  TMob.SummonedList := TList<string>.Create;
   DropList := TList<string>.Create;
 
 finalization
   TMob.MobList.Free;
   DropList.Free;
-
+  TMob.SummonedList.Free;
 end.
 
