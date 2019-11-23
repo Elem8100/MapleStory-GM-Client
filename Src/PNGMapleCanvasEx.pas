@@ -160,92 +160,79 @@ end;
 function TPNGMapleCanvas.Dump(ColorEffect: TColorEffect; Value: Integer): TDX9LockableTexture;
 var
   Decompressed: TMemoryStream;
-  Texture:TDX9LockableTexture;
+  Texture: TDX9LockableTexture;
 begin
   Result := nil;
   Decompressed := Decompress;
   try
     case FFormat of
       1:
-        begin
-          case ColorEffect of
-            ceNone:
-              begin
-                Result := Parse1(Decompressed);
-              end;
-            ceHue:
-              begin
-                Texture := Parse1(Decompressed);
-                HSVvar(Texture, Value, 1, 0);
-                Result := Texture;
-              end;
-                ceSaturation:
-              begin
-                Texture := Parse1(Decompressed);
-                HSVvar(Texture, 0, Value, 0);
-                Result := Texture;
-              end;
-                ceContrast1:
-              begin
-                Texture := Parse1(Decompressed);
-                Contrast3(Texture,50,-90,True,False,False);
-                Result := Texture;
-              end;
-                ceContrast2:
-              begin
-                Texture := Parse1(Decompressed);
-                Contrast3(Texture,50,-90,False,True,False);
-                Result := Texture;
-              end;
-
-               ceContrast3:
-              begin
-                Texture := Parse1(Decompressed);
-                Contrast3(Texture,50,-90,False,False,True);
-                Result := Texture;
-              end;
-
-               ceContrast4:
-              begin
-                Texture := Parse1(Decompressed);
-                Contrast3(Texture,50,-90,True,True,False);
-                Result := Texture;
-              end;
-
-                ceContrast5:
-              begin
-                Texture := Parse1(Decompressed);
-                Contrast3(Texture,50,-90,True,False,True);
-                Result := Texture;
-              end;
-
-              ceNegative:
-              begin
-                Texture := Parse1(Decompressed);
-                Negative(Texture);
-                Result := Texture;
-              end;
-
-
-
-          end;
-        end;
-
+        Texture := Parse1(Decompressed);
       2:
-
-        Result := Parse2(Decompressed);
-
+        Texture := Parse2(Decompressed);
       513:
-        Result := Parse513(Decompressed); // $201
+        Texture := Parse513(Decompressed); // $201
       517:
-        Result := Parse517(Decompressed);
+        Texture := Parse517(Decompressed);
       1026:
-        Result := Parse1026(Decompressed);
+        Texture := Parse1026(Decompressed);
       2050:
-        Result := Parse2050(Decompressed);
+        Texture := Parse2050(Decompressed);
     end;
   finally
     Decompressed.Free;
+  end;
+
+  case ColorEffect of
+    ceNone:
+      begin
+        Result := Texture;
+      end;
+    ceHue:
+      begin
+        HSVvar(Texture, Value, 1, 0);
+        Result := Texture;
+      end;
+    ceSaturation:
+      begin
+        HSVvar(Texture, 0, Value, 0);
+        Result := Texture;
+      end;
+    ceContrast1:
+      begin
+        Contrast3(Texture, 50, -90, True, False, False);
+        Result := Texture;
+      end;
+    ceContrast2:
+      begin
+        Contrast3(Texture, 50, -90, False, True, False);
+        Result := Texture;
+      end;
+
+    ceContrast3:
+      begin
+        Contrast3(Texture, 50, -90, False, False, True);
+        Result := Texture;
+      end;
+
+    ceContrast4:
+      begin
+        Contrast3(Texture, 50, -90, True, True, False);
+        Result := Texture;
+      end;
+
+    ceContrast5:
+      begin
+        Contrast3(Texture, 50, -90, True, False, True);
+        Result := Texture;
+      end;
+
+    ceNegative:
+      begin
+        Negative(Texture);
+        Result := Texture;
+      end;
+
   end;
 end;
 
@@ -413,8 +400,6 @@ begin
 
   Result.Unlock;
 end;
-
-
 
 function TPNGMapleCanvas.Parse513(Input: TMemoryStream): TDX9LockableTexture;
 var
