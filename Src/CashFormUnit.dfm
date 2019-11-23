@@ -1,7 +1,7 @@
 object CashForm: TCashForm
   Left = 0
   Top = 0
-  Caption = 'Cash'
+  Caption = 'Cash Effect'
   ClientHeight = 645
   ClientWidth = 339
   Color = clBtnFace
@@ -167,7 +167,7 @@ object CashForm: TCashForm
     Top = 6
     Width = 177
     Height = 30
-    Caption = 'Delete'
+    Caption = 'Remove'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -15
