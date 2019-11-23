@@ -153,7 +153,7 @@ end;
 
 function TrimS(Stemp: string): string;
 const
-  Remove = ['.', '/', #13, #10];
+  Remove = [' ','.', '/', #13, #10];
 var
   I: Integer;
 begin
