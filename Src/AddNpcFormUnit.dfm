@@ -64,7 +64,7 @@ object AddNpcForm: TAddNpcForm
   object Button1: TButton
     Left = 13
     Top = 205
-    Width = 243
+    Width = 110
     Height = 33
     Caption = 'Drop'
     Font.Charset = DEFAULT_CHARSET
@@ -317,5 +317,20 @@ object AddNpcForm: TAddNpcForm
       18
       18
       18)
+  end
+  object Button2: TButton
+    Left = 140
+    Top = 205
+    Width = 110
+    Height = 33
+    Caption = 'Remove'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -15
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 4
+    OnClick = Button2Click
   end
 end

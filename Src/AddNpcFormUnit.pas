@@ -3,9 +3,9 @@ unit AddNpcFormUnit;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.Grids,
-  AdvObj, BaseGrid, AdvGrid, Vcl.StdCtrls, WZIMGFile, WZArchive, WzUtils, Math;
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.Grids, AdvObj, BaseGrid, AdvGrid, Vcl.StdCtrls,
+  WZIMGFile, WZArchive, WzUtils, Math, AdvUtil;
 
 type
   TAddNpcForm = class(TForm)
@@ -16,6 +16,7 @@ type
     Label4: TLabel;
     NpcGrid: TAdvStringGrid;
     Label1: TLabel;
+    Button2: TButton;
     procedure NpcGridClickCell(Sender: TObject; ARow, ACol: Integer);
     procedure Button1Click(Sender: TObject);
     procedure FormActivate(Sender: TObject);
@@ -24,6 +25,7 @@ type
     procedure Edit2Change(Sender: TObject);
     procedure NpcGridClick(Sender: TObject);
     procedure FormClick(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
   private
     NpcID: string;
     WZ: TWZArchive;
@@ -102,15 +104,36 @@ begin
     Exit;
   Range := RandomRange(Round(Player.X - 100), Round(Player.X + 100));
   if (Range > TMap.Left) and (Range < TMap.Right) then
+  begin
     TNpc.Drop(NpcID, Range, Round(Player.Y) - 100, RandomFlip);
+    TNpc.SummonedList.Add(NpcID);
+  end;
+  TNpc.ReDrawTarget := True;
+  ActiveControl := nil;
+end;
+
+procedure TAddNpcForm.Button2Click(Sender: TObject);
+begin
+  for var Iter in SpriteEngine.SpriteList do
+    if Iter is TNpc then
+    begin
+      for var i := 0 to TNpc.SummonedList.Count - 1 do
+      begin
+        if TNpc(Iter).LocalID = TNpc.SummonedList[i] then
+        begin
+          TNpc(Iter).Dead;
+
+        end;
+      end;
+    end;
   TNpc.ReDrawTarget := True;
   ActiveControl := nil;
 end;
 
 procedure TAddNpcForm.Edit2Change(Sender: TObject);
 begin
-  NpcGrid.NarrowDown(Edit2.Text);
-  ActiveControl := nil;
+  NpcGrid.NarrowDown(TrimS(Edit2.Text));
+  //ActiveControl := nil;
 end;
 
 procedure TAddNpcForm.FormActivate(Sender: TObject);

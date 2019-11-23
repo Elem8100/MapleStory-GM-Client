@@ -3,10 +3,9 @@ unit AddMobUnit;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls,
-  AdvUtil, Vcl.Grids, AdvObj, BaseGrid, AdvGrid, WZIMGFile, WZArchive, Math,
-  MapleMap, WzUtils;
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, AdvUtil, Vcl.Grids, AdvObj,
+  BaseGrid, AdvGrid, WZIMGFile, WZArchive, Math, MapleMap, WzUtils;
 
 type
   TAddMobForm = class(TForm)
@@ -14,12 +13,12 @@ type
     Label1: TLabel;
     Label2: TLabel;
     Edit1: TEdit;
-    Label3: TLabel;
     Button1: TButton;
     Edit2: TEdit;
     MobGrid: TAdvStringGrid;
     Image1: TImage;
     Label4: TLabel;
+    Button2: TButton;
     procedure FormCreate(Sender: TObject);
     procedure MobGridClickCell(Sender: TObject; ARow, ACol: Integer);
     procedure Button1Click(Sender: TObject);
@@ -28,6 +27,7 @@ type
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormClick(Sender: TObject);
     procedure MobGridClick(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
   private
     MobID: string;
     WZ: TWZArchive;
@@ -53,14 +53,13 @@ end;
 
 procedure TAddMobForm.MobGridClickCell(Sender: TObject; ARow, ACol: Integer);
 var
-  Bmp: Tbitmap;
-  Entry: TWZImgEntry;
+  Bmp: TBitmap;
+  Entry: TWZIMGEntry;
   Path, SpriteID: string;
 begin
   MobID := MobGrid.Cells[1, ARow];
   Label1.Caption := MobGrid.Cells[2, ARow];
   Image1.Picture := nil;
-
 
   if MobWZ.GetImgFile(MobID + '.img') <> nil then
   begin
@@ -114,16 +113,40 @@ begin
     begin
       Range := RandomRange(Round(Player.X - 100), Round(Player.X + 100));
       if (Range > TMap.Left) and (Range < TMap.Right) then
+      begin
         TMob.Drop(MobID, Range, Round(Player.Y) - 100, TMap.Left, TMap.Right);
+        TMob.SummonedList.Add(MobID);
+      end;
     end;
   TMobInfo.ReDrawTarget;
   ActiveControl := nil;
 end;
 
+procedure TAddMobForm.Button2Click(Sender: TObject);
+begin
+
+  for var Iter in SpriteEngine.SpriteList do
+    if Iter is TMob then
+    begin
+      for var i := 0 to TMob.SummonedList.Count - 1 do
+      begin
+        if TMob(Iter).InfoID = TMob.SummonedList[i] then
+        begin
+          TMob(Iter).Dead;
+
+          TMob.MobList.Remove(TMob.SummonedList[i]);
+
+        end;
+      end;
+    end;
+  TMobInfo.ReDrawTarget;
+   ActiveControl := nil;
+end;
+
 procedure TAddMobForm.Edit2Change(Sender: TObject);
 begin
-  MobGrid.NarrowDown(Edit2.Text);
-  ActiveControl := nil;
+  MobGrid.NarrowDown(TrimS(Edit2.Text));
+ // ActiveControl := nil;
 end;
 
 procedure TAddMobForm.FormActivate(Sender: TObject);
@@ -163,7 +186,7 @@ end;
 
 procedure TAddMobForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
-  if Key = VK_Menu then
+  if Key = VK_MENU then
     Key := 0;
 end;
 

@@ -1,7 +1,7 @@
 object AddMobForm: TAddMobForm
   Left = 0
   Top = 0
-  Caption = 'Drop Mob'
+  Caption = 'Mob'
   ClientHeight = 805
   ClientWidth = 267
   Color = clBtnFace
@@ -63,8 +63,8 @@ object AddMobForm: TAddMobForm
     ParentFont = False
     TabOrder = 0
     object Image1: TImage
-      Left = 0
-      Top = 0
+      Left = 1
+      Top = 2
       Width = 238
       Height = 158
     end
@@ -82,12 +82,12 @@ object AddMobForm: TAddMobForm
     Font.Style = []
     ParentFont = False
     TabOrder = 1
-    Text = '10'
+    Text = '5'
   end
   object Button1: TButton
     Left = 15
     Top = 200
-    Width = 243
+    Width = 110
     Height = 33
     Caption = 'Drop'
     Font.Charset = DEFAULT_CHARSET
@@ -340,5 +340,20 @@ object AddMobForm: TAddMobForm
       18
       18
       18)
+  end
+  object Button2: TButton
+    Left = 141
+    Top = 200
+    Width = 110
+    Height = 33
+    Caption = 'Remove'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -15
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 5
+    OnClick = Button2Click
   end
 end
