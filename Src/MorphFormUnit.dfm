@@ -171,7 +171,7 @@ object MorphForm: TMorphForm
     Top = 8
     Width = 161
     Height = 33
-    Caption = 'Delete'
+    Caption = 'Remove'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -15

@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, AdvObj,
-  BaseGrid, AdvGrid, Generics.Collections, Vcl.StdCtrls;
+  BaseGrid, AdvGrid, Generics.Collections, Vcl.StdCtrls, AdvUtil;
 
 type
   TMorphForm = class(TForm)
