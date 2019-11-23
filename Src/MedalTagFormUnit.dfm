@@ -167,7 +167,7 @@ object MedalTagForm: TMedalTagForm
     Top = 3
     Width = 169
     Height = 33
-    Caption = 'Delete'
+    Caption = 'Remove'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -15
