@@ -25,7 +25,7 @@ object SkillForm: TSkillForm
     Top = 20
     Width = 105
     Height = 16
-    Caption = 'HotKeys  Settigs'
+    Caption = 'Hotkey  Settings'
   end
   object Label2: TLabel
     Left = 168

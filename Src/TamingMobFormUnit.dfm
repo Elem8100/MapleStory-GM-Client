@@ -167,7 +167,7 @@ object TamingMobForm: TTamingMobForm
     Top = 8
     Width = 201
     Height = 33
-    Caption = 'Delete'
+    Caption = 'Remove'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -15

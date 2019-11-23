@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, scControls,
-  scAdvancedControls, Vcl.Grids, AdvObj, BaseGrid, AdvGrid;
+  scAdvancedControls, Vcl.Grids, AdvObj, BaseGrid, AdvGrid, AdvUtil;
 
 type
   TSkillForm = class(TForm)
@@ -232,7 +232,7 @@ begin
   SkillGrid.Cells[1, 0] := 'ID';
   SkillGrid.Cells[2, 0] := 'Icon';
   SkillGrid.Cells[3, 0] := 'Name';
-  SkillGrid.Cells[4, 0] := 'HotKey';
+  SkillGrid.Cells[4, 0] := 'Hotkey';
   for var i := 0 to SkillGrid.ColCount - 1 do
     SkillGrid.CellProperties[i, 0].Alignment := taCenter;
 end;
