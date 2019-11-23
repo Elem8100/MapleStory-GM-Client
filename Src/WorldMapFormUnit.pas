@@ -34,6 +34,7 @@ procedure TWorldMapForm.FormActivate(Sender: TObject);
 begin
   if HasLoad then
     Exit;
+  WorldMapForm.Top:=-2500;
   HasLoad := True;
   var WorldMapGrid := MainForm.WorldMapGrid;
   WorldMapGrid.ColWidths[0] := 0;
