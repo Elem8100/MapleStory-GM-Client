@@ -1,7 +1,7 @@
 object NickNameForm: TNickNameForm
   Left = 0
   Top = 0
-  Caption = 'NickName'
+  Caption = 'Title'
   ClientHeight = 755
   ClientWidth = 342
   Color = clBtnFace
@@ -167,7 +167,7 @@ object NickNameForm: TNickNameForm
     Top = 6
     Width = 161
     Height = 30
-    Caption = 'Delete'
+    Caption = 'Remove'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -15
