@@ -63,6 +63,8 @@ begin
       SpriteEngine.Items[I].Dead;
 
   TMob.Moblist.Clear;
+  TMob.SummonedList.Clear;
+  TNpc.SummonedList.Clear;
   // LoadMob.Clear;
   TMap.Info.Clear;
   WzData.Clear;
