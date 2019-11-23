@@ -41,11 +41,11 @@ object DamageSkinForm: TDamageSkinForm
     ParentFont = False
   end
   object Label2: TLabel
-    Left = 85
+    Left = 120
     Top = 32
-    Width = 83
+    Width = 40
     Height = 18
-    Caption = 'Current Use:'
+    Caption = 'Using:'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -15
