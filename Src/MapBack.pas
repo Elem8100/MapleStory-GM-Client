@@ -34,7 +34,7 @@ type
 implementation
 
 uses
-  SaveMapUnit, MainUnit;
+  SaveMapUnit, MainUnit,ColorUtils, OptionsFormUnit;
 
 var
   cc: Integer;
@@ -84,7 +84,10 @@ begin
       if not HasLoad.contains(Entry) then
       begin
         HasLoad.Add(Entry);
-        DumpData(Entry, WzData, Images);
+        if OptionsForm.CheckBox2.Checked then
+          DumpData(Entry, WzData, Images, ceSaturation, -100)
+        else
+          DumpData(Entry, WzData, Images);
       end;
     end;
 
@@ -103,7 +106,10 @@ begin
       if not HasLoad.contains(AniEntry) then
       begin
         HasLoad.Add(AniEntry);
-        DumpData(AniEntry, WzData, Images);
+        if OptionsForm.CheckBox2.Checked then
+          DumpData(AniEntry, WzData, Images, ceSaturation, -100)
+        else
+          DumpData(AniEntry, WzData, Images);
       end;
     end;
 

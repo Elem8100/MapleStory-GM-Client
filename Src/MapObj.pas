@@ -38,7 +38,7 @@ type
 implementation
 
 uses
-  MapleMap;
+  MapleMap, ColorUtils, OptionsFormUnit;
 
 class procedure TMapObj.Create;
 var
@@ -68,8 +68,13 @@ begin
       else
         Entry := GetImgEntry('Map2.wz/Obj/' + oS + '.img/' + L0 + '/' + L1 + '/' + L2);
       if not WzData.ContainsKey(Entry.GetPath) then
-        DumpData(Entry, WzData, Images);
-
+      begin
+       // DumpData(Entry, WzData, Images);
+        if OptionsForm.CheckBox2.Checked then
+          DumpData(Entry, WzData, Images, ceSaturation, -100)
+        else
+          DumpData(Entry, WzData, Images);
+      end;
       _Flow := Iter.Get('flow', '0');
 
       if _Flow = 0 then
