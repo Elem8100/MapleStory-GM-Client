@@ -59,9 +59,9 @@ type
     NickNameButton: TSpeedButton;
     LabelRingButton: TSpeedButton;
     PetButton: TSpeedButton;
-
     SpeedButton5: TSpeedButton;
     SpeedButton6: TSpeedButton;
+    SpeedButton7: TSpeedButton;
     procedure FormCreate(Sender: TObject);
     procedure LoadMapButtonClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -102,9 +102,11 @@ type
     procedure PetButtonClick(Sender: TObject);
     procedure SpeedButton5Click(Sender: TObject);
     procedure SpeedButton6Click(Sender: TObject);
+    procedure SpeedButton7Click(Sender: TObject);
   private
     OldX, OldY: Integer;
     MoveOn: Boolean;
+    LoadWorldMapDone: Boolean;
     CircleList: TList<TShape>;
     procedure OnDeviceCreate(Sender: TObject; Param: Pointer; var Handled: Boolean);
     procedure TimerEvent(Sender: TObject);
@@ -129,7 +131,7 @@ uses
   ShowOptionUnit, Tools, AddNpcFormUnit, ChairformUnit, MorphFormUnit, MedalTagFormUnit,
   NickNameTagFormUnit, DamageSkinFormUnit, WorldMapFormUnit, CashFormUnit, TamingMobFormUnit,
   NameTag, MapleEffect, TamingMob, MapleChair, LabelRingFormUnit, PetFormUnit, Pet, FamiliarFormUnit,
-  MonsterFamiliar, SkillFormUnit, Skill;
+  MonsterFamiliar, SkillFormUnit, Skill,OptionsFormUnit;
 {$R *.dfm}
 
 procedure TMainForm.FamiliarButtonClick(Sender: TObject);
@@ -536,7 +538,11 @@ begin
   for var Iter in CircleList do
     Iter.Free;
   CircleList.Clear;
-
+  if not LoadWorldMapDone then
+  begin
+    WorldMapForm.Top := (Screen.Height - WorldMapForm.Height) div 2;
+    LoadWorldMapDone := True;
+  end;
   if not WorldMapForm.Showing then
     WorldMapForm.Show;
 
@@ -899,7 +905,7 @@ end;
 
 procedure TMainForm.SearchMapEditChange(Sender: TObject);
 begin
-  Grid.NarrowDown(SearchMapEdit.Text);
+  Grid.NarrowDown(Trims(SearchMapEdit.Text));
 end;
 
 procedure TMainForm.SpeedButton1Click(Sender: TObject);
@@ -940,6 +946,11 @@ end;
 procedure TMainForm.SpeedButton6Click(Sender: TObject);
 begin
   SkillForm.Show;
+end;
+
+procedure TMainForm.SpeedButton7Click(Sender: TObject);
+begin
+  OptionsForm.Show;
 end;
 
 procedure TMainForm.AvatarButton1Click(Sender: TObject);
