@@ -1,7 +1,7 @@
 object LabelRingForm: TLabelRingForm
   Left = 0
   Top = 0
-  Caption = 'LabelRing'
+  Caption = 'Ring'
   ClientHeight = 626
   ClientWidth = 342
   Color = clBtnFace
