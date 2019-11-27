@@ -7,26 +7,30 @@ uses
   AsphyreTypes;
 
 type
-  TColorEffect = (ceNone, ceHue, ceSaturation, ceLight, ceNegative, ceContrast1,ceContrast2,
-  ceContrast3,ceContrast4,ceContrast5);
+  TColorEffect = (ceNone, ceHue, ceSaturation, ceLight, ceNegative, ceContrast1, ceContrast2,
+    ceContrast3, ceContrast4, ceContrast5);
 
 procedure HSVvar(Texture: TDX9LockableTexture; oHue, oSat, oVal: Integer); overload;
 
-procedure HSVvar(Bitmap: TBitmap; oHue, oSat, oVal: Integer); overload;
+procedure HSVvar(BITMAP: TBitmap; oHue, oSat, oVal: Integer); overload;
 
-procedure HSV2RGB(var px: TRGB32; H, S, V: Integer);
+procedure HSV2RGB(var px: TRGB32; H, S, v: Integer);
 
 procedure RGB2HSV(RGB: TRGB32; var h, s, v: Integer);
 
-procedure Negative(Bitmap: TBitmap); overload;
+procedure Negative(BITMAP: TBitmap); overload;
 
 procedure Negative(Texture: TDX9LockableTexture); overload;
 
-procedure IntensityRGBAll(Bitmap: TBitmap; r, g, b: Integer); overload;
+procedure IntensityRGBAll(BITMAP: TBitmap; r, g, b: Integer); overload;
 
 procedure Contrast3(BITMAP: TBitmap; Change, Midpoint: Integer; DoRed, DoGreen, DoBlue: Boolean); overload;
 
 procedure Contrast3(Texture: TDX9LockableTexture; Change, Midpoint: Integer; DoRed, DoGreen, DoBlue: Boolean); overload;
+
+procedure Colorize(BITMAP: TBitmap; hue: Integer; saturation: Integer; luminosity: Double); overload;
+
+procedure Colorize(Texture: TDX9LockableTexture; hue: Integer; saturation: Integer; luminosity: Double); overload;
 
 implementation
 
@@ -303,6 +307,66 @@ begin
 
   end;
   Texture.Unlock;
+end;
+
+procedure Colorize(Bitmap: TBitmap; Hue: Integer; Saturation: Integer; Luminosity: Double);
+var
+  i, row, col: Integer;
+  px: PRGB32;
+  rgb: TRGB32;
+  v: Integer;
+  bitmapWidth, bitmapHeight: Integer;
+const
+  RedToGrayCoef = 21;
+  GreenToGrayCoef = 71;
+  BlueToGrayCoef = 8;
+begin
+  bitmapWidth := Bitmap.Width;
+  bitmapHeight := Bitmap.Height;
+
+  for row := 0 to bitmapHeight - 1 do
+  begin
+    px := Bitmap.Scanline[row];
+    for col := 0 to bitmapWidth - 1 do
+    begin
+      with px^ do
+        v := Trunc((r * RedToGrayCoef + g * GreenToGrayCoef + b * BlueToGrayCoef) shr 8 * Luminosity);
+      HSV2RGB(px^, Hue, Saturation, v);
+      Inc(px);
+    end;
+
+  end;
+
+end;
+
+procedure Colorize(Texture: TDX9LockableTexture; Hue: Integer; Saturation: Integer; Luminosity: Double);
+var
+  i, row, col: Integer;
+  px: PRGB32;
+  rgb: TRGB32;
+  v: Integer;
+  pDest: Pointer;
+  nPitch: Integer;
+const
+  RedToGrayCoef = 21;
+  GreenToGrayCoef = 71;
+  BlueToGrayCoef = 8;
+begin
+
+  Texture.Lock(Rect(0, 0, Texture.Width, Texture.Height), pDest, nPitch);
+  px := pDest;
+  for row := 0 to Texture.Height - 1 do
+  begin
+    for col := 0 to Texture.Width - 1 do
+    begin
+      with px^ do
+        v := Trunc((r * RedToGrayCoef + g * GreenToGrayCoef + b * BlueToGrayCoef) shr 8 * Luminosity);
+      HSV2RGB(px^, Hue, Saturation, v);
+      Inc(px);
+    end;
+  end;
+  Texture.Unlock;
+
 end;
 
 procedure HSV2RGB(var px: TRGB32; H, S, V: Integer);
