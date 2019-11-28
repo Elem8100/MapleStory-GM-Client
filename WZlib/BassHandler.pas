@@ -23,7 +23,7 @@ type
     procedure Play;
     procedure PlayLoop;
     procedure Mute;
-    procedure NotMute;
+    procedure ReStart;
     property Position: Double read GetPosition;
     property Length: Double read GetLength;
     property IsPlaying: Boolean read GetIsPlaying;
@@ -101,7 +101,7 @@ begin
   BASS_Pause;
 end;
 
-procedure TBassHandler.NotMute;
+procedure TBassHandler.ReStart;
 begin
   BASS_Start;
   PlayLoop;
