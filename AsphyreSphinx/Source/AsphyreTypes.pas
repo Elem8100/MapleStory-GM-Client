@@ -43,6 +43,15 @@ uses
 
 //---------------------------------------------------------------------------
 type
+ TRGB32 = record
+    B, G, R, A: Byte;
+ end;
+
+ TRGB32Array = array[0..MaxInt div SizeOf(TRGB32) - 1] of TRGB32;
+ PRGB32=^TRGB32;
+ PRGB32Array = ^TRGB32Array;
+
+
  PAsphyrePixelFormat = ^TAsphyrePixelFormat;
  TAsphyrePixelFormat = (apf_Unknown, apf_R8G8B8, apf_A8R8G8B8, apf_X8R8G8B8,
   apf_R5G6B5, apf_X1R5G5B5, apf_A1R5G5B5, apf_A4R4G4B4, apf_R3G3B2, apf_A8,
