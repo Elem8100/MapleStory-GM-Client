@@ -190,46 +190,46 @@ begin
       end;
     ceHue:
       begin
-        HSVvar(Texture, Value, 1, 0);
+        TColorFunc.HSVvar(Texture, Value, 1, 0);
         Result := Texture;
       end;
     ceSaturation:
       begin
-        HSVvar(Texture, 0, Value, 0);
+        TColorFunc.HSVvar(Texture, 0, Value, 0);
         Result := Texture;
       end;
     ceContrast1:
       begin
-        Contrast3(Texture, 50, -90, True, False, False);
+        TColorFunc.Contrast3<TDX9LockableTexture>(Texture, 50, -90, True, False, False);
         Result := Texture;
       end;
     ceContrast2:
       begin
-        Contrast3(Texture, 50, -90, False, True, False);
+        TColorFunc.Contrast3<TDX9LockableTexture>(Texture, 50, -90, False, True, False);
         Result := Texture;
       end;
 
     ceContrast3:
       begin
-        Contrast3(Texture, 50, -90, False, False, True);
+        TColorFunc.Contrast3<TDX9LockableTexture>(Texture, 50, -90, False, False, True);
         Result := Texture;
       end;
 
     ceContrast4:
       begin
-        Contrast3(Texture, 50, -90, True, True, False);
+        TColorFunc.Contrast3<TDX9LockableTexture>(Texture, 50, -90, True, True, False);
         Result := Texture;
       end;
 
     ceContrast5:
       begin
-        Contrast3(Texture, 50, -90, True, False, True);
+        TColorFunc.Contrast3<TDX9LockableTexture>(Texture, 50, -90, True, False, True);
         Result := Texture;
       end;
 
     ceNegative:
       begin
-        Negative(Texture);
+        TColorFunc.Negative(Texture);
         Result := Texture;
       end;
 
