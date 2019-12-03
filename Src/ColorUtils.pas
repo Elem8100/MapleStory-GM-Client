@@ -3,38 +3,99 @@ unit ColorUtils;
 interface
 
 uses
-  Windows, SysUtils, StrUtils, Generics.Collections, Classes, Math, Vcl.Graphics, DX9Textures,
-  AsphyreTypes;
+  Windows, SysUtils, Classes, Math, Vcl.Graphics, DX9Textures, AsphyreTypes, AdvGrid;
 
 type
   TColorEffect = (ceNone, ceHue, ceSaturation, ceLight, ceNegative, ceContrast1, ceContrast2,
     ceContrast3, ceContrast4, ceContrast5);
 
-procedure HSVvar(Texture: TDX9LockableTexture; oHue, oSat, oVal: Integer); overload;
-
-procedure HSVvar(BITMAP: TBitmap; oHue, oSat, oVal: Integer); overload;
-
-procedure HSV2RGB(var px: TRGB32; H, S, v: Integer);
-
-procedure RGB2HSV(RGB: TRGB32; var h, s, v: Integer);
-
-procedure Negative(BITMAP: TBitmap); overload;
-
-procedure Negative(Texture: TDX9LockableTexture); overload;
-
-procedure IntensityRGBAll(BITMAP: TBitmap; r, g, b: Integer); overload;
-
-procedure Contrast3(BITMAP: TBitmap; Change, Midpoint: Integer; DoRed, DoGreen, DoBlue: Boolean); overload;
-
-procedure Contrast3(Texture: TDX9LockableTexture; Change, Midpoint: Integer; DoRed, DoGreen, DoBlue: Boolean); overload;
-
-procedure Colorize(BITMAP: TBitmap; hue: Integer; saturation: Integer; luminosity: Double); overload;
-
-procedure Colorize(Texture: TDX9LockableTexture; hue: Integer; saturation: Integer; luminosity: Double); overload;
+  TColorFunc = class
+    class procedure SetGridColor(Bmp: TBitmap; Grid: TAdvStringGrid);
+    class procedure SetSpriteColor<T: class>(Entry: T; Row: Integer);
+    class procedure HSVvar<T: class>(Texture: T; oHue, oSat, oVal: Integer);
+    class procedure Negative<T: class>(Texture: T);
+    class procedure IntensityRGBAll<T: class>(Texture: T; r, g, b: Integer);
+    class procedure Contrast3<T: class>(Texture: T; Change, Midpoint: Integer; DoRed, DoGreen, DoBlue: Boolean);
+    class procedure Colorize<T: class>(Texture: T; Hue: Integer; saturation: Integer; luminosity: Double);
+    class procedure HSV2RGB(var px: TRGB32; H, S, v: Integer);
+    class procedure RGB2HSV(RGB: TRGB32; var h, s, v: Integer);
+    class function blimit(vv: Integer): Integer;
+  end;
 
 implementation
 
-procedure HSVvar(Texture: TDX9LockableTexture; oHue, oSat, oVal: Integer);
+uses
+  WZImgFile, wzUtils, Global;
+
+class procedure TColorFunc.SetGridColor(Bmp: TBitmap; Grid: TAdvStringGrid);
+begin
+  var Width := Bmp.Width;
+  var Height := Bmp.Height;
+  var DoStretch: Boolean;
+  if (Height < 180) then
+    Grid.DefaultRowHeight := Height + 5
+  else
+    Grid.DefaultRowHeight := 180;
+
+
+  //DyeGrid.FixedColWidth := 0;
+  Grid.fixedRowHeight := 0;
+  for var Row := 0 to 18 do
+  begin
+    Grid.CreateBitmap(0, Row, False, haCenter, vaCenter).Assign(Bmp);
+    case Row of
+      0..10:
+        TColorFunc.HSVvar(Grid.CellGraphics[0, Row].CellBitmap, Row * 30, 0, 0);
+      11:
+        TColorFunc.HSVvar(Grid.CellGraphics[0, Row].CellBitmap, 0, 25, 0);
+      12:
+        TColorFunc.HSVvar(Grid.CellGraphics[0, Row].CellBitmap, 0, -100, 0);
+      13:
+        TColorFunc.Contrast3<TBitmap>(Grid.CellGraphics[0, Row].CellBitmap, 50, -90, True, False, False);
+      14:
+        TColorFunc.Contrast3<TBitmap>(Grid.CellGraphics[0, Row].CellBitmap, 50, -90, False, True, False);
+      15:
+        TColorFunc.Contrast3<TBitmap>(Grid.CellGraphics[0, Row].CellBitmap, 50, -90, False, False, True);
+      16:
+        TColorFunc.Contrast3<TBitmap>(Grid.CellGraphics[0, Row].CellBitmap, 50, -90, True, True, False);
+      17:
+        TColorFunc.Contrast3<TBitmap>(Grid.CellGraphics[0, Row].CellBitmap, 50, -90, True, False, True);
+      18:
+        TColorFunc.Negative(Grid.CellGraphics[0, Row].CellBitmap);
+    end;
+  end;
+
+end;
+
+class procedure TColorFunc.SetSpriteColor<T>(Entry: T; Row: Integer);
+begin
+  case Row of
+    0:
+      DumpData(TWZIMGEntry(Entry), WzData, Images);
+    1..10:
+      DumpData(TWZIMGEntry(Entry), WzData, Images, ceHue, Row * 30);
+    11:
+      DumpData(TWZIMGEntry(Entry), WzData, Images, ceSaturation, 25);
+    12:
+      DumpData(TWZIMGEntry(Entry), WzData, Images, ceSaturation, -100);
+    13:
+      DumpData(TWZIMGEntry(Entry), WzData, Images, ceContrast1);
+    14:
+      DumpData(TWZIMGEntry(Entry), WzData, Images, ceContrast2);
+    15:
+      DumpData(TWZIMGEntry(Entry), WzData, Images, ceContrast3);
+    16:
+      DumpData(TWZIMGEntry(Entry), WzData, Images, ceContrast4);
+    17:
+      DumpData(TWZIMGEntry(Entry), WzData, Images, ceContrast5);
+    18:
+      DumpData(TWZIMGEntry(Entry), WzData, Images, ceNegative);
+
+  end;
+
+end;
+
+class procedure TColorFunc.HSVvar<T>(Texture: T; oHue, oSat, oVal: Integer);
 var
   x, y: Integer;
   Hue, Sat, Val: Integer;
@@ -42,125 +103,123 @@ var
   nPitch: Integer;
   ARGB: PRGB32;
 begin
-  Texture.Lock(Rect(0, 0, Texture.Width, Texture.Height), pDest, nPitch);
-  ARGB := pDest;
-  for y := 0 to Texture.Height - 1 do
-  begin
-    for x := 0 to Texture.Width - 1 do
+  //var Output := TDX9LockableTexture(Texture);
+  if Texture is TDX9LockableTexture then
+    with TDX9LockableTexture(Texture) do
     begin
-      RGB2HSV(ARGB^, Hue, Sat, Val);
-      HSV2RGB(ARGB^, Hue + oHue, Sat + oSat, Val + oVal);
-      Inc(ARGB);
-    end;
-  end;
-  Texture.Unlock;
+      Lock(Rect(0, 0, Width, Height), pDest, nPitch);
+      ARGB := pDest;
+      for y := 0 to Height - 1 do
+      begin
+        for x := 0 to Width - 1 do
+        begin
+          RGB2HSV(ARGB^, Hue, Sat, Val);
+          HSV2RGB(ARGB^, Hue + oHue, Sat + oSat, Val + oVal);
+          Inc(ARGB);
+        end;
+      end;
+      Unlock;
+     // TDX9LockableTexture(Result) := Output;
+    end
+  else if Texture is TBitmap then
+    with TBitmap(Texture) do
+    begin
+      for y := 0 to Height - 1 do
+      begin
+        ARGB := ScanLine[y];
+        for x := 0 to Width - 1 do
+        begin
+          RGB2HSV(ARGB^, Hue, Sat, Val);
+          HSV2RGB(ARGB^, Hue + oHue, Sat + oSat, Val + oVal);
+          Inc(ARGB);
+        end;
+      end;
+    end
+
 end;
 
-procedure HSVvar(Bitmap: TBitmap; oHue, oSat, oVal: Integer);
-var
-  x, y: Integer;
-  Hue, Sat, Val: Integer;
-  ARGB: PRGB32;
-begin
-
-  for y := 0 to Bitmap.Height - 1 do
-  begin
-    ARGB := Bitmap.ScanLine[y];
-    for x := 0 to Bitmap.width - 1 do
-    begin
-      RGB2HSV(ARGB^, Hue, Sat, Val);
-      HSV2RGB(ARGB^, Hue + oHue, Sat + oSat, Val + oVal);
-      Inc(ARGB);
-    end;
-  end;
-end;
-
-procedure Negative(Bitmap: TBitmap);
+class procedure TColorFunc.Negative<T>(Texture: T);
 var
   col, row: Integer;
   ppx: PRGB32;
   p_byte: PByte;
-begin
-
-  case Bitmap.PixelFormat of
-    pf24bit:
-      for row := 0 to Bitmap.Height - 1 do
-      begin
-        ppx := Bitmap.ScanLine[row];
-
-        for col := 0 to Bitmap.Width - 1 do
-        begin
-          ppx^.r := 255 - ppx^.r;
-          ppx^.g := 255 - ppx^.g;
-          ppx^.b := 255 - ppx^.b;
-          Inc(ppx);
-        end;
-
-      end;
-    pf32bit:
-      for row := 0 to Bitmap.Height - 1 do
-      begin
-        p_byte := Bitmap.ScanLine[row];
-
-        for col := 0 to Bitmap.Width - 1 do
-        begin
-          p_byte^ := 255 - p_byte^;
-          Inc(p_byte);
-          p_byte^ := 255 - p_byte^;
-          Inc(p_byte);
-          p_byte^ := 255 - p_byte^;
-          Inc(p_byte);
-          Inc(p_byte);
-        end;
-
-      end;
-
-  end;
-
-end;
-
-procedure Negative(Texture: TDX9LockableTexture);
-var
-  col, row: Integer;
-  p_byte: PByte;
   pDest: Pointer;
   nPitch: Integer;
 begin
-  Texture.Lock(Rect(0, 0, Texture.Width, Texture.Height), pDest, nPitch);
-  p_byte := pDest;
-  for row := 0 to Texture.Height - 1 do
-  begin
-    for col := 0 to Texture.Width - 1 do
+  if Texture is TDX9LockableTexture then
+    with TDX9LockableTexture(Texture) do
     begin
-      p_byte^ := 255 - p_byte^;
-      Inc(p_byte);
-      p_byte^ := 255 - p_byte^;
-      Inc(p_byte);
-      p_byte^ := 255 - p_byte^;
-      Inc(p_byte);
-      Inc(p_byte);
+      Lock(Rect(0, 0, Width, Height), pDest, nPitch);
+      p_byte := pDest;
+      for row := 0 to Height - 1 do
+      begin
+        for col := 0 to Width - 1 do
+        begin
+          p_byte^ := 255 - p_byte^;
+          Inc(p_byte);
+          p_byte^ := 255 - p_byte^;
+          Inc(p_byte);
+          p_byte^ := 255 - p_byte^;
+          Inc(p_byte);
+          Inc(p_byte);
+        end;
+      end;
+      Unlock;
+    end
+  else if Texture is TBitmap then
+    with TBitmap(Texture) do
+    begin
+      case PixelFormat of
+        pf24bit:
+          for row := 0 to Height - 1 do
+          begin
+            ppx := ScanLine[row];
+            for col := 0 to Width - 1 do
+            begin
+              ppx^.r := 255 - ppx^.r;
+              ppx^.g := 255 - ppx^.g;
+              ppx^.b := 255 - ppx^.b;
+              Inc(ppx);
+            end;
+          end;
+        pf32bit:
+          for row := 0 to Height - 1 do
+          begin
+            p_byte := ScanLine[row];
+            for col := 0 to Width - 1 do
+            begin
+              p_byte^ := 255 - p_byte^;
+              Inc(p_byte);
+              p_byte^ := 255 - p_byte^;
+              Inc(p_byte);
+              p_byte^ := 255 - p_byte^;
+              Inc(p_byte);
+              Inc(p_byte);
+            end;
+          end;
+      end;
     end;
-  end;
-  Texture.Unlock;
 
 end;
 
-function blimit(vv: Integer): Integer;
+class function TColorFunc.blimit(vv: Integer): Integer;
 begin
   if vv < 0 then
-    result := 0
+    Result := 0
   else if vv > 255 then
-    result := 255
+    Result := 255
   else
-    result := vv;
+    Result := vv;
 end;
 
-procedure IntensityRGBAll(bitmap: TBitmap; r, g, b: Integer);
+class procedure TColorFunc.IntensityRGBAll<T>(Texture: T; r, g, b: Integer);
 var
   x, y: Integer;
   e: PRGB32;
   per1: Double;
   LUTR, LUTG, LUTB: array[0..255] of Byte;
+  pDest: Pointer;
+  nPitch: Integer;
 begin
 
   for x := 0 to 255 do
@@ -170,88 +229,48 @@ begin
     LUTB[x] := blimit(x + b);
   end;
 
-  for y := 0 to bitmap.Height - 1 do
-  begin
-    e := bitmap.ScanLine[y];
-
-    for x := 0 to bitmap.Width - 1 do
+  if Texture is TDX9LockableTexture then
+    with TDX9LockableTexture(Texture) do
     begin
-      with e^ do
+      Lock(Rect(0, 0, Width, Height), pDest, nPitch);
+      e := pDest;
+      for y := 0 to Height - 1 do
       begin
-        r := LUTR[r];
-        g := LUTG[g];
-        b := LUTB[b];
+        for x := 0 to Width - 1 do
+        begin
+          with e^ do
+          begin
+            r := LUTR[r];
+            g := LUTG[g];
+            b := LUTB[b];
+          end;
+          Inc(e);
+        end;
       end;
-      Inc(e);
-    end;
-
-  end;
+      Unlock;
+    end
+  else if Texture is TBitmap then
+    with TBitmap(Texture) do
+      for y := 0 to Height - 1 do
+      begin
+        e := ScanLine[y];
+        for x := 0 to Width - 1 do
+        begin
+          with e^ do
+          begin
+            r := LUTR[r];
+            g := LUTG[g];
+            b := LUTB[b];
+          end;
+          Inc(e);
+        end;
+      end;
 end;
 
-procedure Contrast3(Bitmap: TBitmap; Change, Midpoint: Integer; DoRed, DoGreen, DoBlue: Boolean);
+class procedure TColorFunc.Contrast3<T>(Texture: T; Change, Midpoint: Integer; DoRed, DoGreen, DoBlue: Boolean);
 var
   i, x, y: Integer;
   rgb: PRGB32;
-  width, height: Integer;
-  contrast: Double;
-  modifier: Integer;
-  LUT1: array[0..255] of Integer;
-begin
-  if Change = 0 then
-    Exit;
-
-  if Change < -255 then
-    Change := -255;
-  if Change > 255 then
-    Change := 255;
-
-  if Midpoint < -100 then
-    Midpoint := -100;
-  if Midpoint > 100 then
-    Midpoint := 100;
-
-  i := Change + 100;
-
-  if i = 100 then
-    contrast := 1
-  else if i < 100 then
-    contrast := 1 / (5 - (i / 25))
-  else
-    contrast := ((i - 100) / 50) + 1;
-
-  modifier := 100 + Midpoint;
-  for i := 0 to 255 do
-    LUT1[i] := blimit(Trunc(((i - modifier) * contrast) + modifier));
-
-  width := Bitmap.Width;
-  height := Bitmap.Height;
-
-  for y := 0 to height - 1 do
-  begin
-    rgb := Bitmap.Scanline[y];
-    for x := 0 to width - 1 do
-    begin
-      with rgb^ do
-      begin
-        if DoRed then
-          r := LUT1[r];
-        if DoGreen then
-          g := LUT1[g];
-        if DoBlue then
-          b := LUT1[b];
-      end;
-      Inc(rgb);
-    end;
-
-  end;
-
-end;
-
-procedure Contrast3(Texture: TDX9LockableTexture; Change, Midpoint: Integer; DoRed, DoGreen, DoBlue: Boolean);
-var
-  i, x, y: Integer;
-  rgb: PRGB32;
-  width, height: Integer;
   contrast: Double;
   modifier: Integer;
   LUT1: array[0..255] of Integer;
@@ -284,62 +303,55 @@ begin
   for i := 0 to 255 do
     LUT1[i] := blimit(Trunc(((i - modifier) * contrast) + modifier));
 
-  width := Texture.Width;
-  height := Texture.Height;
-  Texture.Lock(Rect(0, 0, Texture.Width, Texture.Height), pDest, nPitch);
-  rgb := pDest;
-  for y := 0 to height - 1 do
-  begin
-
-    for x := 0 to width - 1 do
+  if Texture is TDX9LockableTexture then
+    with TDX9LockableTexture(Texture) do
     begin
-      with rgb^ do
+      Lock(Rect(0, 0, Width, Height), pDest, nPitch);
+      rgb := pDest;
+      for y := 0 to Height - 1 do
       begin
-        if DoRed then
-          r := LUT1[r];
-        if DoGreen then
-          g := LUT1[g];
-        if DoBlue then
-          b := LUT1[b];
+        for x := 0 to Width - 1 do
+        begin
+          with rgb^ do
+          begin
+            if DoRed then
+              r := LUT1[r];
+            if DoGreen then
+              g := LUT1[g];
+            if DoBlue then
+              b := LUT1[b];
+          end;
+          Inc(rgb);
+        end;
       end;
-      Inc(rgb);
-    end;
-
-  end;
-  Texture.Unlock;
-end;
-
-procedure Colorize(Bitmap: TBitmap; Hue: Integer; Saturation: Integer; Luminosity: Double);
-var
-  i, row, col: Integer;
-  px: PRGB32;
-  rgb: TRGB32;
-  v: Integer;
-  bitmapWidth, bitmapHeight: Integer;
-const
-  RedToGrayCoef = 21;
-  GreenToGrayCoef = 71;
-  BlueToGrayCoef = 8;
-begin
-  bitmapWidth := Bitmap.Width;
-  bitmapHeight := Bitmap.Height;
-
-  for row := 0 to bitmapHeight - 1 do
-  begin
-    px := Bitmap.Scanline[row];
-    for col := 0 to bitmapWidth - 1 do
+      unlock;
+    end
+  else if Texture is TBitmap then
+    with TBitmap(Texture) do
     begin
-      with px^ do
-        v := Trunc((r * RedToGrayCoef + g * GreenToGrayCoef + b * BlueToGrayCoef) shr 8 * Luminosity);
-      HSV2RGB(px^, Hue, Saturation, v);
-      Inc(px);
-    end;
+      for y := 0 to Height - 1 do
+      begin
+        rgb := Scanline[y];
+        for x := 0 to Width - 1 do
+        begin
+          with rgb^ do
+          begin
+            if DoRed then
+              r := LUT1[r];
+            if DoGreen then
+              g := LUT1[g];
+            if DoBlue then
+              b := LUT1[b];
+          end;
+          Inc(rgb);
+        end;
 
-  end;
+      end;
+    end;
 
 end;
 
-procedure Colorize(Texture: TDX9LockableTexture; Hue: Integer; Saturation: Integer; Luminosity: Double);
+class procedure TColorFunc.Colorize<T>(Texture: T; Hue: Integer; Saturation: Integer; Luminosity: Double);
 var
   i, row, col: Integer;
   px: PRGB32;
@@ -352,24 +364,43 @@ const
   GreenToGrayCoef = 71;
   BlueToGrayCoef = 8;
 begin
-
-  Texture.Lock(Rect(0, 0, Texture.Width, Texture.Height), pDest, nPitch);
-  px := pDest;
-  for row := 0 to Texture.Height - 1 do
-  begin
-    for col := 0 to Texture.Width - 1 do
+  if Texture is TDX9LockableTexture then
+    with TDX9LockableTexture(Texture) do
     begin
-      with px^ do
-        v := Trunc((r * RedToGrayCoef + g * GreenToGrayCoef + b * BlueToGrayCoef) shr 8 * Luminosity);
-      HSV2RGB(px^, Hue, Saturation, v);
-      Inc(px);
+      Lock(Rect(0, 0, Width, Height), pDest, nPitch);
+      px := pDest;
+      for row := 0 to Height - 1 do
+      begin
+        for col := 0 to Width - 1 do
+        begin
+          with px^ do
+            v := Trunc((r * RedToGrayCoef + g * GreenToGrayCoef + b * BlueToGrayCoef) shr 8 * Luminosity);
+          HSV2RGB(px^, Hue, Saturation, v);
+          Inc(px);
+        end;
+      end;
+      Unlock;
+    end
+  else if Texture is TBitmap then
+    with TBitmap(Texture) do
+    begin
+      for row := 0 to Height - 1 do
+      begin
+        px := Scanline[row];
+        for col := 0 to Width - 1 do
+        begin
+          with px^ do
+            v := Trunc((r * RedToGrayCoef + g * GreenToGrayCoef + b * BlueToGrayCoef) shr 8 * Luminosity);
+          HSV2RGB(px^, Hue, Saturation, v);
+          Inc(px);
+        end;
+
+      end;
     end;
-  end;
-  Texture.Unlock;
 
 end;
 
-procedure HSV2RGB(var px: TRGB32; H, S, V: Integer);
+class procedure TColorFunc.HSV2RGB(var px: TRGB32; H, S, V: Integer);
 const
   divisor: Integer = 99 * 60;
 var
@@ -457,7 +488,7 @@ begin
   px.b := Round(px.b / 99 * 255);
 end;
 
-procedure RGB2HSV(RGB: TRGB32; var h, s, v: Integer);
+class procedure TColorFunc.RGB2HSV(RGB: TRGB32; var h, s, v: Integer);
 
   procedure MinMaxInt(const i, j, k: Integer; var min, max: Integer);
   begin
