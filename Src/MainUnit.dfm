@@ -3,7 +3,7 @@ object MainForm: TMainForm
   Top = 77
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
-  Caption = 'MapleStoryGM V3.11'
+  Caption = 'MapleStoryGM v3.13'
   ClientHeight = 711
   ClientWidth = 1744
   Color = clBtnFace
@@ -156,7 +156,7 @@ object MainForm: TMainForm
     ShowClose = False
     ShowLock = False
     Style = esCustom
-    Version = '1.6.0.1'
+    Version = '1.6.0.2'
     OnClick = AdvToolPanel1Click
   end
   object AdvGroupBox2: TAdvGroupBox
@@ -2429,7 +2429,7 @@ object MainForm: TMainForm
         SearchFooter.ResultFormat = '(%d of %d)'
         ShowDesignHelper = False
         SortSettings.DefaultFormat = ssAutomatic
-        Version = '8.2.4.1'
+        Version = '8.4.2.2'
         ColWidths = (
           180)
         RowHeights = (
@@ -2439,6 +2439,10 @@ object MainForm: TMainForm
     object TabSheet2: TTabSheet
       Caption = 'World  Map'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object WorldMapGrid: TAdvStringGrid
         Left = 0
         Top = 0
@@ -2558,7 +2562,7 @@ object MainForm: TMainForm
         SearchFooter.ResultFormat = '(%d of %d)'
         ShowDesignHelper = False
         SortSettings.DefaultFormat = ssAutomatic
-        Version = '8.2.4.1'
+        Version = '8.4.2.2'
         ColWidths = (
           180
           180)

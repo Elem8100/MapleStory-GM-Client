@@ -127,8 +127,8 @@ var
 implementation
 
 uses
-  AddMobUnit, SaveMapUnit, ImageInfoUnit, RenderFormUnit, MapBack, MobInfo, AvatarUnit,
-  ShowOptionUnit, Tools, AddNpcFormUnit, ChairformUnit, MorphFormUnit, MedalTagFormUnit,
+  MobFormUnit, SaveMapFormUnit, ImageInfoUnit, RenderFormUnit, MapBack, MobInfo, AvatarFormUnit,
+  ShowOptionUnit, Tools, NpcFormUnit, ChairformUnit, MorphFormUnit, MedalTagFormUnit,
   NickNameTagFormUnit, DamageSkinFormUnit, WorldMapFormUnit, CashFormUnit, TamingMobFormUnit,
   NameTag, MapleEffect, TamingMob, MapleChair, LabelRingFormUnit, PetFormUnit, Pet, FamiliarFormUnit,
   MonsterFamiliar, SkillFormUnit, Skill,OptionsFormUnit;
