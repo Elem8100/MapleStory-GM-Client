@@ -5,19 +5,28 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, AdvObj, BaseGrid, AdvGrid, Generics.Collections,
-  StrUtils, Vcl.StdCtrls, AdvUtil;
+  StrUtils, Vcl.StdCtrls, AdvUtil, Vcl.ComCtrls;
 
 type
   TChairForm = class(TForm)
+    PageControl1: TPageControl;
+    TabSheet1: TTabSheet;
+    TabSheet2: TTabSheet;
     ChairGrid: TAdvStringGrid;
+    DyeGrid: TAdvStringGrid;
+    Edit1: TEdit;
+    Label1: TLabel;
     procedure ChairGridClickCell(Sender: TObject; ARow, ACol: Integer);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormCreate(Sender: TObject);
     procedure FormClick(Sender: TObject);
     procedure ChairGridClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
+    procedure DyeGridClickCell(Sender: TObject; ARow, ACol: Integer);
+    procedure Edit1Change(Sender: TObject);
   private
     HasLoad: Boolean;
+    ChairID: string;
     { Private declarations }
   public
     { Public declarations }
@@ -31,7 +40,8 @@ implementation
 {$R *.dfm}
 
 uses
-  MapleChair, Global, MapleEffect, MapleCharacter, WZIMGFile, WZDirectory, WzUtils, TamingMob, Morph;
+  MapleChair, Global, MapleEffect, MapleCharacter, WZIMGFile, WZDirectory, WZUtils, TamingMob, Morph,
+  ColorUtils;
 
 function IDToInt(ID: string): string;
 begin
@@ -48,7 +58,7 @@ procedure TChairForm.ChairGridClickCell(Sender: TObject; ARow, ACol: Integer);
 begin
   if TMorph.IsUse then
     Exit;
-  var ChairID := ChairGrid.Cells[1, ARow];
+  ChairID := ChairGrid.Cells[1, ARow];
   TMapleChair.Delete;
   TTamingMob.Delete;
   TItemEffect.Delete(Chair);
@@ -57,8 +67,45 @@ begin
   if TItemEffect.AllList.contains(ChairID) then
     TItemEffect.Create(ChairID, True);
   TMapleChair.IsUse := True;
-
+  TColorFunc.SetGridColor(ChairGrid.CellGraphics[2, ARow].CellBitmap, DyeGrid);
   ActiveControl := nil;
+end;
+
+procedure TChairForm.DyeGridClickCell(Sender: TObject; ARow, ACol: Integer);
+begin
+  TMapleChair.Delete;
+  TTamingMob.Delete;
+  TItemEffect.Delete(Chair);
+  case ARow of
+    0:  TMapleChair.Create(ChairID);
+    1..10:
+      TMapleChair.Create(ChairID, ceHue, ARow * 30);
+    11:
+      TMapleChair.Create(ChairID, ceSaturation, 25);
+    12:
+      TMapleChair.Create(ChairID, ceSaturation, -100);
+    13:
+      TMapleChair.Create(ChairID, ceContrast1);
+    14:
+      TMapleChair.Create(ChairID, ceContrast2);
+    15:
+      TMapleChair.Create(ChairID, ceContrast3);
+    16:
+      TMapleChair.Create(ChairID, ceContrast4);
+    17:
+      TMapleChair.Create(ChairID, ceContrast5);
+    18:
+      TMapleChair.Create(ChairID, ceNegative);
+  end;
+
+   if TItemEffect.AllList.contains(ChairID) then
+    TItemEffect.Create(ChairID, True);
+  TMapleChair.IsUse := True;
+end;
+
+procedure TChairForm.Edit1Change(Sender: TObject);
+begin
+ ChairGrid.NarrowDown(TrimS(Edit1.Text));
 end;
 
 procedure TChairForm.FormActivate(Sender: TObject);
