@@ -3,22 +3,25 @@ unit LabelRingFormUnit;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, AdvObj, BaseGrid, AdvGrid,
-  AdvUtil;
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, AdvObj,
+  BaseGrid, AdvGrid, Vcl.StdCtrls;
 
 type
   TLabelRingForm = class(TForm)
     LabelRingGrid: TAdvStringGrid;
+    Label1: TLabel;
+    Edit1: TEdit;
     procedure FormActivate(Sender: TObject);
-    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
-    procedure FormCreate(Sender: TObject);
-    procedure LabelRingGridClick(Sender: TObject);
     procedure LabelRingGridClickCell(Sender: TObject; ARow, ACol: Integer);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormClick(Sender: TObject);
+    procedure LabelRingGridClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure Edit1Change(Sender: TObject);
   private
+    HasShow: Boolean;
     { Private declarations }
-    HasLoad: Boolean;
   public
     { Public declarations }
   end;
@@ -27,15 +30,22 @@ var
   LabelRingForm: TLabelRingForm;
 
 implementation
-   uses
-  NameTag, WZIMGFile, WZDirectory, WzUtils, Global, StrUtils;
+
 {$R *.dfm}
+
+uses
+  NameTag, WZIMGFile, WZDirectory, WzUtils, Global, StrUtils;
+
+procedure TLabelRingForm.Edit1Change(Sender: TObject);
+begin
+    LabelRingGrid.NarrowDown(TrimS(Edit1.Text));
+end;
 
 procedure TLabelRingForm.FormActivate(Sender: TObject);
 begin
-   if HasLoad then
+  if HasShow then
     Exit;
-  HasLoad := True;
+  HasShow := True;
   LabelRingGrid.Canvas.Font.Size := 18;
   LabelRingGrid.Canvas.TextOut(90, 100, 'Loading...');
 
@@ -69,11 +79,12 @@ begin
   end;
   LabelRingGrid.SortByColumn(1);
   LabelRingGrid.EndUpdate;
+
 end;
 
 procedure TLabelRingForm.FormClick(Sender: TObject);
 begin
-   ActiveControl := nil;
+  ActiveControl := nil;
 end;
 
 procedure TLabelRingForm.FormCreate(Sender: TObject);
@@ -91,7 +102,7 @@ end;
 
 procedure TLabelRingForm.LabelRingGridClick(Sender: TObject);
 begin
-   ActiveControl := nil;
+  ActiveControl := nil;
 end;
 
 procedure TLabelRingForm.LabelRingGridClickCell(Sender: TObject; ARow,
@@ -103,3 +114,4 @@ begin
 end;
 
 end.
+

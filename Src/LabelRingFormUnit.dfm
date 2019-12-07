@@ -1,8 +1,8 @@
 object LabelRingForm: TLabelRingForm
   Left = 0
   Top = 0
-  Caption = 'Ring'
-  ClientHeight = 626
+  Caption = 'LabelRingForm'
+  ClientHeight = 656
   ClientWidth = 342
   Color = clBtnFace
   Constraints.MaxWidth = 360
@@ -21,21 +21,35 @@ object LabelRingForm: TLabelRingForm
   OnKeyDown = FormKeyDown
   PixelsPerInch = 120
   TextHeight = 16
+  object Label1: TLabel
+    Left = 16
+    Top = 10
+    Width = 44
+    Height = 18
+    Caption = 'Search'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -15
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
+  end
   object LabelRingGrid: TAdvStringGrid
     AlignWithMargins = True
     Left = 4
-    Top = 10
+    Top = 36
     Width = 328
-    Height = 608
+    Height = 612
     Cursor = crDefault
     Margins.Left = 4
-    Margins.Top = 10
+    Margins.Top = 36
     Margins.Right = 10
     Margins.Bottom = 8
     Align = alClient
     ColCount = 4
     DefaultRowHeight = 35
     DrawingStyle = gdsClassic
+    FixedRows = 0
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -15
@@ -144,7 +158,7 @@ object LabelRingForm: TLabelRingForm
     SelectionColor = clGradientInactiveCaption
     ShowDesignHelper = False
     SortSettings.DefaultFormat = ssAutomatic
-    Version = '8.2.4.1'
+    Version = '8.4.2.2'
     ColWidths = (
       10
       81
@@ -161,5 +175,13 @@ object LabelRingForm: TLabelRingForm
       35
       35
       35)
+  end
+  object Edit1: TEdit
+    Left = 64
+    Top = 8
+    Width = 129
+    Height = 24
+    TabOrder = 1
+    OnChange = Edit1Change
   end
 end
