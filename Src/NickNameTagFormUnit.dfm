@@ -15,12 +15,25 @@ object NickNameForm: TNickNameForm
   KeyPreview = True
   OldCreateOrder = False
   Scaled = False
+  OnActivate = FormActivate
   OnClick = FormClick
   OnCreate = FormCreate
   OnKeyDown = FormKeyDown
-  OnShow = FormShow
   PixelsPerInch = 120
   TextHeight = 16
+  object Label1: TLabel
+    Left = 3
+    Top = 11
+    Width = 44
+    Height = 18
+    Caption = 'Search'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -15
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
+  end
   object NickNameGrid: TAdvStringGrid
     AlignWithMargins = True
     Left = 4
@@ -36,6 +49,7 @@ object NickNameForm: TNickNameForm
     ColCount = 4
     DefaultRowHeight = 35
     DrawingStyle = gdsClassic
+    FixedRows = 0
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -15
@@ -144,7 +158,7 @@ object NickNameForm: TNickNameForm
     SelectionColor = clGradientInactiveCaption
     ShowDesignHelper = False
     SortSettings.DefaultFormat = ssAutomatic
-    Version = '8.2.4.1'
+    Version = '8.4.2.2'
     ColWidths = (
       10
       81
@@ -163,9 +177,9 @@ object NickNameForm: TNickNameForm
       35)
   end
   object Button1: TButton
-    Left = 88
-    Top = 6
-    Width = 161
+    Left = 232
+    Top = 5
+    Width = 89
     Height = 30
     Caption = 'Remove'
     Font.Charset = DEFAULT_CHARSET
@@ -176,5 +190,13 @@ object NickNameForm: TNickNameForm
     ParentFont = False
     TabOrder = 1
     OnClick = Button1Click
+  end
+  object Edit1: TEdit
+    Left = 52
+    Top = 8
+    Width = 109
+    Height = 24
+    TabOrder = 2
+    OnChange = Edit1Change
   end
 end

@@ -5,20 +5,24 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, AdvObj,
-  BaseGrid, AdvGrid, Vcl.StdCtrls, AdvUtil;
+  BaseGrid, AdvGrid, Vcl.StdCtrls;
 
 type
   TNickNameForm = class(TForm)
     NickNameGrid: TAdvStringGrid;
     Button1: TButton;
-    procedure FormShow(Sender: TObject);
+    Edit1: TEdit;
+    Label1: TLabel;
     procedure NickNameGridClickCell(Sender: TObject; ARow, ACol: Integer);
     procedure Button1Click(Sender: TObject);
     procedure NickNameGridClick(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
+    procedure Edit1Change(Sender: TObject);
   private
+    HasShow: Boolean;
     { Private declarations }
   public
     { Public declarations }
@@ -39,39 +43,28 @@ begin
   ActiveControl := nil;
 end;
 
-procedure TNickNameForm.FormClick(Sender: TObject);
+procedure TNickNameForm.Edit1Change(Sender: TObject);
 begin
-  ActiveControl := nil;
+    NickNameGrid.NarrowDown(TrimS(Edit1.Text));
 end;
 
-procedure TNickNameForm.FormCreate(Sender: TObject);
+procedure TNickNameForm.FormActivate(Sender: TObject);
 begin
-  Left := (Screen.Width - Width) div 2;
-  Top := (Screen.Height - Height) div 2;
-end;
-
-procedure TNickNameForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
-begin
-  if Key = VK_MENU then
-    Key := 0;
-end;
-
-procedure TNickNameForm.FormShow(Sender: TObject);
-begin
-  if NickNameGrid.Cells[1, 1] <> '' then
+  if HasShow then
     Exit;
-
+  HasShow := True;
+  NickNameGrid.Canvas.Font.Size := 18;
+  NickNameGrid.Canvas.TextOut(90, 100, 'Loading...');
   var RowCount := -1;
   NickNameGrid.BeginUpdate;
   for var Iter in GetImgEntry('Item.wz/Install/0370.img/').Children do
   begin
 
-  //  if GetImgEntry('Character.WZ/Accessory/' + img.Name + '/info/medalTag') = nil then
+    //  if GetImgEntry('Character.WZ/Accessory/' + img.Name + '/info/medalTag') = nil then
     //  Continue;
    // var TagNum:= Iter.Get('info/nickTaf').Data;
    // if  GetImgEntry('UI.wz/NameTag.img/medal/' + string(TagNum)) = nil then
      //Continue;
-
     var ID := Iter.Name;
     Inc(RowCount);
     NickNameGrid.RowCount := RowCount + 1;
@@ -90,6 +83,24 @@ begin
   end;
   NickNameGrid.SortByColumn(1);
   NickNameGrid.EndUpdate;
+
+end;
+
+procedure TNickNameForm.FormClick(Sender: TObject);
+begin
+  ActiveControl := nil;
+end;
+
+procedure TNickNameForm.FormCreate(Sender: TObject);
+begin
+  Left := ((Screen.Width - Width) div 2)+400;
+  Top := (Screen.Height - Height) div 2;
+end;
+
+procedure TNickNameForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  if Key = VK_MENU then
+    Key := 0;
 end;
 
 procedure TNickNameForm.NickNameGridClick(Sender: TObject);
