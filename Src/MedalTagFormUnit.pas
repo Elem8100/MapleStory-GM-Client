@@ -5,12 +5,14 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Grids,
-  AdvObj, BaseGrid, AdvGrid, AdvUtil;
+  AdvObj, BaseGrid, AdvGrid;
 
 type
   TMedalTagForm = class(TForm)
     MedalGrid: TAdvStringGrid;
     Button1: TButton;
+    Label1: TLabel;
+    Edit1: TEdit;
     procedure MedalGridClickCell(Sender: TObject; ARow, ACol: Integer);
     procedure Button1Click(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -18,6 +20,7 @@ type
     procedure FormClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
+    procedure Edit1Change(Sender: TObject);
   private
     HasShow: Boolean;
     { Private declarations }
@@ -38,6 +41,11 @@ procedure TMedalTagForm.Button1Click(Sender: TObject);
 begin
   TMedalTag.Delete;
   ActiveControl := nil;
+end;
+
+procedure TMedalTagForm.Edit1Change(Sender: TObject);
+begin
+  MedalGrid.NarrowDown(TrimS(Edit1.Text));
 end;
 
 procedure TMedalTagForm.FormActivate(Sender: TObject);
@@ -88,7 +96,7 @@ end;
 
 procedure TMedalTagForm.FormCreate(Sender: TObject);
 begin
-  Left := (Screen.Width - Width) div 2;
+  Left := ((Screen.Width - Width) div 2)+400;
   Top := (Screen.Height - Height) div 2;
 end;
 

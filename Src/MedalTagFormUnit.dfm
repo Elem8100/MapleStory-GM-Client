@@ -21,6 +21,19 @@ object MedalTagForm: TMedalTagForm
   OnKeyDown = FormKeyDown
   PixelsPerInch = 120
   TextHeight = 16
+  object Label1: TLabel
+    Left = 9
+    Top = 10
+    Width = 44
+    Height = 18
+    Caption = 'Search'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -15
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
+  end
   object MedalGrid: TAdvStringGrid
     AlignWithMargins = True
     Left = 4
@@ -36,6 +49,7 @@ object MedalTagForm: TMedalTagForm
     ColCount = 4
     DefaultRowHeight = 35
     DrawingStyle = gdsClassic
+    FixedRows = 0
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -15
@@ -144,7 +158,7 @@ object MedalTagForm: TMedalTagForm
     SelectionColor = clGradientInactiveCaption
     ShowDesignHelper = False
     SortSettings.DefaultFormat = ssAutomatic
-    Version = '8.2.4.1'
+    Version = '8.4.2.2'
     ColWidths = (
       10
       81
@@ -163,10 +177,10 @@ object MedalTagForm: TMedalTagForm
       35)
   end
   object Button1: TButton
-    Left = 72
+    Left = 224
     Top = 3
-    Width = 169
-    Height = 33
+    Width = 97
+    Height = 30
     Caption = 'Remove'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -176,5 +190,13 @@ object MedalTagForm: TMedalTagForm
     ParentFont = False
     TabOrder = 1
     OnClick = Button1Click
+  end
+  object Edit1: TEdit
+    Left = 56
+    Top = 8
+    Width = 105
+    Height = 24
+    TabOrder = 2
+    OnChange = Edit1Change
   end
 end
