@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, SysUtils, StrUtils, AsphyreSprite, Generics.Collections, WZIMGFile,
-  Classes, Global, WzUtils;
+  Classes, Global, WzUtils,ColorUtils;
 
 type
   TTamingMob = class(TSpriteEx)
@@ -33,17 +33,17 @@ type
     procedure DoMove(const MoveCount: Single); override;
     class procedure LoadSaddleList;
     class procedure Delete;
-    class procedure CreateSprites;
-    class procedure CreateSaddle(ID: string);
-    class procedure CreateTaming(ID: string);
-    class procedure Create(ID: string); overload;
+    class procedure CreateSprites(ColorEffect:TColorEffect=ceNone;Value:Integer=0);
+    class procedure CreateSaddle(ID: string;ColorEffect:TColorEffect=ceNone;Value:Integer=0);
+    class procedure CreateTaming(ID: string;ColorEffect:TColorEffect=ceNone;Value:Integer=0);
+    class procedure Create(ID: string;ColorEffect:TColorEffect=ceNone;Value:Integer=0); overload;
   end;
 
 implementation
 
 uses
-  MapleCharacter, Footholds, ChairformUnit, AvatarUnit, MapleChair,
-  AsphyreKeyboard, DirectInput, WZDirectory,MapleEffect;
+  MapleCharacter, Footholds, ChairformUnit, MapleChair,
+  AsphyreKeyboard, DirectInput, WZDirectory;
 
 function IDToInt(ID: string): string;
 begin
@@ -82,7 +82,7 @@ end;
 
 class procedure TTamingMob.CreateSprites;
 begin
-  DumpData(Entry, EquipData, EquipImages);
+  DumpData(Entry, EquipData, EquipImages,ColorEffect,Value);
   var _State:string;
   var _Frame:string;
 
@@ -133,7 +133,7 @@ begin
 
 end;
 
-class procedure TTamingMob.CreateSaddle(ID: string);
+class procedure TTamingMob.CreateSaddle(ID: string;ColorEffect:TColorEffect=ceNone;Value:Integer=0);
 begin
   Data.Clear;
   if SaddleList.ContainsKey(ID) then
@@ -146,21 +146,21 @@ begin
       for var Iter2 in Iter.Children do
         Data.AddOrSetValue(Entry.GetPath + '/' + Iter.Name + '/' + Iter2.Name, Iter2.Get2('delay'));
 
-  CreateSprites;
+  CreateSprites(ColorEffect,Value);
 end;
 
-class procedure TTamingMob.CreateTaming(ID: string);
+class procedure TTamingMob.CreateTaming(ID: string;ColorEffect:TColorEffect=ceNone;Value:Integer=0);
 begin
   Entry := GetImgEntry('Character.wz/TamingMob/' + ID + '.img/');
-  CreateSprites;
+  CreateSprites(ColorEffect,Value);
 end;
 
-class procedure TTamingMob.Create(ID: string);
+class procedure TTamingMob.Create(ID: string;ColorEffect:TColorEffect=ceNone;Value:Integer=0);
 begin
   TTamingMob.CharacterAction := 'sit';
   ImageNumList.Clear;
   CreateSaddle(ID);
-  CreateTaming(ID);
+  CreateTaming(ID,ColorEffect,Value);
 end;
 
 procedure TTamingMob.DoMove(const MoveCount: Single);

@@ -5,12 +5,18 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, AdvObj, BaseGrid, AdvGrid, StrUtils, Vcl.StdCtrls,
-  AdvUtil;
+  Vcl.ComCtrls, ColorUtils;
 
 type
   TTamingMobForm = class(TForm)
-    TamingMobGrid: TAdvStringGrid;
     Button1: TButton;
+    PageControl1: TPageControl;
+    Sheet1: TTabSheet;
+    Sheet2: TTabSheet;
+    TamingMobGrid: TAdvStringGrid;
+    DyeGrid: TAdvStringGrid;
+    Edit1: TEdit;
+    Label1: TLabel;
     procedure TamingMobGridClickCell(Sender: TObject; ARow, ACol: Integer);
     procedure Button1Click(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -18,8 +24,11 @@ type
     procedure TamingMobGridClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
+    procedure DyeGridClickCell(Sender: TObject; ARow, ACol: Integer);
+    procedure Edit1Change(Sender: TObject);
   private
     HasLoad: Boolean;
+    TamingMobID: string;
     { Private declarations }
   public
     { Public declarations }
@@ -32,7 +41,8 @@ implementation
 
 {$R *.dfm}
 uses
-  TamingMob, MapleChair, Morph, MapleEffect, Global, MapleCharacter, WZIMGFile, WZDirectory, WzUtils;
+  TamingMob, MapleChair, Morph, MapleEffect, Global, MapleCharacter, WZIMGFile, WZDirectory, WzUtils,
+  Generics.Collections, Skill;
 
 function NoIMG(const Name: string): string; inline;
 begin
@@ -51,6 +61,47 @@ begin
   else
     NewState := 'stand1';
   ActiveControl := nil;
+end;
+
+procedure TTamingMobForm.DyeGridClickCell(Sender: TObject; ARow, ACol: Integer);
+begin
+  if TMorph.IsUse then
+    Exit;
+
+  TTamingMob.Delete;
+  TMapleChair.Delete;
+  TItemEffect.Delete(Chair);
+
+  TTamingMob.IsChairTaming := False;
+  TTamingMob.IsUse := True;
+  case ARow of
+    0:
+      TTamingMob.Create(TamingMobID);
+    1..10:
+      TTamingMob.Create(TamingMobID, ceHue, ARow * 30);
+    11:
+      TTamingMob.Create(TamingMobID, ceSaturation, 25);
+    12:
+      TTamingMob.Create(TamingMobID, ceSaturation, -100);
+    13:
+      TTamingMob.Create(TamingMobID, ceContrast1);
+    14:
+      TTamingMob.Create(TamingMobID, ceContrast2);
+    15:
+      TTamingMob.Create(TamingMobID, ceContrast3);
+    16:
+      TTamingMob.Create(TamingMobID, ceContrast4);
+    17:
+      TTamingMob.Create(TamingMobID, ceContrast5);
+    18:
+      TTamingMob.Create(TamingMobID, ceNegative);
+  end;
+  ActiveControl := nil;
+end;
+
+procedure TTamingMobForm.Edit1Change(Sender: TObject);
+begin
+  TamingMobGrid.NarrowDown(TrimS(Edit1.Text));
 end;
 
 procedure TTamingMobForm.FormActivate(Sender: TObject);
@@ -86,8 +137,38 @@ begin
     end;
 
   end;
+
+  if TSkill.Has001Wz then
+  begin
+    var Dict := TDictionary<string, string>.Create;
+    for var i := 11 to 26 do
+      if HasImgFile('Skill001.wz/' + '8000' + i.ToString + '.img') then
+      begin
+        for var Iter in Skill001Wz.GetImgFile('8000' + i.ToString + '.img').Root.Child['skill'].Children do
+          if Iter.Child['vehicleID'] <> nil then
+            Dict.AddOrSetValue('0' + string(Iter.Child['vehicleID'].Data), Iter.Name);
+      end;
+
+    for var i := 0 to 9 do
+      if HasImgFile('Skill001.wz/' + '80011' + i.ToString + '.img') then
+      begin
+        for var Iter in Skill001Wz.GetImgFile('80011' + i.ToString + '.img').Root.Child['skill'].Children do
+          if Iter.Child['vehicleID'] <> nil then
+            Dict.AddOrSetValue('0' + string(Iter.Child['vehicleID'].Data), Iter.Name);
+      end;
+
+    for var i := 0 to TamingMobGrid.RowCount - 1 do
+    begin
+      var TamingID := (TamingMobGrid.Cells[1, i]);
+      if (TamingMobGrid.Cells[3, i] = '') and (Dict.ContainsKey(TamingID)) then
+        TamingMobGrid.Cells[3, i] := StringWZ.GetImgFile('Skill.img').Root.Get(Dict[TamingID] + '/name', '');
+    end;
+    Dict.Free;
+  end;
+
   TamingMobGrid.SortByColumn(1);
   TamingMobGrid.EndUpdate;
+
 end;
 
 procedure TTamingMobForm.FormClick(Sender: TObject);
@@ -116,16 +197,16 @@ procedure TTamingMobForm.TamingMobGridClickCell(Sender: TObject; ARow, ACol: Int
 begin
   if TMorph.IsUse then
     Exit;
-  var ID := TamingMobGrid.Cells[1, ARow];
+  TamingMobID := TamingMobGrid.Cells[1, ARow];
   TTamingMob.Delete;
 
   TMapleChair.Delete;
   TItemEffect.Delete(Chair);
 
   TTamingMob.IsChairTaming := False;
-  TTamingMob.Create(ID);
+  TTamingMob.Create(TamingMobID);
   TTamingMob.IsUse := True;
-
+  TColorFunc.SetGridColor(TamingMobGrid.CellGraphics[2, ARow].CellBitmap, DyeGrid);
   ActiveControl := nil;
 end;
 
