@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, SysUtils, StrUtils, AsphyreSprite, Generics.Collections, WZIMGFile,
-  Classes, Global, WzUtils;
+  Classes, Global, WzUtils,ColorUtils;
 
 type
   TMapleChair = class(TSpriteEx)
@@ -24,13 +24,13 @@ type
 
     procedure DoMove(const Movecount: Single); override;
     class procedure Delete;
-    class procedure Create(ID: string); overload;
+    class procedure Create(ID: string;ColorEffect:TColorEffect=ceNone;Value:Integer=0); overload;
   end;
 
 implementation
 
 uses
-  MapleCharacter,TamingMob, Footholds, ChairformUnit, MapleEffect, AvatarUnit;
+  MapleCharacter,TamingMob, Footholds, ChairformUnit;
 
 class procedure TMapleChair.Delete;
 begin
@@ -99,7 +99,7 @@ begin
 
 end;
 
-class procedure TMapleChair.Create(ID: string);
+class procedure TMapleChair.Create(ID: string;ColorEffect:TColorEffect=ceNone;Value:Integer=0);
 var
   Below: TPoint;
   BelowFH: TFoothold;
@@ -144,7 +144,7 @@ begin
           UseTamingNavel := True;
 
       TTamingMob.IsChairTaming := True;
-      TTamingMob.Create('0' + TamingMobID);
+      TTamingMob.Create('0' + TamingMobID,ColorEffect,Value);
       if HasImgEntry('Character.wz/TamingMob/' + '0' + TamingMobID + '.img/characterAction/sit') then
       begin
         HasSitAction := True;
@@ -165,7 +165,7 @@ begin
       if (Entry.Get(ID + '/effect/1') = nil) and (Entry.Get(ID + '/effect2') = nil) then
         Exit;
 
-  DumpData(Entry.Get(ID), EquipData, EquipImages);
+  DumpData(Entry.Get(ID), EquipData, EquipImages,ColorEffect,Value);
 
   if Entry.Get(ID + '/info/bodyRelMove') <> nil then
     BodyRelMove := Entry.Get(ID + '/info/bodyRelMove').Vector;
