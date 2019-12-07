@@ -3,8 +3,8 @@ unit MapleEffect;
 interface
 
 uses
-  Windows, SysUtils, StrUtils, AsphyreSprite, Generics.Collections, WZIMGFile, Classes, Global,
-  WzUtils;
+  Windows, SysUtils, StrUtils, AsphyreSprite, Generics.Collections, WZIMGFile,
+  Classes, Global, WzUtils;
 
 type
   TEffectType = (Cash, Chair, Equip);
@@ -49,7 +49,7 @@ type
 implementation
 
 uses
-  MapleCharacter, Footholds, ChairformUnit, AvatarUnit, MapleChair;
+  MapleCharacter, Footholds, ChairformUnit,  MapleChair;
 
 class procedure TSetEffect.LoadList;
 begin
@@ -63,16 +63,7 @@ end;
 
 class procedure TSetEffect.Create(ID: string);
 begin
-
   var Entry := GetImgEntry('Effect.wz/SetEff.img/' + IDToInt(AllList[ID]));
-  for var Iter in Entry.Children do
-  begin
-    if Iter.Name = 'effect' then
-      for var Iter2 in Iter.Children do
-        if (Iter2.Name = 'walk1') or (Iter2.Name = 'stand1') then
-          Exit;
-  end;
-
   DumpData(Entry, EquipData, EquipImages);
 
   var SetEffect := TSetEffect.Create(SpriteEngine);
@@ -90,7 +81,7 @@ begin
           ImageEntry := EquipData[Iter2.GetPath];
         end;
       end;
-  end;
+   end;
   UseList.AddOrSetValue(ID, SetEffect);
 end;
 
@@ -259,7 +250,7 @@ begin
 
   Z := Player.z + TWZIMGEntry(ImageEntry.Parent).Get('z', '0');
   if EffType = Chair then
-    Z := Player.z + TWZIMGEntry(ImageEntry).Get('z', '0') - 1;
+    Z := Player.z + TWZIMGEntry(ImageEntry).Get('z', '0')-1;
   MirrorX := Player.MirrorX;
 
   if ImageEntry.Get('origin') <> nil then
