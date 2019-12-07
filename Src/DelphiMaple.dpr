@@ -3,13 +3,13 @@ program DelphiMaple;
 uses
   Forms,
   MainUnit in 'MainUnit.pas' {MainForm},
-  AddMobUnit in 'AddMobUnit.pas' {AddMobForm},
+  MobFormUnit in 'MobFormUnit.pas' {AddMobForm},
   ImageInfoUnit in 'ImageInfoUnit.pas' {ImageInfoForm},
-  SaveMapUnit in 'SaveMapUnit.pas' {SaveMapForm},
+  SaveMapFormUnit in 'SaveMapFormUnit.pas' {SaveMapForm},
   RenderFormUnit in 'RenderFormUnit.pas' {RenderForm},
-  AvatarUnit in 'AvatarUnit.pas' {AvatarForm},
+  AvatarFormUnit in 'AvatarFormUnit.pas' {AvatarForm},
   ShowOptionUnit in 'ShowOptionUnit.pas' {ShowOptionForm},
-  AddNpcFormUnit in 'AddNpcFormUnit.pas' {AddNpcForm},
+  NpcFormUnit in 'NpcFormUnit.pas' {AddNpcForm},
   DamageSkinFormUnit in 'DamageSkinFormUnit.pas' {DamageSkinForm},
   ChairformUnit in 'ChairformUnit.pas' {ChairForm},
   WorldMapFormUnit in 'WorldMapFormUnit.pas' {WorldMapForm},
@@ -21,7 +21,8 @@ uses
   LabelRingFormUnit in 'LabelRingFormUnit.pas' {LabelRingForm},
   PetFormUnit in 'PetFormUnit.pas' {PetForm},
   FamiliarFormUnit in 'FamiliarFormUnit.pas' {FamiliarForm},
-  SkillFormUnit in 'SkillFormUnit.pas' {SkillForm};
+  SkillFormUnit in 'SkillFormUnit.pas' {SkillForm},
+  OptionsFormUnit in 'OptionsFormUnit.pas' {OptionsForm};
 
 {$R *.res}
 
@@ -48,5 +49,6 @@ begin
   Application.CreateForm(TPetForm, PetForm);
   Application.CreateForm(TFamiliarForm, FamiliarForm);
   Application.CreateForm(TSkillForm, SkillForm);
+  Application.CreateForm(TOptionsForm, OptionsForm);
   Application.Run;
 end.

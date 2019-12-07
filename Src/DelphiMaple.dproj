@@ -89,7 +89,7 @@
         <DCCReference Include="MainUnit.pas">
             <Form>MainForm</Form>
         </DCCReference>
-        <DCCReference Include="AddMobUnit.pas">
+        <DCCReference Include="MobFormUnit.pas">
             <Form>AddMobForm</Form>
             <FormType>dfm</FormType>
         </DCCReference>
@@ -97,7 +97,7 @@
             <Form>ImageInfoForm</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="SaveMapUnit.pas">
+        <DCCReference Include="SaveMapFormUnit.pas">
             <Form>SaveMapForm</Form>
             <FormType>dfm</FormType>
         </DCCReference>
@@ -105,7 +105,7 @@
             <Form>RenderForm</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="AvatarUnit.pas">
+        <DCCReference Include="AvatarFormUnit.pas">
             <Form>AvatarForm</Form>
             <FormType>dfm</FormType>
         </DCCReference>
@@ -113,7 +113,7 @@
             <Form>ShowOptionForm</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="AddNpcFormUnit.pas">
+        <DCCReference Include="NpcFormUnit.pas">
             <Form>AddNpcForm</Form>
             <FormType>dfm</FormType>
         </DCCReference>
@@ -163,6 +163,10 @@
         </DCCReference>
         <DCCReference Include="SkillFormUnit.pas">
             <Form>SkillForm</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="OptionsFormUnit.pas">
+            <Form>OptionsForm</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <BuildConfiguration Include="Debug">
