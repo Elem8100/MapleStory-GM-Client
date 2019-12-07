@@ -11,7 +11,7 @@ type
 
   TColorFunc = class
     class procedure SetGridColor(Bmp: TBitmap; Grid: TAdvStringGrid);
-    class procedure SetSpriteColor<T: class>(Entry: T; Row: Integer);
+    class procedure SetSpriteColor<T: class>(Entry: T; Row: Integer; UseEquipImages: Boolean = False);
     class procedure HSVvar<T: class>(Texture: T; oHue, oSat, oVal: Integer);
     class procedure Negative<T: class>(Texture: T);
     class procedure IntensityRGBAll<T: class>(Texture: T; r, g, b: Integer);
@@ -25,7 +25,7 @@ type
 implementation
 
 uses
-  WZImgFile, wzUtils, Global;
+  WZIMGFile, WzUtils, Global, Generics.Collections;
 
 class procedure TColorFunc.SetGridColor(Bmp: TBitmap; Grid: TAdvStringGrid);
 begin
@@ -67,29 +67,43 @@ begin
 
 end;
 
-class procedure TColorFunc.SetSpriteColor<T>(Entry: T; Row: Integer);
+class procedure TColorFunc.SetSpriteColor<T>(Entry: T; Row: Integer; UseEquipImages: Boolean = False);
 begin
+  var ToData: TObjectDictionary<string, TWZIMGEntry>;
+  var ToImages: TObjectDictionary<TWZIMGEntry, TDX9LockableTexture>;
+  if UseEquipImages then
+  begin
+    ToData:=EquipData;
+    ToImages:=EquipImages;
+  end
+  else
+  begin
+    ToData:=WzData;
+    ToImages:=Images;
+  end;
+
+
   case Row of
     0:
-      DumpData(TWZIMGEntry(Entry), WzData, Images);
+      DumpData(TWZIMGEntry(Entry), ToData, ToImages);
     1..10:
-      DumpData(TWZIMGEntry(Entry), WzData, Images, ceHue, Row * 30);
+      DumpData(TWZIMGEntry(Entry), ToData, ToImages, ceHue, Row * 30);
     11:
-      DumpData(TWZIMGEntry(Entry), WzData, Images, ceSaturation, 25);
+      DumpData(TWZIMGEntry(Entry), ToData, ToImages, ceSaturation, 25);
     12:
-      DumpData(TWZIMGEntry(Entry), WzData, Images, ceSaturation, -100);
+      DumpData(TWZIMGEntry(Entry), ToData, ToImages, ceSaturation, -100);
     13:
-      DumpData(TWZIMGEntry(Entry), WzData, Images, ceContrast1);
+      DumpData(TWZIMGEntry(Entry), ToData, ToImages, ceContrast1);
     14:
-      DumpData(TWZIMGEntry(Entry), WzData, Images, ceContrast2);
+      DumpData(TWZIMGEntry(Entry), ToData, ToImages, ceContrast2);
     15:
-      DumpData(TWZIMGEntry(Entry), WzData, Images, ceContrast3);
+      DumpData(TWZIMGEntry(Entry), ToData, ToImages, ceContrast3);
     16:
-      DumpData(TWZIMGEntry(Entry), WzData, Images, ceContrast4);
+      DumpData(TWZIMGEntry(Entry), ToData, ToImages, ceContrast4);
     17:
-      DumpData(TWZIMGEntry(Entry), WzData, Images, ceContrast5);
+      DumpData(TWZIMGEntry(Entry), ToData, ToImages, ceContrast5);
     18:
-      DumpData(TWZIMGEntry(Entry), WzData, Images, ceNegative);
+      DumpData(TWZIMGEntry(Entry), ToData, ToImages, ceNegative);
 
   end;
 
