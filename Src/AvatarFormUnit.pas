@@ -50,6 +50,8 @@ type
     NameLabel: TLabel;
     Button1: TButton;
     Image1: TImage;
+    Button2: TButton;
+    Button3: TButton;
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure SpeedButton9Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -65,6 +67,8 @@ type
     procedure SearchGridClickCell(Sender: TObject; ARow, ACol: Integer);
     procedure Button1Click(Sender: TObject);
     procedure Edit1Change(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
   private
     HasShow: Boolean;
     HasShowSearchGrid: Boolean;
@@ -95,7 +99,7 @@ var
 implementation
 
 uses
-  WZDirectory, MapleEffect, Global, MapleCharacter, LockRenderTarget, AsphyreTypes, WzUtils;
+  WZDirectory, MapleEffect, Global, MapleCharacter, LockRenderTarget, AsphyreTypes, WzUtils,maplecharacterex;
 
 {$R *.dfm}
 
@@ -224,10 +228,15 @@ begin
     Exit;
   ChangeState := True;
 
-  if WeaponWalkType.contains('stand2') then
-    NewState := 'stand2'
-  else
-    NewState := 'stand1';
+
+  if Part = Weapon then
+  begin
+    if HasEntryE('Character.wz/' + GetDir(NewID) + NewID + '.img/stand1') then
+      NewState := 'stand1'
+    else if HasEntryE('Character.wz/' + GetDir(NewID) + NewID + '.img/stand2') then
+      NewState := 'stand2';
+  end;
+
 
   var TrimID: string;
   if LeftStr(EqpID, 3) = '000' then
@@ -404,6 +413,16 @@ procedure TAvatarForm.Button1Click(Sender: TObject);
 begin
   AddEqpS(SearchEqpID);
   ResetColorGrid;
+end;
+
+procedure TAvatarForm.Button2Click(Sender: TObject);
+begin
+tmapleplayer.Spawn('01070005-00030334-00021000-01050089-01432011-00012000-00002003-');
+end;
+
+procedure TAvatarForm.Button3Click(Sender: TObject);
+begin
+tmapleplayer.Spawn('01072054-00031491-00021503-01052200-01442043-00012000-00002000-');
 end;
 
 procedure TAvatarForm.ResetColorGrid;

@@ -56,10 +56,7 @@ begin
   TMapleChair.Delete;
 
   ChangeState := True;
-  if WeaponWalkType.contains('stand2') then
-    NewState := 'stand2'
-  else
-    NewState := 'stand1';
+  NewState :=Player.StandType;
   ActiveControl := nil;
 end;
 

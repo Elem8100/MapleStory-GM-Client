@@ -40,6 +40,7 @@ type
     Portal: TPortalInfo;
     LadderType: TLadderType;
     PartOwner: TPlayer;
+    StandType, WalkType: string;
     class var
       AvatarTargetIndex: Integer;
       AvatarPanelIndex: Integer;
@@ -103,7 +104,7 @@ var
   DeleteID: string = '99999';
   DressLongcoat, DressCoat, DressPants, DressNormalWeapon, DressCashWeapon, ShowHair: Boolean;
   DressCape, DressShoes, DressEarring, DressGlass, DressFaceAcc, DressGlove, DressShield, DressFace: Boolean;
-  AttackActions, AttackOFs, WeaponWalkType: TList<string>;
+  AttackActions, AttackOFs: TList<string>;
   PlayerEqpList: TList<string>;
   AttackAction, NewState: string;
   NEWFRAME: Integer;
@@ -828,7 +829,7 @@ begin
     WeaponNum := GetWeaponNum(EquipID);
     AttackActions.Clear;
     AttackOFs.Clear;
-    WeaponWalkType.Clear;
+
   end;
 
   for Iter in Entry.Children do
@@ -842,8 +843,7 @@ begin
         else
           AttackOFs.Add(Iter.Name);
       end;
-      if (LeftStr(Iter.Name, 4) = 'walk') or (LeftStr(Iter.Name, 5) = 'stand') then
-        WeaponWalkType.Add(Iter.Name);
+
     end;
 
     if Part = Body then
@@ -1039,12 +1039,8 @@ begin
     begin
       FTime := 0;
       Frame := 0;
-      //State := 'walk1';
-      if WeaponWalkType.contains('walk2') then
-        State := 'walk2'
-      else
-        State := 'walk1';
 
+      State := Owner.walktype;
     end;
   end;
 
@@ -1052,11 +1048,7 @@ begin
     if (not Owner.InLadder) and (Owner.JumpState = jsNone) and (not IsAttack) and (TSkill.PlayEnded) then
     begin
       Frame := 0;
-      //State := 'stand1';
-      if WeaponWalkType.contains('stand2') then
-        State := 'stand2'
-      else
-        State := 'stand1';
+      State := Owner.standtype;
     end;
 
   if (Owner.JumpState <> jsNone) and (not IsAttack) and (not TTamingMob.IsUse) then
@@ -1066,13 +1058,8 @@ begin
   end;
   // jump ->re stand
   if (Owner.JumpState = jsNone) and (State = 'jump') and (not Keyboard.Key[DIK_LMENU]) then
-  begin
-   // State := 'stand1';
-    if WeaponWalkType.contains('stand2') then
-      State := 'stand2'
-    else
-      State := 'stand1';
-  end;
+    State := Owner.standtype;
+
   // press jump+ left(right) key
   if (Keyboard.Key[DIK_LMENU]) and (not IsAttack) and (not TTamingMob.IsUse) then
   begin
@@ -1101,10 +1088,7 @@ begin
     end;
 
     if (Keyboard.KeyReleased[DIK_DOWN]) and (TSkill.PlayEnded) then
-      if WeaponWalkType.contains('stand2') then
-        State := 'stand2'
-      else
-        State := 'stand1';
+      State := Owner.standtype;
   end;
 
   if (not Owner.InLadder) then
@@ -1112,11 +1096,7 @@ begin
     if (State = 'rope') or (State = 'ladder') then
     begin
       Frame := 0;
-    //  State := 'stand1';
-      if WeaponWalkType.contains('stand2') then
-        State := 'stand2'
-      else
-        State := 'stand1';
+      state := owner.standtype;
     end;
   end;
 
@@ -1159,10 +1139,7 @@ begin
   begin
    // FTime := 0;
     Frame := 1;
-    if WeaponWalkType.contains('stand2') then
-      State := 'stand2'
-    else
-      State := 'stand1';
+    State := Owner.standtype;
     AlertCount := 0;
   end;
 
@@ -1194,6 +1171,18 @@ begin
   end;
 
   Part := GetPart(ID);
+  if Part = Weapon then
+  begin
+    if HasEntry(C + GetDir(ID) + ID + '.img/stand1') then
+      Owner.StandType := 'stand1'
+    else if HasEntry(C + GetDir(ID) + ID + '.img/stand2') then
+      Owner.StandType := 'stand2';
+
+    if HasEntry(C + GetDir(ID) + ID + '.img/walk1') then
+      Owner.WalkType := 'walk1'
+    else if HasEntry(C + GetDir(ID) + ID + '.img/walk2') then
+      Owner.WalkType := 'walk2';
+  end;
 
   if (Part = Weapon) and (FTime = 0) then
   begin
@@ -1482,7 +1471,6 @@ begin
       if (Frame >= FrameCount) or (Frame <= 0) then
         Value := -Value;
     end
-
     else
 
     begin
@@ -1675,14 +1663,13 @@ end;
 initialization
   AttackActions := TList<string>.Create;
   AttackOFs := TList<string>.Create;
-  WeaponWalkType := TList<string>.Create;
+
   PlayerEqpList := TList<string>.Create;
   TPlayer.EquipLoadedList := TList<string>.Create;
 
 finalization
   AttackActions.Free;
   AttackOFs.Free;
-  WeaponWalkType.Free;
   PlayerEqpList.Free;
   TPlayer.EquipLoadedList.Free;
 
