@@ -72,7 +72,7 @@ type
   private
     HasShow: Boolean;
     HasShowSearchGrid: Boolean;
-    SearchEqpID:string;
+    SearchEqpID: string;
     Wz: TWZArchive;
     IconList: TObjectDictionary<string, TObjectList<TBmpEx>>;
     ImageGrids: array[1..20] of TImageEnMView;
@@ -80,6 +80,7 @@ type
     HasLoaded: TList<Integer>;
     PartIndex: Integer;
     DeleteIdx: Integer;
+    DeleteID: string;
     DeleteFileName: string;
     DumpRowCount: Integer;
     procedure ImageGridSelect(Sender: TObject; idx: Integer);
@@ -99,7 +100,8 @@ var
 implementation
 
 uses
-  WZDirectory, MapleEffect, Global, MapleCharacter, LockRenderTarget, AsphyreTypes, WzUtils,maplecharacterex;
+  WZDirectory, MapleEffect, Global, MapleCharacter, LockRenderTarget, AsphyreTypes, WzUtils,
+  AfterImage;
 
 {$R *.dfm}
 
@@ -119,29 +121,29 @@ end;
 procedure TAvatarForm.AddEqps(EqpID: string);
 begin
 
-  Player.LoadEquip(EqpID);
+  Player.CreateEquip(Player, EqpID, Player.AvatarEngine);
 
   var NewID := EqpID;
-  DeleteID := '999999';
+
   var Part := GetPart(NewID);
 
   if (Part = Cap) then
   begin
-    DressCap := True;
+    Player.DressCap := True;
     var Data := GetImgEntry('Character.wz/Cap/' + NewID + '.img/info/vslot').Data;
     //no Cover
     if (Data = 'Cp') or (Data = 'CpH5') then
-      CapType := 0;
+      Player.CapType := 0;
     //stand cover
     if Data = 'CpH1H5' then
-      CapType := 1;
+      Player.CapType := 1;
     //cover all
     if Length(Data) > 12 then
-      CapType := 2;
+      Player.CapType := 2;
   end;
 
   if (Part = Hair) then
-    ShowHair := True;
+    Player.ShowHair := True;
 
   var NewPart := GetPart(NewID);
 
@@ -173,70 +175,45 @@ begin
   end;
   PlayerEqpList.Add(NewID);
 
+  for var Iter in Player.SpriteList do
+    TAvatarParts(Iter).Dead;
+  Player.SpriteList.Clear;
+
+  for var Iter in PlayerEqpList do
+    TPlayer.Spawn(Iter);
+
   if TItemEffect.AllList.contains(EqpID) then
     TItemEffect.Create(EqpID, True);
 
   if TSetEffect.AllList.ContainsKey(EqpID) then
     TSetEffect.Create(EqpID);
 
-  case Part of
-    Weapon:
-      begin
-        DressNormalWeapon := True;
-        DressCashWeapon := False;
-      end;
-    CashWeapon:
-      begin
-        DressCashWeapon := True;
-        DressNormalWeapon := False;
-      end;
-    Coat:
-      begin
-        DressCoat := True;
-        DressLongcoat := False;
-      end;
-    Pants:
-      begin
-        DressPants := True;
-        DressLongcoat := False;
-      end;
-    Longcoat:
-      begin
-        DressLongcoat := True;
-        DressPants := False;
-        DressCoat := False;
-      end;
-    Cape:
-      DressCape := True;
-    Glove:
-      DressGlove := True;
-    EarRing:
-      DressEarring := True;
-    Glass:
-      DressGlass := True;
-    FaceAcc:
-      DressFaceAcc := True;
-    Shield:
-      DressShield := True;
-    Shoes:
-      DressShoes := True;
-    Face:
-      DressFace := True;
-  end;
-
   if Part = SitTamingMob then
     Exit;
   ChangeState := True;
-
-
-  if Part = Weapon then
+  var Path := 'Character.wz/Weapon/';
+  if (Part = Weapon) then
   begin
-    if HasEntryE('Character.wz/' + GetDir(NewID) + NewID + '.img/stand1') then
-      NewState := 'stand1'
-    else if HasEntryE('Character.wz/' + GetDir(NewID) + NewID + '.img/stand2') then
-      NewState := 'stand2';
+
+    NewState := Player.StandType;
   end;
 
+  if (Part = CashWeapon) then
+  begin
+
+    AttackActions.Clear;
+    AttackOFs.Clear;
+    for var Iter in GetImgEntry(Path + NewID + '.img/' + Player.WeaponNum).Children do
+      if (LeftStr(Iter.Name, 4) = 'stab') or (LeftStr(Iter.Name, 5) = 'swing') then
+      begin
+        if RightStr(Iter.Name, 1) <> 'F' then
+          AttackActions.Add(Iter.Name)
+        else
+          AttackOFs.Add(Iter.Name);
+      end;
+
+    NewState := Player.StandType;
+  end;
 
   var TrimID: string;
   if LeftStr(EqpID, 3) = '000' then
@@ -321,9 +298,9 @@ begin
   DeleteID := Inventory.Cells[0, ARow];
   PlayerEqpList.Remove(DeleteID);
   if Part = Cap then
-    DressCap := False;
+    Player.DressCap := False;
   if Part = Hair then
-    ShowHair := False;
+    Player.ShowHair := False;
   if TItemEffect.AllList.contains(DeleteID) then
     TItemEffect.Delete(DeleteID);
   if TSetEffect.AllList.containsKey(DeleteID) then
@@ -386,22 +363,10 @@ begin
   Inventory.RemoveRows(1, 20);
 
  // playereqpList.Clear;
-  DressFace := False;
-  ShowHair := False;
-  DressNormalWeapon := False;
-  DressCashWeapon := False;
-  DressCoat := False;
-  DressLongcoat := False;
-  DressPants := False;
-  DressCap := False;
-  DressCape := False;
-  DressCape := False;
-  DressGlove := False;
-  DressEarring := False;
-  DressGlass := False;
-  DressFaceAcc := False;
-  DressShield := False;
-  DressShoes := False;
+
+  Player.ShowHair := False;
+
+  Player.DressCap := False;
 
   for var i := 0 to High(Explode) - 1 do
     AvatarForm.AddEqps(Explode[i]);
@@ -411,18 +376,18 @@ end;
 
 procedure TAvatarForm.Button1Click(Sender: TObject);
 begin
-  AddEqpS(SearchEqpID);
+  AddEqps(SearchEqpID);
   ResetColorGrid;
 end;
 
 procedure TAvatarForm.Button2Click(Sender: TObject);
 begin
-tmapleplayer.Spawn('01070005-00030334-00021000-01050089-01432011-00012000-00002003-');
+  //TMaplePlayer.Spawn('01070005-00030334-00021000-01050089-01432011-00012000-00002003-');
 end;
 
 procedure TAvatarForm.Button3Click(Sender: TObject);
 begin
-tmapleplayer.Spawn('01072054-00031491-00021503-01052200-01442043-00012000-00002000-');
+  //TMaplePlayer.Spawn('01062055-01072054-01040005-00030020-00020000-00002000-00012000-01702281-');
 end;
 
 procedure TAvatarForm.ResetColorGrid;
@@ -468,51 +433,54 @@ procedure TAvatarForm.ColorGridClickCell(Sender: TObject; ARow, ACol: Integer);
 begin
   var Top := ColorGrid.CellRect(ACol, ARow).Location.Y;
   var ID := Inventory.Cells[0, ARow];
-  Player.ReDumpTexture := True;
+
   if Length(ID) > 2 then
   begin
+    var Dir := GetDir(ID);
+    var Entry := CharacterWZ.GetImgFile(Dir + ID + '.img').Root;
+
     case ACol of
       0:
-        Player.LoadEquip(ID, ceHue, 0);
+        DumpData(Entry, EquipData, EquipImages, ceHue, 0);
       1:
-        Player.LoadEquip(ID, ceHue, 30);
+        DumpData(Entry, EquipData, EquipImages, ceHue, 30);
       2:
-        Player.LoadEquip(ID, ceHue, 60);
+        DumpData(Entry, EquipData, EquipImages, ceHue, 60);
       3:
-        Player.LoadEquip(ID, ceHue, 90);
+        DumpData(Entry, EquipData, EquipImages, ceHue, 90);
       4:
-        Player.LoadEquip(ID, ceHue, 120);
+        DumpData(Entry, EquipData, EquipImages, ceHue, 120);
       5:
-        Player.LoadEquip(ID, ceHue, 150);
+        DumpData(Entry, EquipData, EquipImages, ceHue, 150);
       6:
-        Player.LoadEquip(ID, ceHue, 180);
+        DumpData(Entry, EquipData, EquipImages, ceHue, 180);
       7:
-        Player.LoadEquip(ID, ceHue, 210);
+        DumpData(Entry, EquipData, EquipImages, ceHue, 210);
       8:
-        Player.LoadEquip(ID, ceHue, 240);
+        DumpData(Entry, EquipData, EquipImages, ceHue, 240);
       9:
-        Player.LoadEquip(ID, ceHue, 270);
+        DumpData(Entry, EquipData, EquipImages, ceHue, 270);
       10:
-        Player.LoadEquip(ID, ceHue, 300);
+        DumpData(Entry, EquipData, EquipImages, ceHue, 300);
       11:
-        Player.LoadEquip(ID, ceSaturation, 25);
+        DumpData(Entry, EquipData, EquipImages, ceSaturation, 25);
       12:
-        Player.LoadEquip(ID, ceSaturation, -100);
+        DumpData(Entry, EquipData, EquipImages, ceSaturation, -100);
       13:
-        Player.LoadEquip(ID, ceContrast1);
+        DumpData(Entry, EquipData, EquipImages, ceContrast1, 0);
       14:
-        Player.LoadEquip(ID, ceContrast2);
+        DumpData(Entry, EquipData, EquipImages, ceContrast2, 0);
       15:
-        Player.LoadEquip(ID, ceContrast3);
+        DumpData(Entry, EquipData, EquipImages, ceContrast3, 0);
       16:
-        Player.LoadEquip(ID, ceContrast4);
+        DumpData(Entry, EquipData, EquipImages, ceContrast4, 0);
       17:
-        Player.LoadEquip(ID, ceContrast5);
+        DumpData(Entry, EquipData, EquipImages, ceContrast5, 0);
       18:
-        Player.LoadEquip(ID, ceNegative);
+        DumpData(Entry, EquipData, EquipImages, ceNegative, 0);
     end;
   end;
-  Player.ReDumpTexture := False;
+
 end;
 
 procedure TAvatarForm.SaveButtonClick(Sender: TObject);
@@ -1069,7 +1037,7 @@ end;
 
 procedure TAvatarForm.Edit1Change(Sender: TObject);
 begin
-   SearchGrid.NarrowDown(TrimS(Edit1.Text));
+  SearchGrid.NarrowDown(TrimS(Edit1.Text));
 end;
 
 end.

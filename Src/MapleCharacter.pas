@@ -21,7 +21,6 @@ type
   TPlayer = class(TJumperSprite)
     AvatarEngine: TSpriteEngine;
     FH: TFoothold;
-    PartList: TList<string>;
     InLadder: Boolean;
     OnLadder: Boolean;
     FallFlag: Boolean;
@@ -39,14 +38,20 @@ type
     CurrentPortal: TPortalInfo;
     Portal: TPortalInfo;
     LadderType: TLadderType;
-    PartOwner: TPlayer;
     StandType, WalkType: string;
+    SpriteList: TList<TAvatarParts>;
+    ShowHair: Boolean;
+    DressCap: Boolean;
+    CapType: Integer;
+    WeaponNum: string;
     class var
       AvatarTargetIndex: Integer;
       AvatarPanelIndex: Integer;
-      EquipLoadedList: TList<string>;
-      ReDumpTexture: Boolean;
-    procedure LoadEquip(EquipID: string; ColorEffect: TColorEffect = ceNone; Value: Integer = 0);
+      EquipDumpList: TList<string>;
+    class procedure CreateEquip(AOwner: TPlayer; EquipID: string; SelfEngine: TSpriteEngine;
+      ColorEffect: TColorEffect = ceNone; Value: Integer = 0);
+    class procedure SpawnNew;
+    class procedure Spawn(EquipID: string);
     procedure TargetEvent(Sender: TObject);
     procedure DoMove(const Movecount: Single); override;
     procedure DoDraw; override;
@@ -93,17 +98,15 @@ type
     procedure DoDraw; override;
   end;
 
-procedure CreatePlayer;
-
 function GetPart(ID: string): TPartName;
 
 function GetDir(ID: string): string;
 
+function GetWeaponNum(ID: string): string;
+
+function GetAfterImageStr(ID: string): string;
+
 var
- // NewID: string = '99999';
-  DeleteID: string = '99999';
-  DressLongcoat, DressCoat, DressPants, DressNormalWeapon, DressCashWeapon, ShowHair: Boolean;
-  DressCape, DressShoes, DressEarring, DressGlass, DressFaceAcc, DressGlove, DressShield, DressFace: Boolean;
   AttackActions, AttackOFs: TList<string>;
   PlayerEqpList: TList<string>;
   AttackAction, NewState: string;
@@ -113,11 +116,8 @@ var
   Counter: Integer;
   Animate: Boolean = False;
   CharFlip: Boolean;
-  DressCap: Boolean;
-  CapType: Integer;
   Player: TPlayer;
   AfterImageStr: string;
-  WeaponNum: string;
   FState: string;
 
 implementation
@@ -125,22 +125,28 @@ implementation
 uses
   MainUnit, Morph, AfterImage, MapleChair, MapleEffect, TamingMob, Pet, MonsterFamiliar;
 
-procedure CreatePlayer;
+class procedure TPlayer.SpawnNew;
 var
+  I, j: Integer;
+  Iter: TWZIMGEntry;
   Portals: TPortalInfo;
   PX, PY: Integer;
   BelowFH: TFoothold;
   Below: TPoint;
+const
+  DefaultEqps: array[0..7] of string = ('01302030', '00002000', '01062055', '01072054', '01040005',
+    '00020000', '00030020', '00012000');
 begin
+  AvatarTargets := TAsphyreRenderTargets.Create();
+
+  AvatarTargetIndex := AvatarTargets.Add(1, 1024, 1024, apf_A8R8G8B8, True, True);
+  AvatarPanelIndex := AvatarTargets.Add(1, 4096, 4096, apf_A8R8G8B8, True, True);
+
   Player := TPlayer.Create(SpriteEngine);
-  Player.Z := 20000;
-  Player.Offset.Y := -79;
-  Player.Offset.X := -40;
-  Player.JumpSpeed := 0.6;
-  Player.JumpHeight := 9.5;
-  Player.MaxFallSpeed := 8;
-  Player.Alpha := 0;
-  Player.Tag := 1;
+  Player.AvatarEngine := TSpriteEngine.Create(nil);
+  Player.AvatarEngine.Canvas := GameCanvas;
+  Player.AvatarEngine.WorldX := 21 - 400;
+  Player.AvatarEngine.WorldY := 20 - 400;
 
   for Portals in TMapPortal.PortalList do
     if (Portals.PortalType = 0) then
@@ -154,8 +160,225 @@ begin
   Below := TFootholdTree.This.FindBelow(Point(PX, PY - 2), BelowFH);
   Player.FH := BelowFH;
   Player.JumpState := jsFalling;
-  Player.TruncMove := True;
 
+  TAvatarParts.ZMap := TList<string>.Create;
+
+  for Iter in BaseWZ.GetImgFile('zmap.img').Root.Children do
+    TAvatarParts.ZMap.Add(Iter.Name);
+
+  for I := 2000 to 2011 do
+  begin
+    CharData.Add('0000' + I.ToString + '/swingTF/0/arm', 'swingTF');
+    CharData.Add('0000' + I.ToString + '/swingT2/0/arm', 'swingT2');
+    CharData.Add('0000' + I.ToString + '/swingOF/0/arm', 'swingOF/0');
+    CharData.Add('0000' + I.ToString + '/swingOF/1/arm', 'swingOF/1');
+    CharData.Add('0000' + I.ToString + '/swingOF/2/arm', 'swingOF/2');
+  end;
+
+  Player.ShowHair := True;
+
+  for I := 0 to 7 do
+  begin
+    CreateEquip(Player, DefaultEqps[I], Player.AvatarEngine);
+    PlayerEqpList.Add(DefaultEqps[I]);
+  end;
+
+  AttackAction := AttackActions[0];
+  TAfterImage.Load(AfterImageStr, '0');
+  TDamageNumber.Style := 'NoRed1';
+  TDamageNumber.Load('');
+
+end;
+
+class procedure TPlayer.Spawn(EquipID: string);
+begin
+
+  CreateEquip(Player, EquipID, Player.AvatarEngine);
+end;
+
+class procedure TPlayer.CreateEquip(AOwner: TPlayer; EquipID: string; SelfEngine: TSpriteEngine;
+  ColorEffect: TColorEffect = ceNone; Value: Integer = 0);
+var
+  Child: TWZIMGEntry;
+  Iter, Iter2, Iter3, Iter4, Entry: TWZIMGEntry;
+  Path, Dir: string;
+  Part: TPartName;
+  SameName: TList<string>;
+begin
+  Dir := GetDir(EquipID);
+  Part := GetPart(EquipID);
+  Entry := CharacterWZ.GetImgFile(Dir + EquipID + '.img').Root;
+
+  if not EquipDumpList.contains(EquipID) then
+  begin
+    DumpData(Entry, EquipData, EquipImages, ColorEffect, Value);
+    EquipDumpList.Add(EquipID);
+  end;
+  var LPath := 'Character.wz/Weapon/';
+  if Part = Weapon then
+  begin
+    AfterImageStr := GetAfterImageStr(EquipID);
+    TAfterImage.Load(AfterImageStr, '0');
+    AOwner.WeaponNum := GetWeaponNum(EquipID);
+    AttackActions.Clear;
+    AttackOFs.Clear;
+
+    if HasEntryE(LPath + EquipID + '.img/stand1') then
+      AOwner.StandType := 'stand1'
+    else if HasEntryE(LPath + EquipID + '.img/stand2') then
+      AOwner.StandType := 'stand2';
+
+    if HasEntryE(LPath + EquipID + '.img/walk1') then
+      AOwner.WalkType := 'walk1'
+    else if HasEntryE(LPath + EquipID + '.img/walk2') then
+      AOwner.WalkType := 'walk2';
+
+  end;
+
+  for Iter in Entry.Children do
+  begin
+    if (Dir = 'Weapon/') and (Iter.Name <> 'info') then
+    begin
+      if (LeftStr(Iter.Name, 4) = 'stab') or (LeftStr(Iter.Name, 5) = 'swing') then
+      begin
+        if RightStr(Iter.Name, 1) <> 'F' then
+          AttackActions.Add(Iter.Name)
+        else
+          AttackOFs.Add(Iter.Name);
+      end;
+
+    end;
+
+    if Part = Body then
+      CharData.AddOrSetValue('body/' + Iter.Name + '/FrameCount', Iter.Children.Count - 1);
+    if Part = Face then
+      CharData.AddOrSetValue('face/' + Iter.Name + '/FrameCount', Iter.Children.Count - 1);
+
+    for Iter2 in Iter.Children do
+    begin
+      if Part = Body then
+        CharData.AddOrSetValue('body/' + Iter.Name + '/' + Iter2.Name + '/delay', Abs(Iter2.Get('delay', 0)));
+      if Part = Face then
+        CharData.AddOrSetValue('face/' + Iter.Name + '/' + Iter2.Name + '/delay', Iter2.Get('delay', 0));
+
+      if (Iter2.Child['action'] <> nil) and (Iter2.Child['frame'] <> nil) then
+      begin
+        CharData.AddOrSetValue(Iter.Name + '/' + Iter2.Name, Iter2.Get('action', '') + '/' +
+          IntToStr(Iter2.Get('frame', '')));
+      end;
+    end;
+  end;
+
+  var Sprite: TAvatarParts;
+  var S: TStringArray;
+  SameName := TList<string>.Create;
+  if Part <> CashWeapon then
+    for Iter in Entry.Children do
+    begin
+      for Iter2 in Iter.Children do
+      begin
+        if Iter2.Name = 'hairShade' then
+          Continue;
+        for Iter3 in Iter2.Children do
+        begin
+          if (Iter3.Name = 'hairShade') or (Iter3.Name = '006') then
+            Continue;
+          if (Iter3.DataType = mdtCanvas) or (Iter3.DataType = mdtUOL) then
+            if not SameName.contains(Iter3.Name) then
+            begin
+
+              SameName.Add(Iter3.Name);
+              Sprite := TAvatarParts.Create(SelfEngine);
+              with Sprite do
+              begin
+                Owner := AOwner;
+                ImageLib := EquipImages;
+                Path := Iter3.GetPath;
+                if EquipData.ContainsKey(Path) then
+                  ImageEntry := EquipData[Path];
+                TruncMove := True;
+                Tag := 1;
+                Value := 1;
+                State := 'stand1';
+                MirrorX:=AOwner.MirrorX;
+                Expression := 'blink';
+                S := Explode('/', Path);
+                // Body,head
+                if LeftStr(S[1], 1) = '0' then
+                begin
+                  ID := LeftStr(S[1], 8);
+                  Image := S[4];
+                end
+                else
+                begin
+                  ID := LeftStr(S[2], 8);
+                  Image := S[5];
+                end;
+
+              end;
+              AOwner.SpriteList.Add(Sprite);
+
+            end;
+        end;
+      end;
+    end;
+
+  if Part = CashWeapon then
+  begin
+    for var I := 69 downto 30 do
+    begin
+      if HasEntryE(LPath + EquipID + '.img/' + I.ToString + '/stand1') then
+        AOwner.StandType := 'stand1'
+      else if HasEntryE(LPath + EquipID + '.img/' + I.ToString + '/stand2') then
+        AOwner.StandType := 'stand2';
+
+      if HasEntryE(LPath + EquipID + '.img/' + I.ToString + '/walk1') then
+        AOwner.Walktype := 'walk1'
+      else if HasEntryE(LPath + EquipID + '.img/' + I.ToString + '/walk2') then
+        AOwner.WalkType := 'walk2';
+      if HasEntryE(LPath + EquipID + '.img/' + I.ToString) then
+        AOwner.WeaponNum := I.ToString;
+    end;
+    AfterImageStr := GetAfterImageStr('01' + AOwner.WeaponNum + '1234');
+    TAfterImage.Load(AfterImageStr, '0');
+
+    Entry := GetImgEntry('Character.wz/' + Dir + EquipID + '.img/' + AOwner.WeaponNum);
+
+    for Iter in Entry.Children do
+      for Iter2 in Iter.Children do
+      begin
+        for Iter3 in Iter2.Children do
+        begin
+          if (Iter3.DataType = mdtCanvas) or (Iter3.DataType = mdtUOL) then
+            if not SameName.contains(Iter3.Name) then
+            begin
+              SameName.Add(Iter3.Name);
+              Sprite := TAvatarParts.Create(SelfEngine);
+              with Sprite do
+              begin
+                Owner := AOwner;
+                ImageLib := EquipImages;
+                Path := Iter3.GetPath;
+                if EquipData.ContainsKey(Path) then
+                  ImageEntry := EquipData[Path];
+                TruncMove := True;
+                Tag := 1;
+                Value := 1;
+                State := 'stand1';
+                 MirrorX:=AOwner.MirrorX;
+                Expression := 'blink';
+                S := Explode('/', Path);
+                ID := LeftStr(S[2], 8);
+                Image := S[6];
+              end;
+              AOwner.SpriteList.Add(Sprite);
+
+            end;
+        end;
+      end;
+
+  end;
+  SameName.Free;
 end;
 
 var
@@ -244,7 +467,7 @@ var
   AID: Integer;
 begin
   AID := ID.ToInteger;
-  Result := ((AID div 10000) - 100).ToString;
+  Result := ((AID div 10000) - 100).toString;
 end;
 
 function GetAfterImageStr(ID: string): string;
@@ -292,137 +515,25 @@ begin
 end;
 
 constructor TPlayer.Create(const AParent: TSprite);
-var
-  I, j: Integer;
-  Iter: TWZIMGEntry;
-  S: TStringArray;
-const
-  DefaultEqps: array[0..7] of string = ('01302030', '00002000', '01062055', '01072054', '01040005',
-    '00020000', '00030020', '00012000');
 begin
   inherited;
-  AvatarTargets := TAsphyreRenderTargets.Create();
-  AvatarEngine := TSpriteEngine.Create(nil);
-  AvatarEngine.Canvas := GameCanvas;
-  AvatarEngine.WorldX := 21 - 400;
-  AvatarEngine.WorldY := 20 - 400;
-
-  AvatarTargetIndex := AvatarTargets.Add(1, 1024, 1024, apf_A8R8G8B8, True, True);
-  AvatarPanelIndex := AvatarTargets.Add(1, 4096, 4096, apf_A8R8G8B8, True, True);
-  PartOwner := Self;
-  TAvatarParts.ZMap := TList<string>.Create;
-  PartList := TList<string>.Create;
-  for Iter in BaseWZ.GetImgFile('zmap.img').Root.Children do
-    TAvatarParts.ZMap.Add(Iter.Name);
-
-  for I := 2000 to 2011 do
-  begin
-    CharData.Add('0000' + I.ToString + '/swingTF/0/arm', 'swingTF');
-    CharData.Add('0000' + I.ToString + '/swingT2/0/arm', 'swingT2');
-    CharData.Add('0000' + I.ToString + '/swingOF/0/arm', 'swingOF/0');
-    CharData.Add('0000' + I.ToString + '/swingOF/1/arm', 'swingOF/1');
-    CharData.Add('0000' + I.ToString + '/swingOF/2/arm', 'swingOF/2');
-  end;
-
-  LoadEquip('00002000'); // body
-  LoadEquip('01302030'); // weapon
-  LoadEquip('01702115'); // cash weapon
-  if HasImgFile('Character.wz/Weapon/01702528.img') then
-    LoadEquip('01702528');
-  if HasImgFile('Character.wz/Weapon/01702357.img') then
-    LoadEquip('01702357');
-  if HasImgFile('Character.wz/Weapon/01702330.img') then
-    LoadEquip('01702330');
-
-  LoadEquip('01092000'); // shield
-  LoadEquip('01062055'); // pants
-  LoadEquip('01072054'); // shoes
-  LoadEquip('01040005'); // coat
-  LoadEquip('01102000'); // cape
-  if HasImgFile('Character.wz/Longcoat/01052773.img') then
-    LoadEquip('01052773')  // longcoat
-  else
-    LoadEquip('01050007'); // longcoat
-  LoadEquip('01081003'); // glove
-
-  LoadEquip('01002071');  //Cap
-  if HasImgFile('Character.wz/Cap/01002953.img') then
-    LoadEquip('01002953');
-  if HasImgFile('Character.wz/Cap/01004782.img') then
-    LoadEquip('01004782');
-
-  LoadEquip('00020000'); // face
-  //hair
-  if HasImgFile('Character.wz/Hair/00040920.img') then
-    LoadEquip('00040920');
-  LoadEquip('00030020');
-
-  LoadEquip('00012000'); // head
-  LoadEquip('01021000'); // glass
-  LoadEquip('01032000'); // earring
-  LoadEquip('01010000'); // Face acc
-
-  ShowHair := True;
-  DressShoes := True;
-  DressFace := True;
-  DressNormalWeapon := True;
-
-  for I := 0 to 7 do
-
-    PlayerEqpList.Add(DefaultEqps[I]);
-
-  for I := 0 to PartList.Count - 1 do
-    with TAvatarParts.Create(AvatarEngine) do
-    begin
-      Owner := PartOwner;
-      ImageLib := EquipImages;
-      if EquipData.ContainsKey(PartList[I]) then
-        ImageEntry := EquipData[PartList[I]];
-      TruncMove := True;
-      Tag := 1;
-      Value := 1;
-      State := 'stand1';
-      Expression := 'blink';
-      S := Explode('/', PartList[I]);
-      // Body,head
-      if LeftStr(S[1], 1) = '0' then
-      begin
-        ID := LeftStr(S[1], 8);
-        Image := S[4];
-      end
-      else
-      begin
-        ID := LeftStr(S[2], 8);
-        Image := S[5];
-      end;
-      // cash weapon
-      if GetPart(ID) = CashWeapon then
-      begin
-        ID := LeftStr(S[2], 8);
-        Image := S[6];
-      end;
-      Visible := False;
-      for j := 0 to 7 do
-      begin
-
-        if GetPart(ID) = GetPart(DefaultEqps[j]) then
-          Visible := True;
-      end;
-      // if GetPart(ID) = 'CashWeapon' then
-      // Visible := False;
-    end;
-
-  AttackAction := AttackActions[0];
-  // usecashweapon:=true;
-  TAfterImage.Load(AfterImageStr, '0');
-  TDamageNumber.Style := 'NoRed1';
-  TDamageNumber.Load('');
+  SpriteList := TList<TAvatarParts>.Create;
+  Z := 20000;
+  Offset.Y := -79;
+  Offset.X := -40;
+  JumpSpeed := 0.6;
+  JumpHeight := 9.5;
+  MaxFallSpeed := 8;
+  Alpha := 0;
+  Tag := 1;
+  JumpState := jsFalling;
+  TruncMove := True;
 end;
 
 destructor TPlayer.Destroy;
 begin
   TAvatarParts.ZMap.Free;
-  PartList.Free;
+
   FreeAndNil(AvatarTargets);
   AvatarEngine.Free;
   inherited Destroy;
@@ -799,117 +910,6 @@ begin
 
 end;
 
-procedure TPlayer.LoadEquip(EquipID: string; ColorEffect: TColorEffect = ceNone; Value: Integer = 0);
-var
-  Child: TWZIMGEntry;
-  Iter, Iter2, Iter3, Iter4, Entry: TWZIMGEntry;
-  Path, Dir: string;
-  Part: TPartName;
-  SameName: TList<string>;
-begin
-  Dir := GetDir(EquipID);
-  Part := GetPart(EquipID);
-  Entry := CharacterWZ.GetImgFile(Dir + EquipID + '.img').Root;
- // if not EquipImages.ContainsKey(Entry) then
-  if TPlayer.ReDumpTexture then
-    DumpData(Entry, EquipData, EquipImages, ColorEffect, Value)
-  else
-  begin
-    if not EquipLoadedList.contains(EquipID) then
-    begin
-      DumpData(Entry, EquipData, EquipImages, ColorEffect, Value);
-      EquipLoadedList.Add(EquipID);
-    end;
-  end;
-
-  if Part = Weapon then
-  begin
-    AfterImageStr := GetAfterImageStr(EquipID);
-    TAfterImage.Load(AfterImageStr, '0');
-    WeaponNum := GetWeaponNum(EquipID);
-    AttackActions.Clear;
-    AttackOFs.Clear;
-
-  end;
-
-  for Iter in Entry.Children do
-  begin
-    if (Dir = 'Weapon/') and (Iter.Name <> 'info') then
-    begin
-      if (LeftStr(Iter.Name, 4) = 'stab') or (LeftStr(Iter.Name, 5) = 'swing') then
-      begin
-        if RightStr(Iter.Name, 1) <> 'F' then
-          AttackActions.Add(Iter.Name)
-        else
-          AttackOFs.Add(Iter.Name);
-      end;
-
-    end;
-
-    if Part = Body then
-      CharData.AddOrSetValue('body/' + Iter.Name + '/FrameCount', Iter.Children.Count - 1);
-    if Part = Face then
-      CharData.AddOrSetValue('face/' + Iter.Name + '/FrameCount', Iter.Children.Count - 1);
-
-    for Iter2 in Iter.Children do
-    begin
-      if Part = Body then
-        CharData.AddOrSetValue('body/' + Iter.Name + '/' + Iter2.Name + '/delay', Abs(Iter2.Get('delay', 0)));
-      if Part = Face then
-        CharData.AddOrSetValue('face/' + Iter.Name + '/' + Iter2.Name + '/delay', Iter2.Get('delay', 0));
-
-      if (Iter2.Child['action'] <> nil) and (Iter2.Child['frame'] <> nil) then
-      begin
-        CharData.AddOrSetValue(Iter.Name + '/' + Iter2.Name, Iter2.Get('action', '') + '/' +
-          IntToStr(Iter2.Get('frame', '')));
-      end;
-    end;
-  end;
-
-  if TMap.FirstLoad then
-    Exit;
-  SameName := TList<string>.Create;
-  for Iter in Entry.Children do
-    for Iter2 in Iter.Children do
-    begin
-      if Iter2.Name = 'hairShade' then
-        Continue;
-      for Iter3 in Iter2.Children do
-      begin
-        if (Iter3.Name = 'hairShade') or (Iter3.Name = '006') then
-          Continue;
-        if (Iter3.DataType = mdtCanvas) or (Iter3.DataType = mdtUOL) then
-          if not SameName.contains(Iter3.Name) then
-          begin
-            SameName.Add(Iter3.Name);
-            PartList.Add(GetEntryPath(Iter3));
-          end;
-      end;
-    end;
-
-  if Part = CashWeapon then
-  begin
-    Entry := GetImgEntry('Character.wz/' + Dir + EquipID + '.img/' + WeaponNum);
-
-    for Iter in Entry.Children do
-      for Iter2 in Iter.Children do
-      begin
-        for Iter3 in Iter2.Children do
-        begin
-          if (Iter3.DataType = mdtCanvas) or (Iter3.DataType = mdtUOL) then
-            if not SameName.contains(Iter3.Name) then
-            begin
-              SameName.Add(Iter3.Name);
-              PartList.Add(Iter3.GetPath);
-            end;
-        end;
-      end;
-
-  end;
-  SameName.Free;
-
-end;
-
 procedure TPlayer.DoDraw;
 var
   WX, WY, NamePos, IDPos: Integer;
@@ -1096,7 +1096,7 @@ begin
     if (State = 'rope') or (State = 'ladder') then
     begin
       Frame := 0;
-      state := owner.standtype;
+      State := Owner.standtype;
     end;
   end;
 
@@ -1171,20 +1171,8 @@ begin
   end;
 
   Part := GetPart(ID);
-  if Part = Weapon then
-  begin
-    if HasEntry(C + GetDir(ID) + ID + '.img/stand1') then
-      Owner.StandType := 'stand1'
-    else if HasEntry(C + GetDir(ID) + ID + '.img/stand2') then
-      Owner.StandType := 'stand2';
 
-    if HasEntry(C + GetDir(ID) + ID + '.img/walk1') then
-      Owner.WalkType := 'walk1'
-    else if HasEntry(C + GetDir(ID) + ID + '.img/walk2') then
-      Owner.WalkType := 'walk2';
-  end;
-
-  if (Part = Weapon) and (FTime = 0) then
+  if ((Part = Weapon) or (Part=CashWeapon))and (FTime = 0) then
   begin
     AfterImagePath := 'Character.wz/Afterimage/' + AfterImageStr + '.img/0/' + State + '/' + IntToStr(Frame) + '/0';
     if HasEntry(AfterImagePath) then
@@ -1256,7 +1244,7 @@ begin
   if (Image <> 'face') and (GetPart(ID) <> FaceAcc) then
   begin
     if Part = CashWeapon then
-      WpNum := WeaponNum + '/'
+      WpNum := Owner.WeaponNum + '/'
     else
       WpNum := '';
 
@@ -1267,27 +1255,6 @@ begin
   end
   else
     Path := C + Dir + ID + '.img/' + Expression + '/' + IntToStr(FaceFrame) + '/' + Image;
- {
-  if Part = GetPart(NewID) then
-  begin
-    ID := NewID;
-    Visible := True;
-    //NewID := '99999'
-  end;
-  }
-
-  for var I := 0 to PlayerEqpList.Count - 1 do
-    if Part = GetPart(PlayerEqpList[I]) then
-    begin
-      ID := PlayerEqpList[I];
-      Visible := True
-    end;
-
-  if Part = GetPart(DeleteID) then
-  begin
-    Visible := False;
-   // DeleteID := '99999';
-  end;
 
   if (Image <> 'face') and (GetPart(ID) <> FaceAcc) then
   begin
@@ -1320,23 +1287,23 @@ begin
       Alpha := 255;
   end;
 
-  if not DressCap then
+  if not Owner.DressCap then
   begin
     if Part = Cap then
       Visible := False;
 
-    if ShowHair then
+    if Owner.ShowHair then
    //   if (Image = 'hairOverHead') or (Image = 'backHair') then
      //   Visible := True;
       if Part = Hair then
         Visible := True;
   end;
 
-  if (DressCap) and (ShowHair) then
+  if (Owner.DressCap) and (Owner.ShowHair) then
   begin
 
     if Part = Hair then
-      case CapType of
+      case Owner.CapType of
         0:
           Visible := True;
         1:
@@ -1347,69 +1314,6 @@ begin
         2:
           Visible := False;
       end;
-  end;
-
-  case Part of
-    Weapon:
-      begin
-        if DressCashWeapon then
-          Visible := False;
-        if not DressNormalWeapon then
-          Visible := False;
-      end;
-
-    CashWeapon:
-      begin
-        if DressNormalWeapon then
-          Visible := False;
-        if not DressCashWeapon then
-          Visible := False;
-      end;
-
-    Longcoat:
-      begin
-        if (DressCoat) or (DressPants) then
-          Visible := False;
-        if not DressLongcoat then
-          Visible := False;
-      end;
-
-    Coat, Pants:
-      if DressLongcoat then
-        Visible := False;
-
-    Cape:
-      if not DressCape then
-        Visible := False;
-
-    Glove:
-      if not DressGlove then
-        Visible := False;
-
-    EarRing:
-      if not DressEarring then
-        Visible := False;
-
-    Glass:
-      if not DressGlass then
-        Visible := False;
-
-    FaceAcc:
-      if not DressFaceAcc then
-        Visible := False;
-
-    Shield:
-      if not DressShield then
-        Visible := False;
-
-    Shoes:
-      if not DressShoes then
-        Visible := False;
-
-    Face:
-      if not DressFace then
-        Visible := False;
-
   end;
 
 
@@ -1665,13 +1569,13 @@ initialization
   AttackOFs := TList<string>.Create;
 
   PlayerEqpList := TList<string>.Create;
-  TPlayer.EquipLoadedList := TList<string>.Create;
+  TPlayer.EquipDumpList := TList<string>.Create;
 
 finalization
   AttackActions.Free;
   AttackOFs.Free;
   PlayerEqpList.Free;
-  TPlayer.EquipLoadedList.Free;
+  TPlayer.EquipDumpList.Free;
 
 end.
 
