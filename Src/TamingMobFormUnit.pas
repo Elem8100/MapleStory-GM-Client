@@ -55,8 +55,8 @@ begin
   TItemEffect.Delete(Chair);
   TMapleChair.Delete;
 
-  ChangeState := True;
-  NewState :=Player.StandType;
+  Player.ResetAction := True;
+  Player.NewAction :=Player.StandType;
   ActiveControl := nil;
 end;
 

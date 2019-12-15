@@ -121,30 +121,8 @@ end;
 procedure TAvatarForm.AddEqps(EqpID: string);
 begin
 
-  Player.CreateEquip(Player, EqpID, Player.AvatarEngine);
-
   var NewID := EqpID;
-
   var Part := GetPart(NewID);
-
-  if (Part = Cap) then
-  begin
-    Player.DressCap := True;
-    var Data := GetImgEntry('Character.wz/Cap/' + NewID + '.img/info/vslot').Data;
-    //no Cover
-    if (Data = 'Cp') or (Data = 'CpH5') then
-      Player.CapType := 0;
-    //stand cover
-    if Data = 'CpH1H5' then
-      Player.CapType := 1;
-    //cover all
-    if Length(Data) > 12 then
-      Player.CapType := 2;
-  end;
-
-  if (Part = Hair) then
-    Player.ShowHair := True;
-
   var NewPart := GetPart(NewID);
 
   for var i := PlayerEqpList.Count - 1 downto 0 do
@@ -175,45 +153,17 @@ begin
   end;
   PlayerEqpList.Add(NewID);
 
-  for var Iter in Player.SpriteList do
-    TAvatarParts(Iter).Dead;
-  Player.SpriteList.Clear;
-
-  for var Iter in PlayerEqpList do
-    TPlayer.Spawn(Iter);
-
   if TItemEffect.AllList.contains(EqpID) then
     TItemEffect.Create(EqpID, True);
 
   if TSetEffect.AllList.ContainsKey(EqpID) then
     TSetEffect.Create(EqpID);
 
+
   if Part = SitTamingMob then
     Exit;
-  ChangeState := True;
+
   var Path := 'Character.wz/Weapon/';
-  if (Part = Weapon) then
-  begin
-
-    NewState := Player.StandType;
-  end;
-
-  if (Part = CashWeapon) then
-  begin
-
-    AttackActions.Clear;
-    AttackOFs.Clear;
-    for var Iter in GetImgEntry(Path + NewID + '.img/' + Player.WeaponNum).Children do
-      if (LeftStr(Iter.Name, 4) = 'stab') or (LeftStr(Iter.Name, 5) = 'swing') then
-      begin
-        if RightStr(Iter.Name, 1) <> 'F' then
-          AttackActions.Add(Iter.Name)
-        else
-          AttackOFs.Add(Iter.Name);
-      end;
-
-    NewState := Player.StandType;
-  end;
 
   var TrimID: string;
   if LeftStr(EqpID, 3) = '000' then
@@ -239,8 +189,8 @@ begin
     Bmp := Entry.Get2('info/icon').Canvas.DumpBmp;
   end;
 
-  var Row := 0;
-  for var i := 1 to Inventory.RowCount - 1 do
+  var Row := -1;
+  for var i := 0 to Inventory.RowCount - 1 do
   begin
    // if Inventory.Cells[0, i]='' then continue;
     if GetPart(Inventory.Cells[0, i]) = Part then
@@ -255,7 +205,7 @@ begin
     AddInventory(NewID, Bmp, Name, Row + 1);
   end;
 
-  for var i := Inventory.RowCount - 1 downto 1 do
+  for var i := Inventory.RowCount - 1 downto 0 do
   begin
     var InvPart := GetPart(Inventory.Cells[0, i]);
     if (Part = Coat) or (Part = Pants) then
@@ -288,6 +238,11 @@ end;
 procedure TAvatarForm.ImageGridSelect(Sender: TObject; idx: Integer);
 begin
   AddEqps(ImageGrids[PartIndex].ImageInfoText[idx]);
+  Inventory.SortByColumn(0);
+
+  Player.RemoveSprites;
+  for var i := 0 to Inventory.RowCount - 1 do
+    TPlayer.Spawn(Inventory.Cells[0, i]);
   ResetColorGrid;
   ActiveControl := nil;
 end;
@@ -297,16 +252,23 @@ begin
   var Part := GetPart(Inventory.Cells[0, ARow]);
   DeleteID := Inventory.Cells[0, ARow];
   PlayerEqpList.Remove(DeleteID);
-  if Part = Cap then
-    Player.DressCap := False;
-  if Part = Hair then
-    Player.ShowHair := False;
+
   if TItemEffect.AllList.contains(DeleteID) then
     TItemEffect.Delete(DeleteID);
   if TSetEffect.AllList.containsKey(DeleteID) then
     TSetEffect.Delete(DeleteID);
 
   Inventory.RemoveRows(ARow, 1);
+  case Part of
+    Hair: Player.ShowHair := False;
+    Cap: Player.DressCap := False;
+  end;
+
+  Inventory.SortByColumn(0);
+  Player.RemoveSprites;
+  for var i := 0 to Inventory.RowCount - 1 do
+    TPlayer.Spawn(Inventory.Cells[0, i]);
+
   ResetColorGrid;
 end;
 
@@ -370,6 +332,12 @@ begin
 
   for var i := 0 to High(Explode) - 1 do
     AvatarForm.AddEqps(Explode[i]);
+  Inventory.SortByColumn(0);
+
+  Player.RemoveSprites;
+  for var i := 0 to Inventory.RowCount - 1 do
+   TPlayer.Spawn(Inventory.Cells[0, i]);
+
   ResetColorGrid;
   ActiveControl := nil;
 end;
@@ -393,14 +361,14 @@ end;
 procedure TAvatarForm.ResetColorGrid;
 begin
   ColorGrid.Clear;
-  for var Row := 1 to Inventory.RowCount - 1 do
+  for var Row := 0 to Inventory.RowCount  do
   begin
-    if Inventory.CellTypes[1, Row] = ctPicture then
+    if Inventory.CellTypes[1, Row-1] = ctPicture then
     begin
 
       for var Col := 0 to 18 do
       begin
-        ColorGrid.CreateBitmap(Col, Row, False, haLeft, vaCenter).Assign(Inventory.CellGraphics[1, Row].CellBitmap);
+        ColorGrid.CreateBitmap(Col, Row, False, haLeft, vaCenter).Assign(Inventory.CellGraphics[1, Row-1].CellBitmap);
         case Col of
           0..10:
             TColorFunc.HSVvar(ColorGrid.CellGraphics[Col, Row].CellBitmap, Col * 30, 0, 0);
@@ -432,7 +400,7 @@ end;
 procedure TAvatarForm.ColorGridClickCell(Sender: TObject; ARow, ACol: Integer);
 begin
   var Top := ColorGrid.CellRect(ACol, ARow).Location.Y;
-  var ID := Inventory.Cells[0, ARow];
+  var ID := Inventory.Cells[0, ARow-1];
 
   if Length(ID) > 2 then
   begin
@@ -624,12 +592,13 @@ begin
   AvatarView.ThumbsRounded := 100;
   AvatarView.SelectionColor := clRed;
   AvatarView.OnImageSelect := AvatarViewImageSelect;
-
+  {
   Inventory.ColumnHeaders.Add('ID');
   Inventory.ColumnHeaders.Add('Icon');
   Inventory.ColumnHeaders.Add('Name');
   Inventory.ColumnHeaders.Add('Del');
   Inventory.RowHeights[0] := 22;
+  }
   Inventory.ColWidths[0] := 80;
   Inventory.ColWidths[1] := 40;  //icon
   Inventory.ColWidths[2] := 105;
@@ -695,9 +664,10 @@ begin
       else
         Bmp := Entry.Get2('info/icon').Canvas.DumpBmp;
     end;
-    AddInventory(DefaultEqps[i], Bmp, Name, i + 1);
+    AddInventory(DefaultEqps[i], Bmp, Name, i);
     Bmp.Free;
   end;
+  Inventory.SortByColumn(0);
   ResetColorGrid;
 
 end;

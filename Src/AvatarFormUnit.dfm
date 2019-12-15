@@ -2555,7 +2555,8 @@ object AvatarForm: TAvatarForm
     DefaultRowHeight = 35
     DrawingStyle = gdsClassic
     FixedCols = 0
-    RowCount = 9
+    RowCount = 8
+    FixedRows = 0
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -15
@@ -2674,7 +2675,6 @@ object AvatarForm: TAvatarForm
       35
       35
       35
-      35
       35)
   end
   object SaveButton: TButton
@@ -2728,10 +2728,18 @@ object AvatarForm: TAvatarForm
     object TabSheet2: TTabSheet
       Caption = 'Load Character'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
     end
     object TabSheet3: TTabSheet
       Caption = 'Dye'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object ColorGrid: TAdvStringGrid
         Left = 0
         Top = 0
@@ -2893,6 +2901,10 @@ object AvatarForm: TAvatarForm
       ImageIndex = 3
       ParentFont = False
       OnShow = TabSheet4Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label1: TLabel
         Left = 205
         Top = 63
@@ -3110,5 +3122,23 @@ object AvatarForm: TAvatarForm
         end
       end
     end
+  end
+  object Button2: TButton
+    Left = 488
+    Top = 232
+    Width = 65
+    Height = 25
+    Caption = 'Button2'
+    TabOrder = 5
+    OnClick = Button2Click
+  end
+  object Button3: TButton
+    Left = 608
+    Top = 232
+    Width = 73
+    Height = 41
+    Caption = 'Button3'
+    TabOrder = 6
+    OnClick = Button3Click
   end
 end

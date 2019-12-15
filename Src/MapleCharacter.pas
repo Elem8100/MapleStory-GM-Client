@@ -44,12 +44,15 @@ type
     DressCap: Boolean;
     CapType: Integer;
     WeaponNum: string;
+    ResetAction: Boolean;
+    NewAction: string;
     class var
       AvatarTargetIndex: Integer;
       AvatarPanelIndex: Integer;
       EquipDumpList: TList<string>;
-    class procedure CreateEquip(AOwner: TPlayer; EquipID: string; SelfEngine: TSpriteEngine;
-      ColorEffect: TColorEffect = ceNone; Value: Integer = 0);
+    procedure CreateEquip(EquipID: string; UseEngine: TSpriteEngine; ColorEffect: TColorEffect =
+      ceNone; Value: Integer = 0);
+    procedure RemoveSprites;
     class procedure SpawnNew;
     class procedure Spawn(EquipID: string);
     procedure TargetEvent(Sender: TObject);
@@ -109,10 +112,9 @@ function GetAfterImageStr(ID: string): string;
 var
   AttackActions, AttackOFs: TList<string>;
   PlayerEqpList: TList<string>;
-  AttackAction, NewState: string;
+  AttackAction: string;
   NEWFRAME: Integer;
   NewFaceState: string = 'blink';
-  ChangeState: Boolean;
   Counter: Integer;
   Animate: Boolean = False;
   CharFlip: Boolean;
@@ -175,11 +177,9 @@ begin
     CharData.Add('0000' + I.ToString + '/swingOF/2/arm', 'swingOF/2');
   end;
 
-  Player.ShowHair := True;
-
   for I := 0 to 7 do
   begin
-    CreateEquip(Player, DefaultEqps[I], Player.AvatarEngine);
+    Player.CreateEquip(DefaultEqps[I], Player.AvatarEngine);
     PlayerEqpList.Add(DefaultEqps[I]);
   end;
 
@@ -193,11 +193,11 @@ end;
 class procedure TPlayer.Spawn(EquipID: string);
 begin
 
-  CreateEquip(Player, EquipID, Player.AvatarEngine);
+  Player.CreateEquip(EquipID, Player.AvatarEngine);
 end;
 
-class procedure TPlayer.CreateEquip(AOwner: TPlayer; EquipID: string; SelfEngine: TSpriteEngine;
-  ColorEffect: TColorEffect = ceNone; Value: Integer = 0);
+procedure TPlayer.CreateEquip(EquipID: string; UseEngine: TSpriteEngine; ColorEffect: TColorEffect =
+  ceNone; Value: Integer = 0);
 var
   Child: TWZIMGEntry;
   Iter, Iter2, Iter3, Iter4, Entry: TWZIMGEntry;
@@ -219,21 +219,38 @@ begin
   begin
     AfterImageStr := GetAfterImageStr(EquipID);
     TAfterImage.Load(AfterImageStr, '0');
-    AOwner.WeaponNum := GetWeaponNum(EquipID);
+    WeaponNum := GetWeaponNum(EquipID);
     AttackActions.Clear;
     AttackOFs.Clear;
 
     if HasEntryE(LPath + EquipID + '.img/stand1') then
-      AOwner.StandType := 'stand1'
+      StandType := 'stand1'
     else if HasEntryE(LPath + EquipID + '.img/stand2') then
-      AOwner.StandType := 'stand2';
+      StandType := 'stand2';
 
     if HasEntryE(LPath + EquipID + '.img/walk1') then
-      AOwner.WalkType := 'walk1'
+      WalkType := 'walk1'
     else if HasEntryE(LPath + EquipID + '.img/walk2') then
-      AOwner.WalkType := 'walk2';
-
+      WalkType := 'walk2';
   end;
+
+  if (Part = Cap) then
+  begin
+    DressCap := True;
+    var Data := GetImgEntry('Character.wz/Cap/' + EquipID + '.img/info/vslot').Data;
+    //no Cover
+    if (Data = 'Cp') or (Data = 'CpH5') then
+      CapType := 0;
+    //stand cover
+    if Data = 'CpH1H5' then
+      CapType := 1;
+    //cover all
+    if Length(Data) > 12 then
+      CapType := 2;
+  end;
+
+  if (Part = Hair) then
+    ShowHair := True;
 
   for Iter in Entry.Children do
   begin
@@ -246,7 +263,6 @@ begin
         else
           AttackOFs.Add(Iter.Name);
       end;
-
     end;
 
     if Part = Body then
@@ -288,10 +304,11 @@ begin
             begin
 
               SameName.Add(Iter3.Name);
-              Sprite := TAvatarParts.Create(SelfEngine);
+              Sprite := TAvatarParts.Create(UseEngine);
               with Sprite do
               begin
-                Owner := AOwner;
+                Visible := False;
+                Owner := Self;
                 ImageLib := EquipImages;
                 Path := Iter3.GetPath;
                 if EquipData.ContainsKey(Path) then
@@ -300,7 +317,7 @@ begin
                 Tag := 1;
                 Value := 1;
                 State := 'stand1';
-                MirrorX:=AOwner.MirrorX;
+                MirrorX := Self.MirrorX;
                 Expression := 'blink';
                 S := Explode('/', Path);
                 // Body,head
@@ -316,33 +333,44 @@ begin
                 end;
 
               end;
-              AOwner.SpriteList.Add(Sprite);
+              SpriteList.Add(Sprite);
 
             end;
         end;
       end;
     end;
-
+  MainForm.Caption := Self.SpriteList.Count.ToString;
   if Part = CashWeapon then
   begin
     for var I := 69 downto 30 do
     begin
       if HasEntryE(LPath + EquipID + '.img/' + I.ToString + '/stand1') then
-        AOwner.StandType := 'stand1'
+        StandType := 'stand1'
       else if HasEntryE(LPath + EquipID + '.img/' + I.ToString + '/stand2') then
-        AOwner.StandType := 'stand2';
+        StandType := 'stand2';
 
       if HasEntryE(LPath + EquipID + '.img/' + I.ToString + '/walk1') then
-        AOwner.Walktype := 'walk1'
+        WalkType := 'walk1'
       else if HasEntryE(LPath + EquipID + '.img/' + I.ToString + '/walk2') then
-        AOwner.WalkType := 'walk2';
+        WalkType := 'walk2';
       if HasEntryE(LPath + EquipID + '.img/' + I.ToString) then
-        AOwner.WeaponNum := I.ToString;
+        WeaponNum := I.ToString;
     end;
-    AfterImageStr := GetAfterImageStr('01' + AOwner.WeaponNum + '1234');
+    AttackActions.Clear;
+    AttackOFs.Clear;
+    for  Iter in GetImgEntry(LPath + EquipID + '.img/' + WeaponNum).Children do
+      if (LeftStr(Iter.Name, 4) = 'stab') or (LeftStr(Iter.Name, 5) = 'swing') then
+      begin
+        if RightStr(Iter.Name, 1) <> 'F' then
+          AttackActions.Add(Iter.Name)
+        else
+          AttackOFs.Add(Iter.Name);
+      end;
+
+    AfterImageStr := GetAfterImageStr('01' + WeaponNum + '1234');
     TAfterImage.Load(AfterImageStr, '0');
 
-    Entry := GetImgEntry('Character.wz/' + Dir + EquipID + '.img/' + AOwner.WeaponNum);
+    Entry := GetImgEntry('Character.wz/' + Dir + EquipID + '.img/' + WeaponNum);
 
     for Iter in Entry.Children do
       for Iter2 in Iter.Children do
@@ -353,10 +381,11 @@ begin
             if not SameName.contains(Iter3.Name) then
             begin
               SameName.Add(Iter3.Name);
-              Sprite := TAvatarParts.Create(SelfEngine);
+              Sprite := TAvatarParts.Create(UseEngine);
               with Sprite do
               begin
-                Owner := AOwner;
+                Visible := False;
+                Owner := Self;
                 ImageLib := EquipImages;
                 Path := Iter3.GetPath;
                 if EquipData.ContainsKey(Path) then
@@ -365,20 +394,30 @@ begin
                 Tag := 1;
                 Value := 1;
                 State := 'stand1';
-                 MirrorX:=AOwner.MirrorX;
+                MirrorX := Self.MirrorX;
                 Expression := 'blink';
                 S := Explode('/', Path);
                 ID := LeftStr(S[2], 8);
                 Image := S[6];
               end;
-              AOwner.SpriteList.Add(Sprite);
+              SpriteList.Add(Sprite);
 
             end;
         end;
       end;
 
   end;
+  ResetAction := True;
+  NewAction := StandType;
   SameName.Free;
+end;
+
+procedure TPlayer.RemoveSprites;
+begin
+  for var Iter in SpriteList do
+    TAvatarParts(Iter).Dead;
+  SpriteList.Clear;
+
 end;
 
 var
@@ -1172,7 +1211,7 @@ begin
 
   Part := GetPart(ID);
 
-  if ((Part = Weapon) or (Part=CashWeapon))and (FTime = 0) then
+  if ((Part = Weapon) or (Part = CashWeapon)) and (FTime = 0) then
   begin
     AfterImagePath := 'Character.wz/Afterimage/' + AfterImageStr + '.img/0/' + State + '/' + IntToStr(Frame) + '/0';
     if HasEntry(AfterImagePath) then
@@ -1222,11 +1261,11 @@ begin
       Frame := NEWFRAME;
   end;
 
-  if ChangeState then
+  if Owner.ResetAction then
   begin
 
     Frame := 1;
-    State := NewState;
+    State := Owner.NewAction;
     Inc(Counter);
   end;
 
@@ -1287,6 +1326,14 @@ begin
       Alpha := 255;
   end;
 
+  if (TTamingMob.IsUse) or (TMapleChair.IsUse) then
+  begin
+    if (Part = Weapon) or (Part = CashWeapon) then
+      Visible := False;
+  end
+  else
+    Visible := True;
+
   if not Owner.DressCap then
   begin
     if Part = Cap then
@@ -1309,7 +1356,7 @@ begin
         1:
           begin
             if (Image = 'hairOverHead') or (Image = 'backHair') then
-              Visible := False;
+              Self.Visible := False;
           end;
         2:
           Visible := False;
@@ -1338,12 +1385,6 @@ begin
 
   end;
 
-  if (TTamingMob.IsUse) or (TMapleChair.IsUse) then
-  begin
-    if (Part = Weapon) or (Part = CashWeapon) then
-      Visible := False;
-  end;
-
   if HasEntry(Path + '/z') then
     Z := 100 + Owner.Z - ZMap.IndexOf(EquipData[Path + '/z'].Data);
 
@@ -1364,7 +1405,7 @@ begin
 
     if Counter > 50 then
     begin
-      ChangeState := False;
+      Owner.ResetAction := False;
       Counter := 0;
     end;
     FTime := 0;
