@@ -50,7 +50,6 @@ type
     NameLabel: TLabel;
     Button1: TButton;
     Image1: TImage;
-    Button2: TButton;
     Button3: TButton;
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure SpeedButton9Click(Sender: TObject);
@@ -101,7 +100,7 @@ implementation
 
 uses
   WZDirectory, MapleEffect, Global, MapleCharacter, LockRenderTarget, AsphyreTypes, WzUtils,
-  AfterImage;
+  AfterImage,MapleCharacterEx;
 
 {$R *.dfm}
 
@@ -242,7 +241,7 @@ begin
 
   Player.RemoveSprites;
   for var i := 0 to Inventory.RowCount - 1 do
-    TPlayer.Spawn(Inventory.Cells[0, i]);
+    Player.Spawn(Inventory.Cells[0, i]);
   ResetColorGrid;
   ActiveControl := nil;
 end;
@@ -267,7 +266,7 @@ begin
   Inventory.SortByColumn(0);
   Player.RemoveSprites;
   for var i := 0 to Inventory.RowCount - 1 do
-    TPlayer.Spawn(Inventory.Cells[0, i]);
+    Player.Spawn(Inventory.Cells[0, i]);
 
   ResetColorGrid;
 end;
@@ -336,7 +335,7 @@ begin
 
   Player.RemoveSprites;
   for var i := 0 to Inventory.RowCount - 1 do
-   TPlayer.Spawn(Inventory.Cells[0, i]);
+   Player.Spawn(Inventory.Cells[0, i]);
 
   ResetColorGrid;
   ActiveControl := nil;
@@ -345,6 +344,11 @@ end;
 procedure TAvatarForm.Button1Click(Sender: TObject);
 begin
   AddEqps(SearchEqpID);
+  Inventory.SortByColumn(0);
+  Player.RemoveSprites;
+  for var i := 0 to Inventory.RowCount - 1 do
+    Player.Spawn(Inventory.Cells[0, i]);
+
   ResetColorGrid;
 end;
 
@@ -355,7 +359,7 @@ end;
 
 procedure TAvatarForm.Button3Click(Sender: TObject);
 begin
-  //TMaplePlayer.Spawn('01062055-01072054-01040005-00030020-00020000-00002000-00012000-01702281-');
+  TPlayerEx.Spawn('01062055-01072054-01040005-00030020-00020000-00002000-00012000-01702281-');
 end;
 
 procedure TAvatarForm.ResetColorGrid;

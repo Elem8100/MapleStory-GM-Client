@@ -119,7 +119,7 @@ begin
   if not TMap.FirstLoad then
   begin
     TMobInfo.Create;
-    CreatePlayer;
+    Player.SpawnNew;
     TLabelRingTag.Create('01112101');
   end;
   //TNameTag.Create('SuperGM');

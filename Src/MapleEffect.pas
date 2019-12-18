@@ -91,9 +91,9 @@ var
   BrowPos, BodyRelMove: TPoint;
 begin
   inherited;
-  if HasEntryE(Path + '/' + FState + '/' + FFrame.ToString) then
+  if HasEntryE(Path + '/' + Player.Action + '/' + FFrame.ToString) then
   begin
-    ImageEntry := EquipData[Path + '/' + FState + '/' + FFrame.ToString];
+    ImageEntry := EquipData[Path + '/' + Player.Action + '/' + FFrame.ToString];
     Default := 1;
     Visible := True;
   end
@@ -112,7 +112,7 @@ begin
     FFrame := FFrame + 1;
     case Default of
       1:
-        if not HasEntryE(Path + '/' + FState + '/' + FFrame.ToString) then
+        if not HasEntryE(Path + '/' + Player.Action + '/' + FFrame.ToString) then
           FFrame := 0;
       0:
         if not HasEntryE(Path + '/' + FFrame.ToString) then
@@ -137,7 +137,7 @@ begin
   if ImageEntry.Get('origin') <> nil then
     Origin := ImageEntry.Get('origin').Vector;
 
-  BrowPos := TAvatarParts.BrowPos;
+  BrowPos := player.BrowPos;
   BodyRelMove := TMapleChair.BodyRelMove;
   OffY := 30;
 
@@ -189,9 +189,9 @@ var
 begin
   inherited;
 
-  if HasEntryE(Path + '/' + FState + '/' + FFrame.ToString) then
+  if HasEntryE(Path + '/' + Player.Action + '/' + FFrame.ToString) then
   begin
-    ImageEntry := EquipData[Path + '/' + FState + '/' + FFrame.ToString];
+    ImageEntry := EquipData[Path + '/' + Player.Action + '/' + FFrame.ToString];
     Default := 1;
     Visible := True;
   end
@@ -224,7 +224,7 @@ begin
 
     case Default of
       1:
-        if not HasEntryE(Path + '/' + FState + '/' + FFrame.ToString) then
+        if not HasEntryE(Path + '/' + Player.Action + '/' + FFrame.ToString) then
           FFrame := 0;
       0:
         if not HasEntryE(Path + '/default/' + FFrame.ToString) then
@@ -266,7 +266,7 @@ begin
   end
   else
   begin
-    BrowPos := TAvatarParts.BrowPos;
+    BrowPos := player.BrowPos;
     BodyRelMove := TMapleChair.BodyRelMove;
     OffY := 30;
   end;

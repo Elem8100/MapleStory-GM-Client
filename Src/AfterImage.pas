@@ -66,13 +66,13 @@ begin
 
   Delay := ImageEntry.Get('delay', 100);
   a1 := ImageEntry.Get('a1', '-1');
-  MirrorX := CharFlip;
+  MirrorX := Player.Flip;
 
-  if EquipData.ContainsKey(c + AfterImageStr + '.img/0/' + FState + '/lt') then
+  if EquipData.ContainsKey(c + Player.AfterImageStr + '.img/0/' + Player.Action + '/lt') then
   begin
-    LT := EquipData[c + AfterImageStr + '.img/0/' + FState + '/lt'].Vector;
-    RB := EquipData[c + AfterImageStr + '.img/0/' + FState + '/rb'].Vector;
-    case CharFlip of
+    LT := EquipData[c + Player.AfterImageStr + '.img/0/' + Player.Action + '/lt'].Vector;
+    RB := EquipData[c + Player.AfterImageStr + '.img/0/' + Player.Action + '/rb'].Vector;
+    case Player.Flip of
       True:
         begin
           Right := Round(X) - LT.X + 18;

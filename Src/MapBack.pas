@@ -34,7 +34,7 @@ type
 implementation
 
 uses
-  SaveMapUnit, MainUnit,ColorUtils, OptionsFormUnit;
+  SaveMapFormUnit, MainUnit,ColorUtils, OptionsFormUnit;
 
 var
   cc: Integer;

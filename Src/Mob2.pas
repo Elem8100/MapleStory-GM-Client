@@ -438,7 +438,7 @@ begin
   if ImageEntry.Child['head'] <> nil then
   begin
     _Head := ImageEntry.Child['head'].Vector;
-    if (MirrorX <> CharFlip) or (not GetHit1) then
+    if (MirrorX <> Player.Flip) or (not GetHit1) then
     begin
       case MirrorX of
         True:
@@ -599,7 +599,7 @@ begin
     end;
 
     // -->player   -->mob
-    if (MirrorX = CharFlip) and (FTime = 0) then
+    if (MirrorX = Player.Flip) and (FTime = 0) then
     begin
       MirrorX := not MirrorX;
       case MoveDirection of
@@ -618,7 +618,7 @@ begin
       end;
     end;
     // player-->  <--Mob
-    if (MirrorX <> CharFlip) and (FTime = 0) then
+    if (MirrorX <> Player.Flip) and (FTime = 0) then
     begin
       if MoveDirection = mdNone then
         if MirrorX then
