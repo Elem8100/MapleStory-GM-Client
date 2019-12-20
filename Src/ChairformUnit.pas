@@ -58,6 +58,8 @@ procedure TChairForm.ChairGridClickCell(Sender: TObject; ARow, ACol: Integer);
 begin
   if TMorph.IsUse then
     Exit;
+  if not TMapleChair.CanUse then
+    Exit;
   ChairID := ChairGrid.Cells[1, ARow];
   TMapleChair.Delete;
   TTamingMob.Delete;
