@@ -95,11 +95,16 @@ type
     ChangeFrame: Boolean;
     Origin: TPoint;
     Flip: Integer;
+    MoveOffset: TPoint;
+    Animate: Boolean;
+    Counter: Integer;
   public
     class var
       ZMap: TList<string>;
       property
       AnimDelay: Integer Read FAnimDelay Write FAnimDelay;
+    function IsAttack: Boolean;
+    procedure UpdateFrame;
     procedure DoMove(const Movecount: Single); override;
     procedure DoDraw; override;
   end;
@@ -121,10 +126,6 @@ implementation
 uses
   MainUnit, Morph, AfterImage, MapleChair, MapleEffect, TamingMob, Pet, MonsterFamiliar,
   MapleCharacterEx;
-
-var
-  Counter: Integer;
-  Animate: Boolean = False;
 
 procedure TPlayer.SpawnNew;
 var
@@ -342,7 +343,17 @@ begin
               if OtherPlayer then
                 Visible := True
               else
-                Visible := False;
+              begin
+                if (TMapleChair.IsUse) or (TTamingMob.IsUse) then
+                begin
+                  if (Part = CashWeapon) or (Part = Weapon) then
+                    Visible := False
+                  else
+                    Visible := True
+                end
+                else
+                  Visible := False;
+              end;
               Owner := Self;
               ImageLib := EquipImages;
               Path := Iter3.GetPath;
@@ -376,8 +387,7 @@ begin
                 Image := S[6];
               end;
             end;
-            if not OtherPlayer then
-              SpriteList.Add(Sprite);
+            SpriteList.Add(Sprite);
 
           end;
       end;
@@ -386,16 +396,34 @@ begin
   end;
 
   ResetAction := True;
-  NewAction := StandType;
+  if OtherPlayer then
+    NewAction := StandType
+  else
+  begin
+    if (TMapleChair.IsUse) or (TTamingMob.IsUse) then
+      NewAction := 'sit'
+    else
+      NewAction := StandType;
+  end;
+
+  if (InLadder) then
+  begin
+    case LadderType of
+      rtLadder:
+        NewAction := 'ladder';
+      rtRope:
+        NewAction := 'rope';
+    end;
+  end;
+
   SameName.Free;
 end;
 
 procedure TPlayer.RemoveSprites;
 begin
   for var Iter in SpriteList do
-    TAvatarParts(Iter).Dead;
+    Iter.Dead;
   SpriteList.Clear;
-
 end;
 
 var
@@ -976,59 +1004,35 @@ end;
 var
   BlinkNum: Integer;
 
-procedure TAvatarParts.DoMove(const Movecount: Single);
-
-  function IsAttack: Boolean;
-  begin
-    if (LeftStr(State, 4) = 'stab') or (LeftStr(State, 5) = 'swing') or ((LeftStr(State, 5) = 'shoot')) then
-      Result := True
-    else
-      Result := False;
-  end;
-
-  function IsSkillAttack: Boolean;
-  begin
-    if (CharData.ContainsKey(TSkill.ID + '/action')) and (Owner.Action = CharData[TSkill.ID + '/action']) then
-      Result := True
-    else
-      Result := False;
-  end;
-
-  function ArrowKeyDown: Boolean;
-  begin
-    if (not Keyboard.Key[DIK_LEFT]) and (not Keyboard.Key[DIK_RIGHT]) and (not Keyboard.Key[DIK_UP])
-      and (not Keyboard.Key[DIK_DOWN]) then
-      Result := False
-    else
-      Result := True;
-  end;
-
+procedure TAvatarParts.UpdateFrame;
 var
   Path, AfterImagePath: string;
   BodyDelay, FaceDelay: Integer;
   FaceFrameCount: Integer;
   AdjX: Integer;
-  MoveOffset: TPoint;
   Dir: string;
   Part: TPartName;
   SkillAction: string;
 const
   C = 'Character.wz/';
 begin
-  inherited;
+  Part := GetPart(ID);
 
-  if GameMode = gmView then
-    Exit;
-  if TMorph.IsUse then
+  if (State = 'stand1') or (State = 'stand2') or (State = 'alert') then
+    AnimZigzag := True
+  else
+    AnimZigzag := False;
+
+  if ((Part = Weapon) or (Part = CashWeapon)) and (FTime = 0) then
   begin
-    Owner.MoveX := -99999;
-    Exit;
+    AfterImagePath := 'Character.wz/Afterimage/' + Owner.AfterImageStr + '.img/0/' + State + '/' +
+      IntToStr(Frame) + '/0';
+    if HasEntry(AfterImagePath) then
+    begin
+      PlaySounds('Weapon', 'swordL/Attack');
+      TAfterImage.Create(AfterImagePath);
+    end;
   end;
-
-  // if (not Visible) and (GetPart(ID) <> 'Weapon') then
-  // Moved := False;
-//  if not Visible then
-  //  Exit;
 
   if (Image = 'head') and (FTime = 0) then
     ChangeFrame := True;
@@ -1038,7 +1042,7 @@ begin
   end
   else
   begin
-    if TMapleChair.IsUse then
+    if (TMapleChair.IsUse) and (not Owner.OtherPlayer) then
     begin
       MoveOffset := TMapleChair.BodyRelMove;
     end
@@ -1054,210 +1058,6 @@ begin
     Owner.MoveX := Round(Owner.X - 1 + MoveOffset.X);
 
   Owner.MoveY := Round(Owner.Y + MoveOffset.Y);
-
-  // X := Foot.X-1;
-  // Y := Foot.Y;
-
-  Owner.FAttack := IsAttack;
-  Owner.Action := State;
-
-  if TTamingMob.IsUse then
-  begin
-    Owner.FAttack := False;
-    if State <> 'fly' then
-      Frame := 0;
-    if TTamingMob.CharacterAction = 'StabT2' then
-      TTamingMob.CharacterAction := 'stabT2';
-    if TTamingMob.CharacterAction <> 'hideBody' then
-      State := TTamingMob.CharacterAction;
-    if (Part = Weapon) or (Part = CashWeapon) then
-      Exit;
-  end;
-
-  if ((Keyboard.Key[DIK_LEFT]) or (Keyboard.Key[DIK_RIGHT])) and (not TTamingMob.IsUse) then
-  begin
-    if (LeftStr(State, 4) <> 'walk') and (Owner.JumpState = jsNone) and (not Owner.InLadder) and (not
-      IsAttack) and (TSkill.PlayEnded) then
-    begin
-      FTime := 0;
-      Frame := 0;
-
-      State := Owner.walktype;
-    end;
-  end;
-
-  if (Keyboard.KeyReleased[DIK_LEFT]) or (Keyboard.KeyReleased[DIK_RIGHT]) then
-    if (not Owner.InLadder) and (Owner.JumpState = jsNone) and (not IsAttack) and (TSkill.PlayEnded) then
-    begin
-      Frame := 0;
-      State := Owner.standtype;
-    end;
-
-  if (Owner.JumpState <> jsNone) and (not IsAttack) and (not TTamingMob.IsUse) then
-  begin
-    Frame := 0;
-    State := 'jump';
-  end;
-  // jump ->re stand
-  if (Owner.JumpState = jsNone) and (State = 'jump') and (not Keyboard.Key[DIK_LMENU]) then
-    State := Owner.standtype;
-
-  // press jump+ left(right) key
-  if (Keyboard.Key[DIK_LMENU]) and (not IsAttack) and (not TTamingMob.IsUse) then
-  begin
-    if (Keyboard.Key[DIK_RIGHT]) or (Keyboard.Key[DIK_LEFT]) then
-    begin
-      Frame := 0;
-      State := 'jump';
-    end;
-  end;
-
-  if (not Owner.InLadder) and (Owner.JumpState = jsNone) and (not TTamingMob.IsUse) then
-  begin
-    if (not IsAttack) and (TSkill.PlayEnded) then
-    begin
-      if (Keyboard.Key[DIK_DOWN]) and (not Keyboard.Key[DIK_LCONTROL]) and (State <> 'proneStab') then
-        State := 'prone';
-
-      if (Keyboard.Key[DIK_LCONTROL]) and (State <> 'proneStab') and (TSkill.PlayEnded) then
-      begin
-        TSkill.Attacking := False;
-        AnimEnd := False;
-        Frame := 0;
-        FTime := 0;
-        State := 'proneStab';
-      end;
-    end;
-
-    if (Keyboard.KeyReleased[DIK_DOWN]) and (TSkill.PlayEnded) then
-      State := Owner.standtype;
-  end;
-
-  if (not Owner.InLadder) then
-  begin
-    if (State = 'rope') or (State = 'ladder') then
-    begin
-      Frame := 0;
-      State := Owner.standtype;
-    end;
-  end;
-
-  if (Owner.InLadder) then
-  begin
-    case Owner.LadderType of
-      rtLadder:
-        State := 'ladder';
-      rtRope:
-        State := 'rope';
-    end;
-  end;
-
-  if (IsAttack) or (State = 'proneStab') or (IsSkillAttack) then
-    AnimRepeat := False
-  else
-    AnimRepeat := True;
-
-  if AnimEnd then
-  begin
-    if (IsSkillAttack) or (IsAttack) then
-    begin
-      Value := 1;
-      FTime := 0;
-      Frame := 0;
-      State := 'alert';
-      AlertCount := 0;
-      TSkill.Start := False;
-    end;
-    if State = 'proneStab' then
-    begin
-      FTime := 0;
-      Frame := 0;
-      State := 'prone';
-    end;
-  end;
-
-  Inc(AlertCount);
-  if (AlertCount > 300) and (State = 'alert') then
-  begin
-   // FTime := 0;
-    Frame := 1;
-    State := Owner.standtype;
-    AlertCount := 0;
-  end;
-
-  if (State = 'stand1') or (State = 'stand2') or (State = 'alert') then
-    AnimZigzag := True
-  else
-    AnimZigzag := False;
-
-  if (Keyboard.Key[DIK_LCONTROL]) and (not Keyboard.Key[DIK_DOWN]) and (not IsAttack) and (not Owner.InLadder)
-    and (TSkill.PlayEnded) and (not TTamingMob.IsUse) then
-  begin
-    TSkill.Attacking := False;
-    AnimEnd := False;
-    Frame := 0;
-    FTime := 0;
-    State := Owner.AttackAction;
-  end;
-
-  if (TSkill.Start) and (not TSkill.PlayEnded) then
-  begin
-    if CharData.ContainsKey(TSkill.ID + '/action') then
-      if State <> CharData[TSkill.ID + '/action'] then
-      begin
-        AnimEnd := False;
-        Frame := 0;
-        FTime := 0;
-        State := CharData[TSkill.ID + '/action'];
-      end;
-  end;
-
-  Part := GetPart(ID);
-
-  if ((Part = Weapon) or (Part = CashWeapon)) and (FTime = 0) then
-  begin
-    AfterImagePath := 'Character.wz/Afterimage/' + Owner.AfterImageStr + '.img/0/' + State + '/' +
-      IntToStr(Frame) + '/0';
-    if HasEntry(AfterImagePath) then
-    begin
-      PlaySounds('Weapon', 'swordL/Attack');
-      TAfterImage.Create(AfterImagePath);
-    end;
-  end;
-
-  // Expression := NewFaceState;
-  with Keyboard do
-  begin
-    if Key[DIK_F1] then
-      Expression := 'hit';
-    if Key[DIK_F2] then
-      Expression := 'smile';
-    if Key[DIK_F3] then
-      Expression := 'troubled';
-    if Key[DIK_F4] then
-      Expression := 'cry';
-    if Key[DIK_F5] then
-      Expression := 'angry';
-    if Key[DIK_F6] then
-      Expression := 'bewildered';
-    if Key[DIK_F7] then
-      Expression := 'stunned';
-  end;
-
-  // MirrorX := NewFlip;
-  if (not Owner.InLadder) and (not IsAttack) and (TSkill.PlayEnded) then
-  begin
-    if Keyboard.Key[DIK_LEFT] then
-    begin
-      MirrorX := False;
-      Owner.Flip := False;
-    end;
-    if Keyboard.Key[DIK_RIGHT] then
-    begin
-      MirrorX := True;
-      Owner.Flip := True;
-    end;
-  end;
 
   if not Animate then
   begin
@@ -1330,14 +1130,6 @@ begin
       Alpha := 255;
   end;
 
-  if (TTamingMob.IsUse) or (TMapleChair.IsUse) then
-  begin
-    if (Part = Weapon) or (Part = CashWeapon) then
-      Visible := False;
-  end
-  else
-    Visible := True;
-
   if not Owner.DressCap then
   begin
     if Part = Cap then
@@ -1375,32 +1167,8 @@ begin
   if (Image = 'ear') or (Image = 'lefEar') or (Image = 'highlefEar') then
     Alpha := 0;
 
-  Player.MirrorX := MirrorX;
-
-  if (State = 'stand1') or (State = 'stand2') or (State = 'alert') or (State = 'sit') then
-    TMapleChair.CanUse := True
-  else
-    TMapleChair.CanUse := False;
-
-  if TMapleChair.IsUse then
-  begin
-
-    State := TMapleChair.CharacterAction;
-
-  end;
-
   if HasEntry(Path + '/z') then
     Z := 100 + Owner.Z - ZMap.IndexOf(EquipData[Path + '/z'].Data);
-
-  if Owner.InLadder then
-  begin
-    if (Keyboard.KeyReleased[DIK_UP]) or (Keyboard.KeyReleased[DIK_DOWN]) then
-      Animate := False;
-    if (Keyboard.Key[DIK_UP]) or (Keyboard.Key[DIK_DOWN]) then
-      Animate := True;
-  end
-  else
-    Animate := True;
 
   if Animate then
     FTime := FTime + 17;
@@ -1516,7 +1284,12 @@ begin
       end;
       Origin.Y := -EquipData[Path + '/origin'].Vector.Y;
     end;
+    if OtherPlayer then
+    begin
+      TTamingMob.Navel.X := 0;
+      TTamingMob.Navel.Y := 0;
 
+    end;
     if HasEntry(Path + '/map/brow') then
     begin
       Brow.X := -EquipData[Path + '/map/brow'].Vector.X * Self.Flip;
@@ -1576,6 +1349,266 @@ begin
     end;
 
   end;
+
+end;
+
+function TAvatarParts.IsAttack: Boolean;
+begin
+  if (LeftStr(State, 4) = 'stab') or (LeftStr(State, 5) = 'swing') or ((LeftStr(State, 5) = 'shoot')) then
+    Result := True
+  else
+    Result := False;
+end;
+
+procedure TAvatarParts.DoMove(const Movecount: Single);
+
+  function IsSkillAttack: Boolean;
+  begin
+    if (CharData.ContainsKey(TSkill.ID + '/action')) and (Owner.Action = CharData[TSkill.ID + '/action']) then
+      Result := True
+    else
+      Result := False;
+  end;
+
+  function ArrowKeyDown: Boolean;
+  begin
+    if (not Keyboard.Key[DIK_LEFT]) and (not Keyboard.Key[DIK_RIGHT]) and (not Keyboard.Key[DIK_UP])
+      and (not Keyboard.Key[DIK_DOWN]) then
+      Result := False
+    else
+      Result := True;
+  end;
+
+var
+  Part: TPartName;
+begin
+  inherited;
+
+  if GameMode = gmView then
+    Exit;
+  if TMorph.IsUse then
+  begin
+    Owner.MoveX := -99999;
+    Exit;
+  end;
+
+  Owner.FAttack := IsAttack;
+  Owner.Action := State;
+  Part := GetPart(ID);
+  if TTamingMob.IsUse then
+  begin
+    Owner.FAttack := False;
+    if State <> 'fly' then
+      Frame := 0;
+    if TTamingMob.CharacterAction = 'StabT2' then
+      TTamingMob.CharacterAction := 'stabT2';
+    if TTamingMob.CharacterAction <> 'hideBody' then
+      State := TTamingMob.CharacterAction;
+   // if (Part = Weapon) or (Part = CashWeapon) then
+     // Exit;
+  end;
+
+  if ((Keyboard.Key[DIK_LEFT]) or (Keyboard.Key[DIK_RIGHT])) and (not TTamingMob.IsUse) then
+  begin
+    if (LeftStr(State, 4) <> 'walk') and (Owner.JumpState = jsNone) and (not Owner.InLadder) and (not
+      IsAttack) and (TSkill.PlayEnded) then
+    begin
+      FTime := 0;
+      Frame := 0;
+
+      State := Owner.walktype;
+    end;
+  end;
+
+  if (Keyboard.KeyReleased[DIK_LEFT]) or (Keyboard.KeyReleased[DIK_RIGHT]) then
+    if (not Owner.InLadder) and (Owner.JumpState = jsNone) and (not IsAttack) and (TSkill.PlayEnded) then
+    begin
+      Frame := 0;
+      State := Owner.standtype;
+    end;
+
+  if (Owner.JumpState <> jsNone) and (not IsAttack) and (not TTamingMob.IsUse) then
+  begin
+    Frame := 0;
+    State := 'jump';
+  end;
+  // jump ->re stand
+  if (Owner.JumpState = jsNone) and (State = 'jump') and (not Keyboard.Key[DIK_LMENU]) then
+    State := Owner.standtype;
+
+  // press jump+ left(right) key
+  if (Keyboard.Key[DIK_LMENU]) and (not IsAttack) and (not TTamingMob.IsUse) then
+  begin
+    if (Keyboard.Key[DIK_RIGHT]) or (Keyboard.Key[DIK_LEFT]) then
+    begin
+      Frame := 0;
+      State := 'jump';
+    end;
+  end;
+
+  if (not Owner.InLadder) and (Owner.JumpState = jsNone) and (not TTamingMob.IsUse) then
+  begin
+    if (not IsAttack) and (TSkill.PlayEnded) then
+    begin
+      if (Keyboard.Key[DIK_DOWN]) and (not Keyboard.Key[DIK_LCONTROL]) and (State <> 'proneStab') then
+        State := 'prone';
+
+      if (Keyboard.Key[DIK_LCONTROL]) and (State <> 'proneStab') and (TSkill.PlayEnded) then
+      begin
+        TSkill.Attacking := False;
+        AnimEnd := False;
+        Frame := 0;
+        FTime := 0;
+        State := 'proneStab';
+      end;
+    end;
+
+    if (Keyboard.KeyReleased[DIK_DOWN]) and (TSkill.PlayEnded) then
+      State := Owner.standtype;
+  end;
+
+  if (not Owner.InLadder) then
+  begin
+    if (State = 'rope') or (State = 'ladder') then
+    begin
+      Frame := 0;
+      State := Owner.standtype;
+    end;
+  end;
+
+  if (Owner.InLadder) then
+  begin
+    case Owner.LadderType of
+      rtLadder:
+        State := 'ladder';
+      rtRope:
+        State := 'rope';
+    end;
+  end;
+
+  if (IsAttack) or (State = 'proneStab') or (IsSkillAttack) then
+    AnimRepeat := False
+  else
+    AnimRepeat := True;
+
+  if AnimEnd then
+  begin
+    if (IsSkillAttack) or (IsAttack) then
+    begin
+      Value := 1;
+      FTime := 0;
+      Frame := 0;
+      State := 'alert';
+      AlertCount := 0;
+      TSkill.Start := False;
+    end;
+    if State = 'proneStab' then
+    begin
+      FTime := 0;
+      Frame := 0;
+      State := 'prone';
+    end;
+  end;
+
+  Inc(AlertCount);
+  if (AlertCount > 300) and (State = 'alert') then
+  begin
+   // FTime := 0;
+    Frame := 1;
+    State := Owner.standtype;
+    AlertCount := 0;
+  end;
+
+  if (Keyboard.Key[DIK_LCONTROL]) and (not Keyboard.Key[DIK_DOWN]) and (not IsAttack) and (not Owner.InLadder)
+    and (TSkill.PlayEnded) and (not TTamingMob.IsUse) then
+  begin
+    TSkill.Attacking := False;
+    AnimEnd := False;
+    Frame := 0;
+    FTime := 0;
+    State := Owner.AttackAction;
+  end;
+
+  if (TSkill.Start) and (not TSkill.PlayEnded) then
+  begin
+    if CharData.ContainsKey(TSkill.ID + '/action') then
+      if State <> CharData[TSkill.ID + '/action'] then
+      begin
+        AnimEnd := False;
+        Frame := 0;
+        FTime := 0;
+        State := CharData[TSkill.ID + '/action'];
+      end;
+  end;
+
+
+  // Expression := NewFaceState;
+  with Keyboard do
+  begin
+    if Key[DIK_F1] then
+      Expression := 'hit';
+    if Key[DIK_F2] then
+      Expression := 'smile';
+    if Key[DIK_F3] then
+      Expression := 'troubled';
+    if Key[DIK_F4] then
+      Expression := 'cry';
+    if Key[DIK_F5] then
+      Expression := 'angry';
+    if Key[DIK_F6] then
+      Expression := 'bewildered';
+    if Key[DIK_F7] then
+      Expression := 'stunned';
+  end;
+
+
+  // MirrorX := NewFlip;
+  if (not Owner.InLadder) and (not IsAttack) and (TSkill.PlayEnded) then
+  begin
+    if Keyboard.Key[DIK_LEFT] then
+    begin
+      MirrorX := False;
+      Owner.Flip := False;
+    end;
+    if Keyboard.Key[DIK_RIGHT] then
+    begin
+      MirrorX := True;
+      Owner.Flip := True;
+    end;
+  end;
+
+  if Owner.InLadder then
+  begin
+    if (Keyboard.KeyReleased[DIK_UP]) or (Keyboard.KeyReleased[DIK_DOWN]) then
+      Animate := False;
+    if (Keyboard.Key[DIK_UP]) or (Keyboard.Key[DIK_DOWN]) then
+      Animate := True;
+  end
+  else
+    Animate := True;
+
+  if (TTamingMob.IsUse) or (TMapleChair.IsUse) then
+  begin
+    if (Part = Weapon) or (Part = CashWeapon) then
+      Visible := False;
+  end
+  else
+    Visible := True;
+
+  Player.MirrorX := MirrorX;
+
+  if (State = 'stand1') or (State = 'stand2') or (State = 'alert') or (State = 'sit') then
+    TMapleChair.CanUse := True
+  else
+    TMapleChair.CanUse := False;
+
+  if TMapleChair.IsUse then
+  begin
+    State := TMapleChair.CharacterAction;
+  end;
+
+  UpdateFrame;
+
 end;
 
 procedure TAvatarParts.DoDraw;
