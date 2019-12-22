@@ -55,10 +55,12 @@ type
     ArmHand, ArmNavel, BodyNeck, BodyNavel, BodyHand, lHandMove, HeadBrow, HeadNeck: TPoint;
     MoveX, MoveY: Double;
     BrowPos: TPoint;
+    NewZ: Integer;
     class var
       AvatarTargetIndex: Integer;
       AvatarPanelIndex: Integer;
       EquipDumpList: TList<string>;
+      _NewZ: Integer;
     procedure CreateEquip(EquipID: string; UseEngine: TSpriteEngine);
     procedure RemoveSprites;
     procedure SpawnNew;
@@ -1168,8 +1170,12 @@ begin
     Alpha := 0;
 
   if HasEntry(Path + '/z') then
-    Z := 100 + Owner.Z - ZMap.IndexOf(EquipData[Path + '/z'].Data);
-
+  begin
+    if not Owner.OtherPlayer then
+      Z := 100 + Owner.Z - ZMap.IndexOf(EquipData[Path + '/z'].Data)
+    else
+      Z := 100 + (200 * Owner.NewZ) + Owner.Z - ZMap.IndexOf(EquipData[Path + '/z'].Data);
+  end;
   if Animate then
     FTime := FTime + 17;
   if FTime > BodyDelay then
