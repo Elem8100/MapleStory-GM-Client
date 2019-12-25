@@ -367,6 +367,8 @@ begin
               State := 'stand1';
               MirrorX := Self.MirrorX;
               Expression := 'blink';
+              Animate := True;
+              AnimRepeat := True;
               S := Explode('/', Path);
                 // Body,head
               if Part <> CashWeapon then
@@ -577,6 +579,8 @@ begin
   Alpha := 0;
   Tag := 1;
   JumpState := jsFalling;
+  StandType:='stand1';
+  WalkType:='walk1';
   TruncMove := True;
 end;
 
@@ -1305,7 +1309,6 @@ begin
 
       Self.Offset.X := Origin.X + HeadNeck.X - BodyNeck.X - HeadBrow.X + Brow.X - TTamingMob.Navel.X;
       Self.Offset.Y := Origin.Y + HeadNeck.Y - BodyNeck.Y - HeadBrow.Y + Brow.Y - TTamingMob.Navel.Y;
-      BrowPos := Offset;
     end;
 
     if HasEntry(Path + '/map/neck') then
@@ -1317,6 +1320,9 @@ begin
       if Image = 'head' then
         HeadNeck := Neck;
     end;
+
+    if Image = 'body' then
+      BrowPos := Neck+ TTamingMob.Navel;
 
     if HasEntry(Path + '/map/hand') then
     begin

@@ -169,6 +169,10 @@
             <Form>OptionsForm</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="AndroidFormUnit.pas">
+            <Form>AndroidForm</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

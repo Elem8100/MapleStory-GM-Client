@@ -22,7 +22,8 @@ uses
   PetFormUnit in 'PetFormUnit.pas' {PetForm},
   FamiliarFormUnit in 'FamiliarFormUnit.pas' {FamiliarForm},
   SkillFormUnit in 'SkillFormUnit.pas' {SkillForm},
-  OptionsFormUnit in 'OptionsFormUnit.pas' {OptionsForm};
+  OptionsFormUnit in 'OptionsFormUnit.pas' {OptionsForm},
+  AndroidFormUnit in 'AndroidFormUnit.pas' {AndroidForm};
 
 {$R *.res}
 
@@ -50,5 +51,6 @@ begin
   Application.CreateForm(TFamiliarForm, FamiliarForm);
   Application.CreateForm(TSkillForm, SkillForm);
   Application.CreateForm(TOptionsForm, OptionsForm);
+  Application.CreateForm(TAndroidForm, AndroidForm);
   Application.Run;
 end.

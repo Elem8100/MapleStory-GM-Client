@@ -7,7 +7,7 @@ uses
   ChatBalloon, Classes, Global, Tools, MapleMap, MapleCharacter;
 
 type
-  TMoveDirection = (mdLeft, mdRight, mdNone,mdNone2);
+  TMoveDirection = (mdLeft, mdRight, mdNone, mdNone2);
 
   TMoveType = (mtStand, mtMove, mtJump, mtFly);
 
@@ -72,7 +72,7 @@ begin
   Inc(TPlayer._NewZ);
   var PlayerEx := TPlayerEx.Create(SpriteEngine);
   PlayerEx.ImageLib := EquipImages;
-  PlayerEx.NewZ:=  TPlayer._NewZ;
+  PlayerEx.NewZ := TPlayer._NewZ;
   PlayerEx.OtherPlayer := True;
   PlayerEx.X := Player.X;
   PlayerEx.Y := Player.Y - 100;
@@ -84,6 +84,7 @@ begin
   PlayerEx.JumpState := jsFalling;
   PlayerEx.MoveSpeed := 1.8;
   PlayerEx.MoveType := mtJump;
+  PlayerEx.MoveDirection:=mdNone;
   var Explode: TArray<string>;
   Explode := IDList.Split(['-']);
 
@@ -177,10 +178,10 @@ begin
         MoveDirection := mdNone;
       end;
 
-     250:
-      begin
-        MoveDirection := mdNone2;
-      end;
+   // 250:
+    //  begin
+      //  MoveDirection := mdNone2;
+     // end;
 
     290:
       begin
@@ -210,7 +211,7 @@ begin
 
           Action := StandType;
         end;
-          mdNone2:
+      mdNone2:
         begin
 
           Action := 'prone';
@@ -418,9 +419,7 @@ begin
   Y := Trunc(Owner.Y);
 
   MirrorX := Owner.MirrorX;
-  Animate := True;
   State := Owner.action;
-  AnimRepeat := True;
 
   case Random(500) of
     250:
@@ -428,17 +427,19 @@ begin
         FaceFrame := 0;
         Expression := 'smile';
       end;
-      400:
+    400:
       begin
         Expression := 'blink';
       end;
   end;
   UpdateFrame;
-
-  if Alpha = 0 then
-    Dead;
-  if Visible = False then
-    Dead;
+  if Image <> 'hand' then
+  begin
+    if Alpha = 0 then
+      Dead;
+    if Visible = False then
+      Dead;
+  end;
 end;
 
 procedure TAvatarPartEx.DoDraw;

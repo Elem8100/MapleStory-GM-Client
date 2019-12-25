@@ -143,11 +143,11 @@ begin
 
   case MirrorX of
     True:
-      Offset.X := Origin.X - PatternWidth + BrowPos.X + BodyRelMove.X;
+      Offset.X := Origin.X - PatternWidth - BrowPos.X + BodyRelMove.X+3;
     False:
-      Offset.X := -Origin.X + BrowPos.X + 22 + BodyRelMove.X;
+      Offset.X := -Origin.X - BrowPos.X + 12 + BodyRelMove.X;
   end;
-  Offset.Y := -Origin.Y + BrowPos.Y + OffY + BodyRelMove.Y;
+  Offset.Y := -Origin.Y - BrowPos.Y + OffY + BodyRelMove.Y;
 
 end;
 
@@ -273,11 +273,11 @@ begin
 
   case MirrorX of
     True:
-      Offset.X := Origin.X - PatternWidth + 12 + BrowPos.X + BodyRelMove.X;
+      Offset.X := Origin.X - PatternWidth + 12 - BrowPos.X + BodyRelMove.X;
     False:
-      Offset.X := -Origin.X + BrowPos.X + 12 + BodyRelMove.X;
+      Offset.X := -Origin.X - BrowPos.X + 2 + BodyRelMove.X;
   end;
-  Offset.Y := -Origin.Y + BrowPos.Y + OffY + BodyRelMove.Y;
+  Offset.Y := -Origin.Y - BrowPos.Y + OffY + BodyRelMove.Y;
 
 end;
 

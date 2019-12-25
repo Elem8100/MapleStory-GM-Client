@@ -51,6 +51,7 @@ type
     Button1: TButton;
     Image1: TImage;
     Button3: TButton;
+    TabSheet5: TTabSheet;
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure SpeedButton9Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -100,7 +101,7 @@ implementation
 
 uses
   WZDirectory, MapleEffect, Global, MapleCharacter, LockRenderTarget, AsphyreTypes, WzUtils,
-  AfterImage,MapleCharacterEx;
+  AfterImage, MapleCharacterEx;
 
 {$R *.dfm}
 
@@ -157,7 +158,6 @@ begin
 
   if TSetEffect.AllList.ContainsKey(EqpID) then
     TSetEffect.Create(EqpID);
-
 
   if Part = SitTamingMob then
     Exit;
@@ -259,8 +259,10 @@ begin
 
   Inventory.RemoveRows(ARow, 1);
   case Part of
-    Hair: Player.ShowHair := False;
-    Cap: Player.DressCap := False;
+    Hair:
+      Player.ShowHair := False;
+    Cap:
+      Player.DressCap := False;
   end;
 
   Inventory.SortByColumn(0);
@@ -290,11 +292,19 @@ begin
       begin
         SaveButton.Enabled := False;
         DeleteButton.Enabled := True;
+        AvatarView.Parent := PageControl1.Pages[1];
         AvatarView.Clear;
         AvatarView.FillFromDirectory(ExtractFilePath(ParamStr(0)) + 'Images\');
       end;
     2:
       SaveButton.Enabled := True;
+    4:
+      begin
+        AvatarView.Parent := PageControl1.Pages[4];
+        AvatarView.Clear;
+        AvatarView.FillFromDirectory(ExtractFilePath(ParamStr(0)) + 'Images\');
+        SaveButton.Enabled := True;
+      end;
   end;
 end;
 
@@ -308,37 +318,45 @@ end;
 
 procedure TAvatarForm.AvatarViewImageSelect(Sender: TObject; idx: Integer);
 begin
-  DeleteIdx := idx;
-  DeleteFileName := AvatarView.ImageFileName[idx];
-  var ImageName := ExtractFileName(AvatarView.ImageFileName[idx]);
-  var Explode: TArray<string> := ImageName.Split(['-']);
+  case PageControl1.TabIndex of
+    1:
+      begin
+        DeleteIdx := idx;
+        DeleteFileName := AvatarView.ImageFileName[idx];
+        var ImageName := ExtractFileName(AvatarView.ImageFileName[idx]);
+        var Explode: TArray<string> := ImageName.Split(['-']);
 
-  for var Iter in TItemEffect.UseList.Keys do
-    TItemEffect.UseList[Iter].Dead;
-  TItemEffect.UseList.Clear;
+        for var Iter in TItemEffect.UseList.Keys do
+          TItemEffect.UseList[Iter].Dead;
+        TItemEffect.UseList.Clear;
 
-  for var Iter in TSetEffect.UseList.Keys do
-    TSetEffect.UseList[Iter].Dead;
-  TSetEffect.UseList.Clear;
+        for var Iter in TSetEffect.UseList.Keys do
+          TSetEffect.UseList[Iter].Dead;
+        TSetEffect.UseList.Clear;
+        Inventory.RemoveRows(1, 20);
 
-  Inventory.RemoveRows(1, 20);
+       // playereqpList.Clear;
+        Player.ShowHair := False;
+        Player.DressCap := False;
 
- // playereqpList.Clear;
+        for var i := 0 to High(Explode) - 1 do
+          AvatarForm.AddEqps(Explode[i]);
+        Inventory.SortByColumn(0);
 
-  Player.ShowHair := False;
+        Player.RemoveSprites;
+        for var i := 0 to Inventory.RowCount - 1 do
+          Player.Spawn(Inventory.Cells[0, i]);
 
-  Player.DressCap := False;
-
-  for var i := 0 to High(Explode) - 1 do
-    AvatarForm.AddEqps(Explode[i]);
-  Inventory.SortByColumn(0);
-
-  Player.RemoveSprites;
-  for var i := 0 to Inventory.RowCount - 1 do
-   Player.Spawn(Inventory.Cells[0, i]);
-
-  ResetColorGrid;
-  ActiveControl := nil;
+        ResetColorGrid;
+        ActiveControl := nil;
+      end;
+    4:
+      begin
+         var ImageName := ExtractFileName(AvatarView.ImageFileName[idx]);
+         TPlayerEx.Spawn(ImageName);
+         ActiveControl := nil;
+      end;
+  end;
 end;
 
 procedure TAvatarForm.Button1Click(Sender: TObject);
@@ -365,14 +383,14 @@ end;
 procedure TAvatarForm.ResetColorGrid;
 begin
   ColorGrid.Clear;
-  for var Row := 0 to Inventory.RowCount  do
+  for var Row := 0 to Inventory.RowCount do
   begin
-    if Inventory.CellTypes[1, Row-1] = ctPicture then
+    if Inventory.CellTypes[1, Row - 1] = ctPicture then
     begin
 
       for var Col := 0 to 18 do
       begin
-        ColorGrid.CreateBitmap(Col, Row, False, haLeft, vaCenter).Assign(Inventory.CellGraphics[1, Row-1].CellBitmap);
+        ColorGrid.CreateBitmap(Col, Row, False, haLeft, vaCenter).Assign(Inventory.CellGraphics[1, Row - 1].CellBitmap);
         case Col of
           0..10:
             TColorFunc.HSVvar(ColorGrid.CellGraphics[Col, Row].CellBitmap, Col * 30, 0, 0);
@@ -404,7 +422,7 @@ end;
 procedure TAvatarForm.ColorGridClickCell(Sender: TObject; ARow, ACol: Integer);
 begin
   var Top := ColorGrid.CellRect(ACol, ARow).Location.Y;
-  var ID := Inventory.Cells[0, ARow-1];
+  var ID := Inventory.Cells[0, ARow - 1];
 
   if Length(ID) > 2 then
   begin
@@ -501,7 +519,7 @@ begin
   LockRenderTargets.UnLock;
 
   var ImageName: string;
-  for var i := 1 to Inventory.RowCount - 1 do
+  for var i := 0 to Inventory.RowCount - 1 do
     ImageName := ImageName + Inventory.Cells[0, i] + '-';
   ForceDirectories(ExtractFilePath(ParamStr(0)) + 'Images');
   var FileName := ExtractFilePath(ParamStr(0)) + 'Images\' + ImageName + '.bmp';
