@@ -50,19 +50,8 @@ type
 implementation
 
 uses
-  MapleChair, WZIMGFile, WzUtils, mainunit;
+  MapleChair, WZIMGFile, WzUtils;
 
-var
-  Counter: Integer;
-  Animate: Boolean = False;
-
-function GetWeaponNum(ID: string): string;
-var
-  AID: Integer;
-begin
-  AID := ID.ToInteger;
-  Result := ((AID div 10000) - 100).toString;
-end;
 
 class procedure TPlayerEx.Spawn(IDList: string);
 var
@@ -398,19 +387,10 @@ begin
 end;
 
 procedure TPlayerEx.DoDraw;
-var
-  WX, WY, NamePos, IDPos: Integer;
 begin
   inherited;
 end;
 
-function HasEntry(Entry: string): Boolean;
-begin
-  Result := EquipData.ContainsKey(Entry);
-end;
-
-var
-  BlinkNum: Integer;
 
 procedure TAvatarPartEx.DoMove(const Movecount: Single);
 begin
@@ -443,8 +423,6 @@ begin
 end;
 
 procedure TAvatarPartEx.DoDraw;
-var
-  WX, WY, NamePos: Integer;
 begin
   inherited;
 

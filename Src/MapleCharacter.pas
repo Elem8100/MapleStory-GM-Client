@@ -127,7 +127,7 @@ implementation
 
 uses
   MainUnit, Morph, AfterImage, MapleChair, MapleEffect, TamingMob, Pet, MonsterFamiliar,
-  MapleCharacterEx;
+  MapleCharacterEx,Android;
 
 procedure TPlayer.SpawnNew;
 var
@@ -566,8 +566,8 @@ end;
 constructor TPlayer.Create(const AParent: TSprite);
 begin
   inherited;
-  if not OtherPlayer then
-    SpriteList := TList<TAvatarParts>.Create;
+
+  SpriteList := TList<TAvatarParts>.Create;
   AttackActions := TList<string>.Create;
   AttackOFs := TList<string>.Create;
   Z := 20000;
@@ -579,21 +579,25 @@ begin
   Alpha := 0;
   Tag := 1;
   JumpState := jsFalling;
-  StandType:='stand1';
-  WalkType:='walk1';
+  StandType := 'stand1';
+  WalkType := 'walk1';
   TruncMove := True;
 end;
 
 destructor TPlayer.Destroy;
 begin
+
   SpriteList.Free;
   AttackActions.Free;
   AttackOFs.Free;
   if not OtherPlayer then
+  begin
     TAvatarParts.ZMap.Free;
-  FreeAndNil(AvatarTargets);
-  AvatarEngine.Free;
+    FreeAndNil(AvatarTargets);
+    AvatarEngine.Free;
+  end;
   inherited Destroy;
+
 end;
 
 procedure TPlayer.DoMove(const Movecount: Single);
@@ -734,6 +738,13 @@ begin
             TMonsterFamiliar.MonsterFamiliar.X := X;
             TMonsterFamiliar.MonsterFamiliar.Y := Y - 50;
             TMonsterFamiliar.MonsterFamiliar.JumpState := jsFalling;
+          end;
+
+          if AndroidPlayer <> nil then
+          begin
+            AndroidPlayer.X := Player.x;
+            AndroidPlayer.Y := Player.Y;
+            AndroidPlayer.JumpState := jsFalling;
           end;
 
           Z := FH.Z * 100000 + 60000;
@@ -1322,7 +1333,7 @@ begin
     end;
 
     if Image = 'body' then
-      BrowPos := Neck+ TTamingMob.Navel;
+      BrowPos := Neck + TTamingMob.Navel;
 
     if HasEntry(Path + '/map/hand') then
     begin

@@ -4,13 +4,18 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, AdvObj, BaseGrid, AdvGrid;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, AdvObj, BaseGrid, AdvGrid, Vcl.StdCtrls;
 
 type
   TAndroidForm = class(TForm)
     AndroidGrid: TAdvStringGrid;
+    Button1: TButton;
     procedure FormActivate(Sender: TObject);
     procedure AndroidGridClickCell(Sender: TObject; ARow, ACol: Integer);
+    procedure Button1Click(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure FormClick(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
   private
     HasLoad: Boolean;
     { Private declarations }
@@ -25,7 +30,7 @@ implementation
 
 {$R *.dfm}
 uses
-  WZIMGFile, WZDirectory, WzUtils, Global, StrUtils, Generics.Collections, MapleCharacterEx;
+  WZIMGFile, WZDirectory, WzUtils, Global, StrUtils, Generics.Collections, Android;
 
 function Add4(Name: string): string;
 begin
@@ -66,6 +71,8 @@ end;
 
 procedure TAndroidForm.AndroidGridClickCell(Sender: TObject; ARow, ACol: Integer);
 begin
+  if AndroidPlayer = nil then
+    AndroidPlayer.SpawnNew;
   var IDList := TList<string>.Create;
 
   var AndroidID := AndroidGrid.Cells[1, ARow];
@@ -95,15 +102,28 @@ begin
   for var i in IDList do
     Str := Str + i + '-';
 
-  TPlayerEx.Spawn(Str);
+  AndroidPlayer.Spawn(Str);
 
   IDList.Free;
+  ActiveControl := nil;
+end;
+
+procedure TAndroidForm.Button1Click(Sender: TObject);
+begin
+  if AndroidPlayer <> nil then
+  begin
+    AndroidPlayer.RemoveSprites;
+    AndroidPlayer.Dead;
+    AndroidPlayer := nil;
+  end;
+  ActiveControl := nil;
 end;
 
 procedure TAndroidForm.FormActivate(Sender: TObject);
 begin
   if HasLoad then
     Exit;
+
   HasLoad := True;
   AndroidGrid.Canvas.Font.Size := 18;
   AndroidGrid.Canvas.TextOut(60, 0, 'Loading...');
@@ -134,6 +154,25 @@ begin
 
   AndroidGrid.SortByColumn(1);
   AndroidGrid.EndUpdate;
+end;
+
+procedure TAndroidForm.FormClick(Sender: TObject);
+begin
+   ActiveControl := nil;
+end;
+
+procedure TAndroidForm.FormCreate(Sender: TObject);
+begin
+
+  Left := (Screen.Width - Width) div 2;
+  Top := (Screen.Height - Height) div 2;
+end;
+
+procedure TAndroidForm.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if Key = VK_MENU then
+    Key := 0;
 end;
 
 end.

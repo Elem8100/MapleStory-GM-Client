@@ -15,6 +15,9 @@ object AndroidForm: TAndroidForm
   OldCreateOrder = False
   Scaled = False
   OnActivate = FormActivate
+  OnClick = FormClick
+  OnCreate = FormCreate
+  OnKeyDown = FormKeyDown
   PixelsPerInch = 120
   TextHeight = 16
   object AndroidGrid: TAdvStringGrid
@@ -156,5 +159,20 @@ object AndroidForm: TAndroidForm
       35
       35
       35)
+  end
+  object Button1: TButton
+    Left = 88
+    Top = 8
+    Width = 153
+    Height = 28
+    Caption = 'Remove'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -15
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 1
+    OnClick = Button1Click
   end
 end

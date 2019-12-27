@@ -62,6 +62,7 @@ type
     SpeedButton5: TSpeedButton;
     SpeedButton6: TSpeedButton;
     SpeedButton7: TSpeedButton;
+    AndroidButton: TSpeedButton;
     procedure FormCreate(Sender: TObject);
     procedure LoadMapButtonClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -103,6 +104,7 @@ type
     procedure SpeedButton5Click(Sender: TObject);
     procedure SpeedButton6Click(Sender: TObject);
     procedure SpeedButton7Click(Sender: TObject);
+    procedure AndroidButtonClick(Sender: TObject);
   private
     OldX, OldY: Integer;
     MoveOn: Boolean;
@@ -131,7 +133,7 @@ uses
   ShowOptionUnit, Tools, NpcFormUnit, ChairformUnit, MorphFormUnit, MedalTagFormUnit,
   NickNameTagFormUnit, DamageSkinFormUnit, WorldMapFormUnit, CashFormUnit, TamingMobFormUnit,
   NameTag, MapleEffect, TamingMob, MapleChair, LabelRingFormUnit, PetFormUnit, Pet, FamiliarFormUnit,
-  MonsterFamiliar, SkillFormUnit, Skill,OptionsFormUnit;
+  MonsterFamiliar, SkillFormUnit, Skill,OptionsFormUnit,AndroidFormUnit,Android;
 {$R *.dfm}
 
 procedure TMainForm.FamiliarButtonClick(Sender: TObject);
@@ -680,6 +682,15 @@ begin
     TMonsterFamiliar.MonsterFamiliar.JumpState := jsFalling;
   end;
 
+  if AndroidPlayer <> nil then
+  begin
+     AndroidPlayer.X := Player.x;
+     AndroidPlayer.Y := Player.Y;
+     AndroidPlayer.JumpState := jsFalling;
+  end;
+
+
+
   SpriteEngine.WorldX := PX - DisplaySize.X / 2;
   SpriteEngine.WorldY := PY - (DisplaySize.Y / 2) - 100;
   if SpriteEngine.WorldX > TMap.Right then
@@ -951,6 +962,11 @@ end;
 procedure TMainForm.SpeedButton7Click(Sender: TObject);
 begin
   OptionsForm.Show;
+end;
+
+procedure TMainForm.AndroidButtonClick(Sender: TObject);
+begin
+  AndroidForm.Show;
 end;
 
 procedure TMainForm.AvatarButton1Click(Sender: TObject);
