@@ -10,8 +10,8 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, ToolWin, ComCtrls, AdvGroupBox,
-  AdvToolBtn, ToolPanels, FolderDialog, AdvGrid, Grids, BaseGrid, WZArchive, WZDirectory, Generics.Collections,
-  WZIMGFile, AdvObj, KeyHandler, WZReader, StrUtils, PngImage, Jpeg, {, Reactor,}
+  AdvToolBtn, ToolPanels, FolderDialog, AdvGrid, Grids, BaseGrid, WZArchive, WZDirectory,
+  Generics.Collections, WZIMGFile, AdvObj, KeyHandler, WZReader, StrUtils, PngImage, Jpeg, {, Reactor,}
   Footholds, bass, BassHandler, MapPortal, AdvUtil, Mob2, Npc, {UI}
   MapleCharacter, {Boss,} Vectors2px, AbstractTextures, AbstractDevices, AbstractCanvas,
   AsphyreTimer, AsphyreSprite, AsphyreKeyboard, AsphyreFontsAlt, DirectInput, AsphyreFactory,
@@ -133,7 +133,7 @@ uses
   ShowOptionUnit, Tools, NpcFormUnit, ChairformUnit, MorphFormUnit, MedalTagFormUnit,
   NickNameTagFormUnit, DamageSkinFormUnit, WorldMapFormUnit, CashFormUnit, TamingMobFormUnit,
   NameTag, MapleEffect, TamingMob, MapleChair, LabelRingFormUnit, PetFormUnit, Pet, FamiliarFormUnit,
-  MonsterFamiliar, SkillFormUnit, Skill,OptionsFormUnit,AndroidFormUnit,Android;
+  MonsterFamiliar, SkillFormUnit, Skill, OptionsFormUnit, AndroidFormUnit, Android;
 {$R *.dfm}
 
 procedure TMainForm.FamiliarButtonClick(Sender: TObject);
@@ -684,12 +684,10 @@ begin
 
   if AndroidPlayer <> nil then
   begin
-     AndroidPlayer.X := Player.x;
-     AndroidPlayer.Y := Player.Y;
-     AndroidPlayer.JumpState := jsFalling;
+    AndroidPlayer.X := Player.x;
+    AndroidPlayer.Y := Player.Y;
+    AndroidPlayer.JumpState := jsFalling;
   end;
-
-
 
   SpriteEngine.WorldX := PX - DisplaySize.X / 2;
   SpriteEngine.WorldY := PY - (DisplaySize.Y / 2) - 100;
@@ -773,6 +771,11 @@ begin
         Map2Wz := TWZArchive.Create(Path + '\Map2.wz');
       if FileExists(Path + '\Map001.wz') then
         Map001Wz := TWZArchive.Create(Path + '\Map001.wz');
+      if FileExists(Path + '\Map002.wz') then
+      begin
+        Map002Wz := TWZArchive.Create(Path + '\Map002.wz');
+        TMap.Has002Wz := True;
+      end;
 
       MobWZ := TWZArchive.Create(Path + '\Mob.wz');
       if FileExists(Path + '\Mob2.wz') then
@@ -817,8 +820,14 @@ begin
         end;
       RowCount := -1;
       Grid.BeginUpdate;
+      var MapDir: TWZDirectory;
 
-      for Dir in TWZDirectory(MapWz.Root.Entry['Map']).SubDirs do
+      if TMap.Has002Wz then
+        MapDir := TWZDirectory(Map002Wz.Root.Entry['Map'])
+      else
+        MapDir := TWZDirectory(MapWz.Root.Entry['Map']);
+
+      for Dir in MapDir.SubDirs do
         for Img in Dir.Files do
         begin
           ID := LeftStr(Img.Name, 9);
@@ -916,7 +925,7 @@ end;
 
 procedure TMainForm.SearchMapEditChange(Sender: TObject);
 begin
-  Grid.NarrowDown(Trims(SearchMapEdit.Text));
+  Grid.NarrowDown(TrimS(SearchMapEdit.Text));
 end;
 
 procedure TMainForm.SpeedButton1Click(Sender: TObject);
@@ -1074,7 +1083,10 @@ var
 begin
   MapID := LeftStr(Grid.Rows[ARow].Text, 9);
   LeftNum := LeftStr(MapID, 1);
-  Entry := GetImgEntry('Map.wz/Map/Map' + LeftNum + '/' + MapID + '.img/info/link');
+  if TMap.Has002Wz then
+    Entry := GetImgEntry('Map002.wz/Map/Map' + LeftNum + '/' + MapID + '.img/info/link')
+  else
+    Entry := GetImgEntry('Map.wz/Map/Map' + LeftNum + '/' + MapID + '.img/info/link');
   if Entry = nil then
     TMap.ID := MapID
   else
@@ -1082,10 +1094,21 @@ begin
 
   LeftNum := LeftStr(TMap.ID, 1);
   Image1.Picture := nil;
-  Entry := GetImgEntry('Map.wz/Map/Map' + LeftNum + '/' + TMap.ID + '.img/miniMap');
+  if TMap.Has002Wz then
+    Entry := GetImgEntry('Map002.wz/Map/Map' + LeftNum + '/' + TMap.ID + '.img/miniMap')
+  else
+    Entry := GetImgEntry('Map.wz/Map/Map' + LeftNum + '/' + TMap.ID + '.img/miniMap');
+
   if Entry <> nil then
   begin
-    Bmp := Entry.Get2('canvas').Canvas.DumpBmp;
+    if (TMap.Has002Wz) and (Entry.Get('canvas/_outlink') <> nil) then
+    begin
+      var Data: string := Entry.Get('canvas/_outlink').Data;
+      var S: TArray<string> := Data.Split(['/']);
+      Bmp := GetImgEntry('Map002.wz/Map/'+ S[2]+'/'+S[3]+'/'+S[4]+'/'+S[5]).Canvas.DumpBmp
+    end
+    else
+      Bmp := Entry.Get2('canvas').Canvas.DumpBmp;
     Image1.Picture.Assign(Bmp);
     Bmp.Free;
   end;

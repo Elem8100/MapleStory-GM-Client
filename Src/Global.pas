@@ -3,17 +3,18 @@ unit Global;
 interface
 
 uses
-  Windows, SysUtils, StrUtils, AsphyreSprite, WZArchive, Generics.Collections,
-  WZIMGFile, WZDirectory, Classes, Math, AsphyreFontsAlt, AbstractCanvas, LockRenderTarget,
-  BassHandler, Dx9Textures, Vectors2px, AbstractDevices, AsphyreKeyboard, AsphyreRenderTargets, Tools,System.Types;
+  Windows, SysUtils, StrUtils, AsphyreSprite, WZArchive, Generics.Collections, WZIMGFile,
+  WZDirectory, Classes, Math, AsphyreFontsAlt, AbstractCanvas, LockRenderTarget, BassHandler,
+  DX9Textures, Vectors2px, AbstractDevices, AsphyreKeyboard, AsphyreRenderTargets, Tools,
+  System.Types;
 
 type
-
   TGameMode = (gmPlay, gmView);
 
   TTimers = class
   private
-    class var TimerList: TDictionary<string, Integer>;
+    class var
+      TimerList: TDictionary<string, Integer>;
   public
     class procedure AddTimer(Name: string);
     class procedure DoTick(Interval: Integer; TimerName: string; Proc: TProc);
@@ -30,12 +31,12 @@ var
   GameTargetMobInfo: TAsphyreRenderTargets = nil;
   LockRenderTargets: TLockableRenderTarget = nil;
   SpriteEngine: TSpriteEngine;
-  BackEngine: array [0 .. 1] of TSpriteEngine;
+  BackEngine: array[0..1] of TSpriteEngine;
   FontsAlt: TAsphyreFontsAlt;
   Keyboard: TAsphyreKeyboard;
-  MobWZ, Mob2WZ,Mob001WZ, NPCWZ, MapWz, Map2Wz,Map001Wz,MorphWz, StringWZ, SoundWZ,Sound2Wz, CharacterWZ, BaseWZ, UIWZ, ReactorWz, EffectWz, SkillWZ,Skill001Wz, ItemWZ,EtcWZ: TWZArchive;
+  MobWZ, Mob2WZ, Mob001WZ, NPCWZ, MapWz, Map2Wz, Map001Wz,Map002Wz, MorphWz, StringWZ, SoundWZ, Sound2Wz,
+    CharacterWZ, BaseWZ, UIWZ, ReactorWz, EffectWz, SkillWZ, Skill001Wz, ItemWZ, EtcWZ: TWZArchive;
   GameMode: TGameMode;
-
   Sounds: TObjectList<TBassHandler>;
   Damage: Integer;
   NewPosition, CurrentPosition, SpriteEngineVelX: Double;
@@ -46,19 +47,27 @@ var
   EquipImages: TObjectDictionary<TWZIMGEntry, TDX9LockableTexture>;
 
 function IsNumber(AStr: string): Boolean;
+
 procedure PlaySounds(Img, Path: string);
+
 function Cos256(I: Integer): Double;
+
 function Sin256(I: Integer): Double;
+
 function GetAngle256(const X1, Y1, X2, Y2: Integer): Integer;
+
 function TrimS(Stemp: string): string;
+
 function IDToInt(ID: string): string;
+
 function Add7(Name: string): string;
+
 function Add9(Name: string): string;
 
 implementation
 
 var
-  CosTable256: array [0 .. 255] of Double;
+  CosTable256: array[0..255] of Double;
 
 function IsNumber(AStr: string): Boolean;
 var
@@ -69,10 +78,9 @@ begin
   Result := Code = 0;
 end;
 
-
 class procedure TTimers.AddTimer(Name: string);
 begin
-  TimerList.Add(Name,0);
+  TimerList.Add(Name, 0);
 end;
 
 class procedure TTimers.Create;
@@ -153,14 +161,14 @@ end;
 
 function TrimS(Stemp: string): string;
 const
-  Remove = [' ','.', '/', #13, #10];
+  Remove =[' ', '.', '/', #13, #10];
 var
   I: Integer;
 begin
   Result := '';
   for I := 1 to Length(Stemp) do
   begin
-    if not(Stemp[I] in Remove) then
+    if not (Stemp[I] in Remove) then
       Result := Result + Stemp[I];
   end;
 end;
@@ -168,36 +176,42 @@ end;
 function Add7(Name: string): string;
 begin
   case Length(Name) of
-    4: Result := '000' + Name;
-    5: Result := '00' + Name;
-    6: Result := '0' + Name;
-    7: Result := Name;
+    4:
+      Result := '000' + Name;
+    5:
+      Result := '00' + Name;
+    6:
+      Result := '0' + Name;
+    7:
+      Result := Name;
   end;
 end;
 
 function Add9(Name: string): string;
 begin
   case Length(Name) of
-    1: Result := '00000000' + name;
-    5: Result := '0000' + name;
-    7: Result := '00' + name;
-    9: Result := Name;
+    1:
+      Result := '00000000' + Name;
+    5:
+      Result := '0000' + Name;
+    7:
+      Result := '00' + Name;
+    9:
+      Result := Name;
   end;
 end;
 
 initialization
-
-TTimers.Create;
-InitCosTable;
-Sounds := TObjectList<TBassHandler>.Create;
-WzData := TObjectDictionary<string, TWZIMGEntry>.Create;
-EquipData := TObjectDictionary<string, TWZIMGEntry>.Create;
-CharData := TDictionary<string, Variant>.Create;
-Data := TDictionary<string, Variant>.Create;
-
+  TTimers.Create;
+  InitCosTable;
+  Sounds := TObjectList<TBassHandler>.Create;
+  WzData := TObjectDictionary<string, TWZIMGEntry>.Create;
+  EquipData := TObjectDictionary<string, TWZIMGEntry>.Create;
+  CharData := TDictionary<string, Variant>.Create;
+  Data := TDictionary<string, Variant>.Create;
 
 finalization
-
-TTimers.TimerList.Free;
+  TTimers.TimerList.Free;
 
 end.
+

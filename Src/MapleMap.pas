@@ -42,6 +42,7 @@ type
       ShowMusic: Boolean;
       ActiveBass: TBassHandler;
       WzMobCount: Integer;
+      Has002Wz: Boolean;
     class procedure PlayMusic; static;
     class procedure LoadMap(ID: string); static;
   end;
@@ -73,7 +74,10 @@ begin
   BackEngine[0].Clear;
   BackEngine[1].Clear;
   Images.Clear;
-  TMap.ImgFile := MapWz.GetImgFile('Map/Map' + LeftStr(ID, 1) + '/' + ID + '.img').Root;
+  if TMap.Has002Wz then
+     TMap.ImgFile := Map002Wz.GetImgFile('Map/Map' + LeftStr(ID, 1) + '/' + ID + '.img').Root
+  else
+     TMap.ImgFile := MapWz.GetImgFile('Map/Map' + LeftStr(ID, 1) + '/' + ID + '.img').Root;
   for Iter in TMap.ImgFile.Child['info'].Children do
     TMap.Info.Add(Iter.Name, Iter.Data);
 
