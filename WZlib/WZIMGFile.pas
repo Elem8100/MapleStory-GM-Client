@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Classes, SysUtils, Variants, Generics.Collections, Tools, Dialogs, WZReader, WZDirectory,
-  PNGMapleCanvasEx, MP3MapleSound, StrUtils, System.Types;
+  PNGMapleCanvasEx, MP3MapleSound, StrUtils;
 
 type
   tagVARENUM = (VT_EMPTY, VT_NULL, VT_I2, VT_I4, VT_R4, VT_R8, VT_CY, VT_DATE, VT_BSTR, VT_DISPATCH,
@@ -237,7 +237,7 @@ begin
             if S[1] = 'Back' then
             begin
                //kMS   Map.wz/obj/acc1.img/MapleIsland/burningMapleIsland/0/0=
-              OutLink := StringReplace(OutLink, 'Map', 'Map0', [rfReplaceAll]);
+              OutLink := StringReplace(OutLink, 'Map', 'Map001', [rfReplaceAll]);
               Result := GetImgEntry(OutLink, True);
             end;
             if (S[1] = 'Tile') or ((S[1] = 'Obj')) then
@@ -248,11 +248,11 @@ begin
             OutLink := StringReplace(OutLink, 'Map', 'Map2', [rfReplaceAll]);
             Result := GetImgEntry(OutLink, True);
           end
-          else if LeftStr(GetEntryPath(Result), 4) = 'Map0' then
+          else if LeftStr(GetEntryPath(Result), 6) = 'Map001' then
           begin
             if S[1] = 'Back' then
             begin
-              OutLink := StringReplace(OutLink, 'Map', 'Map0', [rfReplaceAll]);
+              OutLink := StringReplace(OutLink, 'Map', 'Map001', [rfReplaceAll]);
               Result := GetImgEntry(OutLink, True);
             end;
           end
