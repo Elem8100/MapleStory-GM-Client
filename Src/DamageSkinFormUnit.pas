@@ -32,7 +32,7 @@ var
 implementation
 
 uses
-  DamageNumber;
+  DamageNumber,MapleMap;
 {$R *.dfm}
 
 procedure TDamageSkinForm.DamageGridClick(Sender: TObject);
@@ -60,10 +60,14 @@ begin
   HasLoad := True;
   DamageGrid.Canvas.Font.Size := 18;
   DamageGrid.Canvas.TextOut(60, 0, 'Loading...');
-  var Entry := GetImgEntry('Effect.wz/BasicEff.img/damageSkin');
+  var Entry:TWZIMGEntry;
+  if TMap.Has002Wz then
+    Entry := GetImgEntry('Effect.wz/DamageSkin')
+  else
+    Entry := GetImgEntry('Effect.wz/BasicEff.img/damageSkin');
   if Entry = nil then
   begin
-    MessageDlg('ÂÂª©wz¤£¤ä´©', mtinformation, [mbOk], 0);
+    MessageDlg('Old wz not supports', mtinformation, [mbOk], 0);
     Exit;
   end;
 

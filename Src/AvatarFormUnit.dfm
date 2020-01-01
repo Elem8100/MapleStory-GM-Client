@@ -2712,7 +2712,7 @@ object AvatarForm: TAvatarForm
     Margins.Left = 7
     Margins.Top = 260
     Margins.Bottom = 7
-    ActivePage = TabSheet5
+    ActivePage = TabSheet4
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -3114,14 +3114,5 @@ object AvatarForm: TAvatarForm
       Caption = 'Spawn'
       ImageIndex = 4
     end
-  end
-  object Button3: TButton
-    Left = 608
-    Top = 232
-    Width = 73
-    Height = 41
-    Caption = 'Button3'
-    TabOrder = 5
-    OnClick = Button3Click
   end
 end

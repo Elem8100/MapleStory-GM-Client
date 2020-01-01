@@ -50,7 +50,6 @@ type
     NameLabel: TLabel;
     Button1: TButton;
     Image1: TImage;
-    Button3: TButton;
     TabSheet5: TTabSheet;
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure SpeedButton9Click(Sender: TObject);
@@ -68,7 +67,6 @@ type
     procedure Button1Click(Sender: TObject);
     procedure Edit1Change(Sender: TObject);
     procedure Button2Click(Sender: TObject);
-    procedure Button3Click(Sender: TObject);
   private
     HasShow: Boolean;
     HasShowSearchGrid: Boolean;
@@ -373,11 +371,6 @@ end;
 procedure TAvatarForm.Button2Click(Sender: TObject);
 begin
   //TMaplePlayer.Spawn('01070005-00030334-00021000-01050089-01432011-00012000-00002003-');
-end;
-
-procedure TAvatarForm.Button3Click(Sender: TObject);
-begin
-  TPlayerEx.Spawn('01062055-01072054-01040005-00030020-00020000-00002000-00012000-01702281-');
 end;
 
 procedure TAvatarForm.ResetColorGrid;

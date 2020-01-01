@@ -53,6 +53,7 @@ type
     OtherPlayer: Boolean;
     Neck, Navel, Hand, Brow, HandMove: TPoint;
     ArmHand, ArmNavel, BodyNeck, BodyNavel, BodyHand, lHandMove, HeadBrow, HeadNeck: TPoint;
+    TamingNavel:TPoint;
     MoveX, MoveY: Double;
     BrowPos: TPoint;
     NewZ: Integer;
@@ -1305,12 +1306,19 @@ begin
       end;
       Origin.Y := -EquipData[Path + '/origin'].Vector.Y;
     end;
+
     if OtherPlayer then
     begin
-      TTamingMob.Navel.X := 0;
-      TTamingMob.Navel.Y := 0;
-
+      TamingNavel.X := 0;
+      TamingNavel.Y := 0;
+    end
+    else
+    begin
+      TamingNavel.X:=  TTamingMob.Navel.X;
+      TamingNavel.Y:=  TTamingMob.Navel.Y;
     end;
+
+
     if HasEntry(Path + '/map/brow') then
     begin
       Brow.X := -EquipData[Path + '/map/brow'].Vector.X * Self.Flip;
@@ -1318,8 +1326,8 @@ begin
       if Image = 'head' then
         HeadBrow := Brow;
 
-      Self.Offset.X := Origin.X + HeadNeck.X - BodyNeck.X - HeadBrow.X + Brow.X - TTamingMob.Navel.X;
-      Self.Offset.Y := Origin.Y + HeadNeck.Y - BodyNeck.Y - HeadBrow.Y + Brow.Y - TTamingMob.Navel.Y;
+      Self.Offset.X := Origin.X + HeadNeck.X - BodyNeck.X - HeadBrow.X + Brow.X - TamingNavel.X;
+      Self.Offset.Y := Origin.Y + HeadNeck.Y - BodyNeck.Y - HeadBrow.Y + Brow.Y - TamingNavel.Y;
     end;
 
     if HasEntry(Path + '/map/neck') then
@@ -1367,8 +1375,8 @@ begin
       if Image = 'body' then
         BodyNavel := Navel;
 
-      Self.Offset.X := Origin.X + Navel.X - BodyNavel.X - TTamingMob.Navel.X;
-      Self.Offset.Y := Origin.Y + Navel.Y - BodyNavel.Y - TTamingMob.Navel.Y;
+      Self.Offset.X := Origin.X + Navel.X - BodyNavel.X - TamingNavel.X;
+      Self.Offset.Y := Origin.Y + Navel.Y - BodyNavel.Y - TamingNavel.Y;
     end;
 
   end;

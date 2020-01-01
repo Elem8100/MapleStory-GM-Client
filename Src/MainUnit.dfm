@@ -3,7 +3,7 @@ object MainForm: TMainForm
   Top = 77
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
-  Caption = 'MapleStoryGM v3.13'
+  Caption = 'MapleStoryGM v3.2'
   ClientHeight = 711
   ClientWidth = 1844
   Color = clBtnFace
@@ -116,7 +116,7 @@ object MainForm: TMainForm
     ColorTo = clSkyBlue
     GradientDirection = gdVertical
     DockDots = True
-    Caption = #169' 2019 Elem '
+    Caption = #169' 2020 Elem '
     CaptionGradientDirection = gdVertical
     FocusCaptionFontColor = clBlack
     FocusCaptionColor = 9758459
@@ -2542,6 +2542,10 @@ object MainForm: TMainForm
     object TabSheet2: TTabSheet
       Caption = 'World  Map'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object WorldMapGrid: TAdvStringGrid
         Left = 0
         Top = 0

@@ -3,8 +3,8 @@ unit MapleMap;
 interface
 
 uses
-  Types, Generics.Collections, Generics.Defaults, WZDirectory, WZIMGFile, Global,
-  SysUtils, StrUtils, Bass, BassHandler,WZArchive;
+  Types, Generics.Collections, Generics.Defaults, WZDirectory, WZIMGFile, Global, SysUtils, StrUtils,
+  Bass, BassHandler, WZArchive;
 
 type
   TFadeScreen = record
@@ -50,9 +50,9 @@ type
 implementation
 
 uses
-  MainUnit, Mob2, MapBack, MapPortal, Npc, MapTile, MapObj, MapleCharacter,
-  Footholds, LadderRopes, AsphyreSprite, AsphyreTypes, AsphyreRenderTargets,
-  MobInfo,NameTag,Boss,Skill;
+  MainUnit, Mob2, MapBack, MapPortal, Npc, MapTile, MapObj, MapleCharacter, Footholds, LadderRopes,
+  AsphyreSprite, AsphyreTypes, AsphyreRenderTargets, MobInfo, NameTag, Boss, Skill, MapleCharacterEx,
+  Android;
 
 class procedure TMap.LoadMap(ID: string);
 var
@@ -62,6 +62,17 @@ begin
   for I := 0 to SpriteEngine.Count - 1 do
     if SpriteEngine.Items[I].Tag <> 1 then
       SpriteEngine.Items[I].Dead;
+
+  for I := 0 to PlayerExList.Count - 1 do
+  begin
+    if PlayerExList[I] <> nil then
+    begin
+      PlayerExList[I].RemoveSprites;
+      PlayerExList[I].Dead;
+      PlayerExList[I] := nil;
+    end;
+  end;
+  PlayerExList.Clear;
 
   TMob.Moblist.Clear;
   TMob.SummonedList.Clear;
@@ -75,9 +86,9 @@ begin
   BackEngine[1].Clear;
   Images.Clear;
   if TMap.Has002Wz then
-     TMap.ImgFile := Map002Wz.GetImgFile('Map/Map' + LeftStr(ID, 1) + '/' + ID + '.img').Root
+    TMap.ImgFile := Map002Wz.GetImgFile('Map/Map' + LeftStr(ID, 1) + '/' + ID + '.img').Root
   else
-     TMap.ImgFile := MapWz.GetImgFile('Map/Map' + LeftStr(ID, 1) + '/' + ID + '.img').Root;
+    TMap.ImgFile := MapWz.GetImgFile('Map/Map' + LeftStr(ID, 1) + '/' + ID + '.img').Root;
   for Iter in TMap.ImgFile.Child['info'].Children do
     TMap.Info.Add(Iter.Name, Iter.Data);
 
@@ -134,7 +145,7 @@ begin
   TMap.PlayMusic;
   TMapBack.ResetPos := True;
   TMobInfo.ReDrawTarget;
-  Tskill.PlayEnded := True;
+  TSkill.PlayEnded := True;
 end;
 
 class procedure TMap.PlayMusic;
@@ -160,20 +171,19 @@ begin
   BgmIMG := LeftStr(TMap.BgmPath, CPos) + '.img';
   BgmName := RightStr(TMap.BgmPath, Length(TMap.BgmPath) - CPos - 1);
 
-  var WZ:TWzArchive;
+  var WZ: TWZArchive;
   if SoundWZ.GetImgFile(BgmIMG) <> nil then
   begin
     Entry := SoundWZ.GetImgFile(BgmIMG).Root.Child[BgmName];
-    WZ:=SoundWZ;
+    WZ := SoundWZ;
   end
-  else if Sound2WZ.GetImgFile(BgmIMG) <> nil then
+  else if Sound2Wz.GetImgFile(BgmIMG) <> nil then
   begin
     Entry := Sound2Wz.GetImgFile(BgmIMG).Root.Child[BgmName];
-    WZ:=Sound2WZ;
+    WZ := Sound2Wz;
   end
   else
     Exit;
-
 
   if Entry.DataType = mdtSound then
   begin

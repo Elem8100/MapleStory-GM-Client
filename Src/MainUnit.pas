@@ -252,6 +252,8 @@ begin
     Map2Wz.Free;
   if Map001Wz <> nil then
     Map001Wz.Free;
+  if Map002WZ <> nil then
+    Map002WZ.Free;
   NPCWZ.Free;
   StringWZ.Free;
   UIWZ.Free;
@@ -333,6 +335,7 @@ begin
     TLabelRingTag.ReDraw;
     TPetNameTag.ReDraw;
     TFamiliarNameTag.ReDraw;
+    TAndroidNameTag.ReDraw;
   end;
   if KEY = VK_MENU then
     KEY := 0;
@@ -950,6 +953,7 @@ begin
   TLabelRingTag.ReDraw;
   TPetNameTag.ReDraw;
   TFamiliarNameTag.ReDraw;
+  TAndroidNameTag.ReDraw;
   ActiveControl := nil;
 end;
 
@@ -1030,6 +1034,7 @@ begin
     TLabelRingTag.ReDraw;
     TPetNameTag.ReDraw;
     TFamiliarNameTag.ReDraw;
+    TAndroidNameTag.ReDraw;
   end;
   Left := (Screen.Width - Width) div 2;
   Top := (Screen.Height - Height) div 2;

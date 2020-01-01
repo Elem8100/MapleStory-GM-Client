@@ -3,19 +3,18 @@ unit DamageNumber;
 interface
 
 uses
-  Windows, SysUtils, StrUtils, AsphyreSprite, Generics.Collections, WZIMGFile,
-  Classes, Global, WzUtils;
+  Windows, SysUtils, StrUtils, AsphyreSprite, Generics.Collections, WZIMGFile, Classes, Global,
+  WzUtils;
 
 type
   TDamageNumber = class(TSpriteEx)
   public
     Number: Integer;
-
     Counter: Integer;
     Alpha: Integer;
     class var
-     Style: string;
-     UseNewDamage:Boolean;
+      Style: string;
+      UseNewDamage: Boolean;
     procedure DoDraw; override;
     procedure DoMove(const Movecount: Single); override;
     class procedure Load(Num: string);
@@ -25,7 +24,7 @@ type
 implementation
 
 uses
-  MapleCharacter;
+  MapleCharacter, MapleMap;
 
 procedure TDamageNumber.DoDraw;
 var
@@ -36,11 +35,18 @@ begin
   for I := 1 to Length(Number.ToString) do
   begin
     Char := MidStr(Number.ToString, I, 1);
-    if UseNewDamage then              //style='1/NoRed1'
-      ImageEntry := EquipData['Effect.wz/BasicEff.img/damageSkin/' + Style + '/' + Char]
+    if UseNewDamage then
+    begin
+       //style='1/NoRed1'
+      if TMap.Has002Wz then
+        ImageEntry := EquipData['Effect.wz/DamageSkin.img/' + Style + '/' + Char]
+      else
+        ImageEntry := EquipData['Effect.wz/BasicEff.img/damageSkin/' + Style + '/' + Char];
+    end
     else
       ImageEntry := EquipData['Effect.wz/BasicEff.img/' + Style + '/' + Char];
-    GameCanvas.Draw(EquipImages[ImageEntry], X + I * 29 - ImageEntry.Get('origin').Vector.X - Engine.WorldX, Y - ImageEntry.Get('origin').Vector.Y - Engine.WorldY, 1, False, 255, 255, 255, Alpha);
+    GameCanvas.Draw(EquipImages[ImageEntry], X + I * 29 - ImageEntry.Get('origin').Vector.X - Engine.WorldX,
+      Y - ImageEntry.Get('origin').Vector.Y - Engine.WorldY, 1, False, 255, 255, 255, Alpha);
   end;
 end;
 
@@ -57,12 +63,17 @@ end;
 
 class procedure TDamageNumber.Load(Num: string);
 const
-  StyleList: array[0..7] of string = ('NoBlue0', 'NoBlue1', 'NoCri0', 'NoCri1', 'NoRed0', 'NoRed1', 'NoViolet0', 'NoViolet1');
+  StyleList: array[0..7] of string = ('NoBlue0', 'NoBlue1', 'NoCri0', 'NoCri1', 'NoRed0', 'NoRed1',
+    'NoViolet0', 'NoViolet1');
 begin
   var Entry := GetImgEntry('Effect.wz/BasicEff.img/');
   if UseNewDamage then
-  begin                   //num=1/NoRed1
-    DumpData(Entry.Get2('damageSkin/' + Num), EquipData, EquipImages);
+  begin
+    //num=1/NoRed1
+    if TMap.Has002Wz then
+      DumpData(GetImgEntry('Effect.wz/DamageSkin.img/' + Num), EquipData, EquipImages)
+    else
+      DumpData(Entry.Get2('damageSkin/' + Num), EquipData, EquipImages);
   end
   else
   begin

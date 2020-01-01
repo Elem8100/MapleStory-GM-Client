@@ -26,8 +26,6 @@ type
     MoveSpeed: Single;
     JumpEdge: Integer;
     MoveType: TMoveType;
-
-  //  newaction:string;
     property VelocityY: Single read FVelocityY write FVelocityY;
     property JumpCount: Integer read FJumpCount write FJumpCount;
     property JumpState: TJumpState read FJumpState write SetJumpState;
@@ -47,11 +45,13 @@ type
     procedure DoDraw; override;
   end;
 
+var
+  PlayerExList: TList<TPlayerEx>;
+
 implementation
 
 uses
   MapleChair, WZIMGFile, WzUtils;
-
 
 class procedure TPlayerEx.Spawn(IDList: string);
 var
@@ -73,7 +73,8 @@ begin
   PlayerEx.JumpState := jsFalling;
   PlayerEx.MoveSpeed := 1.8;
   PlayerEx.MoveType := mtJump;
-  PlayerEx.MoveDirection:=mdNone;
+  PlayerEx.MoveDirection := mdNone;
+  PlayerExList.Add(PlayerEx);
   var Explode: TArray<string>;
   Explode := IDList.Split(['-']);
 
@@ -391,9 +392,11 @@ begin
   inherited;
 end;
 
-
 procedure TAvatarPartEx.DoMove(const Movecount: Single);
 begin
+  if Image <> 'hand' then
+    if (Alpha = 0) or (Visible = False) then
+      Exit;
 
   X := Trunc(Owner.X);
   Y := Trunc(Owner.Y);
@@ -413,17 +416,13 @@ begin
       end;
   end;
   UpdateFrame;
-  if Image <> 'hand' then
-  begin
-    if Alpha = 0 then
-      Dead;
-    if Visible = False then
-      Dead;
-  end;
+
 end;
 
 procedure TAvatarPartEx.DoDraw;
 begin
+  if (Alpha = 0) or (Visible = False) then
+     Exit;
   inherited;
 
   if ChangeFrame then
@@ -433,6 +432,12 @@ begin
     Moved := True;
 
 end;
+
+initialization
+  PlayerExList := TList<TPlayerEx>.Create;
+
+finalization
+  PlayerExList.Free;
 
 end.
 
