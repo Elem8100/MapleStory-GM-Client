@@ -82,6 +82,7 @@ object TamingMobForm: TTamingMobForm
         ColCount = 4
         DefaultRowHeight = 35
         DrawingStyle = gdsClassic
+        FixedRows = 0
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -15

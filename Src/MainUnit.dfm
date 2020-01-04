@@ -2542,10 +2542,6 @@ object MainForm: TMainForm
     object TabSheet2: TTabSheet
       Caption = 'World  Map'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object WorldMapGrid: TAdvStringGrid
         Left = 0
         Top = 0

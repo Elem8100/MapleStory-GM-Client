@@ -145,6 +145,7 @@ object AddMobForm: TAddMobForm
         DefaultRowHeight = 18
         DrawingStyle = gdsClassic
         RowCount = 100
+        FixedRows = 0
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -12
@@ -379,10 +380,6 @@ object AddMobForm: TAddMobForm
       Caption = #23567'Boss'
       ImageIndex = 1
       TabVisible = False
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Boss1Grid: TAdvStringGrid
         AlignWithMargins = True
         Left = 0
@@ -524,10 +521,6 @@ object AddMobForm: TAddMobForm
       Caption = #22823'Boss'
       ImageIndex = 2
       TabVisible = False
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Boss2Grid: TAdvStringGrid
         AlignWithMargins = True
         Left = 0

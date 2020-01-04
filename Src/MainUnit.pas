@@ -508,6 +508,25 @@ begin
   Below := TFootholdTree.This.FindBelow(Point(PX, PY - 2), BelowFH);
   Player.FH := BelowFH;
   Player.JumpState := jsFalling;
+  if TPet.Pet <> nil then
+  begin
+    TPet.Pet.X := Player.x;
+    TPet.Pet.Y := Player.y;
+    TPet.Pet.JumpState := jsFalling;
+  end;
+  if TMonsterFamiliar.MonsterFamiliar <> nil then
+  begin
+    TMonsterFamiliar.MonsterFamiliar.X := Player.x;
+    TMonsterFamiliar.MonsterFamiliar.Y := Player.Y;
+    TMonsterFamiliar.MonsterFamiliar.JumpState := jsFalling;
+  end;
+  if AndroidPlayer <> nil then
+  begin
+    AndroidPlayer.X := Player.x;
+    AndroidPlayer.Y := Player.Y;
+    AndroidPlayer.JumpState := jsFalling;
+  end;
+
   SpriteEngine.WorldX := PX - DisplaySize.X / 2;
   SpriteEngine.WorldY := PY - (DisplaySize.Y / 2) - 100;
   if SpriteEngine.WorldX > TMap.Right then
@@ -677,14 +696,12 @@ begin
     TPet.Pet.Y := Player.y;
     TPet.Pet.JumpState := jsFalling;
   end;
-
   if TMonsterFamiliar.MonsterFamiliar <> nil then
   begin
     TMonsterFamiliar.MonsterFamiliar.X := Player.x;
     TMonsterFamiliar.MonsterFamiliar.Y := Player.Y;
     TMonsterFamiliar.MonsterFamiliar.JumpState := jsFalling;
   end;
-
   if AndroidPlayer <> nil then
   begin
     AndroidPlayer.X := Player.x;

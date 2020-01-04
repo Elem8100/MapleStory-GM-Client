@@ -124,6 +124,7 @@ object AddNpcForm: TAddNpcForm
         DefaultRowHeight = 18
         DrawingStyle = gdsClassic
         RowCount = 100
+        FixedRows = 0
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -12
@@ -347,10 +348,6 @@ object AddNpcForm: TAddNpcForm
     object TabSheet2: TTabSheet
       Caption = 'Dye'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object DyeGrid: TAdvStringGrid
         AlignWithMargins = True
         Left = 0
