@@ -55,7 +55,7 @@ interface
 
 //---------------------------------------------------------------------------
 uses
- Types, Classes, {$ifdef TntUnicode}TntClasses,{$endif} SysUtils, Math,
+ System.Types, Classes, {$ifdef TntUnicode}TntClasses,{$endif} SysUtils, Math,
  Vectors2px, Vectors2, AsphyreXML, MediaUtils, AsphyreColors, AsphyreTypes,
  AsphyreUtils, AsphyreImages, AbstractCanvas, HelperSets, FontLetterGroups;
 
@@ -104,6 +104,11 @@ type
   Whitespace: Single;
   Linespace : Single;
  end;
+  // ---------------------------------------------------------------------------
+  THAlign = (hLeft, hCenter, hRight, hJustify);
+
+  // ---------------------------------------------------------------------------
+  TVAlign = (vTop, vMiddle, vBottom);
 
 //---------------------------------------------------------------------------
  TCustomTextEvent = procedure(Sender: TObject; Image: TAsphyreImage;
@@ -742,10 +747,10 @@ begin
     (Entry.Top + Entry.Size.y) / FFontSize.y);
 
    Event(Self, Image,
-    Types.Bounds(
+    Bounds(
      Entry.Pos.x, Entry.Pos.y,
      Entry.Size.x, Entry.Size.y),
-    Types.Bounds(
+    Bounds(
      Round(DrawPos.x), Round(DrawPos.y),
      Round(DrawSize.x), Round(DrawSize.y)),
     cColorAlpha4(
