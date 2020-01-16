@@ -12,8 +12,15 @@ type
     DoFade: Boolean;
   end;
 
+  TMapNameRec=record
+    ID:string;
+    MapName:string;
+    StreetName:string;
+  end;
+
   TMap = record
     class var
+      MapNameList:TDictionary<string, TMapNameRec>;
       Info: TDictionary<string, Variant>;
       SaveMap: Boolean;
       SaveMapID: string;
@@ -43,6 +50,9 @@ type
       ActiveBass: TBassHandler;
       WzMobCount: Integer;
       Has002Wz: Boolean;
+      HasMiniMap: Boolean;
+      MiniMapEntry: TWZIMGEntry;
+      MiniMapWidth, MiniMapHeight: Integer;
     class procedure PlayMusic; static;
     class procedure LoadMap(ID: string); static;
   end;
@@ -52,7 +62,7 @@ implementation
 uses
   MainUnit, Mob2, MapBack, MapPortal, Npc, MapTile, MapObj, MapleCharacter, Footholds, LadderRopes,
   AsphyreSprite, AsphyreTypes, AsphyreRenderTargets, MobInfo, NameTag, Boss, Skill, MapleCharacterEx,
-  Android;
+  Android, minimap;
 
 class procedure TMap.LoadMap(ID: string);
 var
@@ -136,12 +146,32 @@ begin
     TMobInfo.Create;
     Player.SpawnNew;
     TLabelRingTag.Create('01112101');
+    AMiniMap := TMiniMap.Create(UIEngine.Root);
+    with AMiniMap do
+    begin
+      Width :=  TMap.MiniMapWidth + 125;
+      Height := TMap.MiniMapHeight + 40;
+      Left := 150 + 1000;
+      Top := 150 + 1000;
+    end;
   end;
+  if ReLoad then
+  begin
+     HasMiniMap := True;
+     MiniMapEntry := ImgFile.Get('miniMap');
+     var Bmp := MiniMapEntry.Get('canvas').Canvas.DumpBmp;
+     MiniMapWidth :=   Bmp.Width;
+     MiniMapHeight :=   Bmp.Height;
+     Bmp.Free;
+  end;
+  AMiniMap.ReDraw;
   //TNameTag.Create('SuperGM');
 
   TMap.FirstLoad := True;
   TMapBack.Create;
   // CreateReactor;
+
+
   TMap.PlayMusic;
   TMapBack.ResetPos := True;
   TMobInfo.ReDrawTarget;
@@ -196,6 +226,7 @@ end;
 
 initialization
   BassInit;
+  TMap.MapNameList:=TDictionary<string, TMapNameRec>.Create;
   TMap.BgmList := TList<string>.Create;
   TMap.Info := TDictionary<string, Variant>.Create;
   TMap.ShowTile := True;
@@ -211,6 +242,6 @@ finalization
   TMap.ActiveBass.Free;
   TMap.Info.Free;
   TMap.BgmList.Free;
-
+  TMap.MapNameList.Free;
 end.
 
