@@ -14,6 +14,8 @@ type
     Targets: TAsphyreRenderTargets;
     TargetIndex: Integer;
     PicWidth, PicHeight: Integer;
+    OffX, OffY, cx, cy: Integer;
+    PlayerMark: TWZIMGEntry;
     procedure TargetEvent(Sender: TObject);
     procedure Paint(DC: HDC); override;
     procedure ReDraw;
@@ -29,15 +31,18 @@ implementation
 
 uses
   AbstractCanvas, AsphyreFactory, AsphyreTypes, AsphyreDb, AbstractDevices, AsphyreImages,
-  AsphyreTimer, DX9Providers, Vectors2, Vectors2px, MapleMap;
+  AsphyreTimer, DX9Providers, Vectors2, Vectors2px, MapleMap, MapleCharacter;
 
 procedure TMiniMap.Paint(DC: HDC);
 var
-  x, y: Integer;
+  x, y, px, py: Integer;
 begin
   x := ClientLeft;
   y := ClientTop;
   Engine.Canvas.Draw(Targets[TargetIndex], x, y, 1, False, 255, 255, 255, 255);
+  px := Round(Player.X + cx) div 16;
+  py := Round(Player.Y + cy) div 16;
+  AEngine.Canvas.Draw(UIImages[PlayerMark], x + px + OffX + 2, y + py + OffY + 50, 1, False, 255, 255, 255, 255);
 end;
 
 procedure TMiniMap.TargetEvent;
@@ -45,7 +50,7 @@ begin
   var Entry := GetImgEntry('UI.wz/UIWindow2.img/MiniMap/MaxMap');
   DumpData(Entry, UIData, UIImages);
   var MiniMap: TWZIMGEntry;
-  var cx, cy, OffX, OffY: Integer;
+///  var cx, cy: Integer;
   if TMap.HasMiniMap then
   begin
     cx := TMap.ImgFile.Get('miniMap/centerX').Data;
@@ -121,7 +126,7 @@ begin
     DumpData(MapMarkPic, UIData, UIImages);
     AEngine.Canvas.Draw(UIImages[MapMarkPic], 7, 17, 1, False, 255, 255, 255, 255);
   end;
-
+  PlayerMark := GetImgEntry('Map.wz/MapHelper.img/minimap/user');
   FontsAlt[5].TextOut(TMap.MapNameList[TMap.ID].StreetName, 50, 20, cRGB1(255, 255, 255));
   FontsAlt[5].TextOut(TMap.MapNameList[TMap.ID].MapName, 50, 40, cRGB1(255, 255, 255));
 end;
