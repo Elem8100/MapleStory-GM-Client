@@ -16,7 +16,7 @@ interface
 uses
   Classes,controls,
   // Asphyre units
-  AsphyreImages, AsphyreTypes, WZIMGFile;
+  PXT.Graphics, AsphyreTypes, WZIMGFile;
 
 type
   // --------------------------------------------------------------------------
@@ -130,14 +130,14 @@ type
   protected
     procedure AssignTo(Dest: TPersistent); override;
   public
-    FAImage: Pointer;
-    FAImageHover: Pointer;
-    FAImagePressed: Pointer;
+    FAImage: TTExture;
+    FAImageHover: TTExture;
+    FAImagePressed: TTexture;
 
     constructor Create;
     destructor Destroy; override;
 
-    function AImage: TAsphyreImage;
+    function AImage: TTexture;
 
     property ButtonType: TUpDownType read FType write SetType;
     property IsEnabled: Boolean read FEnabled write FEnabled;
@@ -298,7 +298,7 @@ end;
 
 { TUpDownButton }
 
-function TUpDownButton.AImage: TAsphyreImage;
+function TUpDownButton.AImage: TTexture;
 begin
   Result := FAImage;
 
@@ -342,9 +342,9 @@ end;
 constructor TUpDownButton.Create;
 begin
   // Set Fields
-  FAImage := nil;
-  FAImageHover := nil;
-  FAImagePressed := nil;
+  //FAImage := nil;
+ // FAImageHover := nil;
+  //FAImagePressed := nil;
 
   FColor := TFillColor.Create;
   FColor.SetFillColor($FFA6CAF0, $FF4090F0, $FF4090F0, $FFA6CAF0);

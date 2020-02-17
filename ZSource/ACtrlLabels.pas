@@ -14,12 +14,11 @@ unit ACtrlLabels;
 interface
 
 uses
-  Classes, Controls, SysUtils,Windows,
+  Classes, Controls, SysUtils, Windows,
   // Aspryre units
   AbstractCanvas, AsphyreFonts, AsphyreImages, AsphyreTypes, Vectors2,
   // Asphyre GUI Engine
-  ZGameFonts, ZGameFontHelpers,
-  AControls, ACtrlForms, ACtrlTypes;
+  ZGameFonts, ZGameFontHelpers, AControls, ACtrlForms, ACtrlTypes;
 
 type
   TCustomALabel = class(TAControl)
@@ -37,15 +36,12 @@ type
     procedure AssignTo(Dest: TPersistent); override;
     procedure Click; override;
     procedure Paint(DC: HDC); override;
-    procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
-      X, Y: Integer); override;
+    procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
     procedure MouseMove(Shift: TShiftState; X, Y: Integer); override;
-    procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-      override;
+    procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-
     property CanMoveHandle: Boolean read FCanMoveHandle write SetCanMoveHandle;
     property FocusControl: string read FFocusControl write SetFocusControl;
     property ParagraphLine: Boolean read FPLine write FPLine;
@@ -62,7 +58,6 @@ type
     property TextHorizontalAlign;
     property TextVerticalAlign;
     property Transparent;
-
     property BorderColor;
     property BorderWidth;
     property Color;
@@ -95,6 +90,9 @@ type
 
 implementation
 
+uses
+  PXT.Graphics, PXT.Types;
+
 var
   XOffSet, YOffSet: Integer;
 
@@ -107,15 +105,15 @@ begin
   inherited AssignTo(Dest);
 
   if Dest is TCustomALabel then
-  with TCustomALabel(Dest) do
-  begin
-    CanMoveHandle := Self.CanMoveHandle;
-    TextHorizontalAlign := Self.TextHorizontalAlign;
-    TextVerticalAlign := Self.TextVerticalAlign;
-    FocusControl := Self.FocusControl;
-    ParagraphLine := Self.ParagraphLine;
-    Transparent := Self.Transparent;
-  end;
+    with TCustomALabel(Dest) do
+    begin
+      CanMoveHandle := Self.CanMoveHandle;
+      TextHorizontalAlign := Self.TextHorizontalAlign;
+      TextVerticalAlign := Self.TextVerticalAlign;
+      FocusControl := Self.FocusControl;
+      ParagraphLine := Self.ParagraphLine;
+      Transparent := Self.Transparent;
+    end;
 
   ControlState := ControlState - [csReadingState];
 end;
@@ -181,8 +179,7 @@ begin
   inherited Destroy;
 end;
 
-procedure TCustomALabel.MouseDown(Button: TMouseButton; Shift: TShiftState;
-  X, Y: Integer);
+procedure TCustomALabel.MouseDown;
 begin
   // Start move the form Handle
   if (FCanMoveHandle) and (Handle is TAForm) then
@@ -213,8 +210,7 @@ begin
   inherited MouseMove(Shift, X, Y);
 end;
 
-procedure TCustomALabel.MouseUp(Button: TMouseButton; Shift: TShiftState;
-  X, Y: Integer);
+procedure TCustomALabel.MouseUp;
 begin
   // Stop move the form Handle
   if (FCanMoveHandle) and (Handle is TAForm) then
@@ -237,21 +233,19 @@ begin
   // Draw Border
   if BorderWidth > 0 then
   begin
-    AEngine.Canvas.FillRect(Rect(X, Y, X + Width, Y + BorderWidth),
-      BorderColor, deNormal);
-    AEngine.Canvas.FillRect(Rect(X, Y + BorderWidth, X + BorderWidth,
-        Y + Height - BorderWidth), BorderColor, deNormal);
-    AEngine.Canvas.FillRect(Rect(X, Y + Height - BorderWidth, X + Width,
-        Y + Height), BorderColor, deNormal);
-    AEngine.Canvas.FillRect(Rect(X + Width - BorderWidth, Y + BorderWidth,
-        X + Width, Y + Height - BorderWidth), BorderColor, deNormal);
+    AEngine.Canvas.FillRect(FloatRect(X, Y, X + Width, Y + BorderWidth), BorderColor);
+    AEngine.Canvas.FillRect(FloatRect(X, Y + BorderWidth, X + BorderWidth, Y + Height - BorderWidth), BorderColor);
+    AEngine.Canvas.FillRect(FloatRect(X, Y + Height - BorderWidth, X + Width, Y + Height), BorderColor);
+    AEngine.Canvas.FillRect(FloatRect(X + Width - BorderWidth, Y + BorderWidth, X + Width, Y +
+      Height - BorderWidth), BorderColor);
   end;
 
   // Draw Background
   if not FTransparent then
   begin
-    if AImage <> nil then
+    if AImage.Initialized then
     begin
+    {
       AEngine.Canvas.UseTexturePx(AImage,
         pxBounds4(0 + BorderWidth, 0 + BorderWidth,
           AImage.Width - (BorderWidth * 2),
@@ -259,12 +253,16 @@ begin
       AEngine.Canvas.TexMap(pRect4(Rect(X + BorderWidth, Y + BorderWidth,
             X + Width - BorderWidth, Y + Height - BorderWidth)),
         cAlpha4(ImageAlpha), deNormal);
+     }
+      var TexCoord := Quad(0 + BorderWidth, 0 + BorderWidth, AImage.Parameters.Width - (BorderWidth
+        * 2), AImage.Parameters.Height - (BorderWidth * 2));
+      AEngine.Canvas.Quad(AImage, Quad(IntRectBDS(X + BorderWidth, Y + BorderWidth, X + Width -
+        BorderWidth, Y + Height - BorderWidth)), TexCoord, $FFFFFFFF);
     end
     else
     begin
-      AEngine.Canvas.FillRect(Rect(X + BorderWidth, Y + BorderWidth,
-          X + Width - BorderWidth, Y + Height - BorderWidth), cColor4(Color),
-        deNormal);
+      AEngine.Canvas.FillRect(FloatRect(X + BorderWidth, Y + BorderWidth, X + Width - BorderWidth, Y +
+        Height - BorderWidth), cardinal(Color));
     end;
   end;
 
@@ -285,13 +283,12 @@ begin
   begin
     if Text <> '' then
     begin
-      FZFont.Color   := cColor4(FontColor.Top,FontColor.Top,FontColor.Bottom,FontColor.Bottom);
-      FZFont.TextOutRect( DC,
-                          Point2(X + BorderWidth + Margin,Y + BorderWidth + Margin+1),
-                          Point2(Width - (BorderWidth * 2) - (Margin * 2),Height - (BorderWidth * 2) - (Margin * 2)),
-                          Text, 0, 0,FPLine,GetZHAlign(FHAlign),GetZVAlign(FVAlign));
+      FZFont.Color := cColor4(FontColor.Top, FontColor.Top, FontColor.Bottom, FontColor.Bottom);
+      FZFont.TextOutRect(DC, Point2(X + BorderWidth + Margin, Y + BorderWidth + Margin + 1), Point2(Width
+        - (BorderWidth * 2) - (Margin * 2), Height - (BorderWidth * 2) - (Margin * 2)), Text, 0, 0,
+        FPLine, GetZHAlign(FHAlign), GetZVAlign(FVAlign));
     end;
-  end;{ else
+  end; { else
   if AFont <> nil then
   begin
     if Text <> '' then
@@ -323,11 +320,10 @@ begin
 end;
 
 initialization
-
-RegisterClasses([TCustomALabel, TALabel]);
+  RegisterClasses([TCustomALabel, TALabel]);
 
 finalization
-
-UnRegisterClasses([TCustomALabel, TALabel]);
+  UnRegisterClasses([TCustomALabel, TALabel]);
 
 end.
+

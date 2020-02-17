@@ -14,7 +14,7 @@ unit ACtrlDropPanels;
 interface
 
 uses
-  SysUtils, Types, Classes, Controls,Windows,
+  pxt.types,SysUtils, Types, Classes, Controls,Windows,
   // Aspryre units
   AbstractCanvas, AsphyreFonts, AsphyreImages, AsphyreTypes, Vectors2,
   // Asphyre GUI Engine
@@ -51,7 +51,7 @@ type
     function CellAtPos(const X, Y: Integer): TPoint;
     function ColAtPos(const X: Integer): Integer;
     function RowAtPos(const Y: Integer): Integer;
-    function CellRect(const ACol, ARow: Integer): TRect;
+    function CellRect(const ACol, ARow: Integer): TIntRect;
     function ItemAtPos(const X, Y: Integer): PItem;
 
     procedure AssignTo(Dest: TPersistent); override;
@@ -119,7 +119,7 @@ type
   TADropPanelClass = class of TADropPanel;
 
 implementation
-
+     uses PXT.Graphics;
 var
   SelItem: PItem;
   XOffSet, YOffSet: Integer;
@@ -208,8 +208,7 @@ begin
   Result := @FItems[Index];
 end;
 
-procedure TCustomADropPanel.MouseDown(Button: TMouseButton; Shift: TShiftState;
-  X, Y: Integer);
+procedure TCustomADropPanel.MouseDown;
 var
   Item: PItem;
 begin
@@ -248,8 +247,7 @@ begin
   inherited;
 end;
 
-procedure TCustomADropPanel.MouseUp(Button: TMouseButton; Shift: TShiftState;
-  X, Y: Integer);
+procedure TCustomADropPanel.MouseUp;
 var
   Item: PItem;
   PrevItem: TItem;
@@ -320,12 +318,12 @@ begin
   Result := Point(ColAtPos(X), RowAtPos(Y));
 end;
 
-function TCustomADropPanel.CellRect(const ACol, ARow: Integer): TRect;
+function TCustomADropPanel.CellRect(const ACol, ARow: Integer): TIntRect;
 var
   CL, CT: Integer;
   L, T, W, H: Integer;
 begin
-  Result := Rect(0, 0, 0, 0);
+  Result := IntRectBDS(0, 0, 0, 0);
 
   if (ACol < 0) or (ACol >= FColumns) then
     Exit;
@@ -341,7 +339,7 @@ begin
   W := (CL + (ACol * Margin) + (FRowWidth * ACol)) + (FRowWidth);
   H := (CT + (ARow * Margin) + (FRowHeight * ARow)) + (FRowHeight);
 
-  Result := Rect(L, T, W, H);
+  Result := IntRectBDS(L, T, W, H);
 end;
 
 procedure TCustomADropPanel.ClearAll;
@@ -416,7 +414,7 @@ var
   X, Y: Integer;
   I, J, Index: Integer;
  // Img: TAsphyreImage;
-  Img: TAsphyreLockableTexture;
+  Img: TTexture;
 begin
   // Set initial values
   X := ClientLeft;
@@ -425,32 +423,38 @@ begin
   // Draw Border
   if BorderWidth > 0 then
   begin
-    AEngine.Canvas.FillRect(Rect(X, Y, X + Width, Y + BorderWidth),
-      BorderColor, deNormal);
-    AEngine.Canvas.FillRect(Rect(X, Y + BorderWidth, X + BorderWidth,
-        Y + Height - BorderWidth), BorderColor, deNormal);
-    AEngine.Canvas.FillRect(Rect(X, Y + Height - BorderWidth, X + Width,
-        Y + Height), BorderColor, deNormal);
-    AEngine.Canvas.FillRect(Rect(X + Width - BorderWidth, Y + BorderWidth,
-        X + Width, Y + Height - BorderWidth), BorderColor, deNormal);
+    AEngine.Canvas.FillRect(FloatRect(X, Y, X + Width, Y + BorderWidth),
+      BorderColor);
+    AEngine.Canvas.FillRect(FloatRect(X, Y + BorderWidth, X + BorderWidth,
+        Y + Height - BorderWidth), BorderColor);
+    AEngine.Canvas.FillRect(FloatRect(X, Y + Height - BorderWidth, X + Width,
+        Y + Height), BorderColor);
+    AEngine.Canvas.FillRect(FloatRect(X + Width - BorderWidth, Y + BorderWidth,
+        X + Width, Y + Height - BorderWidth), BorderColor);
   end;
 
   // Draw Background
-  if AImage <> nil then
+  if AImage.Initialized then
   begin
-    AEngine.Canvas.UseTexturePx(AImage,
-      pxBounds4(0 + BorderWidth, 0 + BorderWidth,
-        AImage.Width - (BorderWidth * 2),
-        AImage.Height - (BorderWidth * 2)));
-    AEngine.Canvas.TexMap(pRect4(Rect(X + BorderWidth, Y + BorderWidth,
-          X + Width - BorderWidth, Y + Height - BorderWidth)),
-      cAlpha4(ImageAlpha), deNormal);
+    //AEngine.Canvas.UseTexturePx(AImage,
+     // pxBounds4(0 + BorderWidth, 0 + BorderWidth,
+   //     AImage.Width - (BorderWidth * 2),
+ //       AImage.Height - (BorderWidth * 2)));
+
+        var TexCoord := Quad( 0 + BorderWidth, 0 + BorderWidth,
+        AImage.Parameters.Width - (BorderWidth * 2),
+        AImage.Parameters.Height - (BorderWidth * 2));
+         AEngine.Canvas.Quad(AImage, Quad(IntRectBDS(X + BorderWidth, Y + BorderWidth, X + Width -
+      BorderWidth, Y + Height - BorderWidth)), TexCoord,$FFFFFFFF);
+
+  //  AEngine.Canvas.TexMap(pRect4(Rect(X + BorderWidth, Y + BorderWidth,
+    //      X + Width - BorderWidth, Y + Height - BorderWidth)),
+    //  cAlpha4(ImageAlpha), deNormal);
   end
   else
   begin
-    AEngine.Canvas.FillRect(Rect(X + BorderWidth, Y + BorderWidth,
-        X + Width - BorderWidth, Y + Height - BorderWidth), cColor4(Color),
-      deNormal);
+    AEngine.Canvas.FillRect(FloatRect(X + BorderWidth, Y + BorderWidth,
+        X + Width - BorderWidth, Y + Height - BorderWidth), Cardinal(Color));
   end;
 
   // Draw Panels
@@ -463,29 +467,34 @@ begin
       begin
         //Img := AEngine.Images.Image[string(FItems[Index].Image)];
          Img := AEngine.ImageLib[FItems[Index].Image];
-        if Img <> nil then
+        if Img.Initialized then
         begin
-          AEngine.Canvas.UseTexturePx(Img, pxBounds4(0, 0, Img.Width, Img.Height));
+        //  AEngine.Canvas.UseTexturePx(Img, pxBounds4(0, 0, Img.Width, Img.Height));
+          var TexCoord := Quad(0, 0, AImage.Parameters.Width, AImage.Parameters.Height);
+
 
           if (@FItems[Index] = SelItem) and (DragItem) then
-            AEngine.Canvas.TexMap(pRect4(CellRect(J, I)), cColor4($FFBBBBBB),
-              deNormal)
+          //  AEngine.Canvas.TexMap(pRect4(CellRect(J, I)), cColor4($FFBBBBBB),
+            //  deNormal)
+             AEngine.Canvas.Quad(AImage, Quad(CellRect(J, I)), TexCoord,$FFBBBBBB)
           else
-            AEngine.Canvas.TexMap(pRect4(CellRect(J, I)), cColor4($FFFFFFFF),
-              deNormal);
+             AEngine.Canvas.Quad(AImage, Quad(CellRect(J, I)), TexCoord,$FFFFFFFF);
+           // AEngine.Canvas.TexMap(pRect4(CellRect(J, I)), cColor4($FFFFFFFF),
+             // deNormal);
+
+
+
         end
         else
         begin
-          if AImage = nil then
-            AEngine.Canvas.FillRect(CellRect(J, I), cColor4(FItemColor),
-              deNormal);
+          if AImage.Initialized then
+            AEngine.Canvas.FillRect(CellRect(J, I), cardinal(FItemColor));
         end;
       end
       else
       begin
-        if AImage = nil then
-          AEngine.Canvas.FillRect(CellRect(J, I), cColor4(FItemColor),
-            deNormal);
+        if AImage.Initialized then
+          AEngine.Canvas.FillRect(CellRect(J, I), cardinal(FItemColor));
       end;
       Index := Index + 1;
     end;
@@ -495,11 +504,14 @@ begin
   begin
     //Img := AEngine.Images.Image[string(SelItem.Image)];
     Img := AEngine.ImageLib[(SelItem.Image)];
-    if Img <> nil then
+    if Img.Initialized then
     begin
-      AEngine.Canvas.UseTexturePx(Img, pxBounds4(0, 0, Img.Width, Img.Height));
-      AEngine.Canvas.TexMap(pRect4(Rect(XOffSet, YOffSet, XOffSet + FRowWidth,
-            YOffSet + FRowHeight)), cColor4($FFFFFFFF), deNormal);
+     // AEngine.Canvas.UseTexturePx(Img, pxBounds4(0, 0, Img.Width, Img.Height));
+      //AEngine.Canvas.TexMap(pRect4(Rect(XOffSet, YOffSet, XOffSet + FRowWidth,
+          //  YOffSet + FRowHeight)), cColor4($FFFFFFFF), deNormal);
+       var TexCoord := Quad(0, 0, AImage.Parameters.Width, AImage.Parameters.Height);
+        AEngine.Canvas.Quad(AImage,Quad(IntRectBDS(XOffSet, YOffSet, XOffSet + FRowWidth,
+            YOffSet + FRowHeight)) , TexCoord,$FFFFFFFF);
     end;
   end;
 end;

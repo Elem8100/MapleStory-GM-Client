@@ -17,9 +17,9 @@ uses
   Windows, SysUtils, Classes, Controls,
   // Asphyre units
   AbstractCanvas, AbstractDevices, AsphyreFonts, AsphyreImages, AsphyreDB,
-  AsphyreTypes, ZGameFonts, AbstractTextures, Generics.Collections,WZIMGFile,
+  AsphyreTypes, ZGameFonts,  Generics.Collections,WZIMGFile,
   // Asphyre GUI Engine
-  ACtrlTypes;
+  ACtrlTypes,PXT.Graphics,PXT.Canvas;
 
 type
   { Forward declarations }
@@ -31,11 +31,11 @@ type
   TCustomEngine = class
   private
     { Private declarations }
-    FDevice: TAsphyreDevice;
-    FCanvas: TAsphyreCanvas;
+    FDevice: TDevice;
+    FCanvas: TGameCanvas;
     //FImages: TAsphyreImages;
     //FFonts: TAsphyreFonts;
-    FImageLib: TDictionary<TWZIMGEntry, TAsphyreLockableTexture>;
+    FImageLib: TObjectDictionary<TWZIMGEntry, TTexture>;
     FParent: TControl;
 
     FActiveControl: TWControl;
@@ -85,8 +85,8 @@ type
     procedure MouseWheelUp(Sender: TObject; Shift: TShiftState;
       MousePos: TPoint; var Handled: Boolean);
   public
-    constructor Create(const AOwner: TControl; const ADevice: TAsphyreDevice;
-      const ACanvas: TAsphyreCanvas);
+    constructor Create(const AOwner: TControl; const ADevice: TDevice;
+      const ACanvas: TGameCanvas);
 
     destructor Destroy; override;
 
@@ -106,11 +106,11 @@ type
 
     property Root: TWControl read FRoot; // The root container that contains all the components
 
-    property Device: TAsphyreDevice read FDevice;
-    property Canvas: TAsphyreCanvas read FCanvas;
+    property Device: TDevice read FDevice;
+    property Canvas: TGameCanvas read FCanvas;
     //property Fonts: TAsphyreFonts read FFonts;
     //property Images: TAsphyreImages read FImages;
-    property ImageLib: TDictionary<TWZIMGEntry, TAsphyreLockableTexture> read FImageLib write FImageLib;
+    property ImageLib: TObjectDictionary<TWZIMGEntry, TTexture> read FImageLib write FImageLib;
     property Parent: TControl read FParent write SetParent;
   end;
 
@@ -120,7 +120,7 @@ type
   private
     FAEngine: Pointer;
     //FAFont: Pointer;
-    FAImage: TAsphyreLockableTexture;
+    FAImage: TTexture;
     FEnabled: Boolean;
     FBorderColor: TBorderColor;
     FBorderWidth: Word;
@@ -240,7 +240,7 @@ type
 
 
   //  function AFont: TAsphyreFont; dynamic;
-    function AImage: TAsphyreLockableTexture; dynamic;
+    function AImage: TTexture; dynamic;
     function AEngine: TCustomEngine;
 
     function GetParentComponent: TComponent; override;
@@ -356,7 +356,7 @@ implementation
 uses
   Forms,
   // Asphyre GUI Engine
-  ACtrlForms, ACtrlDropPanels, ACtrlHelpers;
+  ACtrlForms, ACtrlDropPanels, ACtrlHelpers,Global;
 
 var
   VirtualPoint: TPoint;
@@ -436,7 +436,7 @@ begin
 end;
 
 constructor TCustomEngine.Create(const AOwner: TControl;
-  const ADevice: TAsphyreDevice; const ACanvas: TAsphyreCanvas);
+  const ADevice: TDevice; const ACanvas: TGameCanvas);
 begin
 
   FDevice := ADevice;
@@ -478,8 +478,8 @@ destructor TCustomEngine.Destroy;
 begin
   RestoreEvents;
 
-  FDevice := nil;
-  FCanvas := nil;
+  //FDevice := nil;
+  //FCanvas := nil;
   FParent := nil;
 
   //FFonts.Images.RemoveAll;
@@ -645,10 +645,10 @@ var
   Control: TAControl;
 begin
   // fixes coordinates when scaled
-  if Self.Device.Size.X <> Self.Parent.ClientWidth then
-   X := Trunc(X * (Self.Device.Size.X / Self.Parent.ClientWidth));
-  if Self.Device.Size.Y <> Self.Parent.ClientHeight then
-   Y := Trunc(Y * (Self.Device.Size.Y / Self.Parent.ClientHeight));
+  if Global.DisplaySize.X <> Self.Parent.ClientWidth then
+   X := Trunc(X * (Global.DisplaySize.X / Self.Parent.ClientWidth));
+  if Global.DisplaySize.Y <> Self.Parent.ClientHeight then
+   Y := Trunc(Y * (Global.DisplaySize.Y / Self.Parent.ClientHeight));
 
   if (Assigned(FOwnerMouseDown)) then
     FOwnerMouseDown(Sender, Button, Shift, X, Y);
@@ -728,10 +728,10 @@ var
   Control: TAControl;
 begin
   // fixes coordinates when scaled
-  if Self.Device.Size.X <> Self.Parent.ClientWidth then
-   X := Trunc(X * (Self.Device.Size.X / Self.Parent.ClientWidth));
-  if Self.Device.Size.Y <> Self.Parent.ClientHeight then
-   Y := Trunc(Y * (Self.Device.Size.Y / Self.Parent.ClientHeight));
+  if Global.DisplaySize.X <> Self.Parent.ClientWidth then
+   X := Trunc(X * (Global.DisplaySize.X / Self.Parent.ClientWidth));
+  if Global.DisplaySize.Y <> Self.Parent.ClientHeight then
+   Y := Trunc(Y * (Global.DisplaySize.Y / Self.Parent.ClientHeight));
 
   if (Assigned(FOwnerMouseMove)) then
     FOwnerMouseMove(Sender, Shift, X, Y);
@@ -818,10 +818,10 @@ var
   Control: TAControl;
 begin
   // fixes coordinates when scaled
-  if Self.Device.Size.X <> Self.Parent.ClientWidth then
-   X := Trunc(X * (Self.Device.Size.X / Self.Parent.ClientWidth));
-  if Self.Device.Size.Y <> Self.Parent.ClientHeight then
-   Y := Trunc(Y * (Self.Device.Size.Y / Self.Parent.ClientHeight));
+  if Global.DisplaySize.X <> Self.Parent.ClientWidth then
+   X := Trunc(X * (Global.DisplaySize.X / Self.Parent.ClientWidth));
+  if Global.DisplaySize.Y <> Self.Parent.ClientHeight then
+   Y := Trunc(Y * (Global.DisplaySize.Y / Self.Parent.ClientHeight));
 
   if (Assigned(FOwnerMouseUp)) then
     FOwnerMouseUp(Sender, Button, Shift, X, Y);
@@ -978,11 +978,11 @@ end;
  // Result := FAFont;
 //end;
 
-function TAControl.AImage: TAsphyreLockableTexture;
+function TAControl.AImage: TTexture;
 begin
-  if not AEngine.FImageLib.ContainsKey(FImageEntry) then
-    Result := nil
-  else
+  if {not} AEngine.FImageLib.ContainsKey(FImageEntry) then
+ //   Result := nil
+ // else
     Result := AEngine.FImageLib[FImageEntry];
 end;
 

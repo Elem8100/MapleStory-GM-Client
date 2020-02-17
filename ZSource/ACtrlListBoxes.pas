@@ -18,10 +18,9 @@ uses
   // Aspryre units
   AbstractCanvas, AsphyreFonts, AsphyreImages, AsphyreTypes, Vectors2,
   // Asphyre GUI Engine
-  AControls, ACtrlButtons, ACtrlTypes,WZIMGFile;
+  AControls, ACtrlButtons, ACtrlTypes, WZIMGFile;
 
 type
-
   TCustomAListBox = class(TWControl)
   private
     FScrollWidth: Integer;
@@ -51,42 +50,29 @@ type
     procedure AssignTo(Dest: TPersistent); override;
     procedure KeyDown(var Key: Word; Shift: TShiftState); override;
     procedure MouseLeave; override;
-    procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
-      X, Y: Integer); override;
+    procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
     procedure MouseMove(Shift: TShiftState; X, Y: Integer); override;
-    procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-      override;
-
-    function MouseWheelDown(Shift: TShiftState; MousePos: TPoint): Boolean;
-      override;
-    function MouseWheelUp(Shift: TShiftState; MousePos: TPoint): Boolean;
-      override;
-
+    procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
+    function MouseWheelDown(Shift: TShiftState; MousePos: TPoint): Boolean; override;
+    function MouseWheelUp(Shift: TShiftState; MousePos: TPoint): Boolean; override;
     procedure Paint(DC: HDC); override;
     procedure PaintScrollBar;
-
     procedure SetSelectColor(Value: TFontColor); virtual;
     procedure SetSelectFontColor(Value: TFontColor); virtual;
-
     property VirtualHeight: Integer read FVirtualHeight write SetVirtualHeight;
-    property VirtualPosition: Integer read FVirtualPosition write
-      SetVirtualPosition;
+    property VirtualPosition: Integer read FVirtualPosition write SetVirtualPosition;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-
     procedure SetAEngine(AEngine: TCustomEngine); override;
-
     property ButtonDown: TUpDownButton read FButtonDown write SetButtonDown;
-    property ButtonSlider: TUpDownButton read FButtonSlider write
-      SetButtonSlider;
+    property ButtonSlider: TUpDownButton read FButtonSlider write SetButtonSlider;
     property ButtonUp: TUpDownButton read FButtonUp write SetButtonUp;
     property ItemIndex: Integer read FIndex write SetIndex;
     property LineHeight: Integer read FLineHeight write SetLineHeight;
     property Lines: TStringList read FStrings write SetStrings;
     property SelectColor: TFontColor read FSelectColor write SetSelectColor;
-    property SelectFontColor: TFontColor read FSelectFontColor write
-      SetSelectFontColor;
+    property SelectFontColor: TFontColor read FSelectFontColor write SetSelectFontColor;
   end;
 
   TAListBox = class(TCustomAListBox)
@@ -99,7 +85,6 @@ type
     property Lines;
     property SelectColor;
     property SelectFontColor;
-
     property BorderColor;
     property BorderWidth;
     property Color;
@@ -137,6 +122,8 @@ type
 
 implementation
 
+uses
+  PXT.Types, PXT.Graphics;
 { TACustomListBox }
 
 var
@@ -171,13 +158,10 @@ end;
 procedure TCustomAListBox.ButtonImageChange(Sender: TObject);
 begin
   if AEngine <> nil then
-  begin (TUpDownButton(Sender))
-    .FAImage := AEngine.ImageLib[(TUpDownButton(Sender).Image)
-      ]; (TUpDownButton(Sender))
-    .FAImageHover := AEngine.ImageLib
-      [(TUpDownButton(Sender).ImageHover)]; (TUpDownButton(Sender))
-    .FAImagePressed := AEngine.ImageLib
-      [(TUpDownButton(Sender).ImagePressed)];
+  begin
+    (TUpDownButton(Sender)).FAImage := AEngine.ImageLib[(TUpDownButton(Sender).Image)];
+    (TUpDownButton(Sender)).FAImageHover := AEngine.ImageLib[(TUpDownButton(Sender).ImageHover)];
+    (TUpDownButton(Sender)).FAImagePressed := AEngine.ImageLib[(TUpDownButton(Sender).ImagePressed)];
   end;
 end;
 
@@ -278,38 +262,34 @@ begin
     begin
       FIndex := FIndex - 1;
 
-      if (ClientTop + BorderWidth + Margin + VirtualPosition +
-          (FLineHeight * FIndex)) < ClientTop + BorderWidth + Margin then
+      if (ClientTop + BorderWidth + Margin + VirtualPosition + (FLineHeight * FIndex)) < ClientTop +
+        BorderWidth + Margin then
       begin
         VirtualPosition := -(FLineHeight * FIndex);
       end;
 
-      if (ClientTop + Height - BorderWidth - Margin) <
-        ((ClientTop + BorderWidth + Margin + VirtualPosition +
-            (FLineHeight * FIndex)) + FLineHeight) then
+      if (ClientTop + Height - BorderWidth - Margin) < ((ClientTop + BorderWidth + Margin +
+        VirtualPosition + (FLineHeight * FIndex)) + FLineHeight) then
       begin
-        VirtualPosition := -(FLineHeight * FIndex) +
-          (Height - (BorderWidth * 2) - (Margin * 2) - FLineHeight) -
-          ((Height - (BorderWidth * 2) - (Margin * 2)) mod FLineHeight);
+        VirtualPosition := -(FLineHeight * FIndex) + (Height - (BorderWidth * 2) - (Margin * 2) -
+          FLineHeight) - ((Height - (BorderWidth * 2) - (Margin * 2)) mod FLineHeight);
       end;
     end;
     if (FStrings.Count > 0) and (FIndex < 0) then
     begin
       FIndex := 0;
 
-      if (ClientTop + BorderWidth + Margin + VirtualPosition +
-          (FLineHeight * FIndex)) < ClientTop + BorderWidth + Margin then
+      if (ClientTop + BorderWidth + Margin + VirtualPosition + (FLineHeight * FIndex)) < ClientTop +
+        BorderWidth + Margin then
       begin
         VirtualPosition := -(FLineHeight * FIndex);
       end;
 
-      if (ClientTop + Height - BorderWidth - Margin) <
-        ((ClientTop + BorderWidth + Margin + VirtualPosition +
-            (FLineHeight * FIndex)) + FLineHeight) then
+      if (ClientTop + Height - BorderWidth - Margin) < ((ClientTop + BorderWidth + Margin +
+        VirtualPosition + (FLineHeight * FIndex)) + FLineHeight) then
       begin
-        VirtualPosition := -(FLineHeight * FIndex) +
-          (Height - (BorderWidth * 2) - (Margin * 2) - FLineHeight) -
-          ((Height - (BorderWidth * 2) - (Margin * 2)) mod FLineHeight);
+        VirtualPosition := -(FLineHeight * FIndex) + (Height - (BorderWidth * 2) - (Margin * 2) -
+          FLineHeight) - ((Height - (BorderWidth * 2) - (Margin * 2)) mod FLineHeight);
       end;
     end;
   end;
@@ -320,19 +300,17 @@ begin
     begin
       FIndex := FIndex + 1;
 
-      if (ClientTop + BorderWidth + Margin + VirtualPosition +
-          (FLineHeight * FIndex)) < ClientTop + BorderWidth + Margin then
+      if (ClientTop + BorderWidth + Margin + VirtualPosition + (FLineHeight * FIndex)) < ClientTop +
+        BorderWidth + Margin then
       begin
         VirtualPosition := -(FLineHeight * FIndex);
       end;
 
-      if (ClientTop + Height - BorderWidth - Margin) <
-        ((ClientTop + BorderWidth + Margin + VirtualPosition +
-            (FLineHeight * FIndex)) + FLineHeight) then
+      if (ClientTop + Height - BorderWidth - Margin) < ((ClientTop + BorderWidth + Margin +
+        VirtualPosition + (FLineHeight * FIndex)) + FLineHeight) then
       begin
-        VirtualPosition := -(FLineHeight * FIndex) +
-          (Height - (BorderWidth * 2) - (Margin * 2) - FLineHeight) -
-          ((Height - (BorderWidth * 2) - (Margin * 2)) mod FLineHeight);
+        VirtualPosition := -(FLineHeight * FIndex) + (Height - (BorderWidth * 2) - (Margin * 2) -
+          FLineHeight) - ((Height - (BorderWidth * 2) - (Margin * 2)) mod FLineHeight);
       end;
     end;
   end;
@@ -347,9 +325,7 @@ begin
   if Key = VK_END then
   begin
     if VirtualHeight > (Height - (BorderWidth * 2) - (Margin * 2)) then
-
-      VirtualPosition := (Height - (BorderWidth * 2) - (Margin * 2))
-        - VirtualHeight;
+      VirtualPosition := (Height - (BorderWidth * 2) - (Margin * 2)) - VirtualHeight;
   end;
 
   // Page_Up pressed
@@ -357,9 +333,8 @@ begin
   begin
     if VirtualHeight > (Height - (BorderWidth * 2) - (Margin * 2)) then
     begin
-      VirtualPosition := VirtualPosition +
-        (Height - (BorderWidth * 2) - (Margin * 2)) -
-        ((Height - (BorderWidth * 2) - (Margin * 2)) mod FLineHeight);
+      VirtualPosition := VirtualPosition + (Height - (BorderWidth * 2) - (Margin * 2)) - ((Height -
+        (BorderWidth * 2) - (Margin * 2)) mod FLineHeight);
 
       if (VirtualPosition > 0) then
         VirtualPosition := 0;
@@ -371,22 +346,18 @@ begin
   begin
     if VirtualHeight > (Height - (BorderWidth * 2) - (Margin * 2)) then
     begin
-      VirtualPosition := VirtualPosition -
-        (Height - (BorderWidth * 2) - (Margin * 2)) +
-        ((Height - (BorderWidth * 2) - (Margin * 2)) mod FLineHeight);
+      VirtualPosition := VirtualPosition - (Height - (BorderWidth * 2) - (Margin * 2)) + ((Height -
+        (BorderWidth * 2) - (Margin * 2)) mod FLineHeight);
 
-      if (VirtualPosition + VirtualHeight) <
-        ((Height - (BorderWidth * 2) - (Margin * 2))) then
-        VirtualPosition := (Height - (BorderWidth * 2) - (Margin * 2))
-          - VirtualHeight;
+      if (VirtualPosition + VirtualHeight) < ((Height - (BorderWidth * 2) - (Margin * 2))) then
+        VirtualPosition := (Height - (BorderWidth * 2) - (Margin * 2)) - VirtualHeight;
     end;
   end;
 
   inherited;
 end;
 
-procedure TCustomAListBox.MouseDown(Button: TMouseButton; Shift: TShiftState;
-  X, Y: Integer);
+procedure TCustomAListBox.MouseDown;
 var
   y1: Integer;
 begin
@@ -394,11 +365,9 @@ begin
   if Button = mbLeft then
   begin
     // ButtonDown
-    if (X >= (ClientLeft + Width - BorderWidth - Margin - FScrollWidth)) and
-      (X < (ClientLeft + Width - BorderWidth - Margin)) and
-      (Y >= ClientTop + Height - BorderWidth - Margin - 16) and
-      (Y < ClientTop + Height - BorderWidth - Margin) and
-      (FButtonDown.IsEnabled) then
+    if (X >= (ClientLeft + Width - BorderWidth - Margin - FScrollWidth)) and (X < (ClientLeft +
+      Width - BorderWidth - Margin)) and (Y >= ClientTop + Height - BorderWidth - Margin - 16) and (Y
+      < ClientTop + Height - BorderWidth - Margin) and (FButtonDown.IsEnabled) then
     begin
       if not FButtonDown.IsPressed then
         FButtonDown.IsPressed := True;
@@ -410,11 +379,9 @@ begin
     end;
 
     // ButtonUp
-    if (X >= (ClientLeft + Width - BorderWidth - Margin - FScrollWidth)) and
-      (X < (ClientLeft + Width - BorderWidth - Margin)) and
-      (Y >= ClientTop + BorderWidth + Margin) and
-      (Y < ClientTop + BorderWidth + Margin + 16) and
-      (FButtonUp.IsEnabled) then
+    if (X >= (ClientLeft + Width - BorderWidth - Margin - FScrollWidth)) and (X < (ClientLeft +
+      Width - BorderWidth - Margin)) and (Y >= ClientTop + BorderWidth + Margin) and (Y < ClientTop
+      + BorderWidth + Margin + 16) and (FButtonUp.IsEnabled) then
     begin
       if not FButtonUp.IsPressed then
         FButtonUp.IsPressed := True;
@@ -426,11 +393,9 @@ begin
     end;
 
     // ButtonSlider
-    if (X >= (ClientLeft + Width - BorderWidth - Margin - FScrollWidth)) and
-      (X < (ClientLeft + Width - BorderWidth - Margin)) and
-      (Y >= ClientTop + BorderWidth + Margin + 16 - FBSliderPos) and
-      (Y < ClientTop + BorderWidth + Margin + 16 - FBSliderPos +
-        FBSliderHeight) and (FButtonSlider.IsEnabled) then
+    if (X >= (ClientLeft + Width - BorderWidth - Margin - FScrollWidth)) and (X < (ClientLeft +
+      Width - BorderWidth - Margin)) and (Y >= ClientTop + BorderWidth + Margin + 16 - FBSliderPos)
+      and (Y < ClientTop + BorderWidth + Margin + 16 - FBSliderPos + FBSliderHeight) and (FButtonSlider.IsEnabled) then
     begin
       if not FButtonSlider.IsPressed then
         FButtonSlider.IsPressed := True;
@@ -443,11 +408,9 @@ begin
     end;
   end;
 
-  if (X >= (ClientLeft + BorderWidth + Margin)) and
-    (X < (ClientLeft + Width - BorderWidth - Margin - FScrollWidth)) and
-    (Y >= ClientTop + BorderWidth + Margin) and
-    (Y < ClientTop + Height - BorderWidth - Margin) and (FStrings.Count > 0)
-    then
+  if (X >= (ClientLeft + BorderWidth + Margin)) and (X < (ClientLeft + Width - BorderWidth - Margin
+    - FScrollWidth)) and (Y >= ClientTop + BorderWidth + Margin) and (Y < ClientTop + Height -
+    BorderWidth - Margin) and (FStrings.Count > 0) then
   begin
     y1 := Y - ClientTop - BorderWidth - Margin;
     if (y1 - VirtualPosition) div FLineHeight > FStrings.Count - 1 then
@@ -486,11 +449,9 @@ end;
 procedure TCustomAListBox.MouseMove(Shift: TShiftState; X, Y: Integer);
 begin
   // ButtonDown
-  if (X >= (ClientLeft + Width - BorderWidth - Margin - FScrollWidth)) and
-    (X < (ClientLeft + Width - BorderWidth - Margin)) and
-    (Y >= ClientTop + Height - BorderWidth - Margin - 16) and
-    (Y < ClientTop + Height - BorderWidth - Margin) and
-    (FButtonDown.IsEnabled) then
+  if (X >= (ClientLeft + Width - BorderWidth - Margin - FScrollWidth)) and (X < (ClientLeft + Width
+    - BorderWidth - Margin)) and (Y >= ClientTop + Height - BorderWidth - Margin - 16) and (Y <
+    ClientTop + Height - BorderWidth - Margin) and (FButtonDown.IsEnabled) then
   begin
     if not FButtonDown.IsHover then
       FButtonDown.IsHover := True;
@@ -502,10 +463,9 @@ begin
   end;
 
   // ButtonUp
-  if (X >= (ClientLeft + Width - BorderWidth - Margin - FScrollWidth)) and
-    (X < (ClientLeft + Width - BorderWidth - Margin)) and
-    (Y >= ClientTop + BorderWidth + Margin) and
-    (Y < ClientTop + BorderWidth + Margin + 16) and (FButtonUp.IsEnabled) then
+  if (X >= (ClientLeft + Width - BorderWidth - Margin - FScrollWidth)) and (X < (ClientLeft + Width
+    - BorderWidth - Margin)) and (Y >= ClientTop + BorderWidth + Margin) and (Y < ClientTop +
+    BorderWidth + Margin + 16) and (FButtonUp.IsEnabled) then
   begin
     if not FButtonUp.IsHover then
       FButtonUp.IsHover := True;
@@ -517,11 +477,9 @@ begin
   end;
 
   // ButtonSlider
-  if (X >= (ClientLeft + Width - BorderWidth - Margin - FScrollWidth)) and
-    (X < (ClientLeft + Width - BorderWidth - Margin)) and
-    (Y >= ClientTop + BorderWidth + Margin + 16 - FBSliderPos) and
-    (Y < ClientTop + BorderWidth + Margin + 16 - FBSliderPos + FBSliderHeight)
-    and (FButtonSlider.IsEnabled) then
+  if (X >= (ClientLeft + Width - BorderWidth - Margin - FScrollWidth)) and (X < (ClientLeft + Width
+    - BorderWidth - Margin)) and (Y >= ClientTop + BorderWidth + Margin + 16 - FBSliderPos) and (Y <
+    ClientTop + BorderWidth + Margin + 16 - FBSliderPos + FBSliderHeight) and (FButtonSlider.IsEnabled) then
   begin
     if not FButtonSlider.IsHover then
       FButtonSlider.IsHover := True;
@@ -536,33 +494,26 @@ begin
   if FButtonSlider.IsPressed then
   begin
 
-    VirtualPosition := Round
-      ((YPress - Y) * (FVirtualHeight / (Height - (BorderWidth * 2) -
-            (Margin * 2) - 32)));
+    VirtualPosition := Round((YPress - Y) * (FVirtualHeight / (Height - (BorderWidth * 2) - (Margin * 2) - 32)));
 
     if VirtualPosition > 0 then
       VirtualPosition := 0;
 
-    if (VirtualPosition + VirtualHeight) <
-      ((Height - (BorderWidth * 2) - (Margin * 2))) then
-      VirtualPosition := (Height - (BorderWidth * 2) - (Margin * 2))
-        - VirtualHeight;
+    if (VirtualPosition + VirtualHeight) < ((Height - (BorderWidth * 2) - (Margin * 2))) then
+      VirtualPosition := (Height - (BorderWidth * 2) - (Margin * 2)) - VirtualHeight;
   end;
 
   inherited;
 end;
 
-procedure TCustomAListBox.MouseUp(Button: TMouseButton; Shift: TShiftState;
-  X, Y: Integer);
+procedure TCustomAListBox.MouseUp;
 begin
   if Button = mbLeft then
   begin
     // ButtonDown
-    if (X >= (ClientLeft + Width - BorderWidth - Margin - FScrollWidth)) and
-      (X < (ClientLeft + Width - BorderWidth - Margin)) and
-      (Y >= ClientTop + Height - BorderWidth - Margin - 16) and
-      (Y < ClientTop + Height - BorderWidth - Margin) and
-      (FButtonDown.IsEnabled) then
+    if (X >= (ClientLeft + Width - BorderWidth - Margin - FScrollWidth)) and (X < (ClientLeft +
+      Width - BorderWidth - Margin)) and (Y >= ClientTop + Height - BorderWidth - Margin - 16) and (Y
+      < ClientTop + Height - BorderWidth - Margin) and (FButtonDown.IsEnabled) then
     begin
       if FButtonDown.IsPressed then
       begin
@@ -573,11 +524,9 @@ begin
     end;
 
     // ButtonUp
-    if (X >= (ClientLeft + Width - BorderWidth - Margin - FScrollWidth)) and
-      (X < (ClientLeft + Width - BorderWidth - Margin)) and
-      (Y >= ClientTop + BorderWidth + Margin) and
-      (Y < ClientTop + BorderWidth + Margin + 16) and
-      (FButtonUp.IsEnabled) then
+    if (X >= (ClientLeft + Width - BorderWidth - Margin - FScrollWidth)) and (X < (ClientLeft +
+      Width - BorderWidth - Margin)) and (Y >= ClientTop + BorderWidth + Margin) and (Y < ClientTop
+      + BorderWidth + Margin + 16) and (FButtonUp.IsEnabled) then
     begin
       if FButtonUp.IsPressed then
       begin
@@ -595,30 +544,25 @@ begin
   inherited;
 end;
 
-function TCustomAListBox.MouseWheelDown(Shift: TShiftState;
-  MousePos: TPoint): Boolean;
+function TCustomAListBox.MouseWheelDown(Shift: TShiftState; MousePos: TPoint): Boolean;
 begin
   Result := False;
 
-  if FVirtualPosition + FVirtualHeight > Height - (BorderWidth * 2) -
-    (Margin * 2) then
+  if FVirtualPosition + FVirtualHeight > Height - (BorderWidth * 2) - (Margin * 2) then
   begin
     VirtualPosition := VirtualPosition - FLineHeight;
 
     if VirtualPosition > 0 then
       VirtualPosition := 0;
 
-    if (VirtualPosition + VirtualHeight) <
-      ((Height - (BorderWidth * 2) - (Margin * 2))) then
-      VirtualPosition := (Height - (BorderWidth * 2) - (Margin * 2))
-        - VirtualHeight;
+    if (VirtualPosition + VirtualHeight) < ((Height - (BorderWidth * 2) - (Margin * 2))) then
+      VirtualPosition := (Height - (BorderWidth * 2) - (Margin * 2)) - VirtualHeight;
 
     Result := True;
   end;
 end;
 
-function TCustomAListBox.MouseWheelUp(Shift: TShiftState;
-  MousePos: TPoint): Boolean;
+function TCustomAListBox.MouseWheelUp(Shift: TShiftState; MousePos: TPoint): Boolean;
 begin
   Result := False;
 
@@ -629,10 +573,8 @@ begin
     if VirtualPosition > 0 then
       VirtualPosition := 0;
 
-    if (VirtualPosition + VirtualHeight) <
-      ((Height - (BorderWidth * 2) - (Margin * 2))) then
-      VirtualPosition := (Height - (BorderWidth * 2) - (Margin * 2))
-        - VirtualHeight;
+    if (VirtualPosition + VirtualHeight) < ((Height - (BorderWidth * 2) - (Margin * 2))) then
+      VirtualPosition := (Height - (BorderWidth * 2) - (Margin * 2)) - VirtualHeight;
 
     Result := True;
   end;
@@ -642,7 +584,7 @@ procedure TCustomAListBox.Paint(DC: HDC);
 var
   X, Y: Integer;
   Index: Integer;
-  ARect: TRect;
+  ARect: TIntRect;
   // constraint variables for line draw
   YTop, YBottom: Integer;
 begin
@@ -656,19 +598,17 @@ begin
   // Draw Border
   if BorderWidth > 0 then
   begin
-    AEngine.Canvas.FillRect(Rect(X, Y, X + Width, Y + BorderWidth),
-      BorderColor, deNormal);
-    AEngine.Canvas.FillRect(Rect(X, Y + BorderWidth, X + BorderWidth,
-        Y + Height - BorderWidth), BorderColor, deNormal);
-    AEngine.Canvas.FillRect(Rect(X, Y + Height - BorderWidth, X + Width,
-        Y + Height), BorderColor, deNormal);
-    AEngine.Canvas.FillRect(Rect(X + Width - BorderWidth, Y + BorderWidth,
-        X + Width, Y + Height - BorderWidth), BorderColor, deNormal);
+    AEngine.Canvas.FillRect(FloatRect(X, Y, X + Width, Y + BorderWidth), BorderColor);
+    AEngine.Canvas.FillRect(FloatRect(X, Y + BorderWidth, X + BorderWidth, Y + Height - BorderWidth), BorderColor);
+    AEngine.Canvas.FillRect(FloatRect(X, Y + Height - BorderWidth, X + Width, Y + Height), BorderColor);
+    AEngine.Canvas.FillRect(FloatRect(X + Width - BorderWidth, Y + BorderWidth, X + Width, Y +
+      Height - BorderWidth), BorderColor);
   end;
 
   // Draw Background
-  if AImage <> nil then
+  if AImage.Initialized then
   begin
+  {
     AEngine.Canvas.UseTexturePx(AImage,
       pxBounds4(0 + BorderWidth, 0 + BorderWidth,
         AImage.Width - (BorderWidth * 2),
@@ -676,45 +616,43 @@ begin
     AEngine.Canvas.TexMap(pRect4(Rect(X + BorderWidth, Y + BorderWidth,
           X + Width - BorderWidth, Y + Height - BorderWidth)),
       cAlpha4(ImageAlpha), deNormal);
+      }
+
+    var TexCoord := Quad(0 + BorderWidth, 0 + BorderWidth, AImage.Parameters.Width - (BorderWidth *
+      2), AImage.Parameters.Height - (BorderWidth * 2));
+    AEngine.Canvas.Quad(AImage, Quad(IntRectBDS(X + BorderWidth, Y + BorderWidth, X + Width -
+      BorderWidth, Y + Height - BorderWidth)), TexCoord, $FFFFFFFF);
   end
   else
   begin
-    AEngine.Canvas.FillRect(Rect(X + BorderWidth, Y + BorderWidth,
-        X + Width - BorderWidth, Y + Height - BorderWidth), cColor4(Color),
-      deNormal);
+    AEngine.Canvas.FillRect(FloatRect(X + BorderWidth, Y + BorderWidth, X + Width - BorderWidth, Y +
+      Height - BorderWidth), Cardinal(Color));
   end;
 
   // draw scroll bar
   PaintScrollBar;
 
   // Set Rect Canvas
-  AEngine.Canvas.ClipRect := Rect(X + BorderWidth + Margin,
-    Y + BorderWidth + Margin, X + Width - BorderWidth - Margin - FScrollWidth,
-    Y + Height - BorderWidth - Margin);
+  AEngine.Canvas.ClipRect := intRect(X + BorderWidth + Margin, Y + BorderWidth + Margin, X + Width -
+    BorderWidth - Margin - FScrollWidth, Y + Height - BorderWidth - Margin);
 
   // Draw lines
   if FStrings.Count > 0 then
   begin
     for Index := 0 to FStrings.Count - 1 do
     begin
-      YTop := Y + BorderWidth + Margin + VirtualPosition +
-        (FLineHeight * Index);
-      YBottom := Y + BorderWidth + Margin + VirtualPosition +
-        (FLineHeight * Index) + FLineHeight;
+      YTop := Y + BorderWidth + Margin + VirtualPosition + (FLineHeight * Index);
+      YBottom := Y + BorderWidth + Margin + VirtualPosition + (FLineHeight * Index) + FLineHeight;
 
-      if (AEngine.Canvas.ClipRect.Top <= YBottom) and
-        (AEngine.Canvas.ClipRect.Bottom > YTop) then
+      if (AEngine.Canvas.ClipRect.Top <= YBottom) and (AEngine.Canvas.ClipRect.Bottom > YTop) then
       begin
         if FIndex = Index then
         begin
-          AEngine.Canvas.FillRect(Rect(X + BorderWidth + Margin,
-              Y + BorderWidth + Margin + VirtualPosition +
-                (FLineHeight * Index),
-              X + Width - BorderWidth - Margin - FScrollWidth,
-              Y + BorderWidth + Margin + VirtualPosition +
-                (FLineHeight * Index) + FLineHeight), cColor4(SelectColor.Top,
-              SelectColor.Top, SelectColor.Bottom, SelectColor.Bottom),
-            deNormal);
+          AEngine.Canvas.FillRect(FloatRect(X + BorderWidth + Margin, Y + BorderWidth + Margin +
+            VirtualPosition + (FLineHeight * Index), X + Width - BorderWidth - Margin - FScrollWidth,
+            Y + BorderWidth + Margin + VirtualPosition + (FLineHeight * Index) + FLineHeight),
+            ColorRect(SelectColor.Top, SelectColor.Top, SelectColor.Bottom, SelectColor.Bottom));
+
             {
           AFont.TextOut(Point2(X + BorderWidth + Margin + 1,
               Y + BorderWidth + Margin + VirtualPosition +
@@ -723,13 +661,11 @@ begin
             }
           if FZFont <> nil then
           begin
-            FZFont.Color := cColor4(SelectFontColor.Top,SelectFontColor.Top,SelectFontColor.Bottom,SelectFontColor.Bottom);
-            FZFont.TextOut( DC,
-                            Point2( X + BorderWidth + Margin + 1,
-                                    Y + BorderWidth + Margin + VirtualPosition +
-                                    (FLineHeight * Index)),
-                            FStrings[Index]);
-          end;{ else
+            FZFont.Color := cColor4(SelectFontColor.Top, SelectFontColor.Top, SelectFontColor.Bottom,
+              SelectFontColor.Bottom);
+            FZFont.TextOut(DC, Point2(X + BorderWidth + Margin + 1, Y + BorderWidth + Margin +
+              VirtualPosition + (FLineHeight * Index)), FStrings[Index]);
+          end; { else
           if AFont <> nil then
           begin
             AFont.TextOut(Point2(X + BorderWidth + Margin + 1,
@@ -741,13 +677,10 @@ begin
           // draw unselected shader
           if AEngine.ActiveControl <> Self then
           begin
-            AEngine.Canvas.FillRect(Rect(X + BorderWidth + Margin,
-                Y + BorderWidth + Margin + VirtualPosition +
-                  (FLineHeight * Index),
-                X + Width - BorderWidth - Margin - FScrollWidth,
-                Y + BorderWidth + Margin + VirtualPosition +
-                  (FLineHeight * Index) + FLineHeight), cColor4($20000000),
-              deNormal);
+            AEngine.Canvas.FillRect(FloatRect(X + BorderWidth + Margin, Y + BorderWidth + Margin +
+              VirtualPosition + (FLineHeight * Index), X + Width - BorderWidth - Margin -
+              FScrollWidth, Y + BorderWidth + Margin + VirtualPosition + (FLineHeight * Index) +
+              FLineHeight), ($20000000));
           end;
         end
         else
@@ -760,13 +693,10 @@ begin
           }
           if FZFont <> nil then
           begin
-            FZFont.Color := cColor4(FontColor.Top,FontColor.Top,FontColor.Bottom,FontColor.Bottom);
-            FZFont.TextOut( DC,
-                            Point2( X + BorderWidth + Margin + 1,
-                                    Y + BorderWidth + Margin + VirtualPosition +
-                                    (FLineHeight * Index)),
-                            FStrings[Index] );
-          end;{ else
+            FZFont.Color := cColor4(FontColor.Top, FontColor.Top, FontColor.Bottom, FontColor.Bottom);
+            FZFont.TextOut(DC, Point2(X + BorderWidth + Margin + 1, Y + BorderWidth + Margin +
+              VirtualPosition + (FLineHeight * Index)), FStrings[Index]);
+          end; { else
           if AFont <> nil then
           begin
             AFont.TextOut(Point2(X + BorderWidth + Margin + 1,
@@ -797,13 +727,13 @@ begin
   YMax := Y + Height - BorderWidth - Margin - 16;
 
   // Draw scroll area
-  AEngine.Canvas.FillRect(Rect(X + Width - BorderWidth - Margin - FScrollWidth,
-      Y + BorderWidth + Margin, X + Width - BorderWidth - Margin,
-      Y + Height - BorderWidth - Margin), cColor4($20000000), deShadow);
+  AEngine.Canvas.FillRect(FloatRect(X + Width - BorderWidth - Margin - FScrollWidth, Y + BorderWidth
+    + Margin, X + Width - BorderWidth - Margin, Y + Height - BorderWidth - Margin), $20000000, TBlendingEffect.Shadow);
 
   // Draw up button
-  if FButtonUp.AImage <> nil then
+  if FButtonUp.AImage.Initialized then
   begin
+  {
     AEngine.Canvas.UseImagePx(FButtonUp.AImage,
       pxBounds4(0, 0, FButtonUp.AImage.PatternSize.X,
         FButtonUp.AImage.PatternSize.Y));
@@ -811,138 +741,108 @@ begin
       (pRect4(Rect(X + Width - BorderWidth - Margin - FScrollWidth,
           Y + BorderWidth + Margin, X + Width - BorderWidth - Margin,
           Y + BorderWidth + Margin + 16)), cAlpha4(ImageAlpha), deNormal);
-    if not(FButtonUp.IsEnabled) then
+
+          }
+
+    var TexCoord := Quad(0, 0, FButtonUp.AImage.Parameters.Width, FButtonUp.AImage.Parameters.Height);
+    AEngine.Canvas.Quad(AImage, Quad(IntRectBDS(X + Width - BorderWidth - Margin - FscrollWidth, Y +
+      BorderWidth + Margin, X + Width - BorderWidth - Margin, Y + BorderWidth + Margin + 16)), TexCoord, $FFFFFFFF);
+
+    if not (FButtonUp.IsEnabled) then
     begin
-      AEngine.Canvas.FillRect
-        (Rect(X + Width - BorderWidth - Margin - FScrollWidth,
-          Y + BorderWidth + Margin,
-          X + Width - BorderWidth - Margin, Y + BorderWidth + Margin + 16),
-        cColor4($20000000), deNormal);
+      AEngine.Canvas.FillRect(FloatRect(X + Width - BorderWidth - Margin - FScrollWidth, Y + BorderWidth
+        + Margin, X + Width - BorderWidth - Margin, Y + BorderWidth + Margin + 16), ($20000000));
     end;
   end
   else
   begin
-    if (FButtonUp.IsHover) and not(FButtonUp.IsPressed) then
+    if (FButtonUp.IsHover) and not (FButtonUp.IsPressed) then
     begin
-      AEngine.Canvas.FillRect
-        (Rect(X + Width - BorderWidth - Margin - FScrollWidth,
-          Y + BorderWidth + Margin,
-          X + Width - BorderWidth - Margin, Y + BorderWidth + Margin + 16),
-        cColor4(FButtonUp.ColorHover), deNormal);
+      AEngine.Canvas.FillRect(FloatRect(X + Width - BorderWidth - Margin - FScrollWidth, Y + BorderWidth
+        + Margin, X + Width - BorderWidth - Margin, Y + BorderWidth + Margin + 16),cardinal(FButtonUp.ColorHover));
     end
     else if FButtonUp.IsPressed then
     begin
-      AEngine.Canvas.FillRect
-        (Rect(X + Width - BorderWidth - Margin - FScrollWidth,
-          Y + BorderWidth + Margin,
-          X + Width - BorderWidth - Margin, Y + BorderWidth + Margin + 16),
-        cColor4(FButtonUp.ColorPressed), deNormal);
+      AEngine.Canvas.FillRect(FloatRect(X + Width - BorderWidth - Margin - FScrollWidth, Y + BorderWidth
+        + Margin, X + Width - BorderWidth - Margin, Y + BorderWidth + Margin + 16), Cardinal(FButtonUp.ColorPressed)
+        );
     end
     else
     begin
-      AEngine.Canvas.FillRect
-        (Rect(X + Width - BorderWidth - Margin - FScrollWidth,
-          Y + BorderWidth + Margin,
-          X + Width - BorderWidth - Margin, Y + BorderWidth + Margin + 16),
-        cColor4(FButtonUp.Color), deNormal);
+      AEngine.Canvas.FillRect(FloatRect(X + Width - BorderWidth - Margin - FScrollWidth, Y + BorderWidth
+        + Margin, X + Width - BorderWidth - Margin, Y + BorderWidth + Margin + 16), Cardinal(FButtonUp.Color));
     end;
 
-    AEngine.Canvas.FillTri
-      (Point2(X + Width - BorderWidth - Margin - FScrollWidth / 2,
-        Y + BorderWidth + Margin + 3),
-      Point2(X + Width - BorderWidth - Margin - FScrollWidth + 2,
-        Y + BorderWidth + Margin + 10),
-      Point2(X + Width - BorderWidth - Margin - 2,
-        Y + BorderWidth + Margin + 10), FButtonUp.IconColor,
-      FButtonUp.IconColor, FButtonUp.IconColor);
+   // AEngine.Canvas.Triangles(Point2f(X + Width - BorderWidth - Margin - FScrollWidth / 2, Y +
+     // BorderWidth + Margin + 3), Point2f(X + Width - BorderWidth - Margin - FScrollWidth + 2, Y +
+    //  BorderWidth + Margin + 10), Point2f(X + Width - BorderWidth - Margin - 2, Y + BorderWidth +
+      //Margin + 10), FButtonUp.IconColor, FButtonUp.IconColor, FButtonUp.IconColor);
 
-    AEngine.Canvas.FrameRect
-      (Rect(X + Width - BorderWidth - Margin - FScrollWidth,
-        Y + BorderWidth + Margin, X + Width - BorderWidth - Margin,
-        Y + BorderWidth + Margin + 16), cColor4($60FFFFFF), deNormal);
+    AEngine.Canvas.FrameRect(FloatRect(X + Width - BorderWidth - Margin - FScrollWidth, Y + BorderWidth +
+      Margin, X + Width - BorderWidth - Margin, Y + BorderWidth + Margin + 16), ($60FFFFFF),1);
 
-    if not(FButtonUp.IsEnabled) then
+    if not (FButtonUp.IsEnabled) then
     begin
-      AEngine.Canvas.FillRect
-        (Rect(X + Width - BorderWidth - Margin - FScrollWidth,
-          Y + BorderWidth + Margin,
-          X + Width - BorderWidth - Margin, Y + BorderWidth + Margin + 16),
-        cColor4($20000000), deNormal);
+      AEngine.Canvas.FillRect(FloatRect(X + Width - BorderWidth - Margin - FScrollWidth, Y + BorderWidth
+        + Margin, X + Width - BorderWidth - Margin, Y + BorderWidth + Margin + 16), ($20000000));
     end;
   end;
 
   // Draw down button
-  if FButtonDown.AImage <> nil then
+  if FButtonDown.AImage.Initialized then
   begin
-    AEngine.Canvas.UseImagePx(FButtonDown.AImage,
-      pxBounds4(0, 0, FButtonDown.AImage.PatternSize.X,
-        FButtonDown.AImage.PatternSize.Y));
-    AEngine.Canvas.TexMap
-      (pRect4(Rect(X + Width - BorderWidth - Margin - FScrollWidth,
-          Y + Height - BorderWidth - Margin - 16,
-          X + Width - BorderWidth - Margin,
-          Y + Height - BorderWidth - Margin)), cAlpha4(ImageAlpha),
-      deNormal);
-    if not(FButtonDown.IsEnabled) then
+  {
+    AEngine.Canvas.UseImagePx(FButtonDown.AImage, pxBounds4(0, 0, FButtonDown.AImage.PatternSize.X,
+      FButtonDown.AImage.PatternSize.Y));
+    AEngine.Canvas.TexMap(pRect4(Rect(X + Width - BorderWidth - Margin - FScrollWidth, Y + Height -
+      BorderWidth - Margin - 16, X + Width - BorderWidth - Margin, Y + Height - BorderWidth - Margin)),
+      cAlpha4(ImageAlpha), deNormal);
+   }
+    var TexCoord := Quad(0, 0, FButtonUp.AImage.Parameters.Width, FButtonUp.AImage.Parameters.Height);
+    AEngine.Canvas.Quad(AImage, Quad(IntRectBDS(X + Width - BorderWidth - Margin - FscrollWidth,Y + Height -
+      BorderWidth - Margin - 16, X + Width - BorderWidth - Margin, Y + Height - BorderWidth - Margin)), TexCoord, $FFFFFFFF);
+
+    if not (FButtonDown.IsEnabled) then
     begin
-      AEngine.Canvas.FillRect
-        (Rect(X + Width - BorderWidth - Margin - FScrollWidth,
-          Y + Height - BorderWidth - Margin - 16,
-          X + Width - BorderWidth - Margin,
-          Y + Height - BorderWidth - Margin), cColor4($20000000), deNormal);
+      AEngine.Canvas.FillRect(FloatRect(X + Width - BorderWidth - Margin - FScrollWidth, Y + Height -
+        BorderWidth - Margin - 16, X + Width - BorderWidth - Margin, Y + Height - BorderWidth -
+        Margin), ($20000000));
     end;
   end
   else
   begin
-    if (FButtonDown.IsHover) and not(FButtonDown.IsPressed) then
+    if (FButtonDown.IsHover) and not (FButtonDown.IsPressed) then
     begin
-      AEngine.Canvas.FillRect
-        (Rect(X + Width - BorderWidth - Margin - FScrollWidth,
-          Y + Height - BorderWidth - Margin - 16,
-          X + Width - BorderWidth - Margin,
-          Y + Height - BorderWidth - Margin), cColor4(FButtonDown.ColorHover),
-        deNormal);
+      AEngine.Canvas.FillRect(FloatRect(X + Width - BorderWidth - Margin - FScrollWidth, Y + Height -
+        BorderWidth - Margin - 16, X + Width - BorderWidth - Margin, Y + Height - BorderWidth -
+        Margin), Cardinal(FButtonDown.ColorHover));
     end
     else if FButtonDown.IsPressed then
     begin
-      AEngine.Canvas.FillRect
-        (Rect(X + Width - BorderWidth - Margin - FScrollWidth,
-          Y + Height - BorderWidth - Margin - 16,
-          X + Width - BorderWidth - Margin,
-          Y + Height - BorderWidth - Margin),
-        cColor4(FButtonDown.ColorPressed), deNormal);
+      AEngine.Canvas.FillRect(floatRect(X + Width - BorderWidth - Margin - FScrollWidth, Y + Height -
+        BorderWidth - Margin - 16, X + Width - BorderWidth - Margin, Y + Height - BorderWidth -
+        Margin), cardinal(FButtonDown.ColorPressed));
     end
     else
     begin
-      AEngine.Canvas.FillRect
-        (Rect(X + Width - BorderWidth - Margin - FScrollWidth,
-          Y + Height - BorderWidth - Margin - 16,
-          X + Width - BorderWidth - Margin,
-          Y + Height - BorderWidth - Margin), cColor4(FButtonDown.Color),
-        deNormal);
+      AEngine.Canvas.FillRect(floatRect(X + Width - BorderWidth - Margin - FScrollWidth, Y + Height -
+        BorderWidth - Margin - 16, X + Width - BorderWidth - Margin, Y + Height - BorderWidth -
+        Margin), cardinal(FButtonDown.Color));
     end;
 
-    AEngine.Canvas.FillTri
-      (Point2(X + Width - BorderWidth - Margin - FScrollWidth / 2,
-        Y + Height - BorderWidth - Margin - 3),
-      Point2(X + Width - BorderWidth - Margin - FScrollWidth + 2,
-        Y + Height - BorderWidth - Margin - 10),
-      Point2(X + Width - BorderWidth - Margin - 2,
-        Y + Height - BorderWidth - Margin - 10), FButtonDown.IconColor,
-      FButtonDown.IconColor, FButtonDown.IconColor);
-    AEngine.Canvas.FrameRect
-      (Rect(X + Width - BorderWidth - Margin - FScrollWidth,
-        Y + Height - BorderWidth - Margin - 16,
-        X + Width - BorderWidth - Margin, Y + Height - BorderWidth - Margin),
-      cColor4($60FFFFFF), deNormal);
+  //  AEngine.Canvas.FillTri(Point2(X + Width - BorderWidth - Margin - FScrollWidth / 2, Y + Height -
+    //  BorderWidth - Margin - 3), Point2(X + Width - BorderWidth - Margin - FScrollWidth + 2, Y +
+    //  Height - BorderWidth - Margin - 10), Point2(X + Width - BorderWidth - Margin - 2, Y + Height -
+    //  BorderWidth - Margin - 10), FButtonDown.IconColor, FButtonDown.IconColor, FButtonDown.IconColor);
+    AEngine.Canvas.FrameRect(floatRect(X + Width - BorderWidth - Margin - FScrollWidth, Y + Height -
+      BorderWidth - Margin - 16, X + Width - BorderWidth - Margin, Y + Height - BorderWidth - Margin),
+     ($60FFFFFF),1);
 
-    if not(FButtonDown.IsEnabled) then
+    if not (FButtonDown.IsEnabled) then
     begin
-      AEngine.Canvas.FillRect
-        (Rect(X + Width - BorderWidth - Margin - FScrollWidth,
-          Y + Height - BorderWidth - Margin - 16,
-          X + Width - BorderWidth - Margin,
-          Y + Height - BorderWidth - Margin), cColor4($20000000), deNormal);
+      AEngine.Canvas.FillRect(floatRect(X + Width - BorderWidth - Margin - FScrollWidth, Y + Height -
+        BorderWidth - Margin - 16, X + Width - BorderWidth - Margin, Y + Height - BorderWidth -
+        Margin), ($20000000));
     end;
   end;
 
@@ -958,50 +858,41 @@ begin
 
     YEnd := YIni + FBSliderHeight;
 
-    if FButtonSlider.AImage <> nil then
+    if FButtonSlider.AImage.Initialized then
     begin
-      AEngine.Canvas.UseImagePx(FButtonSlider.AImage,
-        pxBounds4(0, 0, FButtonSlider.AImage.PatternSize.X,
-          FButtonSlider.AImage.PatternSize.Y));
-      AEngine.Canvas.TexMap
-        (pRect4(Rect(X + Width - BorderWidth - Margin - FScrollWidth, YIni,
-            X + Width - BorderWidth - Margin, YEnd)), cAlpha4(ImageAlpha),
-        deNormal);
+    {
+      AEngine.Canvas.UseImagePx(FButtonSlider.AImage, pxBounds4(0, 0, FButtonSlider.AImage.PatternSize.X,
+        FButtonSlider.AImage.PatternSize.Y));
+      AEngine.Canvas.TexMap(pRect4(Rect(X + Width - BorderWidth - Margin - FScrollWidth, YIni, X +
+        Width - BorderWidth - Margin, YEnd)), cAlpha4(ImageAlpha), deNormal);
+     }
+       var TexCoord := Quad(0, 0, FButtonUp.AImage.Parameters.Width, FButtonUp.AImage.Parameters.Height);
+    AEngine.Canvas.Quad(AImage, Quad(IntRectBDS(X + Width - BorderWidth - Margin - FscrollWidth, YIni, X +
+        Width - BorderWidth - Margin, YEnd)), TexCoord, $FFFFFFFF);
+
     end
     else
     begin
-      if (FButtonSlider.IsHover) and not(FButtonSlider.IsPressed) then
+      if (FButtonSlider.IsHover) and not (FButtonSlider.IsPressed) then
       begin
-        AEngine.Canvas.FillRect
-          (Rect(X + Width - BorderWidth - Margin - FScrollWidth, YIni,
-            X + Width - BorderWidth - Margin, YEnd),
-          cColor4(FButtonSlider.ColorHover), deNormal);
-        AEngine.Canvas.FrameRect
-          (Rect(X + Width - BorderWidth - Margin - FScrollWidth, YIni,
-            X + Width - BorderWidth - Margin, YEnd), cColor4($60FFFFFF),
-          deNormal);
+        AEngine.Canvas.FillRect(FloatRect(X + Width - BorderWidth - Margin - FScrollWidth, YIni, X +
+          Width - BorderWidth - Margin, YEnd), cardinal(FButtonSlider.ColorHover));
+        AEngine.Canvas.FrameRect(floatRect(X + Width - BorderWidth - Margin - FScrollWidth, YIni, X +
+          Width - BorderWidth - Margin, YEnd), cardinal($60FFFFFF),1);
       end
       else if FButtonSlider.IsPressed then
       begin
-        AEngine.Canvas.FillRect
-          (Rect(X + Width - BorderWidth - Margin - FScrollWidth, YIni,
-            X + Width - BorderWidth - Margin, YEnd),
-          cColor4(FButtonSlider.ColorPressed), deNormal);
-        AEngine.Canvas.FrameRect
-          (Rect(X + Width - BorderWidth - Margin - FScrollWidth, YIni,
-            X + Width - BorderWidth - Margin, YEnd), cColor4($60FFFFFF),
-          deNormal);
+        AEngine.Canvas.FillRect(FloatRect(X + Width - BorderWidth - Margin - FScrollWidth, YIni, X +
+          Width - BorderWidth - Margin, YEnd), cardinal(FButtonSlider.ColorPressed));
+        AEngine.Canvas.FrameRect(FloatRect(X + Width - BorderWidth - Margin - FScrollWidth, YIni, X +
+          Width - BorderWidth - Margin, YEnd), cardinal($60FFFFFF),1);
       end
       else
       begin
-        AEngine.Canvas.FillRect
-          (Rect(X + Width - BorderWidth - Margin - FScrollWidth, YIni,
-            X + Width - BorderWidth - Margin, YEnd),
-          cColor4(FButtonSlider.Color), deNormal);
-        AEngine.Canvas.FrameRect
-          (Rect(X + Width - BorderWidth - Margin - FScrollWidth, YIni,
-            X + Width - BorderWidth - Margin, YEnd), cColor4($60FFFFFF),
-          deNormal);
+        AEngine.Canvas.FillRect(FloatRect(X + Width - BorderWidth - Margin - FScrollWidth, YIni, X +
+          Width - BorderWidth - Margin, YEnd), cardinal(FButtonSlider.Color));
+        AEngine.Canvas.FrameRect(FloatRect(X + Width - BorderWidth - Margin - FScrollWidth, YIni, X +
+          Width - BorderWidth - Margin, YEnd), cardinal($60FFFFFF),1);
       end;
     end;
   end;
@@ -1076,23 +967,21 @@ procedure TCustomAListBox.SetVirtualHeight(Value: Integer);
 begin
   if (Value > 0) then
   begin
-    Value := Value + ((Height - (BorderWidth * 2) - (Margin * 2))
-        mod FLineHeight);
+    Value := Value + ((Height - (BorderWidth * 2) - (Margin * 2)) mod FLineHeight);
   end;
 
   FVirtualHeight := Value;
 
   // Set FBSliderHeight
   if FVirtualHeight > 0 then
-    FBSliderHeight := Round((Height - (BorderWidth * 2) - (Margin * 2)) *
-        ((Height - (BorderWidth * 2) - (Margin * 2) - 32) / FVirtualHeight));
+    FBSliderHeight := Round((Height - (BorderWidth * 2) - (Margin * 2)) * ((Height - (BorderWidth *
+      2) - (Margin * 2) - 32) / FVirtualHeight));
 
   // Set slider min height
   if FBSliderHeight < 6 then
     FBSliderHeight := 6;
 
-  if FVirtualPosition + FVirtualHeight > Height - (BorderWidth * 2) -
-    (Margin * 2) then
+  if FVirtualPosition + FVirtualHeight > Height - (BorderWidth * 2) - (Margin * 2) then
   begin
     ButtonDown.IsEnabled := True;
   end
@@ -1120,17 +1009,15 @@ begin
   // Set FBSliderPos
   if FVirtualHeight > 0 then
   begin
-    FBSliderPos := Round(FVirtualPosition *
-        ((Height - (BorderWidth * 2) - (Margin * 2) - 32) / FVirtualHeight));
+    FBSliderPos := Round(FVirtualPosition * ((Height - (BorderWidth * 2) - (Margin * 2) - 32) / FVirtualHeight));
 
     // get diference of min size and original value
-    nPos := FBSliderHeight - Round((Height - (BorderWidth * 2) - (Margin * 2))
-        * ((Height - (BorderWidth * 2) - (Margin * 2) - 32) / FVirtualHeight));
+    nPos := FBSliderHeight - Round((Height - (BorderWidth * 2) - (Margin * 2)) * ((Height - (BorderWidth
+      * 2) - (Margin * 2) - 32) / FVirtualHeight));
 
     if nPos > 0 then
-      FBSliderPos := Round
-        (FVirtualPosition * ((Height - (BorderWidth * 2) - (Margin * 2)
-              - 32 - nPos) / FVirtualHeight));
+      FBSliderPos := Round(FVirtualPosition * ((Height - (BorderWidth * 2) - (Margin * 2) - 32 -
+        nPos) / FVirtualHeight));
   end;
 
   if FVirtualPosition < 0 then
@@ -1142,8 +1029,7 @@ begin
     ButtonUp.IsEnabled := False;
   end;
 
-  if FVirtualPosition + FVirtualHeight > Height - (BorderWidth * 2) -
-    (Margin * 2) then
+  if FVirtualPosition + FVirtualHeight > Height - (BorderWidth * 2) - (Margin * 2) then
   begin
     ButtonDown.IsEnabled := True;
   end
@@ -1159,11 +1045,10 @@ begin
 end;
 
 initialization
-
-RegisterClasses([TCustomAListBox, TAListBox]);
+  RegisterClasses([TCustomAListBox, TAListBox]);
 
 finalization
-
-UnRegisterClasses([TCustomAListBox, TAListBox]);
+  UnRegisterClasses([TCustomAListBox, TAListBox]);
 
 end.
+

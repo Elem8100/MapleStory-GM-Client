@@ -14,12 +14,11 @@ unit ACtrlForms;
 interface
 
 uses
-  SysUtils, Classes, Controls,Windows,
+  SysUtils, Classes, Controls, Windows,
   // Aspryre units
   AbstractCanvas, AsphyreFonts, AsphyreImages, AsphyreTypes, Vectors2,
   // Asphyre GUI Engine
-  ZGameFonts, ZGameFontHelpers,
-  AControls, ACtrlTypes;
+  ZGameFonts, ZGameFontHelpers, AControls, ACtrlTypes;
 
 type
   TCustomAForm = class(TWControl)
@@ -42,21 +41,15 @@ type
     procedure Paint(DC: HDC); override;
     procedure MouseEnter; override;
     procedure MouseLeave; override;
-    procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
-      X, Y: Integer); override;
+    procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
     procedure MouseMove(Shift: TShiftState; X, Y: Integer); override;
-    procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-      override;
-
+    procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-
     function IsModal: Boolean;
-
     procedure Close;
     procedure Show(Modal: Boolean = False);
-
     property CanMove: Boolean read FCanMove write SetCanMove;
     property IsMoving: Boolean read FIsMoving write FIsMoving;
     property ParagraphLine: Boolean read FPLine write FPLine;
@@ -76,7 +69,6 @@ type
     property ShowShadow;
     property TextHorizontalAlign;
     property TextVerticalAlign;
-
     property BorderColor;
     property BorderWidth;
     property Color;
@@ -116,6 +108,8 @@ type
 
 implementation
 
+uses
+  PXT.Graphics, PXT.Types, PXT.Canvas, Global;
 // ----------------------------------------------------------------------------
 
 var
@@ -123,8 +117,7 @@ var
 
   { TCustomAForm }
 
-procedure TCustomAForm.MouseDown(Button: TMouseButton; Shift: TShiftState;
-  X, Y: Integer);
+procedure TCustomAForm.MouseDown;
 begin
   if (Button = mbLeft) and (FCanMove) then
   begin
@@ -157,8 +150,7 @@ begin
   inherited MouseMove(Shift, X, Y);
 end;
 
-procedure TCustomAForm.MouseUp(Button: TMouseButton; Shift: TShiftState;
-  X, Y: Integer);
+procedure TCustomAForm.MouseUp;
 begin
   if (Button = mbLeft) and (FIsMoving) then
     FIsMoving := False;
@@ -258,32 +250,24 @@ begin
   // Draw Border
   if BorderWidth > 0 then
   begin
-    AEngine.Canvas.FillRect(Rect(X, Y, X + Width, Y + BorderWidth),
-      BorderColor, deNormal);
-    AEngine.Canvas.FillRect(Rect(X, Y + BorderWidth, X + BorderWidth,
-        Y + Height - BorderWidth), BorderColor, deNormal);
-    AEngine.Canvas.FillRect(Rect(X, Y + Height - BorderWidth, X + Width,
-        Y + Height), BorderColor, deNormal);
-    AEngine.Canvas.FillRect(Rect(X + Width - BorderWidth, Y + BorderWidth,
-        X + Width, Y + Height - BorderWidth), BorderColor, deNormal);
+    AEngine.Canvas.FillRect(FloatRect(X, Y, X + Width, Y + BorderWidth), BorderColor);
+    AEngine.Canvas.FillRect(FloatRect(X, Y + BorderWidth, X + BorderWidth, Y + Height - BorderWidth), BorderColor);
+    AEngine.Canvas.FillRect(FloatRect(X, Y + Height - BorderWidth, X + Width, Y + Height), BorderColor);
+    AEngine.Canvas.FillRect(FloatRect(X + Width - BorderWidth, Y + BorderWidth, X + Width, Y +
+      Height - BorderWidth), BorderColor);
   end;
 
   // Draw Background
-  if AImage <> nil then
+  if AImage.Initialized then
   begin
-    AEngine.Canvas.UseTexturePx(AImage,
-      pxBounds4(0 + BorderWidth, 0 + BorderWidth,
-        AImage.Width - (BorderWidth * 2),
-        AImage.Height - (BorderWidth * 2)));
-    AEngine.Canvas.TexMap(pRect4(Rect(X + BorderWidth, Y + BorderWidth,
-          X + Width - BorderWidth, Y + Height - BorderWidth)),
-      cAlpha4(ImageAlpha), deNormal);
+   // AEngine.Canvas.UseTexturePx(AImage,
+
+    AEngine.Canvas.Draw(AImage,X,Y);
   end
   else
   begin
-    AEngine.Canvas.FillRect(Rect(X + BorderWidth, Y + BorderWidth,
-        X + Width - BorderWidth, Y + Height - BorderWidth), cColor4(Color),
-      deNormal);
+    AEngine.Canvas.FillRect(FloatRect(X + BorderWidth, Y + BorderWidth, X + Width - BorderWidth, Y +
+      Height - BorderWidth), cardinal(Color));
   end;
 
   {
@@ -305,13 +289,12 @@ begin
   begin
     if Text <> '' then
     begin
-      FZFont.Color   := cColor4(FontColor.Top,FontColor.Top,FontColor.Bottom,FontColor.Bottom);
-      FZFont.TextOutRect( DC,
-                          Point2(X + BorderWidth + Margin,Y + BorderWidth + Margin+1),
-                          Point2(Width - (BorderWidth * 2) - (Margin * 2),Height - (BorderWidth * 2) - (Margin * 2)),
-                          Text,0,0,FPLine,GetZHAlign(FHAlign),GetZVAlign(FVAlign));
+      FZFont.Color := cColor4(FontColor.Top, FontColor.Top, FontColor.Bottom, FontColor.Bottom);
+      FZFont.TextOutRect(DC, Point2(X + BorderWidth + Margin, Y + BorderWidth + Margin + 1), Point2(Width
+        - (BorderWidth * 2) - (Margin * 2), Height - (BorderWidth * 2) - (Margin * 2)), Text, 0, 0,
+        FPLine, GetZHAlign(FHAlign), GetZVAlign(FVAlign));
     end;
-  end;{ else
+  end; { else
   if AFont <> nil then
   begin
     // Draw Text
@@ -326,11 +309,10 @@ begin
   // Draw Shadow
   if (FShowShadow) and (FShadowWidth > 0) then
   begin
-    AEngine.Canvas.FillRect(Rect(X + Width, Y + FShadowWidth,
-        X + Width + FShadowWidth, Y + Height), FShadowColor, deShadow);
-    AEngine.Canvas.FillRect(Rect(X + FShadowWidth, Y + Height,
-        X + Width + FShadowWidth, Y + Height + FShadowWidth), FShadowColor,
-      deShadow);
+    AEngine.Canvas.FillRect(FloatRect(X + Width, Y + FShadowWidth, X + Width + FShadowWidth, Y + Height),
+      FShadowColor, TBlendingEffect.Shadow);
+    AEngine.Canvas.FillRect(FloatRect(X + FShadowWidth, Y + Height, X + Width + FShadowWidth, Y + Height
+      + FShadowWidth), FShadowColor,TBlendingEffect.Shadow);
   end;
 
   inherited Paint(DC);
@@ -366,11 +348,10 @@ begin
 end;
 
 initialization
-
-RegisterClasses([TCustomAForm, TAForm]);
+  RegisterClasses([TCustomAForm, TAForm]);
 
 finalization
-
-UnRegisterClasses([TCustomAForm, TAForm]);
+  UnRegisterClasses([TCustomAForm, TAForm]);
 
 end.
+

@@ -77,7 +77,7 @@ type
   TAImageClass = class of TAImage;
 
 implementation
-
+     uses PXT.Types,PXT.Graphics;
 var
   XOffSet, YOffSet: Integer;
 
@@ -151,8 +151,7 @@ begin
   inherited Destroy;
 end;
 
-procedure TCustomAImage.MouseDown(Button: TMouseButton; Shift: TShiftState;
-  X, Y: Integer);
+procedure TCustomAImage.MouseDown;
 begin
   // Start move the form Handle
   if (FCanMoveHandle) and (Handle is TAForm) then
@@ -183,8 +182,7 @@ begin
   inherited MouseMove(Shift, X, Y);
 end;
 
-procedure TCustomAImage.MouseUp(Button: TMouseButton; Shift: TShiftState;
-  X, Y: Integer);
+procedure TCustomAImage.MouseUp;
 begin
   // Stop move the form Handle
   if (FCanMoveHandle) and (Handle is TAForm) then
@@ -207,18 +205,19 @@ begin
   // Draw Border
   if BorderWidth > 0 then
   begin
-    AEngine.Canvas.FillRect(Rect(X, Y, X + Width, Y + BorderWidth),
-      BorderColor, deNormal);
-    AEngine.Canvas.FillRect(Rect(X, Y + BorderWidth, X + BorderWidth,
-        Y + Height - BorderWidth), BorderColor, deNormal);
-    AEngine.Canvas.FillRect(Rect(X, Y + Height - BorderWidth, X + Width,
-        Y + Height), BorderColor, deNormal);
-    AEngine.Canvas.FillRect(Rect(X + Width - BorderWidth, Y + BorderWidth,
-        X + Width, Y + Height - BorderWidth), BorderColor, deNormal);
+    AEngine.Canvas.FillRect(FloatRect(X, Y, X + Width, Y + BorderWidth),
+      BorderColor);
+    AEngine.Canvas.FillRect(FloatRect(X, Y + BorderWidth, X + BorderWidth,
+        Y + Height - BorderWidth), BorderColor);
+    AEngine.Canvas.FillRect(FloatRect(X, Y + Height - BorderWidth, X + Width,
+        Y + Height), BorderColor);
+    AEngine.Canvas.FillRect(FloatRect(X + Width - BorderWidth, Y + BorderWidth,
+        X + Width, Y + Height - BorderWidth), BorderColor);
   end;
 
-  if AImage <> nil then
+  if AImage.Initialized then
   begin
+  {
     AEngine.Canvas.UseTexturePx(AImage,
       pxBounds4(0 + BorderWidth, 0 + BorderWidth,
         AImage.Width - (BorderWidth * 2),
@@ -226,6 +225,12 @@ begin
     AEngine.Canvas.TexMap(pRect4(Rect(X + BorderWidth, Y + BorderWidth,
           X + Width - BorderWidth, Y + Height - BorderWidth)),
       cAlpha4(ImageAlpha), deNormal);
+      }
+
+       var TexCoord := Quad(0 + BorderWidth, 0 + BorderWidth, AImage.Parameters.Width - (BorderWidth *
+      2), AImage.Parameters.Height - (BorderWidth * 2));
+    AEngine.Canvas.Quad(AImage, Quad(IntRectBDS(X + BorderWidth, Y + BorderWidth, X + Width -
+      BorderWidth, Y + Height - BorderWidth)), TexCoord,$FFFFFFFF);
   end;
 end;
 

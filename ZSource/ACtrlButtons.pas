@@ -14,19 +14,19 @@ unit ACtrlButtons;
 interface
 
 uses
-  Classes, Controls, SysUtils, Types, Windows,
+  Classes, Controls, SysUtils, System.Types, Windows,
   // Aspryre units
   AbstractCanvas, AsphyreFonts, AsphyreImages, AsphyreTypes, Vectors2, Vectors2px,
   // Asphyre GUI Engine
   ZGameFonts, ZGameFontHelpers,
-  AControls, ACtrlTypes, AbstractTextures,WZIMGFile;
+  AControls, ACtrlTypes, AbstractTextures,WZIMGFile,PXT.Graphics;
 
 type
   TCustomAButton = class(TAControl)
   private
-    FAImageHover: TAsphyreLockableTexture;
-    FAImagePressed: TAsphyreLockableTexture;
-    FAImageDisabled: TAsphyreLockableTexture;
+    FAImageHover: TTexture;
+    FAImagePressed: TTexture;
+    FAImageDisabled: TTexture;
     FHAlign: THAlign;
     FVAlign: TVAlign;
     FColorHover: TFillColor;
@@ -64,7 +64,7 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
 
-    function AImage: TAsphyreLockableTexture; override;
+    function AImage: TTexture; override;
     function IsHover: Boolean;
     function IsPressed: Boolean;
 
@@ -125,10 +125,10 @@ type
   TAButtonClass = class of TAButton;
 
 implementation
-
+         uses PXT.Types;
 { TCustomAButton }
 
-function TCustomAButton.AImage: TAsphyreLockableTexture;
+function TCustomAButton.AImage: TTexture;
 begin
   Result := inherited AImage;
 
@@ -256,7 +256,7 @@ begin
   Result := FPressed;
 end;
 
-procedure TCustomAButton.MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+procedure TCustomAButton.MouseDown;
 begin
   FPressed := True;
   inherited MouseDown(Button, Shift, X, Y);
@@ -279,7 +279,7 @@ begin
   inherited MouseMove(Shift, X, Y);
 end;
 
-procedure TCustomAButton.MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+procedure TCustomAButton.MouseUp;
 begin
   FPressed := False;
 
@@ -316,27 +316,34 @@ begin
   // Draw Border
   if BorderWidth > 0 then
   begin
-    AEngine.Canvas.FillRect(Rect(X, Y, X + Width, Y + BorderWidth), BorderColor, deNormal);
-    AEngine.Canvas.FillRect(Rect(X, Y + BorderWidth, X + BorderWidth, Y + Height - BorderWidth), BorderColor, deNormal);
-    AEngine.Canvas.FillRect(Rect(X, Y + Height - BorderWidth, X + Width, Y + Height), BorderColor, deNormal);
-    AEngine.Canvas.FillRect(Rect(X + Width - BorderWidth, Y + BorderWidth, X + Width, Y + Height - BorderWidth),
-      BorderColor, deNormal);
+    AEngine.Canvas.FillRect(FloatRect(X, Y, X + Width, Y + BorderWidth), BorderColor);
+    AEngine.Canvas.FillRect(FloatRect(X, Y + BorderWidth, X + BorderWidth, Y + Height - BorderWidth), BorderColor);
+    AEngine.Canvas.FillRect(FloatRect(X, Y + Height - BorderWidth, X + Width, Y + Height), BorderColor);
+    AEngine.Canvas.FillRect(FloatRect(X + Width - BorderWidth, Y + BorderWidth, X + Width, Y + Height - BorderWidth),
+      BorderColor);
   end;
 
   // Draw Background
   if not FTransparent then
   begin
-    if AImage <> nil then
+    if AImage.Initialized then
     begin
+    {
       AEngine.Canvas.UseTexturePx(AImage, pxBounds4(0 + BorderWidth, 0 + BorderWidth, AImage.Width - (BorderWidth * 2),
         AImage.Height - (BorderWidth * 2)));
       AEngine.Canvas.TexMap(pRect4(Rect(X + BorderWidth, Y + BorderWidth, X + Width - BorderWidth,
         Y + Height - BorderWidth)), cAlpha4(ImageAlpha), deNormal);
+        }
+         var TexCoord := Quad(0 + BorderWidth, 0 + BorderWidth, AImage.Parameters.Width - (BorderWidth *
+      2), AImage.Parameters.Height - (BorderWidth * 2));
+    AEngine.Canvas.Quad(AImage, Quad(IntRectBDS(X + BorderWidth, Y + BorderWidth, X + Width -
+      BorderWidth, Y + Height - BorderWidth)), TexCoord,$FFFFFFFF);
+
     end
     else
     begin
-      AEngine.Canvas.FillRect(Rect(X + BorderWidth, Y + BorderWidth, X + Width - BorderWidth, Y + Height - BorderWidth),
-        AColor, deNormal);
+      AEngine.Canvas.FillRect(FloatRect(X + BorderWidth, Y + BorderWidth, X + Width - BorderWidth, Y + Height - BorderWidth),
+        TColorRect(AColor));
     end;
   end;
 
@@ -373,8 +380,8 @@ begin
     end;
   }
   // Draw Shadow
-  AEngine.Canvas.FillRect(Rect(X + Width, Y + 1, X + Width + 1, Y + Height), FShadowColor, deShadow);
-  AEngine.Canvas.FillRect(Rect(X + 1, Y + Height, X + Width + 1, Y + Height + 1), FShadowColor, deShadow);
+  AEngine.Canvas.FillRect(FloatRect(X + Width, Y + 1, X + Width + 1, Y + Height), FShadowColor, TBlendingEffect.Shadow);
+  AEngine.Canvas.FillRect(FloatRect(X + 1, Y + Height, X + Width + 1, Y + Height + 1), FShadowColor, TBlendingEffect.Shadow);
 end;
 
 procedure TCustomAButton.SetAEngine(AEngine: TCustomEngine);
@@ -415,7 +422,7 @@ begin
   if AEngine <> nil then
   begin
     if not AEngine.ImageLib.ContainsKey(Value) then
-      FAImageHover := nil
+      FAImageHover.Clear
     else
       FAImageHover := AEngine.ImageLib[Value];
   end;
@@ -427,9 +434,9 @@ begin
 
   if AEngine <> nil then
   begin
-    if not AEngine.ImageLib.ContainsKey(Value) then
-      FAImagePressed := nil
-    else
+    if  AEngine.ImageLib.ContainsKey(Value) then
+   //   FAImagePressed := nil
+   // else
       FAImagePressed := AEngine.ImageLib[Value];
   end;
 
@@ -441,9 +448,9 @@ begin
 
   if AEngine <> nil then
   begin
-    if not AEngine.ImageLib.ContainsKey(Value) then
-      FAImageDisabled := nil
-    else
+    if  AEngine.ImageLib.ContainsKey(Value) then
+   //   FAImageDisabled := nil
+   // else
       FAImageDisabled := AEngine.ImageLib[Value];
   end;
 

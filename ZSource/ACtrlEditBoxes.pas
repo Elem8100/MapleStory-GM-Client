@@ -45,13 +45,10 @@ type
     procedure KeyPress(var Key: Char); override;
     procedure MouseEnter; override;
     procedure MouseLeave; override;
-    procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
-      X, Y: Integer); override;
+    procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
     procedure MouseMove(Shift: TShiftState; X, Y: Integer); override;
-    procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-      override;
+    procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
     procedure Paint(DC: HDC); override;
-
     procedure Change; dynamic;
     function GetSelLength: Integer; virtual;
     function GetSelStart: Integer; virtual;
@@ -61,29 +58,23 @@ type
     procedure SetSelectFontColor(Value: TFontColor); virtual;
     procedure SetSelLength(Value: Integer); virtual;
     procedure SetSelStart(Value: Integer); virtual;
-    procedure SetSelText(Value: String); virtual;
-    procedure SetText(Value: String); override;
-
-    property AutoSelect
-      : Boolean read FAutoSelect write FAutoSelect default True;
+    procedure SetSelText(Value: string); virtual;
+    procedure SetText(Value: string); override;
+    property AutoSelect: Boolean read FAutoSelect write FAutoSelect default True;
     property OnChange: TNotifyEvent read FOnChange write FOnChange;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-
     procedure Clear; virtual;
     procedure ClearSelection;
-
     procedure CopyToClipboard;
     procedure CutToClipboard;
     procedure PasteFromClipboard;
     procedure SelectAll;
-
     property ReadOnly: Boolean read FReadOnly write SetReadOnly;
     property MaxLength: Integer read FMaxLength write SetMaxLength;
     property SelectColor: TFontColor read FSelectColor write SetSelectColor;
-    property SelectFontColor: TFontColor read FSelectFontColor write
-      SetSelectFontColor;
+    property SelectFontColor: TFontColor read FSelectFontColor write SetSelectFontColor;
     property SelLength: Integer read GetSelLength write SetSelLength;
     property SelStart: Integer read GetSelStart write SetSelStart;
     property SelText: string read GetSelText write SetSelText;
@@ -99,7 +90,6 @@ type
     property MaxLength;
     property SelectColor;
     property SelectFontColor;
-
     property BorderColor;
     property BorderWidth;
     property Color;
@@ -139,7 +129,10 @@ type
 
 implementation
 
+uses
+  PXT.Types, PXT.Graphics;
 // ----------------------------------------------------------------------------
+
 var
   Tic: Byte;
   Counter: Cardinal;
@@ -264,7 +257,7 @@ end;
 
 procedure TCustomAEditBox.CutToClipboard;
 var
-  AText: String;
+  AText: string;
   AMin, AMax, ALength: Integer;
 begin
   // Set initial values
@@ -361,7 +354,7 @@ end;
 
 procedure TCustomAEditBox.KeyDown(var Key: Word; Shift: TShiftState);
 var
-  AText: String;
+  AText: string;
   AMin, AMax, ALength: Integer;
 begin
   AText := Text;
@@ -375,27 +368,27 @@ begin
   if Shift = [ssShift] then
   begin
     // user press right key
-    if Key = vk_Right then
+    if Key = VK_RIGHT then
     begin
       if FSelection.EndPos < Length(Text) then
         Inc(FSelection.EndPos);
     end;
 
     // user press left key
-    if Key = vk_Left then
+    if Key = VK_LEFT then
     begin
       if FSelection.EndPos > 0 then
         Dec(FSelection.EndPos);
     end;
 
     // user press home key
-    if Key = VK_Home then
+    if Key = VK_HOME then
     begin
       FSelection.EndPos := 0;
     end;
 
     // user press end key
-    if Key = VK_End then
+    if Key = VK_END then
     begin
       FSelection.EndPos := Length(Text);
     end;
@@ -405,7 +398,7 @@ begin
   if Shift <> [ssShift] then
   begin
     // User press left key
-    if (Key = vk_Left) then
+    if (Key = VK_LEFT) then
     begin
       if FSelection.StartPos = FSelection.EndPos then
       begin
@@ -426,7 +419,7 @@ begin
     end;
 
     // User press right key
-    if (Key = vk_Right) then
+    if (Key = VK_RIGHT) then
     begin
       if FSelection.StartPos = FSelection.EndPos then
       begin
@@ -447,27 +440,27 @@ begin
     end;
 
     // User press Delete or Backspace
-    if ((Key = vk_Back) or (Key = vk_Delete)) and not(ReadOnly) then
+    if ((Key = VK_BACK) or (Key = VK_DELETE)) and not (ReadOnly) then
     begin
       if ALength > 0 then
       begin
         case Key of
-          vk_Back:
+          VK_BACK:
             Delete(AText, AMin + 1, ALength);
-          vk_Delete:
+          VK_DELETE:
             Delete(AText, AMin + 1, ALength);
         end;
       end
       else
       begin
         case Key of
-          vk_Back:
+          VK_BACK:
             begin
               Delete(AText, AMin, 1);
               if AMin > 0 then
                 Dec(AMin);
             end;
-          vk_Delete:
+          VK_DELETE:
             Delete(AText, AMin + 1, 1);
         end;
       end;
@@ -481,14 +474,14 @@ begin
     end;
 
     // user press home key
-    if Key = VK_Home then
+    if Key = VK_HOME then
     begin
       FSelection.StartPos := 0;
       FSelection.EndPos := 0;
     end;
 
     // user press end key
-    if Key = VK_End then
+    if Key = VK_END then
     begin
       FSelection.StartPos := Length(Text);
       FSelection.EndPos := Length(Text);
@@ -502,7 +495,7 @@ end;
 
 procedure TCustomAEditBox.KeyPress(var Key: Char);
 var
-  AText: String;
+  AText: string;
   AMin, AMax, ALength: Integer;
 begin
   AText := Text;
@@ -552,8 +545,7 @@ begin
   inherited KeyUp(Key, Shift);
 end;
 
-procedure TCustomAEditBox.MouseDown(Button: TMouseButton; Shift: TShiftState;
-  X, Y: Integer);
+procedure TCustomAEditBox.MouseDown;
 var
   Index, XPos, AVirtualCursor: Integer;
   AChars: TAChars;
@@ -610,8 +602,8 @@ begin
     SetLength(AChars, Length(Text) + 1);
     while Index < Length(Text) do
     begin
-      AChars[Index].Char  := Text[Index + 1];
-      AChars[Index].Width := Round(ZFont.CharWidth(0,Text[Index + 1]));
+      AChars[Index].Char := Text[Index + 1];
+      AChars[Index].Width := Round(ZFont.CharWidth(0, Text[Index + 1]));
       //AChars[Index].Width := Round(ZFont.GetTextLength(0,Text[Index + 1],1,1) + ZFont.Spacing);
       Inc(Index);
     end;
@@ -627,8 +619,7 @@ begin
     AVirtualCursor := XPos;
     for Index := 0 to High(AChars) do
     begin
-      if (X > AVirtualCursor) and (X <= AVirtualCursor + AChars[Index].Width)
-        then
+      if (X > AVirtualCursor) and (X <= AVirtualCursor + AChars[Index].Width) then
       begin
         if Index < Length(Text) then
         begin
@@ -721,7 +712,7 @@ begin
     while Index < Length(Text) do
     begin
       AChars[Index].Char := Text[Index + 1];
-      AChars[Index].Width := Round(ZFont.CharWidth(0,Text[Index + 1]));
+      AChars[Index].Width := Round(ZFont.CharWidth(0, Text[Index + 1]));
       Inc(Index);
     end;
 
@@ -735,8 +726,7 @@ begin
     AVirtualCursor := XPos;
     for Index := 0 to High(AChars) do
     begin
-      if (X > AVirtualCursor) and (X <= AVirtualCursor + AChars[Index].Width)
-        then
+      if (X > AVirtualCursor) and (X <= AVirtualCursor + AChars[Index].Width) then
       begin
         if Index < Length(Text) then
         begin
@@ -756,8 +746,7 @@ begin
   inherited MouseMove(Shift, X, Y);
 end;
 
-procedure TCustomAEditBox.MouseUp(Button: TMouseButton; Shift: TShiftState;
-  X, Y: Integer);
+procedure TCustomAEditBox.MouseUp;
 begin
 
   inherited MouseUp(Button, Shift, X, Y);
@@ -770,7 +759,7 @@ var
   AFontColor: TColor2;
   ASelectColor: TColor4;
   AChars: TAChars;
-  ARect: TRect;
+  ARect: TIntRect;
 begin
   // Get size Canvas
   ARect := AEngine.Canvas.ClipRect;
@@ -782,14 +771,11 @@ begin
   // Draw Border
   if BorderWidth > 0 then
   begin
-    AEngine.Canvas.FillRect(Rect(X, Y, X + Width, Y + BorderWidth),
-      BorderColor, deNormal);
-    AEngine.Canvas.FillRect(Rect(X, Y + BorderWidth, X + BorderWidth,
-        Y + Height - BorderWidth), BorderColor, deNormal);
-    AEngine.Canvas.FillRect(Rect(X, Y + Height - BorderWidth, X + Width,
-        Y + Height), BorderColor, deNormal);
-    AEngine.Canvas.FillRect(Rect(X + Width - BorderWidth, Y + BorderWidth,
-        X + Width, Y + Height - BorderWidth), BorderColor, deNormal);
+    AEngine.Canvas.FillRect(FloatRect(X, Y, X + Width, Y + BorderWidth), BorderColor);
+    AEngine.Canvas.FillRect(FloatRect(X, Y + BorderWidth, X + BorderWidth, Y + Height - BorderWidth), BorderColor);
+    AEngine.Canvas.FillRect(FloatRect(X, Y + Height - BorderWidth, X + Width, Y + Height), BorderColor);
+    AEngine.Canvas.FillRect(FloatRect(X + Width - BorderWidth, Y + BorderWidth, X + Width, Y +
+      Height - BorderWidth), BorderColor);
   end;
 
   // Set Bounds
@@ -799,19 +785,24 @@ begin
   AHeight := Height - BorderWidth * 2;
 
   // Draw Background
-  if AImage <> nil then
+  if AImage.Initialized then
   begin
+  {
     AEngine.Canvas.UseTexturePx(AImage,
       pxBounds4(0 + BorderWidth, 0 + BorderWidth,
         AImage.Width - (BorderWidth * 2),
         AImage.Height - (BorderWidth * 2)));
     AEngine.Canvas.TexMap(pRect4(Rect(X, Y, X + AWidth, Y + AHeight)),
       cAlpha4(ImageAlpha), deNormal);
+      }
+
+    var TexCoord := Quad(0 + BorderWidth, 0 + BorderWidth, AImage.Parameters.Width - (BorderWidth *
+      2), AImage.Parameters.Height - (BorderWidth * 2));
+    AEngine.Canvas.Quad(AImage, Quad(IntRectBDS(X, Y, X + AWidth, Y + AHeight)), TexCoord, $FFFFFFFF);
   end
   else
   begin
-    AEngine.Canvas.FillRect(Rect(X, Y, X + AWidth, Y + AHeight),
-      cColor4(Color), deNormal);
+    AEngine.Canvas.FillRect(FloatRect(X, Y, X + AWidth, Y + AHeight), Cardinal(Color));
   end;
 
   // Set Bounds
@@ -905,15 +896,15 @@ begin
   if ZFont <> nil then
   begin
     // Set Rect Canvas
-    AEngine.Canvas.ClipRect := Rect(X - 1, Y, X + AWidth, Y + AHeight);
+    AEngine.Canvas.ClipRect := intRect(X - 1, Y, X + AWidth, Y + AHeight);
 
     // Get chars from text
     Index := 0;
     SetLength(AChars, Length(Text) + 1);
     while Index < Length(Text) do
     begin
-      AChars[Index].Char  := Text[Index + 1];
-      AChars[Index].Width := Round(ZFont.CharWidth(DC,Text[Index + 1]));
+      AChars[Index].Char := Text[Index + 1];
+      AChars[Index].Width := Round(ZFont.CharWidth(DC, Text[Index + 1]));
       //AChars[Index].Width := Round(ZFont.GetTextLength(DC,Text[Index + 1],1,1) + ZFont.Spacing);
       Inc(Index);
     end;
@@ -935,8 +926,7 @@ begin
     AMin := Min(FSelection.StartPos, FSelection.EndPos);
     AMax := Max(FSelection.StartPos, FSelection.EndPos);
 
-    ASelectColor := cColor4(FSelectColor.Top, FSelectColor.Top,
-      FSelectColor.Bottom, FSelectColor.Bottom);
+    ASelectColor := cColor4(FSelectColor.Top, FSelectColor.Top, FSelectColor.Bottom, FSelectColor.Bottom);
 
     // Draw Text char by char
     Y := Y + AHeight - ZFont.MaxHeight - Margin;
@@ -948,8 +938,7 @@ begin
       if (AMin < AMax) then
       begin
         if (Index >= AMin) and (Index < AMax) then
-          AEngine.Canvas.FillRect(Rect(X, Y, X + AChars[Index].Width,
-              Y + AHeight), ASelectColor, deNormal);
+          AEngine.Canvas.FillRect(FloatRect(X, Y, X + AChars[Index].Width, Y + AHeight), tcolorrect(ASelectColor));
         AFontColor := cColor2(FSelectFontColor);
       end;
 
@@ -966,17 +955,16 @@ begin
 
       // Draw char
       //AFont.TextOut(Point2(X, Y), AChars[Index].Char, AFontColor, 1.0);
-      ZFont.Color := cColor4(AFontColor[0],AFontColor[0],AFontColor[1],AFontColor[1]);
+      ZFont.Color := cColor4(AFontColor[0], AFontColor[0], AFontColor[1], AFontColor[1]);
       //if AChars[Index].Char <> #0 then
-        ZFont.TextOut(DC,Point2px(X,Y),AChars[Index].Char);
+      ZFont.TextOut(DC, Point2px(X, Y), AChars[Index].Char);
       //ZCEdit
 
       // Draw Tic
       if (GetTic <= 1) and (AEngine.ActiveControl = Self) then
       begin
         if Index = FSelection.EndPos then
-          AEngine.Canvas.Line(Point2(X-1 , Y), Point2(X-1 , Y + ZFont.MaxHeight),
-            clBlack1);
+          AEngine.Canvas.Line(Point2f(X - 1, Y), Point2f(X - 1, Y + ZFont.MaxHeight), clBlack1);
       end;
 
       // Set Next X position
@@ -991,7 +979,7 @@ end;
 
 procedure TCustomAEditBox.PasteFromClipboard;
 var
-  AText, CText: String;
+  AText, CText: string;
   AMin, AMax, ALength: Integer;
 begin
   AText := Text;
@@ -1070,16 +1058,16 @@ end;
 
 procedure TCustomAEditBox.SetSelStart(Value: Integer);
 begin
-  if not((Value < 0) and (Value > Length(Text))) then
+  if not ((Value < 0) and (Value > Length(Text))) then
   begin
     FSelection.StartPos := Value;
     FSelection.EndPos := Value;
   end;
 end;
 
-procedure TCustomAEditBox.SetSelText(Value: String);
+procedure TCustomAEditBox.SetSelText(Value: string);
 var
-  AText: String;
+  AText: string;
   AMin, AMax, ALength: Integer;
 begin
   AText := Text;
@@ -1105,7 +1093,7 @@ begin
   FSelection.EndPos := AMin + Length(Value);
 end;
 
-procedure TCustomAEditBox.SetText(Value: String);
+procedure TCustomAEditBox.SetText(Value: string);
 begin
   if (FMaxLength < Length(Value)) and (FMaxLength > 0) then
   begin
@@ -1116,11 +1104,10 @@ begin
 end;
 
 initialization
-
-RegisterClasses([TCustomAEditBox, TAEditBox]);
+  RegisterClasses([TCustomAEditBox, TAEditBox]);
 
 finalization
-
-UnRegisterClasses([TCustomAEditBox, TAEditBox]);
+  UnRegisterClasses([TCustomAEditBox, TAEditBox]);
 
 end.
+

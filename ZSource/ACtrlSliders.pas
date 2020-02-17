@@ -16,7 +16,7 @@ interface
 uses
   Windows, SysUtils, Classes, Controls,
   // Aspryre units
-  AbstractCanvas, AsphyreFonts, AsphyreImages, AsphyreTypes, Vectors2,
+  AbstractCanvas, AsphyreFonts, PXT.Graphics, AsphyreTypes, Vectors2,
   // Asphyre GUI Engine
   AControls, ACtrlForms, ACtrlTypes;
 
@@ -35,26 +35,19 @@ type
     procedure SetPosition(Value: Word);
     procedure SetTransparent(Value: Boolean); virtual;
   protected
-    function MouseWheelDown(Shift: TShiftState; MousePos: TPoint): Boolean;
-      override;
-    function MouseWheelUp(Shift: TShiftState; MousePos: TPoint): Boolean;
-      override;
-
+    function MouseWheelDown(Shift: TShiftState; MousePos: TPoint): Boolean; override;
+    function MouseWheelUp(Shift: TShiftState; MousePos: TPoint): Boolean; override;
     procedure AssignTo(Dest: TPersistent); override;
     procedure Paint(DC: HDC); override;
     procedure KeyDown(var Key: Word; Shift: TShiftState); override;
-    procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
-      X, Y: Integer); override;
+    procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
     procedure MouseLeave; override;
     procedure MouseMove(Shift: TShiftState; X, Y: Integer); override;
-    procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-      override;
+    procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-
-    property ButtonSlider: TUpDownButton read FButtonSlider write
-      SetButtonSlider;
+    property ButtonSlider: TUpDownButton read FButtonSlider write SetButtonSlider;
     property Max: Word read FMax write SetMax;
     property Min: Word read FMin write SetMin;
     property Position: Word read FPosition write SetPosition;
@@ -68,7 +61,6 @@ type
     property Min;
     property Position;
     property Transparent;
-
     property BorderColor;
     property BorderWidth;
     property Color;
@@ -105,6 +97,9 @@ type
 
 implementation
 
+uses
+  PXT.Types;
+
 var
   XPress: Integer;
 
@@ -132,13 +127,10 @@ end;
 procedure TCustomASlider.ButtonImageChange(Sender: TObject);
 begin
   if AEngine <> nil then
-  begin (TUpDownButton(Sender))
-    .FAImage := AEngine.ImageLib[(TUpDownButton(Sender).Image)
-      ]; (TUpDownButton(Sender))
-    .FAImageHover := AEngine.ImageLib
-      [((TUpDownButton(Sender)).ImageHover)]; (TUpDownButton(Sender))
-    .FAImagePressed := AEngine.ImageLib
-      [(TUpDownButton(Sender).ImagePressed)];
+  begin
+    (TUpDownButton(Sender)).FAImage := AEngine.ImageLib[(TUpDownButton(Sender).Image)];
+    (TUpDownButton(Sender)).FAImageHover := AEngine.ImageLib[((TUpDownButton(Sender)).ImageHover)];
+    (TUpDownButton(Sender)).FAImagePressed := AEngine.ImageLib[(TUpDownButton(Sender).ImagePressed)];
   end;
 end;
 
@@ -223,14 +215,12 @@ begin
   inherited;
 end;
 
-procedure TCustomASlider.MouseDown(Button: TMouseButton; Shift: TShiftState;
-  X, Y: Integer);
+procedure TCustomASlider.MouseDown;
 var
   VPos, VWidth: Integer;
   XIni, XEnd, YIni, YEnd: Integer;
 begin
-  VPos := Round((FPosition * (Width - (BorderWidth * 2) - (Margin * 2)
-          - FButtonSlider.Width)) / FMax);
+  VPos := Round((FPosition * (Width - (BorderWidth * 2) - (Margin * 2) - FButtonSlider.Width)) / FMax);
   XIni := ClientLeft + BorderWidth + Margin + VPos;
   XEnd := ClientLeft + BorderWidth + Margin + VPos + FButtonSlider.Width;
   YIni := ClientTop + BorderWidth + Margin;
@@ -298,8 +288,7 @@ var
   VPos, VPosInv: Integer;
   XIni, XEnd, YIni, YEnd: Integer;
 begin
-  VPos := Round((FPosition * (Width - (BorderWidth * 2) - (Margin * 2)
-          - FButtonSlider.Width)) / FMax);
+  VPos := Round((FPosition * (Width - (BorderWidth * 2) - (Margin * 2) - FButtonSlider.Width)) / FMax);
   XIni := ClientLeft + BorderWidth + Margin + VPos;
   XEnd := ClientLeft + BorderWidth + Margin + VPos + FButtonSlider.Width;
   YIni := ClientTop + BorderWidth + Margin;
@@ -316,9 +305,7 @@ begin
 
   if FButtonSlider.IsPressed then
   begin
-    VPosInv := Round
-      ((X - XPress) * (FMax / (Width - (BorderWidth * 2) - (Margin * 2)
-            - FButtonSlider.Width)));
+    VPosInv := Round((X - XPress) * (FMax / (Width - (BorderWidth * 2) - (Margin * 2) - FButtonSlider.Width)));
     if VPosInv < 0 then
       Position := 0
     else
@@ -328,24 +315,21 @@ begin
   inherited;
 end;
 
-procedure TCustomASlider.MouseUp(Button: TMouseButton; Shift: TShiftState;
-  X, Y: Integer);
+procedure TCustomASlider.MouseUp;
 begin
   FButtonSlider.IsPressed := False;
 
   inherited;
 end;
 
-function TCustomASlider.MouseWheelDown(Shift: TShiftState;
-  MousePos: TPoint): Boolean;
+function TCustomASlider.MouseWheelDown(Shift: TShiftState; MousePos: TPoint): Boolean;
 begin
   Position := Position + FMax div 20;
 
   Result := True;
 end;
 
-function TCustomASlider.MouseWheelUp(Shift: TShiftState;
-  MousePos: TPoint): Boolean;
+function TCustomASlider.MouseWheelUp(Shift: TShiftState; MousePos: TPoint): Boolean;
 begin
   if (Position - FMax div 20) < 0 then
     Position := 0
@@ -369,78 +353,72 @@ begin
   // Draw Border
   if BorderWidth > 0 then
   begin
-    AEngine.Canvas.FillRect(Rect(X, Y, X + Width, Y + BorderWidth),
-      BorderColor, deNormal);
-    AEngine.Canvas.FillRect(Rect(X, Y + BorderWidth, X + BorderWidth,
-        Y + Height - BorderWidth), BorderColor, deNormal);
-    AEngine.Canvas.FillRect(Rect(X, Y + Height - BorderWidth, X + Width,
-        Y + Height), BorderColor, deNormal);
-    AEngine.Canvas.FillRect(Rect(X + Width - BorderWidth, Y + BorderWidth,
-        X + Width, Y + Height - BorderWidth), BorderColor, deNormal);
+    AEngine.Canvas.FillRect(floatRect(X, Y, X + Width, Y + BorderWidth), BorderColor);
+    AEngine.Canvas.FillRect(floatRect(X, Y + BorderWidth, X + BorderWidth, Y + Height - BorderWidth), BorderColor);
+    AEngine.Canvas.FillRect(floatRect(X, Y + Height - BorderWidth, X + Width, Y + Height), BorderColor);
+    AEngine.Canvas.FillRect(floatRect(X + Width - BorderWidth, Y + BorderWidth, X + Width, Y +
+      Height - BorderWidth), BorderColor);
   end;
 
   // Draw Background
-  if AImage <> nil then
+  if AImage.Initialized then
   begin
-    AEngine.Canvas.UseTexturePx(AImage,
-      pxBounds4(0 + BorderWidth, 0 + BorderWidth,
-        AImage.Width - (BorderWidth * 2),
-        AImage.Height - (BorderWidth * 2)));
-    AEngine.Canvas.TexMap(pRect4(Rect(X + BorderWidth, Y + BorderWidth,
-          X + Width - BorderWidth, Y + Height - BorderWidth)),
-      cAlpha4(ImageAlpha), deNormal);
+
+   // AEngine.Canvas.UseTexturePx(AImage, pxBounds4(0 + BorderWidth, 0 + BorderWidth, AImage.Width - (BorderWidth
+    //  * 2), AImage.Height - (BorderWidth * 2)));
+    var TexCoord := Quad(0 + BorderWidth, 0 + BorderWidth, AImage.Parameters.Width - (BorderWidth *
+      2), AImage.Parameters.Height - (BorderWidth * 2));
+    AEngine.Canvas.Quad(AImage, Quad(IntRectBDS(X + BorderWidth, Y + BorderWidth, X + Width -
+      BorderWidth, Y + Height - BorderWidth)), TexCoord,$FFFFFFFF);
+
+   // AEngine.Canvas.TexMap(pRect4(Rect(X + BorderWidth, Y + BorderWidth, X + Width - BorderWidth, Y +
+     // Height - BorderWidth)), cAlpha4(ImageAlpha), deNormal);
   end
   else
   begin
     if not FTransparent then
     begin
-      AEngine.Canvas.FillRect(Rect(X + BorderWidth, Y + BorderWidth,
-          X + Width - BorderWidth, Y + Height - BorderWidth), cColor4(Color),
-        deNormal);
+      AEngine.Canvas.FillRect(floatRect(X + BorderWidth, Y + BorderWidth, X + Width - BorderWidth, Y +
+        Height - BorderWidth), ARGB(255,0,255,0));
     end;
-    AEngine.Canvas.FrameRect
-      (Rect(X + BorderWidth + Margin + FButtonSlider.Width div 2,
-        (Y + (Height div 2) - 1),
-        X + Width - BorderWidth - Margin - FButtonSlider.Width div 2,
-        (Y + (Height div 2) + 1)), cColor4($20000000), deNormal);
+    AEngine.Canvas.FrameRect(floatRect(X + BorderWidth + Margin + FButtonSlider.Width div 2, (Y + (Height
+      div 2) - 1), X + Width - BorderWidth - Margin - FButtonSlider.Width div 2, (Y + (Height div 2)
+      + 1)), $20000000,1);
   end;
 
   // draw slider
-  VPos := Round((FPosition * (Width - (BorderWidth * 2) - (Margin * 2)
-          - FButtonSlider.Width)) / FMax);
+  VPos := Round((FPosition * (Width - (BorderWidth * 2) - (Margin * 2) - FButtonSlider.Width)) / FMax);
 
   XIni := X + BorderWidth + Margin + VPos;
   XEnd := X + BorderWidth + Margin + VPos + FButtonSlider.Width;
   YIni := Y + BorderWidth + Margin;
   YEnd := Y + Height - BorderWidth - Margin;
 
-  if FButtonSlider.AImage <> nil then
+  if FButtonSlider.AImage.Initialized then
   begin
-    AEngine.Canvas.UseImagePx(FButtonSlider.AImage,
-      pxBounds4(0, 0, FButtonSlider.AImage.PatternSize.X,
-        FButtonSlider.AImage.PatternSize.Y));
-    AEngine.Canvas.TexMap(pRect4(Rect(XIni, YIni, XEnd, YEnd)),
-      cAlpha4(ImageAlpha), deNormal);
+  //  AEngine.Canvas.UseImagePx(FButtonSlider.AImage, pxBounds4(0, 0, FButtonSlider.AImage.PatternSize.X,
+   //   FButtonSlider.AImage.PatternSize.Y));
+      var TexCoord := Quad( 0 ,0,
+        AImage.Parameters.Width,
+        AImage.Parameters.Height);
+      AEngine.Canvas.Quad(AImage, Quad(IntRectBDS(Xini,Yini,XEnd,YEnd)),TexCoord,$FFFFFFFF);
+   // AEngine.Canvas.TexMap(pRect4(Rect(XIni, YIni, XEnd, YEnd)), cAlpha4(ImageAlpha), deNormal);
   end
   else
   begin
-    if (FButtonSlider.IsHover) and not(FButtonSlider.IsPressed) then
+    if (FButtonSlider.IsHover) and not (FButtonSlider.IsPressed) then
     begin
-      AEngine.Canvas.FillRect(Rect(XIni, YIni, XEnd, YEnd),
-        cColor4(FButtonSlider.ColorHover), deNormal);
+      AEngine.Canvas.FillRect(floatRect(XIni, YIni, XEnd, YEnd), $FFFFFFFF);
     end
     else if FButtonSlider.IsPressed then
     begin
-      AEngine.Canvas.FillRect(Rect(XIni, YIni, XEnd, YEnd),
-        cColor4(FButtonSlider.ColorPressed), deNormal);
+      AEngine.Canvas.FillRect(FloatRect(XIni, YIni, XEnd, YEnd), ARGB(255,255,0,0));
     end
     else
     begin
-      AEngine.Canvas.FillRect(Rect(XIni, YIni, XEnd, YEnd),
-        cColor4(FButtonSlider.Color), deNormal);
+      AEngine.Canvas.FillRect(floatRect(XIni, YIni, XEnd, YEnd), cardinal(FButtonSlider.Color));
     end;
-    AEngine.Canvas.FrameRect(Rect(XIni, YIni, XEnd, YEnd), cColor4($60FFFFFF),
-      deNormal);
+    AEngine.Canvas.FrameRect(floatRect(XIni, YIni, XEnd, YEnd), $60FFFFFF,1);
   end;
 
 end;
@@ -491,11 +469,10 @@ begin
 end;
 
 initialization
-
-RegisterClasses([TCustomASlider, TASlider]);
+  RegisterClasses([TCustomASlider, TASlider]);
 
 finalization
-
-UnRegisterClasses([TCustomASlider, TASlider]);
+  UnRegisterClasses([TCustomASlider, TASlider]);
 
 end.
+
