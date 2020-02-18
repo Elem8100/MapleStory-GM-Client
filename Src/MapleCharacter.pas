@@ -3,10 +3,10 @@ unit MapleCharacter;
 interface
 
 uses
-  Windows, SysUtils, StrUtils, Generics.Collections, System.Types, WZIMGFile, Math, AsphyreSprite,
+  Windows, SysUtils, StrUtils, Generics.Collections, System.Types, WZIMGFile, Math, PXT.Sprites,
   Footholds, LadderRopes, ChatBalloon, MapPortal, DirectInput, Classes, AsphyreKeyboard,
   AsphyreRenderTargets, DamageNumber, Skill, AsphyreTypes, AbstractTextures, Global, Tools, MapleMap,
-  WzUtils, ColorUtils;
+  WzUtils, ColorUtils,PXT.Types,PXT.Graphics,PXT.Canvas;
 
 type
   TDir = (dLeft, dRight, no);
@@ -58,7 +58,7 @@ type
     BrowPos: TPoint;
     NewZ: Integer;
     class var
-      AvatarTargetIndex: Integer;
+      AvatarTargetTexture: TTexture;
       AvatarPanelIndex: Integer;
       EquipDumpList: TList<string>;
       _NewZ: Integer;
@@ -66,7 +66,7 @@ type
     procedure RemoveSprites;
     procedure SpawnNew;
     procedure Spawn(EquipID: string);
-    procedure TargetEvent(Sender: TObject);
+    procedure TargetEvent;
     procedure DoMove(const Movecount: Single); override;
     procedure DoDraw; override;
     constructor Create(const AParent: TSprite); override;
@@ -142,10 +142,15 @@ const
   DefaultEqps: array[0..7] of string = ('01302030', '00002000', '01062055', '01072054', '01040005',
     '00020000', '00030020', '00012000');
 begin
-  AvatarTargets := TAsphyreRenderTargets.Create();
+ // AvatarTargets := TAsphyreRenderTargets.Create();
 
-  AvatarTargetIndex := AvatarTargets.Add(1, 1024, 1024, apf_A8R8G8B8, True, True);
-  AvatarPanelIndex := AvatarTargets.Add(1, 4096, 4096, apf_A8R8G8B8, True, True);
+  //AvatarTargetIndex := AvatarTargets.Add(1, 1024, 1024, apf_A8R8G8B8, True, True);
+ // AvatarPanelIndex := AvatarTargets.Add(1, 4096, 4096, apf_A8R8G8B8, True, True);
+  GameCanvas.DrawTarget(AvatarTargetTexture,1024,1024,
+  procedure
+  begin
+  end);
+
 
   Player := TPlayer.Create(SpriteEngine);
   Player.AvatarEngine := TSpriteEngine.Create(nil);
@@ -594,7 +599,7 @@ begin
   if not OtherPlayer then
   begin
     TAvatarParts.ZMap.Free;
-    FreeAndNil(AvatarTargets);
+   // FreeAndNil(AvatarTargets);
     AvatarEngine.Free;
   end;
   inherited Destroy;
@@ -616,9 +621,13 @@ begin
   inherited;
   if GameMode = gmView then
     Exit;
-  GameDevice.RenderTo(TargetEvent, 0, True, AvatarTargets[AvatarTargetIndex]);
+  AvatarTargetTexture.Clear(FloatColor($00404040));
+  AvatarTargetTexture.BeginScene;
+  GameCanvas.BeginScene;
+  TargetEvent;
+  GameCanvas.EndScene;
+  AvatarTargetTexture.EndScene;
 
-  // Engine.Move(1);
   X1 := FH.X1;
   Y1 := FH.Y1;
   X2 := FH.X2;
@@ -1000,7 +1009,7 @@ begin
 
     WX := Round(MoveX - Engine.WorldX);
     WY := Round(MoveY - Engine.WorldY);
-    GameCanvas.Draw(AvatarTargets[AvatarTargetIndex], WX - 180 - 400, WY - 180 - 400, 1, False, 255, 255, 255, 255);
+    GameCanvas.Draw(AvatarTargetTexture, WX - 180 - 400, WY - 180 - 400);
   end;
 end;
 
@@ -1341,7 +1350,7 @@ begin
     end;
 
     if Image = 'body' then
-      BrowPos := Neck + TTamingMob.Navel;
+      BrowPos := BodyNeck + TTamingMob.Navel;
 
     if HasEntry(Path + '/map/hand') then
     begin
