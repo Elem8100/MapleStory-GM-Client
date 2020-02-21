@@ -3,16 +3,16 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Controls, Forms, Dialogs, Graphics,
-  ACtrlImages, StdCtrls, WZIMGFile, WZArchive, StrUtils, Generics.Collections,
-  WzUtils,  AControls, ACtrlEngine, ACtrlForms, ACtrlButtons, Global,
-  PXT.Canvas, PXT.Graphics, PXT.Types;
+  Windows, Messages, SysUtils, Classes, Controls, Forms, Dialogs, Graphics, ACtrlImages, StdCtrls,
+  WZIMGFile, WZArchive, StrUtils, Generics.Collections, WzUtils, AControls, ACtrlEngine, ACtrlForms,
+  ACtrlButtons, Global, PXT.Canvas, PXT.Graphics, PXT.Types;
 
 type
   TStatus = class(TAForm)
   public
     TargetTexture: TTexture;
     PosX: Integer;
+    Level: Integer;
     procedure Paint(DC: HDC); override;
     procedure ReDraw(ReDumpData: Boolean = False);
     procedure NumberTextout(X, Y: Integer; Number1, Number2: Int64);
@@ -25,12 +25,12 @@ type
 implementation
 
 uses
-  UI.Utils;
+  UI.Utils,ShowOptionUnit;
 
 procedure TStatus.Paint(DC: HDC);
 begin
-  var x := ClientLeft;
-  var y := ClientTop;
+  var x := (ClientLeft + Displaysize.X div 2) - 70;
+  var y := ClientTop + displaysize.Y - 70;
   Engine.Canvas.Draw(TargetTexture, x, y);
 end;
 
@@ -78,6 +78,19 @@ begin
       NumberTextout(50, 30, 1000002, 3258880022);
       PosX := 0;
       NumberTextout(50, 46, 25, 25);
+      GameCanvas.Draw(UIImages[Entry.Get('layer:lv')], 24, 8);
+      for var I := 1 to Length(Level.ToString) do
+      begin
+        var Char := MidStr(Level.ToString, I, 1);
+        GameCanvas.Draw(UIImages[Entry.Get('lvNumber/' + Char)], 35 + I * 7, 8);
+      end;
+      var FontSettings: TFontSettings;
+      FontSettings := TFontSettings.Create('Arial', 12);
+      FontSettings.Effect.BorderType := TFontBorder.None;
+      FontSettings.Weight := TFontWeight.Thin;
+      GameFont.FontSettings := FontSettings;
+      GameFont.Draw(Point2f(85,3), ShowOptionForm.Edit1.Text, $FFFFFFFF);
+
     end);
 
 end;
@@ -96,6 +109,7 @@ begin
     Name := 'Form' + IntToStr(Num);
   end;
   ControlState := ControlState - [csCreating];
+  Level := 255;
   ReDraw(True);
 end;
 
@@ -104,8 +118,8 @@ begin
   Instance := TStatus.Create(UIEngine.Root);
   with Instance do
   begin
-    Left := 300 + 1000;
-    Top := 300 + 1000;
+    Left := 0 + 1000;
+    Top := 0 + 1000;
     CanMove := False;
   end;
 end;
