@@ -22,10 +22,16 @@ type
       Instance: TStatus;
   end;
 
+  TMenuForm = class(TAForm)
+    class procedure CreateInstance;
+    class var
+      Instance: TMenuForm;
+  end;
+
 implementation
 
 uses
-  UI.Utils,ShowOptionUnit;
+  UI.Utils, ShowOptionUnit, mainunit;
 
 procedure TStatus.Paint(DC: HDC);
 begin
@@ -89,26 +95,15 @@ begin
       FontSettings.Effect.BorderType := TFontBorder.None;
       FontSettings.Weight := TFontWeight.Thin;
       GameFont.FontSettings := FontSettings;
-      GameFont.Draw(Point2f(85,3), ShowOptionForm.Edit1.Text, $FFFFFFFF);
+      GameFont.Draw(Point2f(85, 3), ShowOptionForm.Edit1.Text, $FFFFFFFF);
 
     end);
 
 end;
 
 constructor TStatus.Create(AOwner: TComponent);
-var
-  Num: Integer;
 begin
-  ControlState := ControlState + [csCreating];
-  inherited Create(AOwner);
-  if (AOwner <> nil) and (AOwner <> Self) and (AOwner is TWControl) then
-  begin
-    Num := 1;
-    while AOwner.FindComponent('Form' + IntToStr(Num)) <> nil do
-      Inc(Num);
-    Name := 'Form' + IntToStr(Num);
-  end;
-  ControlState := ControlState - [csCreating];
+  inherited;
   Level := 255;
   ReDraw(True);
 end;
@@ -122,6 +117,22 @@ begin
     Top := 0 + 1000;
     CanMove := False;
   end;
+  TMenuform.CreateInstance;
+end;
+
+class procedure TMenuForm.CreateInstance;
+begin
+  Instance := TMenuForm.Create(UIEngine.Root);
+  with Instance do
+  begin
+    Left := 300 + 1000;
+    Top := 300 + 1000;
+    Width := 200;
+    Height := 200;
+  end;
+
+  CreateButtons('UI.wz/StatusBar3.img/mainBar/menu', ['button:CashShop', 'button:Event',
+    'button:Character', 'button:Community','button:setting','button:Menu']);
 end;
 
 end.

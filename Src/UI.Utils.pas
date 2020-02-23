@@ -10,7 +10,6 @@ uses
 
 procedure CreateUIs(EntryName: string; X, Y: Integer; wClose: Boolean = True);
 
-function GetPathN(Entry: TWZIMGEntry): string;
 
 procedure CreateButton(EntryName: string; X: Integer = 0; Y: Integer = 0);
 
@@ -54,44 +53,6 @@ implementation
 uses
    WzUtils, ColorUtils,minimap;
 
-
-function GetPathN(Entry: TWZIMGEntry): string;
-var
-  Path: string;
-  E: TWZEntry;
-begin
-  Path := Entry.Name;
-  E := Entry.Parent;
-  while E <> nil do
-  begin
-    Path := E.Name + '/' + Path;
-    E := E.Parent;
-  end;
-  Result := StringReplace(Path, '.wz', '', [rfReplaceAll]);
-end;
-
-function TrimS(Stemp: string): string;
-const
-  Remove =['/', #13, #10];
-var
-  I: Integer;
-begin
-  Result := '';
-  for I := 1 to Length(Stemp) do
-  begin
-    if not (Stemp[I] in Remove) then
-      Result := Result + Stemp[I];
-  end;
-end;
-
-function ToPath(Name: string): string;
-var
-  S: string;
-begin
-  S := StringReplace(Name, '_img', '.img', [rfReplaceAll]);
-  Result := StringReplace(S, '_', '/', [rfReplaceAll]);
-end;
-
 function ToName(S: string): string;
 begin
   while (Pos('/', S) > 0) do
@@ -102,15 +63,6 @@ begin
   Result := S;
 end;
 
-function GetImg(Path: string): string;
-begin
-  Result := LeftStr(Path, Pos('/', Path) - 1) + '.img';
-end;
-
-function GetPathS(Path: string): string;
-begin
-  Result := MidStr(Path, Pos('/', Path) + 1, 100);
-end;
 
 function HasUI(Key: TWZIMGEntry): Boolean;
 begin
@@ -185,7 +137,6 @@ begin
     Height := Entry.Get('normal/0').Canvas.Height;
     Left := X + -Entry.Get('normal/0/origin').Vector.X;
     Top := Y + -Entry.Get('normal/0/origin').Vector.Y;
-    Name := ToName(EntryName);
     ImageHover := Entry.Get('mouseOver/0');
     ImagePressed := Entry.Get('pressed/0');
     ImageDisabled := Entry.Get('disabled/0');
@@ -198,7 +149,7 @@ var
   I: Integer;
 begin
   for I := 0 to High(BtName) do
-    CreateButton(Dir + BtName[I], X, Y);
+    CreateButton(Dir +'/'+ BtName[I], X, Y);
 end;
 
 procedure CreateImage(EntryName: string; X: Integer = 0; Y: Integer = 0);
@@ -245,14 +196,14 @@ begin
   begin
     if Iter.Name = 'backgrnd' then
     begin
-      FormEntry := GetPathN(Iter);
+      FormEntry := Iter.GetPath;
       CreateForm(FormEntry, X, Y, wClose);
     end;
     if (Iter.Name = 'backgrnd1') or (Iter.Name = 'backgrnd2') or (Iter.Name = 'backgrnd3') then
-      CreateImage(GetPathN(Iter));
+      CreateImage(Iter.GetPath);
 
     if LeftStr(Iter.Name, 2) = 'Bt' then
-      CreateButton(GetPathN(Iter));
+      CreateButton(Iter.GetPath);
 
   end;
 
@@ -283,7 +234,7 @@ begin
             or (Iter.Name = IgnoreDir[3]) then
             Continue;
       end;
-      CreateButton(GetPathN(Iter), X, Y);
+      CreateButton(Iter.GetPath, X, Y);
     end;
 
 end;
