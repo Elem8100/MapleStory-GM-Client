@@ -3,8 +3,9 @@ unit PNGMapleCanvasEx;
 interface
 
 uses
-  Windows, Classes, SysUtils, WZReader, ZLIBex, Graphics, DX9Textures, PNGImage, AsphyreFactory,
-  AsphyreTypes, System.Types, iexBitmaps, iesettings, hyiedefs, hyieutils, Math, ColorUtils;
+  Windows, Classes, SysUtils, WZReader, ZLibEx, Graphics, PNGImage, AsphyreFactory, AsphyreTypes,
+  System.Types, iexBitmaps, iesettings, hyiedefs, hyieutils, Math, ColorUtils, PXT.Types,
+  PXT.Graphics;
 
 type
   TBmpEx = class(TIEBitmap)
@@ -20,12 +21,12 @@ type
     FOffset: Int64;
     FFormat: Integer;
     FWZReader: TWZReader;
-    function Parse1(Input: TMemoryStream): TDX9LockableTexture;
-    function Parse2(Input: TMemoryStream): TDX9LockableTexture;
-    function Parse513(Input: TMemoryStream): TDX9LockableTexture;
-    function Parse517(Input: TMemoryStream): TDX9LockableTexture;
-    function Parse1026(Input: TMemoryStream): TDX9LockableTexture;
-    function Parse2050(Input: TMemoryStream): TDX9LockableTexture;
+    function Parse1(Input: TMemoryStream): TTexture;
+    function Parse2(Input: TMemoryStream): TTexture;
+    function Parse513(Input: TMemoryStream): TTexture;
+    function Parse517(Input: TMemoryStream): TTexture;
+    function Parse1026(Input: TMemoryStream): TTexture;
+    function Parse2050(Input: TMemoryStream): TTexture;
     function Parse1Bmp(Input: TMemoryStream): TBitmap;
     function Parse2Bmp(Input: TMemoryStream): TBitmap;
     function Parse1026Bmp(Input: TMemoryStream): TBitmap;
@@ -41,7 +42,7 @@ type
   public
     constructor Create(Width, Height, DataLength: Integer; Offset: Int64; Format: Integer; var WZReader: TWZReader);
     function Decompress: TMemoryStream;
-    function Dump(ColorEffect: TColorEffect; Value: Integer): TDX9LockableTexture;
+    function Dump(ColorEffect: TColorEffect; Value: Integer): TTexture;
     function DumpBmp: TBitmap;
     function DumpBmpEx: TBmpEx;
     function DumpPNG: TPngImage;
@@ -51,6 +52,9 @@ type
   end;
 
 implementation
+
+uses
+  Global;
 
 procedure DecompressDDS(RGBA: PByte; Width, Height: Integer; Blocks: PByte; Flags: Integer); stdcall;
   external 'libdds.dll' index 1;
@@ -157,12 +161,12 @@ begin
   end;
 end;
 
-function TPNGMapleCanvas.Dump(ColorEffect: TColorEffect; Value: Integer): TDX9LockableTexture;
+function TPNGMapleCanvas.Dump(ColorEffect: TColorEffect; Value: Integer): TTexture;
 var
   Decompressed: TMemoryStream;
-  Texture: TDX9LockableTexture;
+  Texture: TTexture;
 begin
-  Result := nil;
+
   Decompressed := Decompress;
   try
     case FFormat of
@@ -200,30 +204,30 @@ begin
       end;
     ceContrast1:
       begin
-        TColorFunc.Contrast3<TDX9LockableTexture>(Texture, 50, -90, True, False, False);
+        TColorFunc.Contrast3(Texture, 50, -90, True, False, False);
         Result := Texture;
       end;
     ceContrast2:
       begin
-        TColorFunc.Contrast3<TDX9LockableTexture>(Texture, 50, -90, False, True, False);
+        TColorFunc.Contrast3(Texture, 50, -90, False, True, False);
         Result := Texture;
       end;
 
     ceContrast3:
       begin
-        TColorFunc.Contrast3<TDX9LockableTexture>(Texture, 50, -90, False, False, True);
+        TColorFunc.Contrast3(Texture, 50, -90, False, False, True);
         Result := Texture;
       end;
 
     ceContrast4:
       begin
-        TColorFunc.Contrast3<TDX9LockableTexture>(Texture, 50, -90, True, True, False);
+        TColorFunc.Contrast3(Texture, 50, -90, True, True, False);
         Result := Texture;
       end;
 
     ceContrast5:
       begin
-        TColorFunc.Contrast3<TDX9LockableTexture>(Texture, 50, -90, True, False, True);
+        TColorFunc.Contrast3(Texture, 50, -90, True, False, True);
         Result := Texture;
       end;
 
@@ -303,26 +307,24 @@ begin
   end;
 end;
 
-function TPNGMapleCanvas.Parse1(Input: TMemoryStream): TDX9LockableTexture;
+function TPNGMapleCanvas.Parse1(Input: TMemoryStream): TTexture;
 var
   x, y: Integer;
   b1: array[0..1] of Byte;
+  P: PLongword;
   A, R, G, B: Word;
-  P: PLongWord;
-  pDest: Pointer;
-  nPitch: Integer;
+  //ARGB: PRGB32;
+  Surface: TRasterSurface;
+  SurfParams: TRasterSurfaceParameters;
+  Params: TTextureParameters;
 begin
-  Result := TDX9LockableTexture.Create;
-  Result.Width := FWidth;
-  Result.Height := FHeight;
-  Result.Format := apf_A8R8G8B8;
-  Result.Initialize;
+  Surface := RasterSurfaceInit(FWidth, FHeight, TPixelFormat.BGRA8);
+  SurfParams := Surface.Parameters;
 
-  Result.Lock(Rect(0, 0, FWidth, FHeight), pDest, nPitch);
-  P := pDest;
-  for y := 0 to Height - 1 do
+  for y := 0 to FHeight - 1 do
   begin
-    for x := 0 to Width - 1 do
+    P := SurfParams.Scanline[y];
+    for x := 0 to FWidth - 1 do
     begin
       Input.Read(b1[0], 2);
       B := b1[0] and 15;
@@ -337,34 +339,35 @@ begin
       A := b1[1] and 240;
       A := A or (A shr 4);
 
-      P^ := cRGB1(R, G, B, A);
+      P^ := cRGB1(R,G,B,A);
       Inc(P);
     end;
   end;
-  Result.Unlock;
 
+  FillChar(Params, SizeOf(TTextureParameters), 0);
+  Params.Width := FWidth;
+  Params.Height := FHeight;
+  Params.Format := TPixelFormat.BGRA8;
+  Result := TextureInit(FDevice, Params);
+  Result.Copy(Surface, 0, ZeroPoint2i, ZeroIntRect);
+  Surface.Free;
 end;
 
-function TPNGMapleCanvas.Parse2(Input: TMemoryStream): TDX9LockableTexture;
+function TPNGMapleCanvas.Parse2(Input: TMemoryStream): TTexture;
 var
   x, y: Integer;
   b1, b2, b3, b4: Byte;
   A, R, G, B: Word;
-  P: PLongWord;
-  pDest: Pointer;
-  nPitch: Integer;
   ARGB: PByte;
   bytes: array of PByte;
+  P: PLongword;
+  Surface: TRasterSurface;
+  SurfParams: TRasterSurfaceParameters;
+  Params: TTextureParameters;
 begin
-  Result := TDX9LockableTexture.Create;
-  Result.Width := FWidth;
-  Result.Height := FHeight;
-  Result.Format := apf_A8R8G8B8;
-  Result.Initialize;
+  Surface := RasterSurfaceInit(FWidth, FHeight, TPixelFormat.BGRA8);
+  SurfParams := Surface.Parameters;
   // SetLength(bytes, Input.Size);
-
-  Result.Lock(Rect(0, 0, FWidth, FHeight), pDest, nPitch);
-  P := pDest;
 
   // for official wz--ultra fast
   {
@@ -387,40 +390,44 @@ begin
   }
   for y := 0 to FHeight - 1 do
   begin
+    P := SurfParams.Scanline[y];
     for x := 0 to FWidth - 1 do
     begin
       Input.Read(b1, 1);
       Input.Read(b2, 1);
       Input.Read(b3, 1);
       Input.Read(b4, 1);
-      P^ := cRGB1(b3, b2, b1, b4);
+    //  P^ := cRGB1(b3, b2, b1, b4);
+      P^ := cRGB1(b3,b2,b1,b4);
       Inc(P);
     end;
   end;
+  FillChar(Params, SizeOf(TTextureParameters), 0);
+  Params.Width := FWidth;
+  Params.Height := FHeight;
+  Params.Format := TPixelFormat.BGRA8;
+  Result := TextureInit(FDevice, Params);
+  Result.Copy(Surface, 0, ZeroPoint2i, ZeroIntRect);
+  Surface.Free;
 
-  Result.Unlock;
 end;
 
-function TPNGMapleCanvas.Parse513(Input: TMemoryStream): TDX9LockableTexture;
+function TPNGMapleCanvas.Parse513(Input: TMemoryStream): TTexture;
 var
   x, y: Integer;
   b1, b2: Byte;
   R, G, B, A: Word;
-  P: PLongWord;
-  pDest: Pointer;
-  nPitch: Integer;
+  P: PLongword;
+  Surface: TRasterSurface;
+  SurfParams: TRasterSurfaceParameters;
+  Params: TTextureParameters;
 begin
-  Result := TDX9LockableTexture.Create;
-  Result.Width := FWidth;
-  Result.Height := FHeight;
-  Result.Format := apf_A8R8G8B8;
-  Result.Initialize;
+  Surface := RasterSurfaceInit(FWidth, FHeight, TPixelFormat.BGRA8);
+  SurfParams := Surface.Parameters;
 
-  Result.Lock(Rect(0, 0, FWidth, FHeight), pDest, nPitch);
-  P := pDest;
   for y := 0 to FHeight - 1 do
   begin
-
+    P := SurfParams.Scanline[y];
     for x := 0 to FWidth - 1 do
     begin
       Input.Read(b1, 1);
@@ -432,35 +439,37 @@ begin
       R := b2 and $F8;
       R := R or (R shr 5);
       A := $FF;
-      P^ := cRGB1(R, G, B, A);
+      P^ := cRGB1(R,G,B,A);
       Inc(P);
     end;
 
   end;
-  Result.Unlock;
+  FillChar(Params, SizeOf(TTextureParameters), 0);
+  Params.Width := FWidth;
+  Params.Height := FHeight;
+  Params.Format := TPixelFormat.BGRA8;
+  Result := TextureInit(FDevice, Params);
+  Result.Copy(Surface, 0, ZeroPoint2i, ZeroIntRect);
+  Surface.Free;
 end;
 
-function TPNGMapleCanvas.Parse517(Input: TMemoryStream): TDX9LockableTexture;
+function TPNGMapleCanvas.Parse517(Input: TMemoryStream): TTexture;
 var
   x, y: Integer;
-  P: PLongWord;
-  pDest: Pointer;
-  nPitch: Integer;
+  P: PLongword;
+  Surface: TRasterSurface;
+  SurfParams: TRasterSurfaceParameters;
+  Params: TTextureParameters;
 begin
-  Result := TDX9LockableTexture.Create;
-  Result.Width := FWidth;
-  Result.Height := FHeight;
-  Result.Format := apf_A8R8G8B8;
-  Result.Initialize;
 
-  Result.Lock(Rect(0, 0, FWidth, FHeight), pDest, nPitch);
-  P := pDest;
+  Surface := RasterSurfaceInit(FWidth, FHeight, TPixelFormat.BGRA8);
+  SurfParams := Surface.Parameters;
   for y := 0 to FHeight - 1 do
   begin
-
+    P := SurfParams.Scanline[y];
     for x := 0 to FWidth - 1 do
     begin
-      if FWidth = 128 then
+       if FWidth = 128 then
         P^ := cRGB1(66, 159, 255, 255)
       else
         P^ := cRGB1(83, 134, 239, 255);
@@ -468,51 +477,101 @@ begin
     end;
 
   end;
-  Result.Unlock;
+  FillChar(Params, SizeOf(TTextureParameters), 0);
+  Params.Width := FWidth;
+  Params.Height := FHeight;
+  Params.Format := TPixelFormat.BGRA8;
+  Result := TextureInit(FDevice, Params);
+  Result.Copy(Surface, 0, ZeroPoint2i, ZeroIntRect);
+  Surface.Free;
 end;
 
-function TPNGMapleCanvas.Parse1026(Input: TMemoryStream): TDX9LockableTexture;
+function TPNGMapleCanvas.Parse1026(Input: TMemoryStream): TTexture;
 var
-  pDest: Pointer;
-  nPitch: Integer;
-  ARGB: PByte;
+  x,Y:Integer;
   bytes: array of PByte;
+  Surface: TRasterSurface;
+  SurfParams: TRasterSurfaceParameters;
+  Params: TTextureParameters;
+  Line,ARGB: PRGB32Array;
+  Bmp:TBitmap;
 begin
-  Result := TDX9LockableTexture.Create;
-  Result.Width := FWidth;
-  Result.Height := FHeight;
-  Result.Format := apf_A8R8G8B8;
-  Result.Initialize;
-
-  SetLength(bytes, Input.Size);
-  Input.Read(bytes[0], Input.Size);
-
-  Result.Lock(Rect(0, 0, FWidth, FHeight), pDest, nPitch);
-  ARGB := pDest;
-  DecompressDDS(ARGB, Width, Height, PByte(bytes), 2);
-  Result.Unlock;
+  Surface := RasterSurfaceInit(fWidth, fHeight, TPixelFormat.BGRA8);
+  SurfParams := Surface.Parameters;
+  Bmp := TBitmap.Create;
+  Bmp.PixelFormat := pf32bit;
+  Bmp.AlphaFormat := afPremultiplied;
+  Bmp.Width := FWidth;
+  Bmp.Height := FHeight;
+  SetLength(Bytes, Input.Size);
+  ARGB := Bmp.Scanline[Bmp.Height - 1];
+  Input.Read(Bytes[0], Input.Size);
+  DecompressDDS(PByte(ARGB), Width, Height, PByte(Bytes), 2);
+  for y := 0 to FHeight - 1 do
+  begin
+    ARGB := Bmp.Scanline[y];
+    line := SurfParams.Scanline[y];
+    for x := 0 to FWidth - 1 do
+    begin
+      line[x].B := ARGB[x].B;
+      line[x].G := ARGB[x].G;
+      line[x].R := ARGB[x].R;
+      Line[x].A := ARGB[x].A;
+    end;
+  end;
+  Bmp.Free;
+  Surface.Flip;
+  FillChar(Params, SizeOf(TTextureParameters), 0);
+  Params.Width := Width;
+  Params.Height := Height;
+  Params.Format := TPixelFormat.BGRA8;
+  Result := TextureInit(FDevice, Params);
+  Result.Copy(Surface, 0, ZeroPoint2i, ZeroIntRect);
+  Surface.Free;
 end;
 
-function TPNGMapleCanvas.Parse2050(Input: TMemoryStream): TDX9LockableTexture;
+function TPNGMapleCanvas.Parse2050(Input: TMemoryStream): TTexture;
 var
-  pDest: Pointer;
-  nPitch: Integer;
-  ARGB: PByte;
+  x,Y:Integer;
   bytes: array of PByte;
+  Surface: TRasterSurface;
+  SurfParams: TRasterSurfaceParameters;
+  Params: TTextureParameters;
+  Line,ARGB: PRGB32Array;
+  Bmp:TBitmap;
 begin
-  Result := TDX9LockableTexture.Create;
-  Result.Width := FWidth;
-  Result.Height := FHeight;
-  Result.Format := apf_A8R8G8B8;
-  Result.Initialize;
-
-  SetLength(bytes, Input.Size);
-  Input.Read(bytes[0], Input.Size);
-
-  Result.Lock(Rect(0, 0, FWidth, FHeight), pDest, nPitch);
-  ARGB := pDest;
-  DecompressDDS(ARGB, Width, Height, PByte(bytes), 4);
-  Result.Unlock;
+  Surface := RasterSurfaceInit(fWidth, fHeight, TPixelFormat.BGRA8);
+  SurfParams := Surface.Parameters;
+  Bmp := TBitmap.Create;
+  Bmp.PixelFormat := pf32bit;
+  Bmp.AlphaFormat := afPremultiplied;
+  Bmp.Width := FWidth;
+  Bmp.Height := FHeight;
+  SetLength(Bytes, Input.Size);
+  ARGB := Bmp.Scanline[Bmp.Height - 1];
+  Input.Read(Bytes[0], Input.Size);
+  DecompressDDS(PByte(ARGB), Width, Height, PByte(Bytes), 4);
+  for y := 0 to FHeight - 1 do
+  begin
+    ARGB := Bmp.Scanline[y];
+    line := SurfParams.Scanline[y];
+    for x := 0 to FWidth - 1 do
+    begin
+      line[x].B := ARGB[x].B;
+      line[x].G := ARGB[x].G;
+      line[x].R := ARGB[x].R;
+      Line[x].A := ARGB[x].A;
+    end;
+  end;
+  Bmp.Free;
+  Surface.Flip;
+  FillChar(Params, SizeOf(TTextureParameters), 0);
+  Params.Width := Width;
+  Params.Height := Height;
+  Params.Format := TPixelFormat.BGRA8;
+  Result := TextureInit(FDevice, Params);
+  Result.Copy(Surface, 0, ZeroPoint2i, ZeroIntRect);
+  Surface.Free;
 end;
 
 function TPNGMapleCanvas.Parse1Bmp(Input: TMemoryStream): TBitmap;
