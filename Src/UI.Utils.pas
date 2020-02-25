@@ -20,6 +20,7 @@ procedure CreateButtonAll(EntryName: string; IgnoreDir: array of string; X, Y: I
 procedure CreateImages(Dir: string; ImageName: array of string; X: Integer = 0; Y: Integer = 0);
 
 procedure CreateForm(EntryName: string; X, Y: Integer; BtClose: Boolean = True);
+procedure CreateEmptyForm(EntryName: string; X, Y,AWidth,AHeight: Integer;ACanMove:Boolean=True);
 
 procedure CreateFormEx(EntryName: string; X, Y: Integer);
 
@@ -27,7 +28,7 @@ procedure CreateEdit(EntryName: string; X, Y, AWidth: Integer);
 
 procedure CreateLabel(EntryName, AText: string; X, Y: Integer; AWidth: Integer = 100; Black: Boolean = True);
 
-procedure CreateImage(EntryName: string; X: Integer = 0; Y: Integer = 0);
+procedure CreateImage(EntryName: string;AScaleX:Single=1;AScaleY:Single=1; X: Integer = 0; Y: Integer = 0);
 
 procedure CreateGrid(AImagePath: string; X, Y, Col, Row: Integer; OwnerName: string);
 
@@ -77,24 +78,35 @@ var
 begin
   Entry := GetImgEntry(EntryName);
   DumpData(Entry, UIData, UIImages);
-
   Form := TAForm.Create(UIEngine.Root);
-
   with Form do
   begin
     ImageEntry := Entry;
-    Name := ToName(EntryName);
-    UIOwner := Name;
     Width := Entry.Canvas.Width;
     Height := Entry.Canvas.Height;
     Left := X + -Entry.Child['origin'].Vector.X + 1000;
     Top := Y + -Entry.Child['origin'].Vector.Y + 1000;
-    BorderWidth := 0;
-    ShadowWidth := 0;
     Ax := Width - 22;
   end;
   if BtClose then
     CreateButton('UI/Basic.img/BtClose3', Ax, 7);
+  UIForm.Add(EntryName, Form);
+end;
+
+procedure CreateEmptyForm(EntryName: string; X, Y,AWidth,AHeight: Integer;ACanMove:Boolean=True);
+var
+  Form: TAForm;
+begin
+
+  Form := TAForm.Create(UIEngine.Root);
+  with Form do
+  begin
+    Left := X + 1000;
+    Top := Y + 1000;
+    Width := AWidth;
+    Height := AHeight;
+    CanMove:=ACanMove;
+  end;
   UIForm.Add(EntryName, Form);
 end;
 
@@ -152,13 +164,14 @@ begin
     CreateButton(Dir +'/'+ BtName[I], X, Y);
 end;
 
-procedure CreateImage(EntryName: string; X: Integer = 0; Y: Integer = 0);
+procedure CreateImage(EntryName: string;AScaleX:Single=1;AScaleY:Single=1; X: Integer = 0; Y: Integer = 0);
 var
   Entry: TWZIMGEntry;
   Image: TAImage;
 begin
   Entry := GetImgEntry(EntryName);
-  DumpData(Entry, UIData, UIImages);
+  if not UIData.ContainsKey(Entry.GetPath) then
+    DumpData(Entry, UIData, UIImages);
   Image := TAImage.Create(UIEngine.AForm(UIOwner));
   with Image do
   begin
@@ -167,12 +180,10 @@ begin
     Height := Entry.Canvas.Height;
     Left := X + -Entry.Child['origin'].Vector.X;
     Top := Y + -Entry.Child['origin'].Vector.Y;
+    ScaleX:=AScaleX;
+    ScaleY:=AScaleY;
     CanMoveHandle := False;
-    Name := ToName(EntryName);
-   // OnMouseDown := Event.OnMouseDown;
-   // OnMouseUp := Event.OnMouseUp;
-    BorderWidth := 0;
-  end;
+   end;
   UIImage.AddOrSetValue(EntryName, Image);
 end;
 

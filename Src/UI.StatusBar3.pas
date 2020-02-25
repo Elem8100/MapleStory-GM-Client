@@ -22,11 +22,9 @@ type
       Instance: TStatus;
   end;
 
-  TMenuForm = class(TAForm)
-    class procedure CreateInstance;
-    class var
-      Instance: TMenuForm;
-  end;
+
+
+
 
 implementation
 
@@ -117,23 +115,16 @@ begin
     Top := 0 + 1000;
     CanMove := False;
   end;
-  TMenuform.CreateInstance;
-end;
-
-class procedure TMenuForm.CreateInstance;
-begin
-  Instance := TMenuForm.Create(UIEngine.Root);
-  with Instance do
-  begin
-    Left := 300 + 1000;
-    Top := 300 + 1000;
-    Width := 200;
-    Height := 200;
-  end;
-
+  CreateEmptyForm('UI.wz/StatusBar3.img/mainBar/InfoBar', 300, 300, 200, 200);
   CreateButtons('UI.wz/StatusBar3.img/mainBar/menu', ['button:CashShop', 'button:Event',
-    'button:Character', 'button:Community','button:setting','button:Menu']);
+    'button:Character', 'button:Community', 'button:setting', 'button:Menu']);
+
+  CreateEmptyForm('UI.wz/StatusBar3.img/mainBar/submenu', 199, 200, 200, 200,false);
+  CreateImage('UI.wz/StatusBar3.img/mainBar/submenu/backgrnd/0', 1, 1, 0, 0);
+  CreateImage('UI.wz/StatusBar3.img/mainBar/submenu/backgrnd/1', 1, 80, 0, 30);
+  CreateImage('UI.wz/StatusBar3.img/mainBar/submenu/backgrnd/2', 1, 1, 0, 180);
 end;
+
 
 end.
 
