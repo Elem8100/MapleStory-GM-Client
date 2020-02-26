@@ -90,10 +90,13 @@ begin
   // LoadMob.Clear;
   TMap.Info.Clear;
   WzData.Clear;
-  GameTargets.RemoveAll;
+  //GameTargets.RemoveAll;
   // SpriteEngine.Clear;
   BackEngine[0].Clear;
   BackEngine[1].Clear;
+  for var n in images.Keys do
+  images[n].Free;
+
   Images.Clear;
   if TMap.Has002Wz then
     TMap.ImgFile := Map002Wz.GetImgFile('Map/Map' + LeftStr(ID, 1) + '/' + ID + '.img').Root
@@ -141,12 +144,15 @@ begin
   TMob.CreateMapMobs;
   DropBoss;
   TNpc.Create;
+  TNPC.ReDrawTarget :=true;
   if not TMap.FirstLoad then
   begin
     TMobInfo.Create;
     Player.SpawnNew;
+    FDevice.BeginScene;
     TLabelRingTag.Create('01112101');
     AMiniMap := TMiniMap.Create(UIEngine.Root);
+    FDevice.EndScene;
     with AMiniMap do
     begin
       Width :=  TMap.MiniMapWidth + 125;
