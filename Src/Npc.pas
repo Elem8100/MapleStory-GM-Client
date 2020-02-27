@@ -3,9 +3,9 @@ unit Npc;
 interface
 
 uses
-  Windows, System.Types, SysUtils, StrUtils, AsphyreSprite, Generics.Collections, WZIMGFile, Global,
-  Math, Footholds, LadderRopes, ChatBalloon, MapPortal, MapleTV, AsphyreTypes, DX9Textures, Tools,
-  MapleMap, WzUtils;
+  Windows, System.Types, SysUtils, StrUtils, PXT.Sprites, Generics.Collections, WZIMGFile, Global,
+  Math, Footholds, LadderRopes, ChatBalloon, MapPortal, MapleTV, AsphyreTypes, Tools, MapleMap,
+  WzUtils, PXT.Graphics, PXT.Types, PXT.Canvas;
 
 type
   TNpc = class(TSpriteEx)
@@ -28,13 +28,13 @@ type
     Actions: TList<string>;
     Balloon: TChatBalloon;
     Msgs: TList<string>;
-    TargetIndex: Integer;
-    TargetWidth: Integer;
+    TargetTexture: TTexture;
+    TargetWidth, TargetHeight: Integer;
   public
     LocalID: string;
     procedure DoMove(const Movecount: Single); override;
     procedure DoDraw; override;
-    procedure TargetEvent(Sender: TObject);
+    procedure TargetEvent;
     destructor Destroy; override;
     class var
       ReDrawTarget: Boolean;
@@ -56,12 +56,13 @@ var
   DumpList: TList<string>;
   BelowFH: TFoothold;
   Pos: TPoint;
-  TargetHeight: Integer;
 begin
   if ID = '9300018' then
     Exit;
   if ID = '9010088' then
     Exit;
+  if GetImgEntry('String/Npc.img/' + IDToInt(ID))= nil
+    then Exit;
   DumpList := TList<string>.Create;
   Randomize;
 
@@ -78,7 +79,6 @@ begin
   with TNpc.Create(SpriteEngine) do
   begin
     LocalID := ID;
-
     if Entry <> nil then
       SpriteID := Entry.Data
     else
@@ -99,12 +99,17 @@ begin
 
     NpcName := GetImgEntry('String/Npc.img/' + IDToInt(LocalID)).Get('name', '');
     NpcFunc := GetImgEntry('String/Npc.img/' + IDToInt(LocalID)).Get('func', '');
-    FNameWidth := FontsAlt[0].TextWidth(NpcName);
-    FFuncWidth := FontsAlt[0].TextWidth(NpcFunc);
+   // FNameWidth := FontsAlt[0].TextWidth(NpcName);
+
+    FNameWidth := Round(GameFont.ExtentByPixels(NpcName).Right);
+    //FFuncWidth := FontsAlt[0].TextWidth(NpcFunc);
+    FFuncWidth := Round(GameFont.ExtentByPixels(NpcFunc).Right);
+
     if NpcFunc <> '' then
       HasFunc := True;
 
-    FIDWidth := FontsAlt[0].TextWidth('ID: ' + LocalID);
+    //FIDWidth := FontsAlt[0].TextWidth('ID: ' + LocalID);
+    FIDWidth := Round(GameFont.ExtentByPixels('ID: ' + LocalID).Right);
     ImageLib := Images;
     ImagePath := 'Npc.wz/' + SpriteID + '.img/' + Action + '/0';
     ImageEntry := WzData[ImagePath];
@@ -151,8 +156,14 @@ begin
     else
       TargetHeight := 20;
     TargetWidth := Max(FFuncWidth, FNameWidth) + 5;
-    TargetIndex := GameTargets.Add(1, TargetWidth, TargetHeight, apf_A8R8G8B8, True, True);
-    GameDevice.RenderTo(TargetEvent, 0, True, GameTargets[TargetIndex]);
+
+    GameCanvas.DrawTarget(TargetTexture, TargetWidth, TargetHeight,
+      procedure
+      begin
+        TargetEvent;
+      end);
+   // TargetIndex := GameTargets.Add(1, TargetWidth, TargetHeight, apf_A8R8G8B8, True, True);
+  //  GameDevice.RenderTo(TargetEvent, 0, True, GameTargets[TargetIndex]);
   end;
   DumpList.Free;
 end;
@@ -183,7 +194,12 @@ var
 begin
   inherited;
   if ReDrawTarget then
-    GameDevice.RenderTo(TargetEvent, 0, True, GameTargets[TargetIndex]);
+    GameCanvas.DrawTarget(TargetTexture, TargetWidth, TargetHeight,
+      procedure
+      begin
+        TargetEvent;
+      end);
+
   ImagePath := 'Npc.wz/' + SpriteID + '.img/' + Action + '/' + Frame.ToString;
   ImageEntry := WzData[ImagePath];
   AnimDelay := WzData[ImagePath].Get('delay', '100');
@@ -232,7 +248,7 @@ begin
   if TMap.ShowNPC then
   begin
     inherited;
-    GameCanvas.Draw(GameTargets[TargetIndex], NamePos - 3, WY + 2, 1, False, 255, 255, 255, 255);
+    GameCanvas.Draw(TargetTexture, NamePos - 3, WY + 2);
     Inc(Counter);
     if Counter > 700 then
     begin
@@ -252,31 +268,35 @@ begin
 
   if TMap.ShowID then
   begin
-    GameCanvas.FillRect(IDPos - 3, WY + 18, FIDWidth + 5, 15, cRGB1(0, 0, 0, 160));
-    GameCanvas.Flush;
-    FontsAlt[0].TextOut('ID: ' + SpriteID, IDPos, WY + 18, cRGB1(255, 255, 0));
+    GameCanvas.FillRect(FloatRect(IDPos - 3, WY + 18, FIDWidth + 5, 15), cRGB1(0, 0, 0, 160));
+    GameFont.Draw(Point2f(IDPos, WY + 18), 'ID: ' + SpriteID, ARGB(255, 255, 255, 0));
   end;
 end;
 
-procedure TNpc.TargetEvent(Sender: TObject);
+procedure TNpc.TargetEvent;
 var
   NameMiddle, FuncMiddle: Integer;
+  ss: TFontSettings;
 begin
+  ss := TFontSettings.Create('Arial', 12);
+  ss.Effect.BorderType := TFontBorder.Normal;
+  ss.Effect.BorderOpacity := 1;
+  ss.Weight := TFontWeight.Thin;
+  GameFont.FontSettings := ss;
   if HasFunc then
   begin
     NameMiddle := (TargetWidth - FNameWidth) div 2;
     FuncMiddle := (TargetWidth - FFuncWidth) div 2;
-    GameCanvas.FillRect(NameMiddle - 3, 0, FNameWidth + 5, 15, cRGB1(0, 0, 0, 190));
-    GameCanvas.FillRect(FuncMiddle - 3, 17, FFuncWidth + 5, 15, cRGB1(0, 0, 0, 190));
-    GameCanvas.Flush;
-    FontsAlt[0].TextOut(NpcName, NameMiddle, 1, clYellow1);
-    FontsAlt[0].TextOut(NpcFunc, FuncMiddle, 18, clYellow1);
+    GameCanvas.FillRect(FloatRect(NameMiddle - 3, 0, FNameWidth + 5, 15), cRGB1(0, 0, 0, 150));
+    GameCanvas.FillRect(FloatRect(FuncMiddle - 3, 17, FFuncWidth + 5, 15), cRGB1(0, 0, 0, 150));
+
+    GameFont.Draw(Point2f(NameMiddle, -1), NpcName, ARGB(255, 255, 255, 0));
+    GameFont.Draw(Point2f(FuncMiddle, 16), NpcFunc, ARGB(255, 255, 255, 0));
   end
   else
   begin
-    GameCanvas.FillRect(0, 0, FNameWidth + 5, 15, cRGB1(0, 0, 0, 190));
-    GameCanvas.Flush;
-    FontsAlt[0].TextOut(NpcName, 3, 1, clYellow1);
+    GameCanvas.FillRect(FloatRect(0, 0, FNameWidth + 5, 15), cRGB1(0, 0, 0, 150));
+    GameFont.Draw(Point2f(3, -1), NpcName, ARGB(255, 255, 255, 0));
   end;
 end;
 
@@ -284,6 +304,7 @@ destructor TNpc.Destroy;
 begin
   Msgs.Free;
   Actions.Free;
+  TargetTexture.Free;
   inherited;
 end;
 

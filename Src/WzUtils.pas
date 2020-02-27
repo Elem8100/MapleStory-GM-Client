@@ -3,8 +3,9 @@ unit WzUtils;
 interface
 
 uses
-  Windows, SysUtils, StrUtils, AsphyreSprite, Generics.Collections, WZIMGFile, Global, Tools,
-  DX9Textures, WZArchive, WZDirectory, ColorUtils;
+  Windows, SysUtils, StrUtils, Generics.Collections, WZIMGFile, Global, Tools,
+   WZArchive, WZDirectory, ColorUtils,PXT.Types,
+  PXT.Graphics;
 
 function NoIMG(const Name: string): string; inline;
 
@@ -24,8 +25,8 @@ function HasEntryE(Path: string): Boolean;
 
 function GetUOL(Entry: TWZIMGEntry): TWZIMGEntry;
 
-procedure DumpData(Entry: TWZIMGEntry; ToData: TObjectDictionary<string, TWZIMGEntry>; ToImageLib:
-  TObjectDictionary<TWZIMGEntry, TDX9LockableTexture>; ColorEffect: TColorEffect = ceNone; Value: Integer = 0);
+procedure DumpData(Entry: TWZIMGEntry; ToData: TDictionary<string, TWZIMGEntry>; ToImageLib:
+  TDictionary<TWZIMGEntry, TTexture>; ColorEffect: TColorEffect = ceNone; Value: Integer = 0);
 
 implementation
 
@@ -166,8 +167,8 @@ begin
   Result := Path;
 end;
 
-procedure Scan1(IE: TWZIMGEntry; ToData: TObjectDictionary<string, TWZIMGEntry>; ToImageLib:
-  TObjectDictionary<TWZIMGEntry, TDX9LockableTexture>; ColorEffect: TColorEffect; Value: Integer);
+procedure Scan1(IE: TWZIMGEntry; ToData: TDictionary<string, TWZIMGEntry>; ToImageLib:
+  TDictionary<TWZIMGEntry, TTexture>; ColorEffect: TColorEffect; Value: Integer);
 var
   C, Child, Entry: TWZIMGEntry;
   NodeInfo: TNodeInfo;
@@ -204,8 +205,8 @@ begin
     Scan1(C, ToData, ToImageLib, ColorEffect, Value);
 end;
 
-procedure Scan2(OriNode, UOLNode: string; IE: TWZIMGEntry; ToData: TObjectDictionary<string,
-  TWZIMGEntry>; ToImageLib: TObjectDictionary<TWZIMGEntry, TDX9LockableTexture>; ColorEffect:
+procedure Scan2(OriNode, UOLNode: string; IE: TWZIMGEntry; ToData: TDictionary<string,
+  TWZIMGEntry>; ToImageLib: TDictionary<TWZIMGEntry, TTexture>; ColorEffect:
   TColorEffect; Value: Integer);
 var
   C: TWZIMGEntry;
@@ -252,7 +253,7 @@ begin
     Scan2(OriNode, UOLNode, C, ToData, ToImageLib, ColorEffect, Value);
 end;
 
-procedure Scan3(OriNode, UOLNode: string; IE: TWZIMGEntry; ToData: TObjectDictionary<string, TWZIMGEntry>);
+procedure Scan3(OriNode, UOLNode: string; IE: TWZIMGEntry; ToData: TDictionary<string, TWZIMGEntry>);
 var
   C: TWZIMGEntry;
   Str: string;
@@ -263,8 +264,8 @@ begin
     Scan3(OriNode, UOLNode, C, ToData);
 end;
 
-procedure DumpData(Entry: TWZIMGEntry; ToData: TObjectDictionary<string, TWZIMGEntry>; ToImageLib:
-  TObjectDictionary<TWZIMGEntry, TDX9LockableTexture>; ColorEffect: TColorEffect = ceNone; Value: Integer = 0);
+procedure DumpData(Entry: TWZIMGEntry; ToData: TDictionary<string, TWZIMGEntry>; ToImageLib:
+  TDictionary<TWZIMGEntry, TTexture>; ColorEffect: TColorEffect = ceNone; Value: Integer = 0);
 var
   P: TNodeInfo;
 begin

@@ -22,10 +22,6 @@ type
       Instance: TStatus;
   end;
 
-
-
-
-
 implementation
 
 uses
@@ -116,15 +112,48 @@ begin
     CanMove := False;
   end;
   CreateEmptyForm('UI.wz/StatusBar3.img/mainBar/InfoBar', 300, 300, 200, 200);
+  var Path := 'UI.wz/StatusBar3.img/mainBar/submenu';
   CreateButtons('UI.wz/StatusBar3.img/mainBar/menu', ['button:CashShop', 'button:Event',
     'button:Character', 'button:Community', 'button:setting', 'button:Menu']);
 
-  CreateEmptyForm('UI.wz/StatusBar3.img/mainBar/submenu', 199, 200, 200, 200,false);
+  //event
+  CreateEmptyForm(Path + '/title/event', 199, 200, 200, 200);
   CreateImage('UI.wz/StatusBar3.img/mainBar/submenu/backgrnd/0', 1, 1, 0, 0);
-  CreateImage('UI.wz/StatusBar3.img/mainBar/submenu/backgrnd/1', 1, 80, 0, 30);
-  CreateImage('UI.wz/StatusBar3.img/mainBar/submenu/backgrnd/2', 1, 1, 0, 180);
-end;
+  CreateImage('UI.wz/StatusBar3.img/mainBar/submenu/backgrnd/1', 1, 35, 0, 30);
+  CreateImage('UI.wz/StatusBar3.img/mainBar/submenu/backgrnd/2', 1, 1, 0, 65);
+  CreateImage(Path + '/title/event', 1, 1, 0, 0);
+  CreateButton(Path + '/event/button:schedule');
+  //character
+  CreateEmptyForm(Path + '/title/character', 250, 200, 200, 200);
+  CreateImage('UI.wz/StatusBar3.img/mainBar/submenu/backgrnd/0', 1, 1, 0, 0);
+  CreateImage('UI.wz/StatusBar3.img/mainBar/submenu/backgrnd/1', 1, 120, 0, 30);
+  CreateImage('UI.wz/StatusBar3.img/mainBar/submenu/backgrnd/2', 1, 1, 0, 150);
+  CreateImage(Path + '/title/character', 1, 1, 0, 0);
+  CreateButtons(Path + '/character', ['button:character', 'button:Stat', 'button:Skill',
+    'button:Equip', 'button:Item']);
+   //menu
+  CreateEmptyForm(Path + '/title/menu', 450, 200, 200, 400);
+  CreateImage('UI.wz/StatusBar3.img/mainBar/submenu/backgrnd/0', 1, 1, 0, 0);
+  CreateImage('UI.wz/StatusBar3.img/mainBar/submenu/backgrnd/1', 1, 280, 0, 30);
+  CreateImage('UI.wz/StatusBar3.img/mainBar/submenu/backgrnd/2', 1, 1, 0, 310);
+  CreateImage(Path + '/title/menu', 1, 1, 0, 0);
+  CreateButtons(Path + '/menu', ['button:quest', 'button:medal', 'button:union',
+    'button:MonsterCollection', 'button:auction', 'button:battleStats', 'button:achievement',
+    'button:Help', 'button:Claim', 'button:Fishing']);
+  //community
+  CreateEmptyForm(Path + '/title/community', 650, 200, 200, 400);
+  CreateImage('UI.wz/StatusBar3.img/mainBar/submenu/backgrnd/0', 1, 1, 0, 0);
+  CreateImage('UI.wz/StatusBar3.img/mainBar/submenu/backgrnd/1', 1, 60, 0, 30);
+  CreateImage('UI.wz/StatusBar3.img/mainBar/submenu/backgrnd/2', 1, 1, 0, 90);
+  CreateImage(Path + '/title/community', 1, 1, 0, 0);
+  CreateButtons(Path + '/community', ['button:friends', 'button:bossParty', 'button:guild']);
 
+  uibutton['UI.wz/StatusBar3.img/mainBar/menu/button:CashShop'].OnClick :=
+    procedure(sender: tobject)
+    begin
+      uiform['UI.wz/StatusBar3.img/mainBar/submenu'].Visible := false;
+    end;
+end;
 
 end.
 
