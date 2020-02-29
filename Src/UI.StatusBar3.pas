@@ -15,7 +15,7 @@ type
     Level: Integer;
     procedure Paint(DC: HDC); override;
     procedure ReDraw(ReDumpData: Boolean = False);
-    procedure NumberTextout(X, Y: Integer; Number1, Number2: Int64);
+    procedure NumberTextout(X, Y: Integer; NumberStr:string);
     constructor Create(AOwner: TComponent); override;
     class procedure CreateUI;
     class var
@@ -34,30 +34,20 @@ begin
   Engine.Canvas.Draw(TargetTexture, x, y);
 end;
 
-procedure TStatus.NumberTextout(X, Y: Integer; Number1, Number2: Int64);
+procedure TStatus.NumberTextout(X, Y: Integer; NumberStr: string);
 begin
   var Char: string;
   var GraphicNumber := GetImgEntry('UI.wz/StatusBar3.img/mainBar/status/gauge/number');
   var W: Integer;
 
-  var Middle := -60 + ((Length(Number1.ToString) * 7) + (Length(Number2.ToString) * 7)) div 2;
-  for var I := 1 to Length(Number1.ToString) do
+  var Middle := -60 + (Length(NumberStr) * 7) div 2;
+  for var I := 1 to Length(NumberStr) do
   begin
-    Char := MidStr(Number1.ToString, I, 1);
+    Char := MidStr(NumberStr, I, 1);
     W := GraphicNumber.Get(Char).Canvas.Width;
     PosX := PosX + W;
     GameCanvas.Draw(UIImages[GraphicNumber.Get(Char)], X + PosX - W - Middle, Y);
   end;
-
-  GameCanvas.Draw(UiImages[GraphicNumber.Get('\')], X + PosX - Middle, Y + 1);
-  for var I := 1 to Length(Number2.ToString) do
-  begin
-    Char := MidStr(Number2.ToString, I, 1);
-    W := GraphicNumber.Get(Char).Canvas.Width;
-    PosX := PosX + W;
-    GameCanvas.Draw(UIImages[GraphicNumber.Get(Char)], 7 + X + posX - W - Middle, Y);
-  end;
-
 end;
 
 procedure TStatus.ReDraw(ReDumpData: Boolean = False);
@@ -75,9 +65,9 @@ begin
       GameCanvas.Draw(UIImages[Entry.Get('gauge/hp/layer:0')], 24, 28);
       GameCanvas.Draw(UIImages[Entry.Get('gauge/mp/layer:0')], 24, 44);
       GameCanvas.Draw(UIImages[Entry.Get('layer:cover')], -1, 0);
-      NumberTextout(50, 30, 1000002, 3258880022);
+      NumberTextout(50, 30, '1000002\3258880022');
       PosX := 0;
-      NumberTextout(50, 46, 25, 25);
+      NumberTextout(50, 46, '25\25668');
       GameCanvas.Draw(UIImages[Entry.Get('layer:lv')], 24, 8);
       for var I := 1 to Length(Level.ToString) do
       begin
@@ -147,6 +137,14 @@ begin
   CreateImage('UI.wz/StatusBar3.img/mainBar/submenu/backgrnd/2', 1, 1, 0, 90);
   CreateImage(Path + '/title/community', 1, 1, 0, 0);
   CreateButtons(Path + '/community', ['button:friends', 'button:bossParty', 'button:guild']);
+  //setting
+  CreateEmptyForm(Path + '/title/setting', 650, 500, 200, 400);
+  CreateImage('UI.wz/StatusBar3.img/mainBar/submenu/backgrnd/0', 1, 1, 0, 0);
+  CreateImage('UI.wz/StatusBar3.img/mainBar/submenu/backgrnd/1', 1, 50, 0, 30);
+  CreateImage('UI.wz/StatusBar3.img/mainBar/submenu/backgrnd/2', 1, 1, 0, 80);
+  CreateImage(Path + '/title/setting', 1, 1, 0, 0);
+  CreateButtons(Path + '/setting', ['button:channel', 'button:option', 'button:keysetting','button:GameQuit']);
+
 
   uibutton['UI.wz/StatusBar3.img/mainBar/menu/button:CashShop'].OnClick :=
     procedure(sender: tobject)
