@@ -3,9 +3,9 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Controls, Forms, Dialogs, Graphics, ACtrlImages, StdCtrls,
-  WZIMGFile, WZArchive, StrUtils, Generics.Collections, WzUtils, AControls, ACtrlEngine, ACtrlForms,
-  ACtrlButtons, Global, PXT.Canvas, PXT.Graphics, PXT.Types;
+  PXT.Types, Windows, Messages, SysUtils, Classes, Controls, Forms, Dialogs, Graphics, ACtrlImages,
+  StdCtrls, WZIMGFile, WZArchive, StrUtils, Generics.Collections, WzUtils, AControls, ACtrlEngine,
+  ACtrlForms, ACtrlButtons, Global, PXT.Canvas, PXT.Graphics;
 
 type
   TStatus = class(TAForm)
@@ -15,11 +15,15 @@ type
     Level: Integer;
     procedure Paint(DC: HDC); override;
     procedure ReDraw(ReDumpData: Boolean = False);
-    procedure NumberTextout(X, Y: Integer; NumberStr:string);
+    procedure NumberTextout(X, Y: Integer; NumberStr: string);
     constructor Create(AOwner: TComponent); override;
     class procedure CreateUI;
     class var
       Instance: TStatus;
+  end;
+
+  TEXPBar = class(TAForm)
+    procedure Paint(DC: HDC); override;
   end;
 
 implementation
@@ -27,10 +31,33 @@ implementation
 uses
   UI.Utils, ShowOptionUnit, mainunit;
 
+procedure TEXPBar.Paint(DC: HDC);
+begin
+  var x := 0;
+  var y := ClientTop + displaysize.Y - 70;
+  var Path := 'UI.wz/StatusBar3.img/mainBar/EXPBar/';
+  var Entry: TWZIMGEntry;
+  case DisplaySize.X of
+    800..1023:
+      Entry := GetImgEntry(Path + '800');
+    1024..1279:
+      Entry := GetImgEntry(Path + '1024');
+    1280..1359:
+      Entry := GetImgEntry(Path + '1280');
+    1360..1919:
+      Entry := GetImgEntry(Path + '1366');
+    1920..4000:
+      Entry := GetImgEntry(Path + '1920');
+  end;
+  Engine.Canvas.Draw(UIImages[Entry.Get('layer:back')], x, y);
+  Engine.Canvas.Draw(UIImages[Entry.Get('layer:gauge')], x + 15, y + 2);
+  Engine.Canvas.Draw(UIImages[Entry.Get('layer:cover')], x + 97, y + 1);
+end;
+
 procedure TStatus.Paint(DC: HDC);
 begin
-  var x := (ClientLeft + Displaysize.X div 2) - 70;
-  var y := ClientTop + displaysize.Y - 70;
+  var x := (ClientLeft + Displaysize.X div 2) - 100;
+  var y := ClientTop + displaysize.Y - 79;
   Engine.Canvas.Draw(TargetTexture, x, y);
 end;
 
@@ -92,6 +119,12 @@ begin
   ReDraw(True);
 end;
 
+procedure HideForms(Forms: array of string);
+begin
+  for var i := 0 to High(Forms) do
+    UIForm['UI.wz/StatusBar3.img/mainBar/submenu/title/' + Forms[i]].Visible := False;
+end;
+
 class procedure TStatus.CreateUI;
 begin
   Instance := TStatus.Create(UIEngine.Root);
@@ -101,56 +134,101 @@ begin
     Top := 0 + 1000;
     CanMove := False;
   end;
-  CreateEmptyForm('UI.wz/StatusBar3.img/mainBar/InfoBar', 300, 300, 200, 200);
-  var Path := 'UI.wz/StatusBar3.img/mainBar/submenu';
+  CreateEmptyForm('UI.wz/StatusBar3.img/mainBar/menu', 617, 720, 200, 30, false);
+
   CreateButtons('UI.wz/StatusBar3.img/mainBar/menu', ['button:CashShop', 'button:Event',
     'button:Character', 'button:Community', 'button:setting', 'button:Menu']);
 
+  var Path := 'UI.wz/StatusBar3.img/mainBar/submenu/';
   //event
-  CreateEmptyForm(Path + '/title/event', 199, 200, 200, 200);
-  CreateImage('UI.wz/StatusBar3.img/mainBar/submenu/backgrnd/0', 1, 1, 0, 0);
-  CreateImage('UI.wz/StatusBar3.img/mainBar/submenu/backgrnd/1', 1, 35, 0, 30);
-  CreateImage('UI.wz/StatusBar3.img/mainBar/submenu/backgrnd/2', 1, 1, 0, 65);
-  CreateImage(Path + '/title/event', 1, 1, 0, 0);
-  CreateButton(Path + '/event/button:schedule');
+  CreateEmptyForm(Path + 'title/event', 610, 630, 100, 100);
+  CreateImage(Path + 'backgrnd/0', 1, 1, 0, 0);
+  CreateImage(Path + 'backgrnd/1', 1, 15, 0, 30);
+  CreateImage(Path + 'backgrnd/2', 1, 1, 0, 45);
+  CreateImage(Path + 'title/event', 1, 1, 0, 0);
+  CreateButton(Path + 'event/button:schedule');
   //character
-  CreateEmptyForm(Path + '/title/character', 250, 200, 200, 200);
-  CreateImage('UI.wz/StatusBar3.img/mainBar/submenu/backgrnd/0', 1, 1, 0, 0);
-  CreateImage('UI.wz/StatusBar3.img/mainBar/submenu/backgrnd/1', 1, 120, 0, 30);
-  CreateImage('UI.wz/StatusBar3.img/mainBar/submenu/backgrnd/2', 1, 1, 0, 150);
-  CreateImage(Path + '/title/character', 1, 1, 0, 0);
-  CreateButtons(Path + '/character', ['button:character', 'button:Stat', 'button:Skill',
-    'button:Equip', 'button:Item']);
-   //menu
-  CreateEmptyForm(Path + '/title/menu', 450, 200, 200, 400);
-  CreateImage('UI.wz/StatusBar3.img/mainBar/submenu/backgrnd/0', 1, 1, 0, 0);
-  CreateImage('UI.wz/StatusBar3.img/mainBar/submenu/backgrnd/1', 1, 280, 0, 30);
-  CreateImage('UI.wz/StatusBar3.img/mainBar/submenu/backgrnd/2', 1, 1, 0, 310);
-  CreateImage(Path + '/title/menu', 1, 1, 0, 0);
-  CreateButtons(Path + '/menu', ['button:quest', 'button:medal', 'button:union',
+  CreateEmptyForm(Path + 'title/character', 650, 525, 100, 200);
+  CreateImage(Path + 'backgrnd/0', 1, 1, 0, 0);
+  CreateImage(Path + 'backgrnd/1', 1, 120, 0, 30);
+  CreateImage(Path + 'backgrnd/2', 1, 1, 0, 150);
+  CreateImage(Path + 'title/character', 1, 1, 0, 0);
+  CreateButtons(Path + 'character', ['button:character', 'button:Stat', 'button:Skill', 'button:Equip', 'button:Item']);
+  //community
+  CreateEmptyForm(Path + 'title/community', 680, 585, 100, 120);
+  CreateImage(Path + 'backgrnd/0', 1, 1, 0, 0);
+  CreateImage(Path + 'backgrnd/1', 1, 60, 0, 30);
+  CreateImage(Path + 'backgrnd/2', 1, 1, 0, 90);
+  CreateImage(Path + 'title/community', 1, 1, 0, 0);
+  CreateButtons(Path + 'community', ['button:friends', 'button:bossParty', 'button:guild']);
+  //setting
+  CreateEmptyForm(Path + 'title/setting', 705, 595, 100, 120);
+  CreateImage(Path + 'backgrnd/0', 1, 1, 0, 0);
+  CreateImage(Path + 'backgrnd/1', 1, 50, 0, 30);
+  CreateImage(Path + 'backgrnd/2', 1, 1, 0, 80);
+  CreateImage(Path + 'title/setting', 1, 1, 0, 0);
+  CreateButtons(Path + 'setting', ['button:channel', 'button:option', 'button:keysetting'{, 'button:GameQuit'}]);
+  //menu
+  CreateEmptyForm(Path + 'title/menu', 745, 365, 100, 370);
+  CreateImage(Path + 'backgrnd/0', 1, 1, 0, 0);
+  CreateImage(Path + 'backgrnd/1', 1, 280, 0, 30);
+  CreateImage(Path + 'backgrnd/2', 1, 1, 0, 310);
+  CreateImage(Path + 'title/menu', 1, 1, 0, 0);
+  CreateButtons(Path + 'menu', ['button:quest', 'button:medal', 'button:union',
     'button:MonsterCollection', 'button:auction', 'button:battleStats', 'button:achievement',
     'button:Help', 'button:Claim', 'button:Fishing']);
-  //community
-  CreateEmptyForm(Path + '/title/community', 650, 200, 200, 400);
-  CreateImage('UI.wz/StatusBar3.img/mainBar/submenu/backgrnd/0', 1, 1, 0, 0);
-  CreateImage('UI.wz/StatusBar3.img/mainBar/submenu/backgrnd/1', 1, 60, 0, 30);
-  CreateImage('UI.wz/StatusBar3.img/mainBar/submenu/backgrnd/2', 1, 1, 0, 90);
-  CreateImage(Path + '/title/community', 1, 1, 0, 0);
-  CreateButtons(Path + '/community', ['button:friends', 'button:bossParty', 'button:guild']);
-  //setting
-  CreateEmptyForm(Path + '/title/setting', 650, 500, 200, 400);
-  CreateImage('UI.wz/StatusBar3.img/mainBar/submenu/backgrnd/0', 1, 1, 0, 0);
-  CreateImage('UI.wz/StatusBar3.img/mainBar/submenu/backgrnd/1', 1, 50, 0, 30);
-  CreateImage('UI.wz/StatusBar3.img/mainBar/submenu/backgrnd/2', 1, 1, 0, 80);
-  CreateImage(Path + '/title/setting', 1, 1, 0, 0);
-  CreateButtons(Path + '/setting', ['button:channel', 'button:option', 'button:keysetting','button:GameQuit']);
 
+  DumpData(GetImgEntry('UI.wz/StatusBar3.img/mainBar/EXPBar'), UIData, UIImages);
+  var EXPBar := TExpBar.Create(UIEngine.Root);
+  with EXPBar do
+  begin
+    Width := 0;
+    Height := 0;
+    Left := -400 + 1000;
+    Top := 60 + 1000;
+  end;
+  HideForms(['character', 'menu', 'event', 'setting', 'community']);
+  var PathButton := 'UI.wz/StatusBar3.img/mainBar/menu/button:';
 
-  uibutton['UI.wz/StatusBar3.img/mainBar/menu/button:CashShop'].OnClick :=
-    procedure(sender: tobject)
+  UIButton[PathButton + 'Event'].OnMouseDown :=
+    procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
     begin
-      uiform['UI.wz/StatusBar3.img/mainBar/submenu'].Visible := false;
+      const Path = 'UI.wz/StatusBar3.img/mainBar/submenu/title/event';
+      HideForms(['character', 'menu', 'community', 'setting']);
+      UIForm[Path].Visible := not UIForm[Path].Visible;
     end;
+
+  UIButton[PathButton + 'Character'].OnMouseDown :=
+    procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
+    begin
+      const Path = 'UI.wz/StatusBar3.img/mainBar/submenu/title/character';
+      HideForms(['event', 'menu', 'community', 'setting']);
+      UIForm[Path].Visible := not UIForm[Path].Visible;
+    end;
+  UIButton[PathButton + 'Community'].OnMouseDown :=
+    procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
+    begin
+      const Path = 'UI.wz/StatusBar3.img/mainBar/submenu/title/community';
+      HideForms(['character', 'menu', 'event', 'setting']);
+      UIForm[Path].Visible := not UIForm[Path].Visible;
+    end;
+
+  UIButton[PathButton + 'setting'].OnMouseDown :=
+    procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
+    begin
+      const Path = 'UI.wz/StatusBar3.img/mainBar/submenu/title/setting';
+      HideForms(['character', 'menu', 'event', 'community']);
+      UIForm[Path].Visible := not UIForm[Path].Visible;
+    end;
+
+   UIButton[PathButton + 'Menu'].OnMouseDown :=
+    procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
+    begin
+      const Path = 'UI.wz/StatusBar3.img/mainBar/submenu/title/menu';
+      HideForms(['character', 'setting', 'event', 'community']);
+      UIForm[Path].Visible := not UIForm[Path].Visible;
+    end;
+
 end;
 
 end.
