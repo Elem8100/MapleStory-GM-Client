@@ -48,7 +48,6 @@ type
 
   TNickNameTag = class(TMedalTag)
   public
-
     class var
       NickNameTag: TNickNameTag;
     class procedure ReDraw; override;
@@ -83,9 +82,7 @@ begin
         if TMap.ShowChar then
         begin
           GameCanvas.FillRect(FloatRect(0, 2, NameWidth + 4, 15), cRGB1(0, 0, 0, 160));
-        //  GameCanvas.Flush;
-          //FontsAlt[1].TextOut(PlayerName, 3, 1, $FFFFFFFF);
-          GameFont.Draw(Point2f(3,1),PlayerName,$FFFFFFFF);
+          GameFont.Draw(Point2f(3, 1), PlayerName, $FFFFFFFF);
         end;
       end);
 
@@ -112,10 +109,7 @@ end;
 class procedure TNameTag.Create(Name: string);
 begin
   PlayerName := Name;
-  //NameWidth := FontsAlt[1].TextWidth(PlayerName) + 5;
-   NameWidth:= Round(GameFont.ExtentByPixels(PlayerName).Right);
- // TargetIndex := GameTargets.Add(1, NameWidth, 15, apf_A8R8G8B8, True, True);
- // GameDevice.RenderTo(TargetEvent, 0, True, GameTargets[TargetIndex]);
+  NameWidth := Round(GameFont.ExtentByPixels(PlayerName).Right);
   GameCanvas.DrawTarget(TargetTexture, NameWidth, 15,
     procedure
     begin
@@ -124,8 +118,8 @@ begin
       begin
         GameCanvas.FillRect(FloatRect(0, 2, NameWidth + 4, 15), cRGB1(0, 0, 0, 160));
         GameCanvas.Flush;
-       // FontsAlt[1].TextOut(PlayerName, 3, 1, $FFFFFFFF);
-        GameFont.Draw(Point2f(3,1),PlayerName,$FFFFFFFF);
+
+        GameFont.Draw(Point2f(3, 1), PlayerName, $FFFFFFFF);
       end;
     end);
 
@@ -148,11 +142,11 @@ procedure TMedalTag.DoMove(const MoveCount: Single);
 begin
   inherited;
   if IsReDraw then
-   GameCanvas.DrawTarget(TargetTexture, 300, 100,
-    procedure
-    begin
-      TargetEvent;
-    end);
+    GameCanvas.DrawTarget(TargetTexture, 300, 100,
+      procedure
+      begin
+        TargetEvent;
+      end);
   X := Player.X;
   Y := Player.Y;
   Z := Player.Z;
@@ -188,7 +182,7 @@ var
 begin
   var Width := Texture.Parameters.Width;
   var Height := Texture.Parameters.Height;
-  Surface := RasterSurfaceInit(Width, Height, TPixelFormat.RGBA8);
+  Surface := RasterSurfaceInit(Width, Height, TPixelFormat.BGRA8);
   SurfParams := Surface.Parameters;
   Texture.Save(Surface, 0, ZeroPoint2i, ZeroIntRect);
   Texture.Clear;
@@ -252,10 +246,8 @@ begin
     GameCanvas.Draw(EquipImages[EastImage], WestX + CenterLength + WestWidth - OffX, -EastImage.Get('origin').Vector.Y
       + 38);
 
-    //GameCanvas.Flush;
-    //FontsAlt[1].TextOut(MedalName, WestX + WestWidth + 2, 36, ARGB(255, R, G, B));
-    GameFont.Draw(Point2f( WestX + WestWidth + 2, 36),MedalName,ARGB(255,R,G,B));
-   // GameCanvas.Flush;
+    GameFont.Draw(Point2f(WestX + WestWidth + 2, 36), MedalName, ARGB(255,R, G, B));
+
   end;
 end;
 
@@ -264,8 +256,8 @@ begin
   EastWidth := Entry.Get2('e').Canvas.Width;
   WestWidth := Entry.Get2('w').Canvas.Width;
   CenterWidth := Entry.Get2('c').Canvas.Width;
-  //CenterLength := FontsAlt[1].TextWidth(MedalName) + 5;
- CenterLength := Round(GameFont.ExtentByPixels(MedalName).Right)+5;
+
+  CenterLength := Round(GameFont.ExtentByPixels(MedalName).Right) + 5;
   TagWidth := CenterLength + EastWidth + WestWidth + 30;
 
   var TagHeight := Entry.Get('w').Canvas.Height + 30;
@@ -282,9 +274,6 @@ begin
     begin
       TargetEvent;
     end);
-
-//  TargetIndex := AvatarTargets.Add(1, 300, 100, apf_A8R8G8B8, True, True);
- // GameDevice.RenderTo(TargetEvent, 0, True, AvatarTargets[TargetIndex]);
 
 end;
 
