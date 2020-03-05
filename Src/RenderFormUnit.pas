@@ -21,7 +21,7 @@ var
 implementation
 
 uses
-  Global, PXT.Types, UI.Utils;
+  Global, PXT.Types, UI.Utils,UI.StatusBar3;
 {$R *.dfm}
 
 procedure TRenderForm.FormResize(Sender: TObject);
@@ -60,6 +60,7 @@ begin
     UIForm[Path2+'setting'].Top:= UIForm[Path].Top-125;
     UIForm[Path2+'menu'].Left:= UIForm[Path].Left+125;
     UIForm[Path2+'menu'].Top:= UIForm[Path].Top-355;
+    TEXPBar.Instance.ReDraw;
   end;
 
 end;

@@ -23,7 +23,15 @@ type
   end;
 
   TEXPBar = class(TAForm)
+  public
+    TargetTexture: TTexture;
+    PosX: Integer;
+    Exp: int64;
+    Percent: Double;
+    procedure ReDraw(ReDumpData: Boolean = False);
     procedure Paint(DC: HDC); override;
+    class var
+      Instance: TEXPBar;
   end;
 
 implementation
@@ -33,25 +41,52 @@ uses
 
 procedure TEXPBar.Paint(DC: HDC);
 begin
-  var x := 0;
   var y := ClientTop + displaysize.Y - 70;
-  var Path := 'UI.wz/StatusBar3.img/mainBar/EXPBar/';
-  var Entry: TWZIMGEntry;
-  case DisplaySize.X of
-    800..1023:
-      Entry := GetImgEntry(Path + '800');
-    1024..1279:
-      Entry := GetImgEntry(Path + '1024');
-    1280..1359:
-      Entry := GetImgEntry(Path + '1280');
-    1360..1919:
-      Entry := GetImgEntry(Path + '1366');
-    1920..4000:
-      Entry := GetImgEntry(Path + '1920');
-  end;
-  Engine.Canvas.Draw(UIImages[Entry.Get('layer:back')], x, y);
-  Engine.Canvas.Draw(UIImages[Entry.Get('layer:gauge')], x + 15, y + 2);
-  Engine.Canvas.Draw(UIImages[Entry.Get('layer:cover')], x + 97, y + 1);
+  Engine.Canvas.Draw(TargetTexture, 0, y);
+
+end;
+
+procedure TEXPBar.ReDraw(ReDumpData: Boolean = False);
+begin
+  var Entry := GetImgEntry('UI.wz/StatusBar3.img/mainBar/EXPBar');
+  if ReDumpData then
+    DumpData(Entry, UIData, UIImages);
+  var Entry1: TWzIMGEntry;
+  GameCanvas.DrawTarget(TargetTexture, 1920, 25,
+    procedure
+    begin
+
+      case DisplaySize.X of
+        800..1023:
+          Entry1 := Entry.Get('800');
+        1024..1279:
+          Entry1 := Entry.Get('1024');
+        1280..1359:
+          Entry1 := Entry.Get('1280');
+        1360..1919:
+          Entry1 := Entry.Get('1366');
+        1920..4000:
+          Entry1 := Entry.Get('1920');
+      end;
+      Engine.Canvas.Draw(UIImages[Entry1.Get('layer:back')], 0, 0,TBlendingeffect.Copy);
+      Engine.Canvas.Draw(UIImages[Entry1.Get('layer:gauge')], 15, 2);
+      Engine.Canvas.Draw(UIImages[Entry1.Get('layer:cover')], 97, 1);
+
+      var EXPStr := Exp.ToString + '[' + Percent.ToString + '%' + ']';
+      var Middle := (DisplaySize.X div 2)- ((Length(EXPStr) * 7) div 2);
+      PosX:=0;
+      for var I := 1 to Length(EXPStr) do
+      begin
+        var Char := MidStr(EXPStr, I, 1);
+        var Entry2 := Entry.Get('number/' + Char);
+        var W := Entry2.Canvas.Width;
+        var OffsetY:=Entry2.Get('origin').Vector.Y;
+        PosX := posX + W;
+        GameCanvas.Draw(UIImages[Entry2], {x+} PosX - W + Middle,-OffsetY+ 1{ y});
+      end;
+
+    end);
+
 end;
 
 procedure TStatus.Paint(DC: HDC);
@@ -153,7 +188,8 @@ begin
   CreateImage(Path + 'backgrnd/1', 1, 120, 0, 30);
   CreateImage(Path + 'backgrnd/2', 1, 1, 0, 150);
   CreateImage(Path + 'title/character', 1, 1, 0, 0);
-  CreateButtons(Path + 'character', ['button:character', 'button:Stat', 'button:Skill', 'button:Equip', 'button:Item']);
+  CreateButtons(Path + 'character', ['button:character', 'button:Stat', 'button:Skill',
+    'button:Equip', 'button:Item']);
   //community
   CreateEmptyForm(Path + 'title/community', 680, 585, 100, 120);
   CreateImage(Path + 'backgrnd/0', 1, 1, 0, 0);
@@ -178,14 +214,16 @@ begin
     'button:MonsterCollection', 'button:auction', 'button:battleStats', 'button:achievement',
     'button:Help', 'button:Claim', 'button:Fishing']);
 
-  DumpData(GetImgEntry('UI.wz/StatusBar3.img/mainBar/EXPBar'), UIData, UIImages);
-  var EXPBar := TExpBar.Create(UIEngine.Root);
-  with EXPBar do
+  TEXPBar.Instance := TExpBar.Create(UIEngine.Root);
+  with TEXPBar.Instance do
   begin
     Width := 0;
     Height := 0;
     Left := -400 + 1000;
     Top := 60 + 1000;
+    Exp := 248976301855987123;
+    Percent := 99.54;
+    Redraw(True);
   end;
   HideForms(['character', 'menu', 'event', 'setting', 'community']);
   var PathButton := 'UI.wz/StatusBar3.img/mainBar/menu/button:';
@@ -221,7 +259,7 @@ begin
       UIForm[Path].Visible := not UIForm[Path].Visible;
     end;
 
-   UIButton[PathButton + 'Menu'].OnMouseDown :=
+  UIButton[PathButton + 'Menu'].OnMouseDown :=
     procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
     begin
       const Path = 'UI.wz/StatusBar3.img/mainBar/submenu/title/menu';
