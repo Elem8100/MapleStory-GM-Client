@@ -8,17 +8,20 @@ interface
 {$IFEND}
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, ToolWin, ComCtrls, AdvGroupBox,
-  AdvToolBtn, ToolPanels, FolderDialog, AdvGrid, Grids, BaseGrid, WZArchive, WZDirectory,
-  Generics.Collections, WZIMGFile, AdvObj, KeyHandler, WZReader, StrUtils, PngImage, Jpeg, {, Reactor,}
+  PXT.Types, Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  FolderDialog, Vcl.Grids, AdvObj, BaseGrid, AdvGrid, Vcl.ComCtrls, Vcl.StdCtrls, Vcl.Buttons,
+  scControls, scExtControls, Vcl.Controls, AdvGroupBox, Vcl.ExtCtrls, ToolPanels, Vcl.Forms,
+  Vcl.Dialogs, ToolWin, AdvToolBtn, WZArchive, WZDirectory, Generics.Collections, WZIMGFile,
+  KeyHandler, WZReader, StrUtils, PngImage, Jpeg, {, Reactor,}
   Footholds, bass, BassHandler, MapPortal, AdvUtil, Mob2, Npc, {UI}
   MapleCharacter, {Boss,} Vectors2px, AbstractTextures, AbstractDevices, AbstractCanvas,
-  AsphyreTimer, AsphyreSprite, AsphyreKeyboard, AsphyreFontsAlt, DirectInput, AsphyreFactory,
-  DX9Providers, AsphyreTypes, Global, DX9Textures, AsphyreRenderTargets, LockRenderTarget, MapleMap,
-  WzUtils, System.Types, Vcl.Buttons, scControls, scExtControls;
+  AsphyreTimer, PXT.Sprites, AsphyreKeyboard, AsphyreFontsAlt, DirectInput, AsphyreFactory,
+  DX9Providers, AsphyreTypes, Global, AsphyreRenderTargets, LockRenderTarget, MapleMap, WzUtils,
+  System.Types, PXT.Graphics, PXT.Headers;
 
 type
+  TScreenMode = (smNormal, smScale, smFullScreen);
+
   TMainForm = class(TForm)
     LoadMapButton: TButton;
     AdvToolPanel1: TAdvToolPanel;
@@ -59,11 +62,11 @@ type
     NickNameButton: TSpeedButton;
     LabelRingButton: TSpeedButton;
     PetButton: TSpeedButton;
+    FamiliarButton: TSpeedButton;
     SpeedButton5: TSpeedButton;
-    SpeedButton6: TSpeedButton;
-    SpeedButton7: TSpeedButton;
+    OptionButton: TSpeedButton;
     AndroidButton: TSpeedButton;
-    procedure FormCreate(Sender: TObject);
+    ScreeenSetButton: TSpeedButton;
     procedure LoadMapButtonClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure GridClickCell(Sender: TObject; ARow, ACol: Integer);
@@ -102,24 +105,24 @@ type
     procedure FamiliarButtonClick(Sender: TObject);
     procedure PetButtonClick(Sender: TObject);
     procedure SpeedButton5Click(Sender: TObject);
-    procedure SpeedButton6Click(Sender: TObject);
-    procedure SpeedButton7Click(Sender: TObject);
+    procedure OptionButtonClick(Sender: TObject);
     procedure AndroidButtonClick(Sender: TObject);
+    procedure ScreeenSetButtonClick(Sender: TObject);
   private
     OldX, OldY: Integer;
     MoveOn: Boolean;
-    LoadWorldMapDone: Boolean;
     CircleList: TList<TShape>;
-    procedure OnDeviceCreate(Sender: TObject; Param: Pointer; var Handled: Boolean);
+    LoadWorldMapDone: Boolean;
+    HasShow: Boolean;
+    MonitorWidth, MonitorHeight: Integer;
     procedure TimerEvent(Sender: TObject);
-    procedure RenderEvent(Sender: TObject);
-    procedure RenderAvatar(Sender: TObject);
-    procedure RenderAvatarPanel(Sender: TObject);
+    procedure RenderEvent;
     procedure CirCleMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     { Private declarations }
   public
-    StringIDs: TDictionary<string, string>;
-
+    ScreenMode: TScreenMode;
+    FullScreenTexture: TTexture;
+    procedure CreateTexture(var Texture: TTexture; Width, Height: Integer);
     { Public declarations }
   end;
 
@@ -129,18 +132,19 @@ var
 implementation
 
 uses
-  MobFormUnit, SaveMapFormUnit, ImageInfoUnit, RenderFormUnit, MapBack, MobInfo, AvatarFormUnit,
-  ShowOptionUnit, Tools, NpcFormUnit, ChairformUnit, MorphFormUnit, MedalTagFormUnit,
-  NickNameTagFormUnit, DamageSkinFormUnit, WorldMapFormUnit, CashFormUnit, TamingMobFormUnit,
-  NameTag, MapleEffect, TamingMob, MapleChair, LabelRingFormUnit, PetFormUnit, Pet, FamiliarFormUnit,
-  MonsterFamiliar, SkillFormUnit, Skill, OptionsFormUnit, AndroidFormUnit, Android;
+  MobFormUnit, SaveMapFormUnit, ImageInfoUnit, RenderFormUnit, MapBack, MobInfo, ShowOptionUnit,
+  Tools, NpcFormUnit, ChairformUnit, MorphFormUnit, MedalTagFormUnit, NickNameTagFormUnit,
+  DamageSkinFormUnit, WorldMapFormUnit, CashFormUnit, TamingMobFormUnit, NameTag, MapleEffect,
+  TamingMob, MapleChair, LabelRingFormUnit, PetFormUnit, Pet, FamiliarFormUnit, MonsterFamiliar,
+  SkillFormUnit, Skill, OptionsFormUnit, AvatarFormUnit, AndroidFormUnit, Android, MiniMap,
+  ACtrlEngine, SetScreenFormUnit, UI.Utils,acontrols,Ui.Statusbar3;
 {$R *.dfm}
 
 procedure TMainForm.FamiliarButtonClick(Sender: TObject);
 begin
   if (not HasImgFile('String.wz/FamiliarSkill.img')) and (not HasImgFile('String.wz/Familiar.img')) then
   begin
-    MessageDlg('Old Wz not supported', mtInformation, [mbOK], 0);
+    MessageDlg('舊版wz不支援', mtInformation, [mbOK], 0);
     Exit;
   end
   else
@@ -152,37 +156,145 @@ begin
   ActiveControl := nil;
 end;
 
-procedure TMainForm.FormCreate(Sender: TObject);
+procedure TMainForm.FormDestroy(Sender: TObject);
 begin
+//  FreeAndNil(LockRenderTargets);
+  GameCanvas.Free;
+  //FreeAndNil(GameDevice);
+//  FreeAndNil(GameTargets);
+  FreeAndNil(SpriteEngine);
+  FreeAndNil(Keyboard);
+  BackEngine[0].Free;
+  BackEngine[1].Free;
+  TFootholdTree.This.Free;
+  Keyboard.Free;
+ // FreeAndNil(FontsAlt);
+  FreeAndNil(CharData);
+  MapWz.Free;
+  if Map2Wz <> nil then
+    Map2Wz.Free;
+  if Map001Wz <> nil then
+    Map001Wz.Free;
+  if Map002Wz <> nil then
+    Map002Wz.Free;
+  NPCWZ.Free;
+  StringWZ.Free;
+  UIWZ.Free;
+  SkillWZ.Free;
+  if Skill001Wz <> nil then
+    Skill001Wz.Free;
+  MobWZ.Free;
+  if Mob2WZ <> nil then
+    Mob2WZ.Free;
+  if Mob001WZ <> nil then
+    Mob001WZ.Free;
+
+  ItemWZ.Free;
+  CharacterWZ.Free;
+  EffectWz.Free;
+  ReactorWz.Free;
+  SoundWZ.Free;
+  MorphWz.Free;
+  BaseWZ.Free;
+  EtcWZ.Free;
+  Images.Free;
+  EquipImages.Free;
+  EquipData.Free;
+  WzData.Free;
+  CharData.Free;
+  Sounds.Free;
+  Sound2Wz.Free;
+  Data.Free;
+  CircleList.Free;
+  // DropList
+
+  //ReportMemoryLeaksOnShutdown := True;
+end;
+
+procedure TMainForm.FormKeyDown(Sender: TObject; var KEY: Word; Shift: TShiftState);
+begin
+
+  if (BorderStyle = bsNone) and (KEY = VK_ESCAPE) then
+  begin
+    BorderStyle := bsSingle;
+    RenderForm.Width := DisplaySize.X;
+    RenderForm.Height := DisplaySize.Y;
+    RenderForm.Left := 217;
+    RenderForm.Top := 78;
+    Width := DisplaySize.X + 232;
+    Height := DisplaySize.Y + 143;
+    Left := (Screen.Width - Width) div 2;
+    Top := (Screen.Height - Height) div 2;
+    Shape1.Width := displaySize.X + 4;
+    Shape1.Height := displaySize.Y + 4;
+    AdvGroupBox2.Width := displaySize.X + 5;
+    PageControl1.Height := displaySize.Y - 130;
+    ScreenMode := smNormal;
+  end;
+  if KEY = VK_MENU then
+    KEY := 0;
+
+end;
+
+procedure TMainForm.FormMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+  MoveOn := True;
+  OldX := X;
+  OldY := Y;
+end;
+
+procedure TMainForm.FormMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
+begin
+  if MoveOn then
+  begin
+    Left := (Left - OldX) + X;
+    Top := (Top - OldY) + Y;
+  end;
+end;
+
+procedure TMainForm.FormMouseUp;
+begin
+  MoveOn := False;
+end;
+
+procedure TMainForm.FormShow(Sender: TObject);
+begin
+  if HasShow then
+    Exit;
+  HasShow := True;
+  RenderForm.Show;
+  RenderForm.Parent := MainForm;
   Randomize;
-  DisplaySize := Point(800, 600);
+  DisplaySize := Point2i(1024, 768);
   GameMode := gmPlay;
-  // Indicate that we're using DirectX 9
-  Factory.UseProvider(idDirectX9);
-  // Create Asphyre components in run-time.
-  GameDevice := Factory.CreateDevice();
-  GameCanvas := Factory.CreateCanvas();
-  GameTargets := TAsphyreRenderTargets.Create();
+
+  FDevice := DeviceInit(TDeviceBackend.Default, RenderForm.Handle, Point2i(1024, 768), PXT.Types.TPixelFormat.BGRA8,
+   PXT.Types.TPixelFormat.Unknown, 0, DeviceAttributes([TDeviceAttribute.VSync]));
+  GameDevice2 := DeviceInitShared(FDevice, AvatarForm.Panel1.Handle, Point2i(260, 200),PXT.Types.TPixelFormat.BGRA8,
+   PXT.Types.TPixelFormat.Unknown, 0, DeviceAttributes([TDeviceAttribute.VSync]));
+  GameDevice2.Resize(Point2i(260, 200));
+  if Screen.MonitorCount > 0 then
+  begin
+    MonitorWidth := Screen.Monitors[0].Width;
+    MonitorHeight := Screen.Monitors[0].Height;
+  end;
+
+  GameCanvas.Create(FDevice);
+  CreateTexture(AvatarPanelTexture, 4096, 4096);
+  GameFont := TextRendererInit(GameCanvas, Point2i(128, 128));
+  GameFont.FontSettings := TFontSettings.Create('Segoe UI', 12.0, TFontWeight.Thin);
+ // GameTargets := TAsphyreRenderTargets.Create();
   Keyboard := TAsphyreKeyboard.Create(MainForm);
   Keyboard.Foreground := False;
-  GameDevice.WindowHandle := Self.Handle;
-  GameDevice.Size := DisplaySize;
-  GameDevice.Windowed := True;
-  GameDevice.VSync := True;
-  GameCanvas.MipMapping := True;
-  GameCanvas.Antialias := True;
-  GameDevice.VertexProcessing := vptSoftware;
-  EventDeviceCreate.Subscribe(OnDeviceCreate, 0);
+  UIEngine := TControlEngine.Create(MainForm, FDevice, GameCanvas);
+  UIEngine.ImageLib := UIImages;
+  UIEngine.Parent := RenderForm;
+
   CircleList := TList<TShape>.Create;
-  // Attempt to initialize Asphyre device.
-  if (not GameDevice.Initialize()) then
-  begin
-    ShowMessage('Failed to initialize Asphyre device.');
-    Application.Terminate();
-    Exit;
-  end;
-  Images := TObjectDictionary<TWZIMGEntry, TDX9LockableTexture>.Create([doOwnsValues]);
-  EquipImages := TObjectDictionary<TWZIMGEntry, TDX9LockableTexture>.Create([doOwnsValues]);
+
+  Images := TDictionary<TWZIMGEntry, TTexture>.Create;
+  EquipImages := TDictionary<TWZIMGEntry, TTexture>.Create;
+
   SpriteEngine := TSpriteEngine.Create(nil);
   SpriteEngine.Canvas := GameCanvas;
   SpriteEngine.VisibleWidth := 800;
@@ -198,8 +310,9 @@ begin
   // Timer.OnProcess := ProcessEvent;
   Timer.Speed := 60.0;
   Timer.MaxFPS := 4000;
-  Timer.Enabled := True;
+ // Timer.Enabled := True;
   TWZReader.EncryptionIV := 0;
+
   TTimers.AddTimer('FreeSounds');
   TTimers.AddTimer('DropMobTicks');
 
@@ -231,140 +344,8 @@ begin
   ComboBox1.ItemIndex := 1;
   Application.HintPause := 0;
   Application.HintHidePause := 5010;
-end;
-
-procedure TMainForm.FormDestroy(Sender: TObject);
-begin
-  FreeAndNil(LockRenderTargets);
-  FreeAndNil(GameCanvas);
-  FreeAndNil(GameDevice);
-  FreeAndNil(GameTargets);
-  FreeAndNil(SpriteEngine);
-  FreeAndNil(Keyboard);
-  BackEngine[0].Free;
-  BackEngine[1].Free;
-  TFootholdTree.This.Free;
-  Keyboard.Free;
-  FreeAndNil(FontsAlt);
-  FreeAndNil(CharData);
-  MapWz.Free;
-  if Map2Wz <> nil then
-    Map2Wz.Free;
-  if Map001Wz <> nil then
-    Map001Wz.Free;
-  if Map002WZ <> nil then
-    Map002WZ.Free;
-  NPCWZ.Free;
-  StringWZ.Free;
-  UIWZ.Free;
-  SkillWZ.Free;
-  if Skill001Wz <> nil then
-    Skill001Wz.Free;
-  MobWZ.Free;
-  if Mob2WZ <> nil then
-    Mob2WZ.Free;
-  if Mob001WZ <> nil then
-    Mob001WZ.Free;
-  ItemWZ.Free;
-  CharacterWZ.Free;
-  EffectWz.Free;
-  ReactorWz.Free;
-  SoundWZ.Free;
-  MorphWz.Free;
-  BaseWZ.Free;
-  EtcWZ.Free;
-  Images.Free;
-  EquipImages.Free;
-  EquipData.Free;
-  WzData.Free;
-  CharData.Free;
-  Sounds.Free;
-  Sound2Wz.Free;
-  Data.Free;
-  CircleList.Free;
-  // DropList
-  StringIDs.Free;
-
-  //ReportMemoryLeaksOnShutdown := True;
-end;
-
-procedure TMainForm.OnDeviceCreate(Sender: TObject; Param: Pointer; var Handled: Boolean);
-begin
-  FontsAlt := TAsphyreFontsAlt.Create(Self);
-  FontsAlt.Add();
-  FontsAlt[0].SIZE := 13;
-  FontsAlt[0].Style := [feBold];
-  FontsAlt[0].FontName := 'Tahoma';
-  //
-  FontsAlt.Add();
-  FontsAlt[1].SIZE := 15;
-  FontsAlt[1].FontName := 'Tahoma';
-  //
-  FontsAlt.Add();
-  FontsAlt[2].SIZE := 12;
-  FontsAlt[2].FontName := 'Tahoma';
-  //
-  FontsAlt.Add();
-  FontsAlt[3].SIZE := 13;
-  FontsAlt[3].FontName := 'Tahoma';
-   //
-  FontsAlt.Add();
-  FontsAlt[4].SIZE := 15;
-  FontsAlt[4].Style := [feBold];
-  FontsAlt[4].FontName := 'Tahoma';
-
-  FontsAlt.UpdateAll;
-
-end;
-
-procedure TMainForm.FormKeyDown(Sender: TObject; var KEY: Word; Shift: TShiftState);
-begin
-  if (GameDevice.Windowed = False) and (KEY = VK_ESCAPE) then
-  begin
-    FontsAlt.UpdateAll;
-    GameDevice.Windowed := True;
-    Width := DisplaySize.X;
-    Height := DisplaySize.Y;
-    Width := DisplaySize.X + 232;
-    Height := DisplaySize.Y + 143;
-    Left := (Screen.Width - Width) div 2;
-    Top := (Screen.Height - Height) div 2;
-    TNpc.ReDrawTarget := True;
-    TMedalTag.ReDraw;
-    TNickNameTag.ReDraw;
-    TLabelRingTag.ReDraw;
-    TPetNameTag.ReDraw;
-    TFamiliarNameTag.ReDraw;
-    TAndroidNameTag.ReDraw;
-  end;
-  if KEY = VK_MENU then
-    KEY := 0;
-end;
-
-procedure TMainForm.FormMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-begin
-  MoveOn := True;
-  OldX := X;
-  OldY := Y;
-end;
-
-procedure TMainForm.FormMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
-begin
-  if MoveOn then
-  begin
-    Left := (Left - OldX) + X;
-    Top := (Top - OldY) + Y;
-  end;
-end;
-
-procedure TMainForm.FormMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-begin
-  MoveOn := False;
-end;
-
-procedure TMainForm.FormShow(Sender: TObject);
-begin
   ComboBox1.OnChange(Self);
+
 end;
 
 function Timex: Real;
@@ -451,12 +432,67 @@ begin
       SpriteEngine.WorldY := TMap.Top;
   end;
 
-  GameDevice.Render(RenderForm.Handle, RenderEvent, $000000);
+  case ScreenMode of
+    smScale:
+      begin
+        FullScreenTexture.Clear(FloatColor($0));
+        FullScreenTexture.BeginScene;
+        GameCanvas.BeginScene;
+        RenderEvent;
+        GameCanvas.EndScene;
+        FullScreenTexture.EndScene;
+
+        FDevice.BeginScene;
+        FDevice.Clear([TClearLayer.Color], FloatColor($0));
+        GameCanvas.BeginScene;
+        GameCanvas.DrawStretch(FullScreenTexture, 0, 0, RenderForm.ClientWidth, RenderForm.ClientHeight);
+        GameCanvas.EndScene;
+        FDevice.EndScene;
+      end;
+    smFullScreen:
+      begin
+        FullScreenTexture.Clear(FloatColor($0));
+        FullScreenTexture.BeginScene;
+        GameCanvas.BeginScene;
+        RenderEvent;
+        GameCanvas.EndScene;
+        FullScreenTexture.EndScene;
+
+        FDevice.BeginScene;
+        FDevice.Clear([TClearLayer.Color], FloatColor($0));
+        GameCanvas.BeginScene;
+        GameCanvas.DrawStretch(FullScreenTexture, 0, 0, MonitorWidth, MonitorHeight);
+        GameCanvas.EndScene;
+        FDevice.EndScene;
+      end;
+    smNormal:
+      begin
+        FDevice.BeginScene;
+        FDevice.Clear([TClearLayer.Color], FloatColor($0));
+        GameCanvas.BeginScene;
+        RenderEvent;
+        GameCanvas.EndScene;
+        FDevice.EndScene;
+      end;
+  end;
 
   if AvatarForm.Active then
   begin
-    GameDevice.RenderTo(RenderAvatar, 0, True, AvatarTargets[TPlayer.AvatarPanelIndex]);
-    GameDevice.Render(AvatarForm.Panel1.Handle, RenderAvatarPanel, $FFFFFFFF);
+    AvatarPanelTexture.Clear(FloatColor($FFFFFFFF));
+    AvatarPanelTexture.BeginScene;
+    GameCanvas.BeginScene;
+    SpriteEngine.DrawEx(['TPlayer', 'TItemEffect', 'TSetEffect']);
+    GameCanvas.EndScene;
+    AvatarPanelTexture.EndScene;
+
+    var WX := Round(Player.X - SpriteEngine.WorldX - 130 + TMapleChair.BodyRelMove.X - TTamingMob.Navel.X);
+    var WY := Round(Player.y - SpriteEngine.WorldY - 160 + TMapleChair.BodyRelMove.Y - TTamingMob.Navel.Y);
+    GameDevice2.BeginScene;
+    GameDevice2.Clear([TClearLayer.Color], FloatColor($0));
+    GameCanvas.BeginScene;
+    GameCanvas.DrawPortion(AvatarPanelTexture, 0, 0, WX, WY, WX + 280, WY + 200, False, $FFFFFFFF);
+    GameCanvas.EndScene;
+    GameDevice2.EndScene;
   end;
 
   if (TMapleChair.IsUse) then
@@ -469,7 +505,48 @@ begin
 
 end;
 
-procedure TMainForm.CirCleMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X: Integer; Y: Integer);
+procedure TMainForm.RenderEvent;
+begin
+  TTimers.DoTick(1000, 'FreeSounds',
+    procedure
+    begin
+      for var Sound in Sounds do
+        if not Sound.IsPlaying then
+          Sounds.Remove(Sound);
+    end);
+
+  if TMap.FirstLoad then
+    TTimers.DoTick(7500, 'DropMobTicks',
+      procedure
+      begin
+        var Count: Integer := 0;
+        for var Iter in SpriteEngine.SpriteList do
+          if Iter is TMob then
+            Inc(Count);
+        if Count < (TMap.WzMobCount div 2) then
+          TMob.CreateMapMobs;
+      end);
+
+  BackEngine[0].Draw;
+  SpriteEngine.Draw;
+  BackEngine[1].Draw;
+
+ // if TMap.ShowFPS then
+  GameFont.Draw(Point2f(10, 10), 'FPS: ' + IntToStr(Timer.FrameRate), cRGB1(255, 0, 0));
+    //FontsAlt[0].TextOut('FPS: ' + IntToStr(Timer.FrameRate), 10, 10, cRGB1(255, 0, 0));
+ // if TMap.ShowMobInfo then
+   // GameCanvas.Draw(GameTargetMobInfo[0], 0, 20, 1, False, 255, 255, 255, 255);
+  if TMap.FadeScreen.DoFade then
+    GameCanvas.FillRect(FloatRect(0, 0, DisplaySize.X, DisplaySize.Y), cRGB1(0, 0, 0, TMap.FadeScreen.AlphaCounter));
+  if TMap.ShowFoothold then
+    TFootholdTree.This.DrawFootHolds;
+  if TMap.ShowMusic then
+    GameFont.Draw(Point2f(10, 50), '音樂: ' + TMap.BgmPath, cRGB1(255, 0, 0));
+    //FontsAlt[4].TextOut('音樂: ' + TMap.BgmPath, 10, 10, cRGB1(255, 0, 0));
+  UIEngine.Render(Canvas.Handle);
+end;
+
+procedure TMainForm.CirCleMouseDown;
 var
   Portals: TPortalInfo;
   PX, PY: Integer;
@@ -484,7 +561,7 @@ begin
     Exit;
   WorldMapForm.Canvas.Font.Size := 18;
   WorldMapForm.Canvas.TextOut(150, 150, 'Loading...');
-
+  TMap.ReLoad := True;
   TMap.ID := ID;
   TMap.LoadMap(TMap.ID);
   if not SaveMapButton.Enabled then
@@ -526,7 +603,6 @@ begin
     AndroidPlayer.Y := Player.Y;
     AndroidPlayer.JumpState := jsFalling;
   end;
-
   SpriteEngine.WorldX := PX - DisplaySize.X / 2;
   SpriteEngine.WorldY := PY - (DisplaySize.Y / 2) - 100;
   if SpriteEngine.WorldX > TMap.Right then
@@ -592,8 +668,9 @@ begin
     Circle.Shape := stCircle;
     Circle.Brush.Color := clLime;
     Circle.ShowHint := True;
-    if StringIDs.ContainsKey(ID) then
-      Circle.Hint := ID + '-' + StringIDs[ID];
+
+    if TMap.MapNameList.ContainsKey(ID) then
+      Circle.Hint := ID + '-' + TMap.MapNameList[ID].ID;
 
     Circle.Width := 23;
     Circle.Height := 25;
@@ -602,61 +679,6 @@ begin
     CircleList.Add(Circle);
   end;
   ActiveControl := nil;
-end;
-
-procedure TMainForm.RenderEvent(Sender: TObject);
-begin
-  TTimers.DoTick(1000, 'FreeSounds',
-    procedure
-    begin
-      for var Sound in Sounds do
-        if not Sound.IsPlaying then
-          Sounds.Remove(Sound);
-    end);
-
-  if TMap.FirstLoad then
-    TTimers.DoTick(7500, 'DropMobTicks',
-      procedure
-      begin
-        var Count: Integer := 0;
-        for var Iter in SpriteEngine.SpriteList do
-          if Iter is TMob then
-            Inc(Count);
-        if Count < (TMap.WzMobCount div 2) then
-          TMob.CreateMapMobs;
-      end);
-
-  BackEngine[0].Draw;
-  SpriteEngine.Draw;
-  BackEngine[1].Draw;
-
-  if TMap.ShowFPS then
-    FontsAlt[0].TextOut('FPS: ' + IntToStr(Timer.FrameRate), 10, 10, cRGB1(255, 0, 0));
-  if TMap.ShowMobInfo then
-    GameCanvas.Draw(GameTargetMobInfo[0], 0, 20, 1, False, 255, 255, 255, 255);
-  if TMap.FadeScreen.DoFade then
-    GameCanvas.FillRect(0, 0, DisplaySize.X, DisplaySize.Y, cRGB1(0, 0, 0, TMap.FadeScreen.AlphaCounter));
-  if TMap.ShowFoothold then
-    TFootholdTree.This.DrawFootHolds;
-  if TMap.ShowMusic then
-    FontsAlt[4].TextOut('Bgm: ' + TMap.BgmPath, 10, 10, cRGB1(255, 0, 0));
-
-end;
-
-procedure TMainForm.RenderAvatar(Sender: TObject);
-begin
-  SpriteEngine.DrawEx(['TPlayer', 'TItemEffect', 'TSetEffect']);
-end;
-
-procedure TMainForm.RenderAvatarPanel(Sender: TObject);
-begin
-  var RX := DisplaySize.X / 260; // panel w
-  var RY := DisplaySize.Y / 200;
-  var WX := Round(Player.X - SpriteEngine.WorldX - 130 + TMapleChair.BodyRelMove.X - TTamingMob.Navel.X);
-  var WY := Round(Player.y - SpriteEngine.WorldY - 160 + TMapleChair.BodyRelMove.Y - TTamingMob.Navel.Y);
-
-  GameCanvas.UseTexturePx(AvatarTargets[TPlayer.AvatarPanelIndex], pxBounds4(WX, WY, 4096, 4096));
-  GameCanvas.TexMap(pBounds4s(0, 0, 4096 * RX, 4096 * RY, 1), clWhite4);
 end;
 
 procedure TMainForm.LabelRingButtonClick(Sender: TObject);
@@ -677,6 +699,7 @@ begin
   T := GetTickCount;
 
   TMap.LoadMap(TMap.ID);
+
   for Portals in TMapPortal.PortalList do
     if (Portals.PortalType = 0) then
     begin
@@ -689,7 +712,6 @@ begin
   Below := TFootholdTree.This.FindBelow(Point(PX, PY - 2), BelowFH);
   Player.FH := BelowFH;
   Player.JumpState := jsFalling;
-
   if TPet.Pet <> nil then
   begin
     TPet.Pet.X := Player.x;
@@ -708,7 +730,6 @@ begin
     AndroidPlayer.Y := Player.Y;
     AndroidPlayer.JumpState := jsFalling;
   end;
-
   SpriteEngine.WorldX := PX - DisplaySize.X / 2;
   SpriteEngine.WorldY := PY - (DisplaySize.Y / 2) - 100;
   if SpriteEngine.WorldX > TMap.Right then
@@ -720,7 +741,7 @@ begin
   if SpriteEngine.WorldY < TMap.Top then
     SpriteEngine.WorldY := TMap.Top;
   TMap.SaveMapID := TMap.ID;
- // Caption := Variant(GetTickCount - T);
+  Caption := Variant(GetTickCount - T);
 
   Timer.Enabled := True;
 
@@ -732,7 +753,17 @@ begin
     OpenMSFolder.Enabled := False;
     ComboKey.Enabled := False;
   end;
-
+  {
+  var Dir := 'UI/StatusBar2.img/mainBar/';
+  CreateForm(Dir + 'quickSlot/quickSlot', 512, 600, False);
+  uiform['UI/StatusBar2.img/mainBar/quickSlot/quickSlot'].Enabled := false;
+  uiform['UI/StatusBar2.img/mainBar/quickSlot/quickSlot'].OnMouseDown :=
+    procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
+    begin
+    //
+    end;
+    }
+    tstatus.CreateUI;
   ActiveControl := nil;
 end;
 
@@ -748,7 +779,7 @@ end;
 
 procedure TMainForm.OpenMSFolderClick(Sender: TObject);
 var
-  ID, Name, Path: string;
+  ID, MapName, StreetName, Path: string;
   Iter, Iter2: TWZIMGEntry;
   Dir: TWZDirectory;
   Img: TWZFile;
@@ -769,6 +800,8 @@ begin
         FreeAndNil(MobWZ);
       if Mob2WZ <> nil then
         FreeAndNil(Mob2WZ);
+      if Mob001WZ <> nil then
+        FreeAndNil(Mob001WZ);
       if NPCWZ <> nil then
         FreeAndNil(NPCWZ);
       if StringWZ <> nil then
@@ -791,17 +824,17 @@ begin
         Map2Wz := TWZArchive.Create(Path + '\Map2.wz');
       if FileExists(Path + '\Map001.wz') then
         Map001Wz := TWZArchive.Create(Path + '\Map001.wz');
-      if FileExists(Path + '\Map002.wz') then
-      begin
-        Map002Wz := TWZArchive.Create(Path + '\Map002.wz');
-        TMap.Has002Wz := True;
-      end;
 
       MobWZ := TWZArchive.Create(Path + '\Mob.wz');
       if FileExists(Path + '\Mob2.wz') then
         Mob2WZ := TWZArchive.Create(Path + '\Mob2.wz');
       if FileExists(Path + '\Mob001.wz') then
         Mob001WZ := TWZArchive.Create(Path + '\Mob001.wz');
+      if FileExists(Path + '\Map002.wz') then
+      begin
+        Map002Wz := TWZArchive.Create(Path + '\Map002.wz');
+        TMap.Has002Wz := True;
+      end;
 
       NPCWZ := TWZArchive.Create(Path + '\Npc.wz');
       SoundWZ := TWZArchive.Create(Path + '\Sound.wz');
@@ -827,19 +860,19 @@ begin
       TItemEffect.LoadList;
       TTamingMob.LoadSaddleList;
 
-      if StringIDs <> nil then
-        StringIDs.Free;
-
-      StringIDs := TDictionary<string, string>.Create;
+      var MapNameRec: TMapNameRec;
       for Iter in StringWZ.GetImgFile('Map.img').Root.Children do
         for Iter2 in Iter.Children do
         begin
           ID := Add9(Iter2.Name);
-          Name := Iter2.Get('mapName', '');
-          StringIDs.AddOrSetValue(ID, Name);
+          MapNameRec.ID := ID;
+          MapNameRec.StreetName := Iter2.Get('streetName', '');
+          MapNameRec.MapName := Iter2.Get('mapName', '');
+          TMap.MapNameList.AddOrSetValue(ID, MapNameRec);
         end;
       RowCount := -1;
       Grid.BeginUpdate;
+
       var MapDir: TWZDirectory;
 
       if TMap.Has002Wz then
@@ -851,11 +884,11 @@ begin
         for Img in Dir.Files do
         begin
           ID := LeftStr(Img.Name, 9);
-          if StringIDs.ContainsKey(ID) then
+          if TMap.MapNameList.ContainsKey(ID) then
           begin
             Inc(RowCount);
             Grid.RowCount := RowCount + 1;
-            Grid.Cells[0, RowCount] := ID + '  ' + StringIDs[ID];
+            Grid.Cells[0, RowCount] := ID + '  ' + TMap.MapNameList[ID].MapName;
           end;
         end;
 
@@ -868,28 +901,10 @@ begin
       PageControl1.Enabled := True;
       Grid.Enabled := True;
 
-      FreeAndNil(GameDevice);
-      GameDevice := Factory.CreateDevice();
-      GameDevice.WindowHandle := Self.Handle;
-      GameDevice.Size := DisplaySize;
-      GameDevice.Windowed := True;
-      GameDevice.VSync := True;
-      GameCanvas.MipMapping := True;
-      // GameCanvas.Antialias := True;
-      GameDevice.VertexProcessing := vptSoftware;
-      EventDeviceCreate.Subscribe(OnDeviceCreate, 0);
-      if (not GameDevice.Initialize()) then
-      begin
-        ShowMessage('Failed to initialize Asphyre device.');
-        Application.Terminate();
-        Exit;
-      end;
-      RenderForm.Show;
-      RenderForm.Parent := MainForm;
     end
     else
     begin
-      ShowMessage('wrong folder,  .wz files not found');
+      ShowMessage('資料夾路徑錯誤,  找不到.wz檔案');
     end;
   end;
   ActiveControl := nil;
@@ -920,6 +935,11 @@ end;
 procedure TMainForm.SaveMapButtonClick(Sender: TObject);
 begin
   SaveMapForm.Show;
+end;
+
+procedure TMainForm.ScreeenSetButtonClick(Sender: TObject);
+begin
+  SetScreenForm.Show;
 end;
 
 procedure TMainForm.PicInfoButtonClick(Sender: TObject);
@@ -960,17 +980,24 @@ end;
 
 procedure TMainForm.SpeedButton3Click(Sender: TObject);
 begin
-  FontsAlt.UpdateAll;
-  GameDevice.Windowed := False;
-  TMobInfo.ReDrawTarget;
-  TNpc.ReDrawTarget := True;
-  TNameTag.ReDraw := True;
-  TMedalTag.ReDraw;
-  TNickNameTag.ReDraw;
-  TLabelRingTag.ReDraw;
-  TPetNameTag.ReDraw;
-  TFamiliarNameTag.ReDraw;
-  TAndroidNameTag.ReDraw;
+  //FontsAlt.UpdateAll;
+  //GameDevice.Windowed := False;
+ // TMobInfo.ReDrawTarget;
+
+  if Screen.MonitorCount > 0 then
+  begin
+    BorderStyle := bsNone;
+    Left := Screen.Monitors[0].Left;
+    Top := Screen.Monitors[0].Top;
+    Width := Screen.Monitors[0].Width;
+    Height := Screen.Monitors[0].Height;
+    RenderForm.Left := Left;
+    RenderForm.Top := Top;
+    RenderForm.Width := Width;
+    RenderForm.Height := Height;
+    ScreenMode := smFullScreen;
+  end;
+
   ActiveControl := nil;
 end;
 
@@ -981,15 +1008,10 @@ end;
 
 procedure TMainForm.SpeedButton5Click(Sender: TObject);
 begin
-  FamiliarForm.Show;
-end;
-
-procedure TMainForm.SpeedButton6Click(Sender: TObject);
-begin
   SkillForm.Show;
 end;
 
-procedure TMainForm.SpeedButton7Click(Sender: TObject);
+procedure TMainForm.OptionButtonClick(Sender: TObject);
 begin
   OptionsForm.Show;
 end;
@@ -1014,11 +1036,23 @@ begin
   ChairForm.Show;
 end;
 
+procedure TMainForm.CreateTexture(var Texture: TTexture; Width, Height: Integer);
+begin
+  var Parameters: TTextureParameters;
+  FillChar(Parameters, SizeOf(TTextureParameters), 0);
+  Parameters.Width := Width; //DisplaySize.X;
+  Parameters.Height := Height; //DisplaySize.Y;
+  Parameters.Attributes := TextureDrawable;
+  Parameters.Format :=pxt.types.TPixelFormat.BGRA8;
+  if Texture.Initialized then
+    Texture.Free;
+  Texture := TextureInit(FDevice, Parameters);
+end;
+
 procedure TMainForm.ComboBox1Change(Sender: TObject);
 var
   I: Integer;
 begin
-  FontsAlt.UpdateAll;
 
   var S := Explode('X', ComboBox1.Items[ComboBox1.ItemIndex]);
   DisplaySize.X := S[0].toInteger;
@@ -1039,22 +1073,14 @@ begin
     BackEngine[I].VisibleWidth := DisplaySize.X;
     BackEngine[I].VisibleHeight := DisplaySize.Y;
   end;
-  GameDevice.Size := DisplaySize;
+  CreateTexture(FullScreenTexture, DisplaySize.X, DisplaySize.Y);
+
   TMap.OffsetY := (DisplaySize.Y - 600) div 2;
   TMapBack.ResetPos := True;
-  TNpc.ReDrawTarget := True;
-  TNameTag.ReDraw := True;
-  if Player <> nil then
-  begin
-    TMedalTag.ReDraw;
-    TNickNameTag.ReDraw;
-    TLabelRingTag.ReDraw;
-    TPetNameTag.ReDraw;
-    TFamiliarNameTag.ReDraw;
-    TAndroidNameTag.ReDraw;
-  end;
+
   Left := (Screen.Width - Width) div 2;
   Top := (Screen.Height - Height) div 2;
+  ScreenMode := smNormal;
   ActiveControl := nil;
 end;
 
@@ -1123,17 +1149,44 @@ begin
 
   if Entry <> nil then
   begin
+    TMap.HasMiniMap := True;
     if (TMap.Has002Wz) and (Entry.Get('canvas/_outlink') <> nil) then
     begin
-      var Data: string := Entry.Get('canvas/_outlink').Data;
-      var S: TArray<string> := Data.Split(['/']);
-      Bmp := GetImgEntry('Map002.wz/Map/'+ S[2]+'/'+S[3]+'/'+S[4]+'/'+S[5]).Canvas.DumpBmp
+      if (Entry.Get('canvas/_outlink') <> nil) then
+      begin
+        var Data: string := Entry.Get('canvas/_outlink').Data;
+        var S: TArray<string> := Data.Split(['/']);
+        TMap.MiniMapEntry := GetImgEntry('Map002.wz/Map/' + S[2] + '/' + S[3] + '/' + S[4]);
+        Bmp := TMap.MiniMapEntry.Get('canvas').Canvas.DumpBmp;
+      end
+      else
+      begin
+        TMap.MiniMapEntry := Entry;
+        Bmp := Entry.Get2('canvas').Canvas.DumpBmp;
+      end;
     end
     else
-      Bmp := Entry.Get2('canvas').Canvas.DumpBmp;
+    begin
+      if (Entry.Get('canvas/_outlink') <> nil) then
+      begin
+        var Data: string := Entry.Get('canvas/_outlink').Data;
+        var S: TArray<string> := Data.Split(['/']);
+        TMap.MiniMapEntry := GetImgEntry('Map.wz/Map/' + S[2] + '/' + S[3] + '/' + S[4]);
+        Bmp := TMap.MiniMapEntry.Get('canvas').Canvas.DumpBmp;
+      end
+      else
+      begin
+        TMap.MiniMapEntry := Entry;
+        Bmp := Entry.Get2('canvas').Canvas.DumpBmp;
+      end;
+    end;
     Image1.Picture.Assign(Bmp);
+    TMap.MiniMapWidth := Bmp.Width;
+    TMap.MiniMapHeight := Bmp.Height;
     Bmp.Free;
-  end;
+  end
+  else
+    TMap.HasMiniMap := False;
   ActiveControl := nil;
 end;
 
