@@ -5,18 +5,18 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Controls, Forms, Dialogs, ZGameFonts, Graphics,
   AbstractTextures, ACtrlImages, StdCtrls, WZIMGFile, WZArchive, StrUtils, Generics.Collections,
-  DX9Textures, WzUtils, AsphyreRenderTargets, AControls, ACtrlEngine, ACtrlForms, ACtrlButtons,
-  Global;
+  WzUtils, AsphyreRenderTargets, AControls, ACtrlEngine, ACtrlForms, ACtrlButtons,
+  Global,PXT.Canvas,PXT.Graphics,PXT.Types;
 
 type
   TMiniMap = class(TAForm)
   public
-    Targets: TAsphyreRenderTargets;
+    TargetTexture: TTexture;
     TargetIndex: Integer;
     PicWidth, PicHeight: Integer;
     OffX, OffY, cx, cy: Integer;
     PlayerMark: TWZIMGEntry;
-    procedure TargetEvent(Sender: TObject);
+    procedure TargetEvent;
     procedure Paint(DC: HDC); override;
     procedure ReDraw;
     constructor Create(AOwner: TComponent); override;
@@ -24,14 +24,13 @@ type
 
 var
   AMiniMap: TMiniMap;
-  UIImages: TObjectDictionary<TWZIMGEntry, TDX9LockableTexture>;
-  UIData: TObjectDictionary<string, TWZIMGEntry>;
+
 
 implementation
 
 uses
   AbstractCanvas, AsphyreFactory, AsphyreTypes, AsphyreDb, AbstractDevices, AsphyreImages,
-  AsphyreTimer, DX9Providers, Vectors2, Vectors2px, MapleMap, MapleCharacter;
+  AsphyreTimer, DX9Providers, Vectors2, Vectors2px, MapleMap, MapleCharacter,UI.Utils;
 
 procedure TMiniMap.Paint(DC: HDC);
 var
@@ -39,10 +38,10 @@ var
 begin
   x := ClientLeft;
   y := ClientTop;
-  Engine.Canvas.Draw(Targets[TargetIndex], x, y, 1, False, 255, 255, 255, 255);
+  Engine.Canvas.Draw(TargetTexture, x, y);
   px := Round(Player.X + cx) div 16;
   py := Round(Player.Y + cy) div 16;
-  AEngine.Canvas.Draw(UIImages[PlayerMark], x + px + OffX + 2, y + py + OffY + 50, 1, False, 255, 255, 255, 255);
+  AEngine.Canvas.Draw(UIImages[PlayerMark], x + px + OffX + 2, y + py + OffY + 50);
 end;
 
 procedure TMiniMap.TargetEvent;
@@ -76,8 +75,8 @@ begin
       PicWidth := MiniMap.Canvas.Width;
       OffX := 0;
     end;
-    Engine.Canvas.FillRect(9, 62, PicWidth, PicHeight, cRGB1(0, 0, 0, 180));
-    Engine.Canvas.Draw(UIImages[MiniMap], 9 + OffX, 62, 1, False, 255, 255, 255, 255);
+    Engine.Canvas.FillRect(FloatRect(9, 62, PicWidth, PicHeight), ARGB(180,0, 0, 0));
+    Engine.Canvas.Draw(UIImages[MiniMap], 9 + OffX, 62);
   end
   else
   begin
@@ -87,24 +86,23 @@ begin
     OffY := 0;
     PicWidth := 150;
     PicHeight := 100;
-    AEngine.Canvas.FillRect(9, 62, PicWidth, PicHeight, cRGB1(0, 0, 0, 180));
+    AEngine.Canvas.FillRect(FloatRect(9, 62, PicWidth, PicHeight),ARGB(180,0,0,0));
   end;
 
   for var x := 0 to PicWidth - 111 do
   begin
-    AEngine.Canvas.Draw(UIImages[Entry.Get2('n')], 64 + x, 0, 1, False, 255, 255, 255, 255);
-    AEngine.Canvas.Draw(UIImages[Entry.Get2('s')], 64 + x, PicHeight + 62, 1, False, 255, 255, 255, 255);
+    AEngine.Canvas.Draw(UIImages[Entry.Get2('n')], 64 + x, 0 );
+    AEngine.Canvas.Draw(UIImages[Entry.Get2('s')], 64 + x, PicHeight + 62);
   end;
   for var y := 0 to PicHeight - 24 do
   begin
-    AEngine.Canvas.Draw(UIImages[Entry.Get('w')], 0, 67 + y, 1, False, 255, 255, 255, 255);
-    AEngine.Canvas.Draw(UIImages[Entry.Get('e')], PicWidth + 9, 67 + y, 1, False, 255, 255, 255, 255);
+    AEngine.Canvas.Draw(UIImages[Entry.Get('w')], 0, 67 + y );
+    AEngine.Canvas.Draw(UIImages[Entry.Get('e')], PicWidth + 9, 67 + y);
   end;
-  AEngine.Canvas.Draw(UIImages[Entry.Get('nw')], 0, 0, 1, False, 255, 255, 255, 255); //left top
-  AEngine.Canvas.Draw(UIImages[Entry.Get('ne')], PicWidth - 46, 0, 1, False, 255, 255, 255, 255); //right top
-  AEngine.Canvas.Draw(UIImages[Entry.Get('sw')], 0, PicHeight + 44, 1, False, 255, 255, 255, 255); // right bottom
-  AEngine.Canvas.Draw(UIImages[Entry.Get('se')], PicWidth - 46, PicHeight + 44, 1, False, 255, 255,
-    255, 255); // left botton
+  AEngine.Canvas.Draw(UIImages[Entry.Get('nw')], 0, 0 ); //left top
+  AEngine.Canvas.Draw(UIImages[Entry.Get('ne')], PicWidth - 46, 0); //right top
+  AEngine.Canvas.Draw(UIImages[Entry.Get('sw')], 0, PicHeight + 44); // right bottom
+  AEngine.Canvas.Draw(UIImages[Entry.Get('se')], PicWidth - 46, PicHeight + 44); // left botton
   DumpData(GetImgEntry('Map.wz/MapHelper.img/minimap'), UIData, UIImages);
 
   var NpcMark := GetImgEntry('Map.wz/MapHelper.img/minimap/npc');
@@ -112,23 +110,25 @@ begin
   begin
     if (iter.Get('type', '') = 'n') and (iter.Get('hide', '') <> '1') then
       AEngine.Canvas.Draw(UIImages[NpcMark], ((iter.Get('x').Data + cx) div 16) + OffX + 4, ((iter.Get
-        ('y').Data + cy) div 16) + 50, 1, False, 255, 255, 255, 255);
+        ('y').Data + cy) div 16) + 50);
   end;
   var PortalMark := GetImgEntry('Map.wz/MapHelper.img/minimap/portal');
   for var iter in TMap.ImgFile.Get('portal').Children do
     if (iter.Get('pt').Data = 2) or (iter.Get('pt').Data = 7) then
       AEngine.Canvas.Draw(UIImages[PortalMark], ((iter.Get('x').Data + cx) div 16) + OffX + 2, ((iter.Get
-        ('y').Data + cy) div 16) + 48, 1, False, 255, 255, 255, 255);
+        ('y').Data + cy) div 16) + 48);
   var MapMarkName := TMap.ImgFile.Get('info/mapMark').Data;
   if MapMarkName <> 'None' then
   begin
     var MapMarkPic := GetImgEntry('Map.wz/MapHelper.img/mark/' + MapMarkName);
     DumpData(MapMarkPic, UIData, UIImages);
-    AEngine.Canvas.Draw(UIImages[MapMarkPic], 7, 17, 1, False, 255, 255, 255, 255);
+    AEngine.Canvas.Draw(UIImages[MapMarkPic], 7, 17);
   end;
   PlayerMark := GetImgEntry('Map.wz/MapHelper.img/minimap/user');
-  FontsAlt[5].TextOut(TMap.MapNameList[TMap.ID].StreetName, 50, 20, cRGB1(255, 255, 255));
-  FontsAlt[5].TextOut(TMap.MapNameList[TMap.ID].MapName, 50, 40, cRGB1(255, 255, 255));
+   GameFont.Draw(Point2f(50, 20),TMap.MapNameList[TMap.ID].StreetName,$FFFFFFFF);
+    GameFont.Draw(Point2f(50, 40),TMap.MapNameList[TMap.ID].MapName,$FFFFFFFF);
+  //FontsAlt[5].TextOut(TMap.MapNameList[TMap.ID].StreetName, 50, 20, cRGB1(255, 255, 255));
+ // FontsAlt[5].TextOut(TMap.MapNameList[TMap.ID].MapName, 50, 40, cRGB1(255, 255, 255));
 end;
 
 constructor TMiniMap.Create(AOwner: TComponent);
@@ -145,15 +145,16 @@ begin
     Name := 'Form' + IntToStr(Num);
   end;
   ControlState := ControlState - [csCreating];
-  Targets := TAsphyreRenderTargets.Create();
   ReDraw;
 end;
 
 procedure TMiniMap.ReDraw;
 begin
-  Targets.RemoveAll;
-  TargetIndex := Targets.Add(1, TMap.MiniMapWidth + 145, TMap.MiniMapHeight + 80, apf_A8R8G8B8, True, True);
-  AEngine.Device.RenderTo(TargetEvent, 0, True, Targets[TargetIndex]);
+  GameCanvas.DrawTarget(TargetTexture,TMap.MiniMapWidth + 145,TMap.MiniMapHeight + 80,
+  procedure
+  begin
+    TargetEvent;
+  end);
   if TMap.MiniMapWidth < 200 then
     Width := TMap.MiniMapWidth + 90
   else
@@ -163,7 +164,7 @@ end;
 
 initialization
   UIData := TObjectDictionary<string, TWZIMGEntry>.Create;
-  UIImages := TObjectDictionary<TWZIMGEntry, TDX9LockableTexture>.Create;
+  UIImages := TObjectDictionary<TWZIMGEntry, TTexture>.Create;
 
 end.
 
