@@ -4,12 +4,11 @@ interface
 
 uses
   Windows, Types, controls, SysUtils, StrUtils, AsphyreSprite, Generics.Collections, WZIMGFile, Math,
-   AbstractTextures, WZArchive, ACtrlEditBoxes, AsphyreTypes, DX9Textures, AControls,
-  ACtrlEngine, ACtrlForms, ACtrlButtons, TypInfo, ACtrlImages, ACtrlDropPanels, ACtrlLabels, Tools,
-  WZDirectory, WZReader, KeyHandler, Global, Classes, AsphyreFonts, ACtrlTypes,PXT.Graphics;
+  AbstractTextures, WZArchive, ACtrlEditBoxes, AsphyreTypes, DX9Textures, AControls, ACtrlEngine,
+  ACtrlForms, ACtrlButtons, TypInfo, ACtrlImages, ACtrlDropPanels, ACtrlLabels, Tools, WZDirectory,
+  WZReader, KeyHandler, Global, Classes, AsphyreFonts, ACtrlTypes, PXT.Graphics;
 
 procedure CreateUIs(EntryName: string; X, Y: Integer; wClose: Boolean = True);
-
 
 procedure CreateButton(EntryName: string; X: Integer = 0; Y: Integer = 0);
 
@@ -20,7 +19,8 @@ procedure CreateButtonAll(EntryName: string; IgnoreDir: array of string; X, Y: I
 procedure CreateImages(Dir: string; ImageName: array of string; X: Integer = 0; Y: Integer = 0);
 
 procedure CreateForm(EntryName: string; X, Y: Integer; BtClose: Boolean = True);
-procedure CreateEmptyForm(EntryName: string; X, Y,AWidth,AHeight: Integer;ACanMove:Boolean=True);
+
+procedure CreateEmptyForm(EntryName: string; X, Y, AWidth, AHeight: Integer; ACanMove: Boolean = True);
 
 procedure CreateFormEx(EntryName: string; X, Y: Integer);
 
@@ -28,7 +28,7 @@ procedure CreateEdit(EntryName: string; X, Y, AWidth: Integer);
 
 procedure CreateLabel(EntryName, AText: string; X, Y: Integer; AWidth: Integer = 100; Black: Boolean = True);
 
-procedure CreateImage(EntryName: string;AScaleX:Single=1;AScaleY:Single=1; X: Integer = 0; Y: Integer = 0);
+procedure CreateImage(EntryName: string; AScaleX: Single = 1; AScaleY: Single = 1; X: Integer = 0; Y: Integer = 0);
 
 procedure CreateGrid(AImagePath: string; X, Y, Col, Row: Integer; OwnerName: string);
 
@@ -39,7 +39,6 @@ procedure ShowForm(Name: string);
 function HasUI(Key: TWZIMGEntry): Boolean;
 
 var
-
   UIImages: TObjectDictionary<TWZIMGEntry, TTexture>;
   UIData: TObjectDictionary<string, TWZIMGEntry>;
   UIButton: TDictionary<string, TAButton>;
@@ -52,7 +51,7 @@ var
 implementation
 
 uses
-   WzUtils, ColorUtils,minimap;
+  WzUtils, ColorUtils, minimap;
 
 function ToName(S: string): string;
 begin
@@ -63,7 +62,6 @@ begin
 
   Result := S;
 end;
-
 
 function HasUI(Key: TWZIMGEntry): Boolean;
 begin
@@ -76,38 +74,47 @@ var
   Form: TAForm;
   Ax: Integer;
 begin
-  Entry := GetImgEntry(EntryName);
-  DumpData(Entry, UIData, UIImages);
-  Form := TAForm.Create(UIEngine.Root);
-  with Form do
+  if not UIForm.ContainsKey(EntryName) then
   begin
-    ImageEntry := Entry;
-    Width := Entry.Canvas.Width;
-    Height := Entry.Canvas.Height;
-    Left := X + -Entry.Child['origin'].Vector.X + 1000;
-    Top := Y + -Entry.Child['origin'].Vector.Y + 1000;
-    Ax := Width - 22;
-  end;
-  if BtClose then
-    CreateButton('UI/Basic.img/BtClose3', Ax, 7);
-  UIForm.Add(EntryName, Form);
+    Entry := GetImgEntry(EntryName);
+    DumpData(Entry, UIData, UIImages);
+    Form := TAForm.Create(UIEngine.Root);
+    with Form do
+    begin
+      ImageEntry := Entry;
+      Width := Entry.Canvas.Width;
+      Height := Entry.Canvas.Height;
+      Left := X + -Entry.Child['origin'].Vector.X + 1000;
+      Top := Y + -Entry.Child['origin'].Vector.Y + 1000;
+      Ax := Width - 22;
+    end;
+    if BtClose then
+      CreateButton('UI/Basic.img/BtClose3', Ax, 7);
+    UIForm.Add(EntryName, Form);
+  end
+  else
+    UIForm[EntryName].Show;
 end;
 
-procedure CreateEmptyForm(EntryName: string; X, Y,AWidth,AHeight: Integer;ACanMove:Boolean=True);
+procedure CreateEmptyForm(EntryName: string; X, Y, AWidth, AHeight: Integer; ACanMove: Boolean = True);
 var
   Form: TAForm;
 begin
-
-  Form := TAForm.Create(UIEngine.Root);
-  with Form do
+  if not UIForm.ContainsKey(EntryName) then
   begin
-    Left := X + 1000;
-    Top := Y + 1000;
-    Width := AWidth;
-    Height := AHeight;
-    CanMove:=ACanMove;
-  end;
-  UIForm.Add(EntryName, Form);
+    Form := TAForm.Create(UIEngine.Root);
+    with Form do
+    begin
+      Left := X + 1000;
+      Top := Y + 1000;
+      Width := AWidth;
+      Height := AHeight;
+      CanMove := ACanMove;
+    end;
+    UIForm.Add(EntryName, Form);
+  end
+  else
+    UIForm[EntryName].Show;
 end;
 
 procedure CreateFormEx(EntryName: string; X, Y: Integer);
@@ -145,8 +152,8 @@ begin
   with Button do
   begin
     ImageEntry := Entry.Get('normal/0');
-    Width := Entry.Get('normal/0').Canvas.Width;
-    Height := Entry.Get('normal/0').Canvas.Height;
+    Width := Entry.Get2('normal/0').Canvas.Width;
+    Height := Entry.Get2('normal/0').Canvas.Height;
     Left := X + -Entry.Get('normal/0/origin').Vector.X;
     Top := Y + -Entry.Get('normal/0/origin').Vector.Y;
     ImageHover := Entry.Get('mouseOver/0');
@@ -161,10 +168,10 @@ var
   I: Integer;
 begin
   for I := 0 to High(BtName) do
-    CreateButton(Dir +'/'+ BtName[I], X, Y);
+    CreateButton(Dir + '/' + BtName[I], X, Y);
 end;
 
-procedure CreateImage(EntryName: string;AScaleX:Single=1;AScaleY:Single=1; X: Integer = 0; Y: Integer = 0);
+procedure CreateImage(EntryName: string; AScaleX: Single = 1; AScaleY: Single = 1; X: Integer = 0; Y: Integer = 0);
 var
   Entry: TWZIMGEntry;
   Image: TAImage;
@@ -180,10 +187,10 @@ begin
     Height := Entry.Canvas.Height;
     Left := X + -Entry.Child['origin'].Vector.X;
     Top := Y + -Entry.Child['origin'].Vector.Y;
-    ScaleX:=AScaleX;
-    ScaleY:=AScaleY;
+    ScaleX := AScaleX;
+    ScaleY := AScaleY;
     CanMoveHandle := False;
-   end;
+  end;
   UIImage.AddOrSetValue(EntryName, Image);
 end;
 
@@ -271,26 +278,26 @@ procedure CreateLabel(EntryName: string; AText: string; X, Y: Integer; AWidth: I
 var
   ALabel: TALabel;
 begin
-  ALabel := TALabel.Create(UIEngine.AForm(UIOwner));
-  with ALabel do // UIEngine.AForm(ParentName)
+  if not UILabel.ContainsKey(EntryName) then
   begin
-    Color.SetFillColor(cRGB4(0, 0, 0, 0));
-  //  Zfont := ZFontb;
-  //  if Black then
-    //  FontColor.SetFontColor(cRGB1(85, 85, 85), cRGB1(85, 85, 85))
-    //else
-    //  FontColor.SetFontColor($FFFF0000, $FFFF0000);
-    BorderWidth := 0;
-    Left := X;
-    Top := Y;
-    Width := AWidth;
-    Height := 17;
-    Text := AText;
-    CanMoveHandle := False;
-    TextHorizontalAlign := hLeft;
-    Name := ToName(EntryName);
-  end;
-  UILabel.Add(EntryName, ALabel);
+    ALabel := TALabel.Create(UIEngine.AForm(UIOwner));
+    with ALabel do
+    begin
+      Color.SetFillColor(cRGB4(0, 0, 0, 0));
+      if Black then
+        FontColor:= $FF000000
+      else
+        FontColor := $FFFF0000;
+      Left := X;
+      Top := Y;
+      Width := AWidth;
+      Height := 17;
+      Text := AText;
+      CanMoveHandle := False;
+    end
+  end
+  else
+    UILabel.Add(EntryName, ALabel);
 end;
 
 procedure CreateGrid(AImagePath: string; X, Y, Col, Row: Integer; OwnerName: string);
@@ -368,9 +375,8 @@ var
   MouseDownPosY: Integer;
   DragEnabled: Boolean;
 
-
 initialization
-   UIData := TObjectDictionary<string, TWZIMGEntry>.Create;
+  UIData := TObjectDictionary<string, TWZIMGEntry>.Create;
   UIImages := TObjectDictionary<TWZIMGEntry, TTexture>.Create;
   UIButton := TDictionary<string, TAButton>.Create;
   UIForm := TDictionary<string, TAForm>.Create;
@@ -379,6 +385,4 @@ initialization
   //UITab := TDictionary<string, TUITab>.Create;
 
 end.
-
-
 
