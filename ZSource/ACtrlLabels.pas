@@ -14,7 +14,7 @@ unit ACtrlLabels;
 interface
 
 uses
-  Classes, Controls, SysUtils, Windows,
+ pxt.types, Classes, Controls, SysUtils, Windows,
   // Aspryre units
   AbstractCanvas, AsphyreFonts, AsphyreImages, AsphyreTypes, Vectors2,
   // Asphyre GUI Engine
@@ -29,6 +29,7 @@ type
     FFocusControl: string;
     FPLine: Boolean;
     FTransparent: Boolean;
+    FFontColor:TColorPair;
     procedure SetCanMoveHandle(Value: Boolean); virtual;
     procedure SetFocusControl(Value: string); virtual;
     procedure SetTransparent(Value: Boolean); virtual;
@@ -48,6 +49,7 @@ type
     property TextHorizontalAlign: THAlign read FHAlign write FHAlign;
     property TextVerticalAlign: TVAlign read FVAlign write FVAlign;
     property Transparent: Boolean read FTransparent write SetTransparent;
+    property FontColor:TColorPair read   FFontColor write  FFontColor;
   end;
 
   TALabel = class(TCustomALabel)
@@ -91,7 +93,7 @@ type
 implementation
 
 uses
-  PXT.Graphics, PXT.Types;
+  PXT.Graphics, Global;
 
 var
   XOffSet, YOffSet: Integer;
@@ -159,7 +161,7 @@ begin
   BorderWidth := 0;
   Color.SetFillColor($FFA6CAF0, $FFA6CAF0, $FF4090F0, $FF4090F0);
   Font := 'tahoma10b';
-  FontColor.SetFontColor(clWhite2);
+  //FontColor.SetFontColor(clWhite2);
   Margin := 2;
   Text := Name;
   Visible := True;
@@ -172,6 +174,12 @@ begin
   FTransparent := True;
 
   ControlState := ControlState - [csCreating];
+
+  var FontSetting: TFontSettings;
+  FontSetting := TFontSettings.Create('Tahoma', 11);
+  FontSetting.Effect.BorderType := TFontBorder.None;
+  FontSetting.Weight := TFontWeight.Light;
+  GameFont.FontSettings := FontSetting;
 end;
 
 destructor TCustomALabel.Destroy;
@@ -229,76 +237,8 @@ begin
   // Set initial values
   X := ClientLeft;
   Y := ClientTop;
+  GameFont.Draw(Point2f(X, Y),Text,FontColor);
 
-  // Draw Border
-  if BorderWidth > 0 then
-  begin
-    AEngine.Canvas.FillRect(FloatRect(X, Y, X + Width, Y + BorderWidth), BorderColor);
-    AEngine.Canvas.FillRect(FloatRect(X, Y + BorderWidth, X + BorderWidth, Y + Height - BorderWidth), BorderColor);
-    AEngine.Canvas.FillRect(FloatRect(X, Y + Height - BorderWidth, X + Width, Y + Height), BorderColor);
-    AEngine.Canvas.FillRect(FloatRect(X + Width - BorderWidth, Y + BorderWidth, X + Width, Y +
-      Height - BorderWidth), BorderColor);
-  end;
-
-  // Draw Background
-  if not FTransparent then
-  begin
-    if AImage.Initialized then
-    begin
-    {
-      AEngine.Canvas.UseTexturePx(AImage,
-        pxBounds4(0 + BorderWidth, 0 + BorderWidth,
-          AImage.Width - (BorderWidth * 2),
-          AImage.Height - (BorderWidth * 2)));
-      AEngine.Canvas.TexMap(pRect4(Rect(X + BorderWidth, Y + BorderWidth,
-            X + Width - BorderWidth, Y + Height - BorderWidth)),
-        cAlpha4(ImageAlpha), deNormal);
-     }
-      var TexCoord := Quad(0 + BorderWidth, 0 + BorderWidth, AImage.Parameters.Width - (BorderWidth
-        * 2), AImage.Parameters.Height - (BorderWidth * 2));
-      AEngine.Canvas.Quad(AImage, Quad(IntRectBDS(X + BorderWidth, Y + BorderWidth, X + Width -
-        BorderWidth, Y + Height - BorderWidth)), TexCoord, $FFFFFFFF);
-    end
-    else
-    begin
-      AEngine.Canvas.FillRect(FloatRect(X + BorderWidth, Y + BorderWidth, X + Width - BorderWidth, Y +
-        Height - BorderWidth), cardinal(Color));
-    end;
-  end;
-
-  // Draw Text
-  {
-  if AFont <> nil then
-  begin
-    if Text <> '' then
-      AFont.TextRectEx(Point2(X + BorderWidth + Margin,
-          Y + BorderWidth + Margin+1),
-        Point2(Width - (BorderWidth * 2) - (Margin * 2),
-          Height - (BorderWidth * 2) - (Margin * 2)), Text,
-        cColor2(FontColor), 1.0, FHAlign, FVAlign, FPLine);
-  end;
-  }
-
-  if FZFont <> nil then
-  begin
-    if Text <> '' then
-    begin
-      FZFont.Color := cColor4(FontColor.Top, FontColor.Top, FontColor.Bottom, FontColor.Bottom);
-      FZFont.TextOutRect(DC, Point2(X + BorderWidth + Margin, Y + BorderWidth + Margin + 1), Point2(Width
-        - (BorderWidth * 2) - (Margin * 2), Height - (BorderWidth * 2) - (Margin * 2)), Text, 0, 0,
-        FPLine, GetZHAlign(FHAlign), GetZVAlign(FVAlign));
-    end;
-  end; { else
-  if AFont <> nil then
-  begin
-    if Text <> '' then
-      AFont.TextRectEx(Point2(X + BorderWidth + Margin,
-          Y + BorderWidth + Margin+1),
-        Point2(Width - (BorderWidth * 2) - (Margin * 2),
-          Height - (BorderWidth * 2) - (Margin * 2)), Text,
-        cColor2(FontColor), 1.0, FHAlign, FVAlign, FPLine);
-  end;
-       }
 end;
 
 procedure TCustomALabel.SetCanMoveHandle(Value: Boolean);
