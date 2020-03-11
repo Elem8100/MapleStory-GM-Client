@@ -3,8 +3,8 @@ unit ChatBalloon;
 interface
 
 uses
-  Windows, SysUtils, StrUtils, AsphyreSprite, Generics.Collections, Classes,
-  WZIMGFile, DX9Textures, AsphyreTypes, Global, WzUtils;
+  Windows, SysUtils, StrUtils, PXT.Sprites, Generics.Collections, Classes, WZIMGFile, DX9Textures,
+  AsphyreTypes, Global, WzUtils, PXT.Graphics;
 
 type
   TBalloonInfo = record
@@ -17,14 +17,14 @@ type
   private
     Col, Row, OffH, BWidth: Integer;
     MaxChars: Integer;
-    Part1, Part2, Part3: array [0 .. 30] of TBalloonInfo;
+    Part1, Part2, Part3: array[0..30] of TBalloonInfo;
     Arrow, C, E, N, NE, NW, S, SE, SW, W: TBalloonInfo;
     FStyle: Integer;
     Directory: string;
     Entry: TWZIMGEntry;
     FMsg: string;
     Counter: Integer;
-    TargetIndex: Integer;
+    TargetTexture: TTexture;
     procedure TextOut(X, Y, MaxWidth, FontHeight: Integer);
     function GetData(TileName: string): TBalloonInfo;
     class function GetS(var Remaining: string; const Width: Integer): string;
@@ -34,14 +34,15 @@ type
     procedure SetStyle(BalloonStyle: Integer; Dir: string = '');
     procedure DoDraw; override;
     procedure DoMove(const Movecount: Single); override;
-    procedure TargetEvent(Sender: TObject);
+    procedure TargetEvent;
     procedure ClearTargetEvent(Sender: TObject);
     destructor Destroy;
   end;
 
 implementation
 
-uses MainUnit;
+uses
+  MainUnit, PXT.Types;
 
 class function TChatBalloon.GetS(var Remaining: string; const Width: Integer): string;
 var
@@ -57,39 +58,42 @@ begin
 
   while (Length(Remaining) > 0) and OK do
   begin
-    if CharInSet(Remaining[1], ['a' .. 'z', 'A' .. 'Z']) then
-      Index := POS(' ', Remaining)
+    if CharInSet(Remaining[1], ['a'..'z', 'A'..'Z']) then
+      Index := Pos(' ', Remaining)
     else
-      Index := POS('', Remaining);
+      Index := Pos('', Remaining);
 
     if Index > 0 then
     begin
       NextWord := Copy(Remaining, 1, Index - 1);
-      if PixelCount + FontsAlt[3].TextWidth(' ' + NextWord) < Width then
+      if PixelCount + Round(GameFont.ExtentByPixels(' ' + NextWord).Right)
+        {FontsAlt[3].TextWidth(' ' + NextWord)}   < Width then
       begin
         Result := Result + ' ' + NextWord;
-        Inc(PixelCount, FontsAlt[3].TextWidth(' ' + NextWord) - 5);
+        Inc(PixelCount, Round(GameFont.ExtentByPixels(' ' + NextWord).Right)
+          {FontsAlt[3].TextWidth(' ' + NextWord)}   - 5);
         Delete(Remaining, 1, Index)
       end
       else
         OK := False;
     end
-
     else
 
     begin
       if Length(Result) = 0 then
       begin
-        while (Length(Remaining) > 0) and (PixelCount + FontsAlt[0].TextWidth(Remaining[1]) < Width) do
+        while (Length(Remaining) > 0) and (PixelCount + Round(GameFont.ExtentByPixels(Remaining[1]).Right
+          {FontsAlt[0].TextWidth(Remaining[1]}) < Width) do
         begin
           Result := Result + Remaining[1];
-          Inc(PixelCount, FontsAlt[3].TextWidth(Remaining[1]));
+          Inc(PixelCount, Round(GameFont.ExtentByPixels(Remaining[1]).Right){FontsAlt[3].TextWidth(Remaining[1])});
           Delete(Remaining, 1, 1)
         end
       end
       else
       begin
-        if PixelCount + FontsAlt[3].TextWidth(' ' + Remaining) < Width then
+        if PixelCount + Round(GameFont.ExtentByPixels(' ' + Remaining).Right)
+          {FontsAlt[3].TextWidth(' ' + Remaining)}   < Width then
         begin
           Result := Result + ' ' + Remaining;
           Remaining := ' '
@@ -104,13 +108,14 @@ end;
 destructor TChatBalloon.Destroy;
 begin
   Entry.Free;
+  TargetTexture.Free;
   inherited Destroy;
 end;
 
 procedure TChatBalloon.DoDraw;
 begin
   if FMsg <> '' then
-    GameCanvas.Draw(GameTargets[TargetIndex], Round(X - 70 - Engine.WorldX), Round(Y - 500 - Engine.WorldY), 1, False, 255, 255, 255, 255);
+    GameCanvas.Draw(TargetTexture, Round(X - 70 - Engine.WorldX), Round(Y - 500 - Engine.WorldY));
 end;
 
 procedure TChatBalloon.DoMove;
@@ -118,7 +123,13 @@ begin
   Inc(Counter);
   if (Counter mod 30) = 0 then
     if FMsg <> '' then
-      GameDevice.RenderTo(TargetEvent, 0, True, GameTargets[TargetIndex]);
+      GameCanvas.DrawTarget(TargetTexture, 150, 512,
+        procedure
+        begin
+          TargetTexture.Clear(FloatColor($00404040));
+          TargetEvent;
+        end);
+    //  GameDevice.RenderTo(TargetEvent, 0, True, GameTargets[TargetIndex]);
 end;
 
 procedure TChatBalloon.SetStyle(BalloonStyle: Integer; Dir: string = '');
@@ -131,10 +142,12 @@ begin
     Entry := GetImgEntry('UI.wz/ChatBalloon.img/' + FStyle.ToString)
   else
     Entry := GetImgEntry('UI.wz/ChatBalloon.img/' + Directory + '/' + FStyle.ToString);
-
   DumpData(Entry, WzData, Images);
-  TargetIndex := GameTargets.Add(1, 150, 512, apf_A8R8G8B8, True, True);
-  GameDevice.RenderTo(ClearTargetEvent, 0, True, GameTargets[TargetIndex]);
+  GameCanvas.DrawTarget(TargetTexture, 150, 512,
+    procedure
+    begin
+
+    end);
 
   Arrow := GetData('arrow');
   C := GetData('c');
@@ -171,8 +184,9 @@ procedure TChatBalloon.TextOut(X, Y, MaxWidth, FontHeight: Integer);
 var
   I: Integer;
 begin
-  for I := 0 to FontsAlt[3].TextWidth(FMsg) div 80 + 1 do
-    FontsAlt[3].TextOut(GetS(FMsg, 80), X - 5, Y + I * 13, cRGB1(125, 0, 0));
+  for I := 0 to Round(GameFont.ExtentByPixels(FMsg).Right){FontsAlt[3].TextWidth(FMsg)}   div 80 + 1 do
+    GameFont.Draw(Point2f(X - 5, Y + I * 13), GetS(FMsg, 80), cRGB1(125, 0, 0));
+    //FontsAlt[3].TextOut(GetS(FMsg, 80), X - 5, Y + I * 13, cRGB1(125, 0, 0));
 end;
 
 function TChatBalloon.GetData(TileName: string): TBalloonInfo;
@@ -187,11 +201,11 @@ begin
   Result.Origin.Y := Entry.Get(TileName).Get('origin').Vector.Y;
 end;
 
-procedure TChatBalloon.TargetEvent(Sender: TObject);
+procedure TChatBalloon.TargetEvent;
 var
   I, J, Cx1, Cx2, Cx3, Mid: Integer;
 begin
-  Row := FontsAlt[3].TextWidth(FMsg) div 80 + 1;
+  Row := Round(GameFont.ExtentByPixels(FMsg).Right) {FontsAlt[3].TextWidth(FMsg)}   div 80 + 1;
   OffH := Row * C.Height + C.Origin.Y + S.Height;
   Cx1 := 0;
   Cx2 := 0;
@@ -200,14 +214,16 @@ begin
   for I := 1 to Col + 1 do
   begin
     Cx1 := Cx1 + Part1[I - 1].Width;
-    GameCanvas.Draw(Images[Part1[I].ImageEntry], Cx1 - NW.Origin.X - Mid + 70, -Part1[I].Origin.Y - OffH + 500, 1, False, 255, 255, 255, 255);
+    GameCanvas.Draw(Images[Part1[I].ImageEntry], Cx1 - NW.Origin.X - Mid + 70, -Part1[I].Origin.Y - OffH + 500);
     Cx2 := Cx2 + Part2[I - 1].Width;
     for J := 0 to Row - 1 do
-      GameCanvas.Draw(Images[Part2[I].ImageEntry], Cx2 - W.Origin.X - Mid + 70, -Part2[I].Origin.Y + (J * C.Height) - OffH + 500, 1, False, 255, 255, 255, 255);
+      GameCanvas.Draw(Images[Part2[I].ImageEntry], Cx2 - W.Origin.X - Mid + 70, -Part2[I].Origin.Y +
+        (J * C.Height) - OffH + 500);
     Cx3 := Cx3 + Part3[I - 1].Width;
-    GameCanvas.Draw(Images[Part3[I].ImageEntry], Cx3 - SW.Origin.X - Mid + 70, -Part3[I].Origin.Y + (J * C.Height) - OffH + 500, 1, False, 255, 255, 255, 255);
+    GameCanvas.Draw(Images[Part3[I].ImageEntry], Cx3 - SW.Origin.X - Mid + 70, -Part3[I].Origin.Y +
+      (J * C.Height) - OffH + 500);
   end;
-  GameCanvas.Draw(Images[Arrow.ImageEntry], 70, Arrow.Origin.Y + (J * C.Height) - OffH + 500, 1, False, 255, 255, 255, 255);
+  GameCanvas.Draw(Images[Arrow.ImageEntry], 70, Arrow.Origin.Y + (J * C.Height) - OffH + 500);
   {
     I2 :=0;
     for I := 0 to Length(FMsg) div MaxChars+1  do
@@ -225,9 +241,11 @@ end;
 
 procedure TChatBalloon.ClearTargetEvent(Sender: TObject);
 begin
-  GameCanvas.FillRect(0, 0, 800, 600, cRGB1(0, 0, 0, 0));
+//  GameCanvas.FillRect(0, 0, 800, 600, cRGB1(0, 0, 0, 0));
 end;
 
 initialization
 
+
 end.
+
