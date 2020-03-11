@@ -66,7 +66,7 @@ type
     procedure SearchGridClickCell(Sender: TObject; ARow, ACol: Integer);
     procedure Button1Click(Sender: TObject);
     procedure Edit1Change(Sender: TObject);
-    procedure Button2Click(Sender: TObject);
+
   private
     HasShow: Boolean;
     HasShowSearchGrid: Boolean;
@@ -83,7 +83,6 @@ type
     DumpRowCount: Integer;
     procedure ImageGridSelect(Sender: TObject; idx: Integer);
     procedure AddInventory(ID: string; Icon: TBitmap; Name: string; ARow: Integer);
-    procedure AvatarTargetEvent(Sender: TObject);
     procedure ResetColorGrid;
     procedure DumpEqpString(Entry: TWZIMGEntry);
      { Private declarations }
@@ -99,13 +98,10 @@ implementation
 
 uses
   WZDirectory, MapleEffect, Global, MapleCharacter, LockRenderTarget, AsphyreTypes, WzUtils,
-  AfterImage, MapleCharacterEx;
+  AfterImage, MapleCharacterEx, PXT.Types;
 
 {$R *.dfm}
 
-const
-  AvatarWidth = 100;
-  AvatarHeight = 100;
 
 procedure TAvatarForm.AddInventory(ID: string; Icon: TBitmap; Name: string; ARow: Integer);
 begin
@@ -288,7 +284,7 @@ begin
 
     1:
       begin
-        SaveButton.Enabled := False;
+
         DeleteButton.Enabled := True;
         AvatarView.Parent := PageControl1.Pages[1];
         AvatarView.Clear;
@@ -304,14 +300,6 @@ begin
         SaveButton.Enabled := True;
       end;
   end;
-end;
-
-procedure TAvatarForm.AvatarTargetEvent;
-begin
-  var WX := Round(Player.X - SpriteEngine.WorldX - 55);
-  var WY := Round(Player.Y - SpriteEngine.WorldY - 90);
-  GameCanvas.UseTexturePx(AvatarTargets[TPlayer.AvatarPanelIndex], pxBounds4(WX, WY, AvatarWidth, AvatarHeight));
-  GameCanvas.TexMap(pBounds4s(0, 0, AvatarWidth, AvatarHeight, 1), clWhite4);
 end;
 
 procedure TAvatarForm.AvatarViewImageSelect(Sender: TObject; idx: Integer);
@@ -350,9 +338,9 @@ begin
       end;
     4:
       begin
-         var ImageName := ExtractFileName(AvatarView.ImageFileName[idx]);
-         TPlayerEx.Spawn(ImageName);
-         ActiveControl := nil;
+        var ImageName := ExtractFileName(AvatarView.ImageFileName[idx]);
+        TPlayerEx.Spawn(ImageName);
+        ActiveControl := nil;
       end;
   end;
 end;
@@ -368,10 +356,7 @@ begin
   ResetColorGrid;
 end;
 
-procedure TAvatarForm.Button2Click(Sender: TObject);
-begin
-  //TMaplePlayer.Spawn('01070005-00030334-00021000-01050089-01432011-00012000-00002003-');
-end;
+
 
 procedure TAvatarForm.ResetColorGrid;
 begin
@@ -392,15 +377,15 @@ begin
           12:
             TColorFunc.HSVvar(ColorGrid.CellGraphics[Col, Row].CellBitmap, 0, -100, 0);
           13:
-            TColorFunc.Contrast3<TBitmap>(ColorGrid.CellGraphics[Col, Row].CellBitmap, 50, -90, True, False, False);
+            TColorFunc.Contrast3(ColorGrid.CellGraphics[Col, Row].CellBitmap, 50, -90, True, False, False);
           14:
-            TColorFunc.Contrast3<TBitmap>(ColorGrid.CellGraphics[Col, Row].CellBitmap, 50, -90, False, True, False);
+            TColorFunc.Contrast3(ColorGrid.CellGraphics[Col, Row].CellBitmap, 50, -90, False, True, False);
           15:
-            TColorFunc.Contrast3<TBitmap>(ColorGrid.CellGraphics[Col, Row].CellBitmap, 50, -90, False, False, True);
+            TColorFunc.Contrast3(ColorGrid.CellGraphics[Col, Row].CellBitmap, 50, -90, False, False, True);
           16:
-            TColorFunc.Contrast3<TBitmap>(ColorGrid.CellGraphics[Col, Row].CellBitmap, 50, -90, True, True, False);
+            TColorFunc.Contrast3(ColorGrid.CellGraphics[Col, Row].CellBitmap, 50, -90, True, True, False);
           17:
-            TColorFunc.Contrast3<TBitmap>(ColorGrid.CellGraphics[Col, Row].CellBitmap, 50, -90, True, False, True);
+            TColorFunc.Contrast3(ColorGrid.CellGraphics[Col, Row].CellBitmap, 50, -90, True, False, True);
           18:
             TColorFunc.Negative(ColorGrid.CellGraphics[Col, Row].CellBitmap);
         end;
@@ -467,58 +452,15 @@ begin
 end;
 
 procedure TAvatarForm.SaveButtonClick(Sender: TObject);
-var
-  Index: Integer;
-  pDest: Pointer;
-  nPitch: Integer;
-  A, R, G, B: Byte;
-  MapName: string;
-  PSrcTex: PLongWord;
-  Line: PRGB32Array;
-  Bmp: TBitmap;
- // Jpg: TJpegImage;
-  Color: Cardinal;
 begin
-  FreeAndNil(LockRenderTargets);
-  LockRenderTargets := TLockableRenderTarget.Create;
-  LockRenderTargets.SetSize(AvatarWidth, AvatarHeight);
-  Index := LockRenderTargets.Add(1, AvatarWidth, AvatarHeight, apf_A8R8G8B8, True, True);
-  GameDevice.RenderTo(AvatarTargetEvent, ARGB(255, 255, 255, 255), True, LockRenderTargets[Index]);
-  Bmp := TBitmap.Create;
-  Bmp.PixelFormat := pf32bit;
-  Bmp.AlphaFormat := afPremultiplied;
-  Bmp.Width := AvatarWidth;
-  Bmp.Height := AvatarHeight;
-
-  LockRenderTargets.Lock(Index, pDest, nPitch);
-  PSrcTex := pDest;
-  for var j := 0 to AvatarHeight - 1 do
-  begin
-    Line := Bmp.Scanline[j];
-    for var i := 0 to AvatarWidth - 1 do
-    begin
-      A := GetA(PSrcTex^);
-      R := GetR(PSrcTex^);
-      G := GetG(PSrcTex^);
-      B := GetB(PSrcTex^);
-      Line[i].B := B;
-      Line[i].G := G;
-      Line[i].R := R;
-      Line[i].A := A;
-      Inc(PSrcTex);
-    end;
-  end;
-
-  LockRenderTargets.UnLock;
-
   var ImageName: string;
   for var i := 0 to Inventory.RowCount - 1 do
     ImageName := ImageName + Inventory.Cells[0, i] + '-';
   ForceDirectories(ExtractFilePath(ParamStr(0)) + 'Images');
   var FileName := ExtractFilePath(ParamStr(0)) + 'Images\' + ImageName + '.bmp';
-  Bmp.SaveToFile(FileName);
-  FreeAndNil(Bmp);
-
+  var WX := Round(Player.X - SpriteEngine.WorldX - 55);
+  var WY := Round(Player.Y - SpriteEngine.WorldY - 90);
+  AvatarPanelTexture.SaveToFile(FileName, nil, 0, IntRectBDS(WX, WY, WX + 100, WY + 100));
 end;
 
 procedure TAvatarForm.SearchGridClickCell(Sender: TObject; ARow, ACol: Integer);
