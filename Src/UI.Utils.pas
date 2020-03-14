@@ -12,6 +12,8 @@ procedure CreateUIs(EntryName: string; X, Y: Integer; wClose: Boolean = True);
 
 procedure CreateButton(EntryName: string; X: Integer = 0; Y: Integer = 0);
 
+procedure CreateCloseButton(ButtonName: string; X: Integer = 0; Y: Integer = 0);
+
 procedure CreateButtons(Dir: string; BtName: array of string; X: Integer = 0; Y: Integer = 0);
 
 procedure CreateButtonAll(EntryName: string; IgnoreDir: array of string; X, Y: Integer);
@@ -89,7 +91,7 @@ begin
       Ax := Width - 22;
     end;
     if BtClose then
-      CreateButton('UI/Basic.img/BtClose3', Ax, 7);
+      CreateCloseButton(EntryName, Ax, 7);
     UIForm.Add(EntryName, Form);
   end
   else
@@ -161,6 +163,27 @@ begin
     ImageDisabled := Entry.Get('disabled/0');
   end;
   UIButton.AddOrSetValue(EntryName, Button);
+end;
+
+procedure CreateCloseButton(ButtonName: string; X: Integer = 0; Y: Integer = 0);
+begin
+  const Path = 'UI.wz/Basic.img/BtClose3';
+  var Entry := GetImgEntry(Path);
+  if not UIData.ContainsKey(Path) then
+    DumpData(Entry, UIData, UIImages);
+  var Button := TAButton.Create(UIEngine.AForm(UIOwner));
+  with Button do
+  begin
+    ImageEntry := Entry.Get('normal/0');
+    Width := Entry.Get2('normal/0').Canvas.Width;
+    Height := Entry.Get2('normal/0').Canvas.Height;
+    Left := X + -Entry.Get('normal/0/origin').Vector.X;
+    Top := Y + -Entry.Get('normal/0/origin').Vector.Y;
+    ImageHover := Entry.Get('mouseOver/0');
+    ImagePressed := Entry.Get('pressed/0');
+    ImageDisabled := Entry.Get('disabled/0');
+  end;
+  UIButton.AddOrSetValue(ButtonName, Button);
 end;
 
 procedure CreateButtons(Dir: string; BtName: array of string; X: Integer = 0; Y: Integer = 0);
@@ -285,7 +308,7 @@ begin
     begin
       Color.SetFillColor(cRGB4(0, 0, 0, 0));
       if Black then
-        FontColor:= $FF000000
+        FontColor := ARGB(255,80,80,80)
       else
         FontColor := $FFFF0000;
       Left := X;
