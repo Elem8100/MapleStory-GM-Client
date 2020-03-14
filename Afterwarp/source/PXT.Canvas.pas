@@ -13,6 +13,8 @@ type
     procedure Draw(ATexture: TTexture; X, Y: Single; AEffect: TBlendingEffect = TBlendingEffect.Normal); overload;
     procedure Draw(ATexture: TTexture; X, Y: Single; Mirror: Boolean; AEffect: TBlendingEffect =
       TBlendingEffect.Normal); overload;
+    procedure DrawScale(ATexture: TTexture; X, Y: Single; ScaleX,ScaleY: Single; AEffect: TBlendingEffect =
+      TBlendingEffect.Normal); overload;
     procedure DrawColor1(ATexture: TTexture; X, Y: Single; Mirror: Boolean; const AColors:
       TColorRect; AEffect: TBlendingEffect = TBlendingEffect.Normal); overload;
     procedure DrawStretch(ATexture: TTexture; X, Y, Width, Height: Single; Mirror: Boolean; const
@@ -66,6 +68,14 @@ begin
   else
     TexCoord := QuadUnity;
   Quad(ATexture, PXT.Types.Quad(X, Y, Width, Height), TexCoord, $FFFFFFFF, AEffect);
+end;
+
+procedure TGameCanvas.DrawScale(ATexture: TTexture; X, Y: Single; ScaleX,ScaleY: Single; AEffect: TBlendingEffect =
+      TBlendingEffect.Normal);
+begin
+  var Width := ATexture.Parameters.Width;
+  var Height := ATexture.Parameters.Height;
+   Quad(ATexture, PXT.Types.Quad(X, Y, Width*ScaleX, Height*ScaleY),  QuadUnity, $FFFFFFFF, AEffect);
 end;
 
 procedure TGameCanvas.DrawColor1(ATexture: TTexture; X, Y: Single; Mirror: Boolean; const AColors:
