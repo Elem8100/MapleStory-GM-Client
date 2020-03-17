@@ -6,13 +6,14 @@ uses
   Windows, Types, controls, SysUtils, StrUtils, AsphyreSprite, Generics.Collections, WZIMGFile, Math,
   AbstractTextures, WZArchive, ACtrlEditBoxes, AsphyreTypes, DX9Textures, AControls, ACtrlEngine,
   ACtrlForms, ACtrlButtons, TypInfo, ACtrlImages, ACtrlDropPanels, ACtrlLabels, Tools, WZDirectory,
-  WZReader, KeyHandler, Global, Classes, AsphyreFonts, ACtrlTypes, PXT.Graphics;
-
+  WZReader, KeyHandler, Global, Classes, AsphyreFonts, ACtrlTypes, PXT.Graphics,PXT.Canvas;
+ type
+  TLabelColor=(lcBlack,lcRed,lcWhite);
 procedure CreateUIs(EntryName: string; X, Y: Integer; wClose: Boolean = True);
 
-procedure CreateButton(EntryName: string; X: Integer = 0; Y: Integer = 0);
+procedure CreateButton(ImageEntry: string; X: Integer = 0; Y: Integer = 0); overload;
 
-procedure CreateCloseButton(ButtonName: string; X: Integer = 0; Y: Integer = 0);
+procedure CreateButton(ButtonName, ImageEntry: string; X: Integer = 0; Y: Integer = 0); overload;
 
 procedure CreateButtons(Dir: string; BtName: array of string; X: Integer = 0; Y: Integer = 0);
 
@@ -20,17 +21,23 @@ procedure CreateButtonAll(EntryName: string; IgnoreDir: array of string; X, Y: I
 
 procedure CreateImages(Dir: string; ImageName: array of string; X: Integer = 0; Y: Integer = 0);
 
-procedure CreateForm(EntryName: string; X, Y: Integer; BtClose: Boolean = True);
+procedure CreateForm(ImageEntry: string; X, Y: Integer);
 
 procedure CreateEmptyForm(EntryName: string; X, Y, AWidth, AHeight: Integer; ACanMove: Boolean = True);
+
+procedure CreateAttachForm(ImageEntry, AAttachFormName: string; X, Y: Integer; AVisible: Boolean = False);
 
 procedure CreateFormEx(EntryName: string; X, Y: Integer);
 
 procedure CreateEdit(EntryName: string; X, Y, AWidth: Integer);
 
-procedure CreateLabel(EntryName, AText: string; X, Y: Integer; AWidth: Integer = 100; Black: Boolean = True);
+procedure CreateLabel(EntryName, AText: string; X, Y: Integer;  LabelColor:TLabelColor =lcBlack);
 
-procedure CreateImage(EntryName: string; AScaleX: Single = 1; AScaleY: Single = 1; X: Integer = 0; Y: Integer = 0);
+procedure CreateImage(ImageEntry: string; AScaleX: Single = 1; AScaleY: Single = 1; X: Integer = 0;
+  Y: Integer = 0); overload;
+
+procedure CreateImage(UIName, ImageEntry: string; AScaleX: Single = 1; AScaleY: Single = 1; X:
+  Integer = 0; Y: Integer = 0); overload;
 
 procedure CreateGrid(AImagePath: string; X, Y, Col, Row: Integer; OwnerName: string);
 
@@ -39,6 +46,15 @@ procedure CreateDummy(W, H, X, Y: Integer);
 procedure ShowForm(Name: string);
 
 function HasUI(Key: TWZIMGEntry): Boolean;
+
+type
+
+  TAttachForm = class(TAForm)
+  public
+    OffsetX, OffsetY: Integer;
+    AttachFormName: string;
+    procedure Paint(DC: HDC); override;
+  end;
 
 var
   UIImages: TObjectDictionary<TWZIMGEntry, TTexture>;
@@ -55,6 +71,16 @@ implementation
 uses
   WzUtils, ColorUtils, minimap;
 
+procedure TAttachForm.Paint(DC: HDC);
+begin
+  if UIForm.ContainsKey(AttachFormName) then
+  begin
+    Left := UIForm[AttachFormName].Left + OffsetX;
+    Top := UIForm[AttachFormName].Top + OffsetY;
+    inherited;
+  end;
+end;
+
 function ToName(S: string): string;
 begin
   while (Pos('/', S) > 0) do
@@ -70,32 +96,53 @@ begin
   Result := UIImages.ContainsKey(Key);
 end;
 
-procedure CreateForm(EntryName: string; X, Y: Integer; BtClose: Boolean = True);
+procedure CreateForm(ImageEntry: string; X, Y: Integer);
 var
   Entry: TWZIMGEntry;
   Form: TAForm;
-  Ax: Integer;
 begin
-  if not UIForm.ContainsKey(EntryName) then
+  if UIForm.ContainsKey(ImageEntry) then
   begin
-    Entry := GetImgEntry(EntryName);
+    UIForm[ImageEntry].Show;
+    Exit;
+  end;
+  Entry := GetImgEntry(ImageEntry);
+  if not UIData.ContainsKey(Entry.GetPath) then
     DumpData(Entry, UIData, UIImages);
-    Form := TAForm.Create(UIEngine.Root);
-    with Form do
-    begin
-      ImageEntry := Entry;
-      Width := Entry.Canvas.Width;
-      Height := Entry.Canvas.Height;
-      Left := X + -Entry.Child['origin'].Vector.X + 1000;
-      Top := Y + -Entry.Child['origin'].Vector.Y + 1000;
-      Ax := Width - 22;
-    end;
-    if BtClose then
-      CreateCloseButton(EntryName, Ax, 7);
-    UIForm.Add(EntryName, Form);
-  end
-  else
-    UIForm[EntryName].Show;
+  Form := TAForm.Create(UIEngine.Root);
+  with Form do
+  begin
+    ImageEntry := Entry;
+    Width := Entry.Canvas.Width;
+    Height := Entry.Canvas.Height;
+    Left := X + -Entry.Child['origin'].Vector.X + 1000;
+    Top := Y + -Entry.Child['origin'].Vector.Y + 1000;
+  end;
+  UIForm.Add(ImageEntry, Form);
+end;
+
+procedure CreateAttachForm(ImageEntry, AAttachFormName: string; X, Y: Integer; AVisible: Boolean = False);
+begin
+  if UIForm.ContainsKey(ImageEntry) then
+  begin
+    UIForm[ImageEntry].Visible := AVisible;
+    Exit;
+  end;
+  var Entry := GetImgEntry(ImageEntry);
+  if not UIdata.ContainsKey(Entry.GetPath) then
+    DumpData(Entry, UIData, UIImages);
+  var Form := TAttachForm.Create(UIEngine.Root);
+  with Form do
+  begin
+    ImageEntry := Entry;
+    AttachFormName := AAttachFormName;
+    Width := Entry.Canvas.Width;
+    Height := Entry.Canvas.Height;
+    OffsetX := X;
+    OffsetY := Y;
+    Visible := AVisible;
+  end;
+  UIForm.Add(ImageEntry, Form);
 end;
 
 procedure CreateEmptyForm(EntryName: string; X, Y, AWidth, AHeight: Integer; ACanMove: Boolean = True);
@@ -142,15 +189,14 @@ begin
   UIForm.Add(EntryName, Form);
 end;
 
-procedure CreateButton(EntryName: string; X: Integer = 0; Y: Integer = 0);
-var
-  Entry: TWZIMGEntry;
-  Button: TAButton;
+procedure CreateButton(ImageEntry: string; X: Integer = 0; Y: Integer = 0);
 begin
-  Entry := GetImgEntry(EntryName);
-  DumpData(Entry, UIData, UIImages);
-
-  Button := TAButton.Create(UIEngine.AForm(UIOwner));
+  if UIButton.ContainsKey(ImageEntry) then
+    Exit;
+  var Entry := GetImgEntry(ImageEntry);
+  if not UIData.ContainsKey(Entry.GetPath) then
+    DumpData(Entry, UIData, UIImages);
+  var Button := TAButton.Create(UIEngine.AForm(UIOwner));
   with Button do
   begin
     ImageEntry := Entry.Get('normal/0');
@@ -162,14 +208,15 @@ begin
     ImagePressed := Entry.Get('pressed/0');
     ImageDisabled := Entry.Get('disabled/0');
   end;
-  UIButton.AddOrSetValue(EntryName, Button);
+  UIButton.AddOrSetValue(ImageEntry, Button);
 end;
 
-procedure CreateCloseButton(ButtonName: string; X: Integer = 0; Y: Integer = 0);
+procedure CreateButton(ButtonName, ImageEntry: string; X: Integer = 0; Y: Integer = 0);
 begin
-  const Path = 'UI.wz/Basic.img/BtClose3';
-  var Entry := GetImgEntry(Path);
-  if not UIData.ContainsKey(Path) then
+  if UIButton.ContainsKey(ButtonName) then
+    Exit;
+  var Entry := GetImgEntry(ImageEntry);
+  if not UIData.ContainsKey(Entry.GetPath) then
     DumpData(Entry, UIData, UIImages);
   var Button := TAButton.Create(UIEngine.AForm(UIOwner));
   with Button do
@@ -194,15 +241,14 @@ begin
     CreateButton(Dir + '/' + BtName[I], X, Y);
 end;
 
-procedure CreateImage(EntryName: string; AScaleX: Single = 1; AScaleY: Single = 1; X: Integer = 0; Y: Integer = 0);
-var
-  Entry: TWZIMGEntry;
-  Image: TAImage;
+procedure CreateImage(ImageEntry: string; AScaleX: Single = 1; AScaleY: Single = 1; X: Integer = 0; Y: Integer = 0);
 begin
-  Entry := GetImgEntry(EntryName);
+  if UIImage.ContainsKey(ImageEntry) then
+    Exit;
+  var Entry := GetImgEntry(ImageEntry);
   if not UIData.ContainsKey(Entry.GetPath) then
     DumpData(Entry, UIData, UIImages);
-  Image := TAImage.Create(UIEngine.AForm(UIOwner));
+  var Image := TAImage.Create(UIEngine.AForm(UIOwner));
   with Image do
   begin
     ImageEntry := Entry;
@@ -214,7 +260,30 @@ begin
     ScaleY := AScaleY;
     CanMoveHandle := False;
   end;
-  UIImage.AddOrSetValue(EntryName, Image);
+  UIImage.AddOrSetValue(ImageEntry, Image);
+end;
+
+procedure CreateImage(UIName, ImageEntry: string; AScaleX: Single = 1; AScaleY: Single = 1; X:
+  Integer = 0; Y: Integer = 0);
+begin
+  if UIImage.ContainsKey(UIName) then
+    Exit;
+  var Entry := GetImgEntry(ImageEntry);
+  if not UIData.ContainsKey(Entry.GetPath) then
+    DumpData(Entry, UIData, UIImages);
+  var Image := TAImage.Create(UIEngine.AForm(UIOwner));
+  with Image do
+  begin
+    ImageEntry := Entry;
+    Width := Entry.Canvas.Width;
+    Height := Entry.Canvas.Height;
+    Left := X + -Entry.Child['origin'].Vector.X;
+    Top := Y + -Entry.Child['origin'].Vector.Y;
+    ScaleX := AScaleX;
+    ScaleY := AScaleY;
+    CanMoveHandle := False;
+  end;
+  UIImage.AddOrSetValue(UIName, Image);
 end;
 
 procedure CreateImages(Dir: string; ImageName: array of string; X: Integer = 0; Y: Integer = 0);
@@ -238,7 +307,7 @@ begin
     if Iter.Name = 'backgrnd' then
     begin
       FormEntry := Iter.GetPath;
-      CreateForm(FormEntry, X, Y, wClose);
+      CreateForm(FormEntry, X, Y);
     end;
     if (Iter.Name = 'backgrnd1') or (Iter.Name = 'backgrnd2') or (Iter.Name = 'backgrnd3') then
       CreateImage(Iter.GetPath);
@@ -297,7 +366,7 @@ begin
   end;
 end;
 
-procedure CreateLabel(EntryName: string; AText: string; X, Y: Integer; AWidth: Integer = 100; Black: Boolean = True);
+procedure CreateLabel(EntryName: string; AText: string; X, Y: Integer;  LabelColor:TLabelColor =lcBlack);
 var
   ALabel: TALabel;
 begin
@@ -306,21 +375,21 @@ begin
     ALabel := TALabel.Create(UIEngine.AForm(UIOwner));
     with ALabel do
     begin
-      Color.SetFillColor(cRGB4(0, 0, 0, 0));
-      if Black then
-        FontColor := ARGB(255,80,80,80)
-      else
-        FontColor := $FFFF0000;
+      case LabelColor of
+         lcBlack:  FontColor := ARGB(255, 80, 80, 80);
+         lcRed:  FontColor := ARGB(255,220,0,0);
+         lcWhite: FontColor := $FFFFFFFF;
+      end;
       Left := X;
       Top := Y;
-      Width := AWidth;
+      Width := 100;//AWidth;
       Height := 17;
       Text := AText;
       CanMoveHandle := False;
-    end
-  end
-  else
+    end;
     UILabel.Add(EntryName, ALabel);
+  end;
+
 end;
 
 procedure CreateGrid(AImagePath: string; X, Y, Col, Row: Integer; OwnerName: string);
