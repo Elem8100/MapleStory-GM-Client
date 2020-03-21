@@ -194,6 +194,7 @@ begin
   if UIButton.ContainsKey(ImageEntry) then
     Exit;
   var Entry := GetImgEntry(ImageEntry);
+  if Entry=nil then Exit;
   if not UIData.ContainsKey(Entry.GetPath) then
     DumpData(Entry, UIData, UIImages);
   var Button := TAButton.Create(UIEngine.AForm(UIOwner));
@@ -216,6 +217,7 @@ begin
   if UIButton.ContainsKey(ButtonName) then
     Exit;
   var Entry := GetImgEntry(ImageEntry);
+  if Entry=nil then Exit;
   if not UIData.ContainsKey(Entry.GetPath) then
     DumpData(Entry, UIData, UIImages);
   var Button := TAButton.Create(UIEngine.AForm(UIOwner));

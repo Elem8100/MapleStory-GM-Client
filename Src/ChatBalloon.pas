@@ -3,8 +3,8 @@ unit ChatBalloon;
 interface
 
 uses
-  Windows, SysUtils, StrUtils, PXT.Sprites, Generics.Collections, Classes, WZIMGFile, DX9Textures,
-  AsphyreTypes, Global, WzUtils, PXT.Graphics;
+  Windows, SysUtils, StrUtils, PXT.Sprites, Generics.Collections, Classes, WZIMGFile,
+   Global, WzUtils, PXT.Graphics;
 
 type
   TBalloonInfo = record
@@ -35,14 +35,13 @@ type
     procedure DoDraw; override;
     procedure DoMove(const Movecount: Single); override;
     procedure TargetEvent;
-    procedure ClearTargetEvent(Sender: TObject);
     destructor Destroy;
   end;
 
 implementation
 
 uses
-  MainUnit, PXT.Types;
+  PXT.Types,PXT.Canvas;
 
 class function TChatBalloon.GetS(var Remaining: string; const Width: Integer): string;
 var
@@ -129,7 +128,7 @@ begin
           TargetTexture.Clear(FloatColor($00404040));
           TargetEvent;
         end);
-    //  GameDevice.RenderTo(TargetEvent, 0, True, GameTargets[TargetIndex]);
+
 end;
 
 procedure TChatBalloon.SetStyle(BalloonStyle: Integer; Dir: string = '');
@@ -181,12 +180,14 @@ begin
 end;
 
 procedure TChatBalloon.TextOut(X, Y, MaxWidth, FontHeight: Integer);
-var
-  I: Integer;
 begin
-  for I := 0 to Round(GameFont.ExtentByPixels(FMsg).Right){FontsAlt[3].TextWidth(FMsg)}   div 80 + 1 do
-    GameFont.Draw(Point2f(X - 5, Y + I * 13), GetS(FMsg, 80), cRGB1(125, 0, 0));
-    //FontsAlt[3].TextOut(GetS(FMsg, 80), X - 5, Y + I * 13, cRGB1(125, 0, 0));
+  var FontSetting := TFontSettings.Create('Arial', 11);
+  FontSetting.Effect.BorderType := TFontBorder.None;
+  FontSetting.Effect.BorderOpacity := 1;
+  FontSetting.Weight := TFontWeight.Thin;
+  GameFont.FontSettings := FontSetting;
+   for var I := 0 to Round(GameFont.ExtentByPixels(FMsg).Right){FontsAlt[3].TextWidth(FMsg)}   div 80 + 1 do
+    GameFont.Draw(Point2f(X - 5, Y + I * 13), GetS(FMsg, 80), ARGB(255,125,0, 0));
 end;
 
 function TChatBalloon.GetData(TileName: string): TBalloonInfo;
@@ -238,14 +239,6 @@ begin
   }
   TextOut(-Mid + 12 + 77, -OffH + 500 - 4, 80, 14);
 end;
-
-procedure TChatBalloon.ClearTargetEvent(Sender: TObject);
-begin
-//  GameCanvas.FillRect(0, 0, 800, 600, cRGB1(0, 0, 0, 0));
-end;
-
-initialization
-
 
 end.
 

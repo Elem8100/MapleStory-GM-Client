@@ -670,7 +670,7 @@ begin
     Circle.ShowHint := True;
 
     if TMap.MapNameList.ContainsKey(ID) then
-      Circle.Hint := ID + '-' + TMap.MapNameList[ID].ID;
+      Circle.Hint := ID + '-' +TMap.MapNameList[ID].MapName;
 
     Circle.Width := 23;
     Circle.Height := 25;
