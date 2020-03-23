@@ -12,15 +12,15 @@ type
     DoFade: Boolean;
   end;
 
-  TMapNameRec=record
-    ID:string;
-    MapName:string;
-    StreetName:string;
+  TMapNameRec = record
+    ID: string;
+    MapName: string;
+    StreetName: string;
   end;
 
   TMap = record
     class var
-      MapNameList:TDictionary<string, TMapNameRec>;
+      MapNameList: TDictionary<string, TMapNameRec>;
       Info: TDictionary<string, Variant>;
       SaveMap: Boolean;
       SaveMapID: string;
@@ -62,7 +62,7 @@ implementation
 uses
   MainUnit, Mob2, MapBack, MapPortal, Npc, MapTile, MapObj, MapleCharacter, Footholds, LadderRopes,
   AsphyreSprite, AsphyreTypes, AsphyreRenderTargets, MobInfo, NameTag, Boss, Skill, MapleCharacterEx,
-  Android, minimap;
+  Android, minimap, WZUtils, graphics;
 
 class procedure TMap.LoadMap(ID: string);
 var
@@ -95,7 +95,7 @@ begin
   BackEngine[0].Clear;
   BackEngine[1].Clear;
   for var n in images.Keys do
-  images[n].Free;
+    images[n].Free;
 
   Images.Clear;
   if TMap.Has002Wz then
@@ -163,20 +163,73 @@ begin
   end;
   if ReLoad then
   begin
-     HasMiniMap := True;
-     MiniMapEntry := ImgFile.Get('miniMap');
-     var Bmp := MiniMapEntry.Get('canvas').Canvas.DumpBmp;
-     MiniMapWidth :=   Bmp.Width;
-     MiniMapHeight :=   Bmp.Height;
-     Bmp.Free;
+    var Entry: TWZIMGEntry;
+    var Bmp: TBitmap;
+    var MapID :string;
+
+    var LeftNum := LeftStr(ID, 1);
+    if TMap.Has002Wz then
+      Entry := GetImgEntry('Map002.wz/Map/Map' + LeftNum + '/' + ID + '.img/info/link')
+    else
+      Entry := GetImgEntry('Map.wz/Map/Map' + LeftNum + '/' + ID + '.img/info/link');
+    if Entry = nil then
+      MapID := ID
+    else
+      MapID := Entry.Data;
+
+    LeftNum := LeftStr(MapID, 1);
+
+    if TMap.Has002Wz then
+      Entry := GetImgEntry('Map002.wz/Map/Map' + LeftNum + '/' + MapID + '.img/miniMap')
+    else
+      Entry := GetImgEntry('Map.wz/Map/Map' + LeftNum + '/' + MapID + '.img/miniMap');
+    if Entry=nil then
+      Exit;
+    if Entry <> nil then
+    begin
+      TMap.HasMiniMap := True;
+      if (TMap.Has002Wz) and (Entry.Get('canvas/_outlink') <> nil) then
+      begin
+        if (Entry.Get('canvas/_outlink') <> nil) then
+        begin
+          var Data: string := Entry.Get('canvas/_outlink').Data;
+          var S: TArray<string> := Data.Split(['/']);
+          TMap.MiniMapEntry := GetImgEntry('Map002.wz/Map/' + S[2] + '/' + S[3] + '/' + S[4]);
+          Bmp := TMap.MiniMapEntry.Get('canvas').Canvas.DumpBmp;
+        end
+        else
+        begin
+          TMap.MiniMapEntry := Entry;
+          Bmp := Entry.Get2('canvas').Canvas.DumpBmp;
+        end;
+      end
+      else
+      begin
+        if (Entry.Get('canvas/_outlink') <> nil) then
+        begin
+          var Data: string := Entry.Get('canvas/_outlink').Data;
+          var S: TArray<string> := Data.Split(['/']);
+          TMap.MiniMapEntry := GetImgEntry('Map.wz/Map/' + S[2] + '/' + S[3] + '/' + S[4]);
+          Bmp := TMap.MiniMapEntry.Get('canvas').Canvas.DumpBmp;
+        end
+        else
+        begin
+          TMap.MiniMapEntry := Entry;
+          Bmp := Entry.Get2('canvas').Canvas.DumpBmp;
+        end;
+      end;
+      MiniMapWidth := Bmp.Width;
+      MiniMapHeight := Bmp.Height;
+      Bmp.Free;
+    end;
   end;
+
   AMiniMap.ReDraw;
   //TNameTag.Create('SuperGM');
 
   TMap.FirstLoad := True;
   TMapBack.Create;
   // CreateReactor;
-
 
   TMap.PlayMusic;
   TMapBack.ResetPos := True;
@@ -232,7 +285,7 @@ end;
 
 initialization
   BassInit;
-  TMap.MapNameList:=TDictionary<string, TMapNameRec>.Create;
+  TMap.MapNameList := TDictionary<string, TMapNameRec>.Create;
   TMap.BgmList := TList<string>.Create;
   TMap.Info := TDictionary<string, Variant>.Create;
   TMap.ShowTile := True;
@@ -249,5 +302,6 @@ finalization
   TMap.Info.Free;
   TMap.BgmList.Free;
   TMap.MapNameList.Free;
+
 end.
 

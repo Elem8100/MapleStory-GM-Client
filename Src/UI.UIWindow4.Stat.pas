@@ -15,6 +15,8 @@ uses
   UI.Utils, ACtrlLabels;
 
 procedure CreateStatForm;
+var
+  statList: array[0..18] of TAImage;
 begin
   const Path = 'UI.wz/UIWindow4.img/Stat/main/';
   CreateForm(Path + 'backgrnd', 617, 320);
@@ -46,39 +48,90 @@ begin
   CreateImage('UI.wz/UIWindow4.img/Stat/detail/metierLine/activated/0');
   CreateImage('UI.wz/UIWindow4.img/Stat/detail/metierLine/activated/1');
   CreateImage('UI.wz/UIWindow4.img/Stat/detail/metierLine/activated/2');
-
   CreateLabel('detailStat/Damage', '226845', 76, 42);
-
-  CreateLabel('detail/DamageBonus', '69%', 76, 60,lcRed);
-
-  CreateLabel('detail/BossDamage', '54%', 175, 60);
-  {
-  CreateLabel('detail/FinalDamage', '88%', 75, 84);
-  CreateLabel('detail/IgnoreDefence', '299%', 75, 102);
-  CreateLabel('detail/CriticalRate', '66%', 75, 120,lcRed);
-  CreateLabel('detail/CritDamage', '55.00%', 75, 138);
-  CreateLabel('detail/StatusResistance', '2687', 75, 207);
-  CreateLabel('detail/KnockbackResistance', '4%', 75, 225);
-  CreateLabel('detail/Defence', '36871', 75, 138);
-  CreateLabel('detail/Speed', '105%', 70, 180);
-  CreateLabel('detail/Jump', '107%', 75, 207);
-   }
-
-  CreateLabel('metierLine0','Item Drop Rate +20%', 23, 227,lcWhite);
-  CreateLabel('metierLine1', 'STR +10, DEX +10', 23, 245,lcWhite);
-  CreateLabel('metierline2', 'Mesos obtained +999%', 23, 264,lcWhite);
-  UIButton['StatFormClose'].OnMouseDown :=
-    procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
-    begin
-      UIForm['UI.wz/UIWindow4.img/Stat/main/backgrnd'].Visible := False;
-      UIForm['UI.wz/UIWindow4.img/Stat/detail/backgrnd'].Visible := False;
-    end;
+  CreateLabel('detail/DamageBonus', '69%', 76, 60, lcRed);
+  CreateLabel('detail/BossDamage', '54%', 170, 60);
+  CreateLabel('detail/FinalDamage', '88%', 76, 78);
+  CreateLabel('detail/IgnoreDefence', '99%', 170, 78, lcRed);
+  CreateLabel('detail/CriticalRate', '66%', 76, 96);
+  CreateLabel('detail/CritDamage', '55.00%', 76, 114);
+  CreateLabel('detail/StatusResistance', '76', 76, 132);
+  CreateLabel('detail/KnockbackResistance', '4%', 170, 132);
+  CreateLabel('detail/Defence', '36871', 76, 150);
+  CreateLabel('detail/Speed', '105%', 76, 168);
+  CreateLabel('detail/Jump', '107%', 170, 168);
+  CreateLabel('metierLine0', 'Item Drop Rate +20%', 23, 227, lcWhite);
+  CreateLabel('metierLine1', 'STR +10, DEX +10', 23, 245, lcWhite);
+  CreateLabel('metierline2', 'Mesos obtained +999%', 23, 264, lcWhite);
+  CreateLabel('detail/HonorExp', '8371', 76, 287);
+  CreateButton('UI.wz/UIWindow4.img/Stat/detail/BtAbility');
+  CreateButton('UI.wz/UIWindow4.img/Stat/detail/BtHpUp');
 
   UIButton[Path + 'BtDetailOpen'].OnMouseDown :=
     procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
     begin
       const Path = 'UI.wz/UIWindow4.img/Stat/detail/backgrnd';
       UIForm[Path].Visible := not UIForm[Path].Visible;
+    end;
+  //hyper stat
+  CreateAttachForm('UI.wz/UIWindow4.img/HyperStat/Window/backgrnd', Path + 'backgrnd', -188, 0, true);
+  CreateImage('UI.wz/UIWindow4.img/HyperStat/Window/backgrnd2');
+  CreateImage('UI.wz/UIWindow4.img/HyperStat/Window/backgrnd3');
+
+  for var i := 0 to 18 do
+  begin
+    CreateImage('UI.wz/UIWindow4.img/HyperStat/Window/statList/800004' + LeftPad(i, 2), 1, 1, 15, 43 + i * 18);
+    statList[i] := UIImage['UI.wz/UIWindow4.img/HyperStat/Window/statList/800004' + LeftPad(i, 2)];
+    if (statList[i].Top < 30) or (statList[i].Top > 250) then
+      statList[i].Visible := False
+  end;
+  CreateImage('HyperStatVScr', 'UI.wz/Basic.img/VScr9/enabled/base', 1, 17.7, 163, 42);
+  CreateImage('HyperStatVScr/prev0', 'UI.wz/Basic.img/VScr9/enabled/prev0', 1, 1, 163, 42);
+  CreateImage('HyperStatVScr/next0', 'UI.wz/Basic.img/VScr9/enabled/next0', 1, 1, 163, 242);
+  CreateImage('HyperStatVScr/thumb0', 'UI.wz/Basic.img/VScr9/enabled/thumb0', 1, 1, 163, 53);
+  UIImage['HyperStatVScr/thumb0'].Width := 11;
+  UIImage['HyperStatVScr/thumb0'].Height := 26;
+  UIButton['StatFormClose'].OnMouseDown :=
+    procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
+    begin
+      UIForm['UI.wz/UIWindow4.img/Stat/main/backgrnd'].Visible := False;
+      UIForm['UI.wz/UIWindow4.img/Stat/detail/backgrnd'].Visible := False;
+      UIForm['UI.wz/UIWindow4.img/HyperStat/Window/backgrnd'].Visible := False;
+    end;
+
+  var OnDrag: Boolean;
+  UIImage['HyperStatVScr/thumb0'].OnMouseDown :=
+    procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
+    begin
+      OnDrag := True;
+    end;
+  UIImage['HyperStatVScr/thumb0'].OnMouseUP :=
+    procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
+    begin
+      OnDrag := False;
+    end;
+  var Thumb := UIImage['HyperStatVScr/thumb0'];
+  Thumb.OnMouseMove :=
+    procedure(Sender: TObject; Shift: TShiftState; X, Y: Integer)
+    begin
+      if OnDrag then
+      begin
+        Thumb.Top := Y - Thumb.Parent.Top + 1000 - 10;
+        if Thumb.Top < 53 then
+          Thumb.Top := 53;
+        if Thumb.Top > 216 then
+          Thumb.Top := 216;
+        for var i := 0 to 18 do
+        begin
+          statList[i].Top := 80 + (18 * i) - Trunc(Thumb.Top * 0.78) div 18 * 18;
+          if (statList[i].Top > 30) and (statList[i].Top < 250) then
+            statList[i].Visible := True
+          else
+            statList[i].Visible := False;
+
+        end;
+
+      end;
     end;
 
 end;

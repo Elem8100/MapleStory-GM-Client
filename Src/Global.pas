@@ -3,10 +3,11 @@ unit Global;
 interface
 
 uses
-  Windows, SysUtils, StrUtils, AsphyreSprite, WZArchive, Generics.Collections, WZIMGFile,
+  Windows, SysUtils, StrUtils, PXT.Sprites, WZArchive, Generics.Collections, WZIMGFile,
   WZDirectory, Classes, Math, AsphyreFontsAlt, AbstractCanvas, LockRenderTarget, BassHandler,
   DX9Textures, Vectors2px, AbstractDevices, AsphyreKeyboard, AsphyreRenderTargets, Tools,
-  System.Types;
+  System.Types, ACtrlEngine,PXT.Types,
+  PXT.Graphics,PXT.Canvas;
 
 type
   TGameMode = (gmPlay, gmView);
@@ -23,16 +24,18 @@ type
 
 var
   WzPath: string;
-  DisplaySize: TPoint;
-  GameDevice: TAsphyreDevice = nil;
-  GameCanvas: TAsphyreCanvas = nil;
-  GameTargets: TAsphyreRenderTargets = nil;
-  AvatarTargets: TAsphyreRenderTargets = nil;
+  FDevice: TDevice;
+  GameDevice2: TDevice;
+  DisplaySize: TPoint2i;
+  GameFont: TTextRenderer;
+  GameCanvas: TGameCanvas;
+  AvatarPanelTexture: TTexture;
   GameTargetMobInfo: TAsphyreRenderTargets = nil;
-  LockRenderTargets: TLockableRenderTarget = nil;
+
+  UIEngine: TControlEngine = nil;
   SpriteEngine: TSpriteEngine;
   BackEngine: array[0..1] of TSpriteEngine;
-  FontsAlt: TAsphyreFontsAlt;
+ // FontsAlt: TAsphyreFontsAlt;
   Keyboard: TAsphyreKeyboard;
   MobWZ, Mob2WZ, Mob001WZ, NPCWZ, MapWz, Map2Wz, Map001Wz,Map002Wz, MorphWz, StringWZ, SoundWZ, Sound2Wz,
     CharacterWZ, BaseWZ, UIWZ, ReactorWz, EffectWz, SkillWZ, Skill001Wz, ItemWZ, EtcWZ: TWZArchive;
@@ -43,8 +46,9 @@ var
   NewPositionY, CurrentPositionY, SpriteEngineVelY: Double;
   CharData, Data: TDictionary<string, Variant>;
   EquipData, WzData: TObjectDictionary<string, TWZIMGEntry>;
-  Images: TObjectDictionary<TWZIMGEntry, TDX9LockableTexture>;
-  EquipImages: TObjectDictionary<TWZIMGEntry, TDX9LockableTexture>;
+  Images: TDictionary<TWZIMGEntry, TTexture>;
+  EquipImages: TDictionary<TWZIMGEntry, TTexture>;
+function LeftPad(Value:Integer; Length:integer=8): string;
 
 function IsNumber(AStr: string): Boolean;
 
@@ -68,6 +72,11 @@ implementation
 
 var
   CosTable256: array[0..255] of Double;
+
+function LeftPad(Value:Integer; Length:integer=8): string;
+begin
+  Result := RightStr(StringOfChar('0',Length) + Value.ToString, Length );
+end;
 
 function IsNumber(AStr: string): Boolean;
 var
