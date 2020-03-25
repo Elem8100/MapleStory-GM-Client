@@ -14,14 +14,17 @@ implementation
 uses
   UI.Utils, ACtrlLabels;
 
+var
+  HyperValues: array of Integer;
+  HyperStatPoint:Integer;
+
 procedure CreateStatForm;
 var
-  statList: array[0..18] of TAImage;
+  HyperImages: array[0..18] of TAImage;
 begin
   const Path = 'UI.wz/UIWindow4.img/Stat/main/';
   CreateForm(Path + 'backgrnd', 617, 320);
   CreateButton('StatFormClose', 'UI.wz/Basic.img/BtClose3', 190, 7);
-
   CreateImage(Path + 'backgrnd2');
   CreateImage(Path + 'backgrnd3');
   CreateButton(Path + 'BtAuto');
@@ -74,16 +77,40 @@ begin
       UIForm[Path].Visible := not UIForm[Path].Visible;
     end;
   //hyper stat
-  CreateAttachForm('UI.wz/UIWindow4.img/HyperStat/Window/backgrnd', Path + 'backgrnd', -188, 0, true);
+  CreateAttachForm('UI.wz/UIWindow4.img/HyperStat/Window/backgrnd', Path + 'backgrnd', -188, 0);
   CreateImage('UI.wz/UIWindow4.img/HyperStat/Window/backgrnd2');
   CreateImage('UI.wz/UIWindow4.img/HyperStat/Window/backgrnd3');
+
+  UIButton[Path + 'BtHyperStatOpen'].OnMouseDown :=
+    procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
+    begin
+      const Path = 'UI.wz/UIWindow4.img/HyperStat/Window/backgrnd';
+      UIForm[Path].Visible := not UIForm[Path].Visible;
+    end;
 
   for var i := 0 to 18 do
   begin
     CreateImage('UI.wz/UIWindow4.img/HyperStat/Window/statList/800004' + LeftPad(i, 2), 1, 1, 15, 43 + i * 18);
-    statList[i] := UIImage['UI.wz/UIWindow4.img/HyperStat/Window/statList/800004' + LeftPad(i, 2)];
-    if (statList[i].Top < 30) or (statList[i].Top > 250) then
-      statList[i].Visible := False
+    HyperImages[i] := UIImage['UI.wz/UIWindow4.img/HyperStat/Window/statList/800004' + LeftPad(i, 2)];
+    if (HyperImages[i].Top < 30) or (HyperImages[i].Top > 250) then
+      HyperImages[i].Visible := False;
+    CreateLabel('HyperValue' + i.ToString, '0', 130, 42 + i * 18);
+    CreateButton('HyperButton' + i.ToString, 'UI.wz/UIWindow4.img/HyperStat/Window/BtLVup', 147, 43 + i * 18);
+    UIButton['HyperButton' + i.ToString].Visible := HyperImages[i].Visible;
+    UILabel['HyperValue' + i.ToString].Visible := HyperImages[i].Visible;
+    UIButton['HyperButton' + i.ToString].Tag := i;
+    UIButton['HyperButton' + i.ToString].OnMouseDown :=
+      procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
+      begin
+        var n := TAButton(Sender).Tag;
+        HyperValues[n] := UILabel['HyperValue' + n.ToString].Text.ToInteger;
+        HyperValues[n] := HyperValues[n] + 1;
+        UILabel['HyperValue' + n.ToString].Text := HyperValues[n].ToString;
+        HyperStatPoint:=UILabel['HyperStatPoint'].Text.ToInteger;
+        Dec(HyperStatPoint);
+        UILabel['HyperStatPoint'].Text:=HyperStatPoint.ToString;
+
+      end;
   end;
   CreateImage('HyperStatVScr', 'UI.wz/Basic.img/VScr9/enabled/base', 1, 17.7, 163, 42);
   CreateImage('HyperStatVScr/prev0', 'UI.wz/Basic.img/VScr9/enabled/prev0', 1, 1, 163, 42);
@@ -98,7 +125,6 @@ begin
       UIForm['UI.wz/UIWindow4.img/Stat/detail/backgrnd'].Visible := False;
       UIForm['UI.wz/UIWindow4.img/HyperStat/Window/backgrnd'].Visible := False;
     end;
-
   var OnDrag: Boolean;
   UIImage['HyperStatVScr/thumb0'].OnMouseDown :=
     procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
@@ -123,18 +149,25 @@ begin
           Thumb.Top := 216;
         for var i := 0 to 18 do
         begin
-          statList[i].Top := 80 + (18 * i) - Trunc(Thumb.Top * 0.78) div 18 * 18;
-          if (statList[i].Top > 30) and (statList[i].Top < 250) then
-            statList[i].Visible := True
+          HyperImages[i].Top := 80 + (18 * i) - Trunc(Thumb.Top * 0.78) div 18 * 18;
+          if (HyperImages[i].Top > 30) and (HyperImages[i].Top < 250) then
+            HyperImages[i].Visible := True
           else
-            statList[i].Visible := False;
-
+            HyperImages[i].Visible := False;
+          UIButton['HyperButton' + i.ToString].Top := HyperImages[i].Top-1;
+          UILabel['HyperValue' + i.ToString].Top := HyperImages[i].Top - 2;
+          UIButton['HyperButton' + i.ToString].Visible := HyperImages[i].Visible;
+          UILabel['HyperValue' + i.ToString].Visible := HyperImages[i].Visible;
         end;
-
       end;
     end;
-
+   CreateButton('UI.wz/UIWindow4.img/HyperStat/Window/BtReduce');
+   CreateButton('UI.wz/UIWindow4.img/HyperStat/Window/BtReset');
+   CreateLabel('HyperStatPoint', '99', 156, 266);
 end;
+
+initialization
+  HyperValues := [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
 end.
 
