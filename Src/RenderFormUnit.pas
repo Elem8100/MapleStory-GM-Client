@@ -3,12 +3,16 @@ unit RenderFormUnit;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+ PXT.Types, Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs;
 
 type
   TRenderForm = class(TForm)
     procedure FormResize(Sender: TObject);
+    procedure FormMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure FormMouseUp(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
   private
     { Private declarations }
   public
@@ -21,8 +25,21 @@ var
 implementation
 
 uses
-  Global, PXT.Types, UI.Utils,UI.StatusBar3;
+  Global,  UI.Utils,UI.StatusBar3;
 {$R *.dfm}
+
+procedure TRenderForm.FormMouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+
+  GameCursor.Change('12');
+end;
+
+procedure TRenderForm.FormMouseUp(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+   GameCursor.Change('0');
+end;
 
 procedure TRenderForm.FormResize(Sender: TObject);
 begin

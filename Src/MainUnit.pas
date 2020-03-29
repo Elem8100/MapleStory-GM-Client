@@ -8,11 +8,11 @@ interface
 {$IFEND}
 
 uses
-  PXT.Types, Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  FolderDialog, Vcl.Grids, AdvObj, BaseGrid, AdvGrid, Vcl.ComCtrls, Vcl.StdCtrls, Vcl.Buttons,
-  scControls, scExtControls, Vcl.Controls, AdvGroupBox, Vcl.ExtCtrls, ToolPanels, Vcl.Forms,
-  Vcl.Dialogs, ToolWin, AdvToolBtn, WZArchive, WZDirectory, Generics.Collections, WZIMGFile,
-  KeyHandler, WZReader, StrUtils, PngImage, Jpeg, {, Reactor,}
+  PXT.Types, Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
+  Vcl.Graphics, FolderDialog, Vcl.Grids, AdvObj, BaseGrid, AdvGrid, Vcl.ComCtrls, Vcl.StdCtrls,
+  Vcl.Buttons, scControls, scExtControls, Vcl.Controls, AdvGroupBox, Vcl.ExtCtrls, ToolPanels,
+  Vcl.Forms, Vcl.Dialogs, ToolWin, AdvToolBtn, WZArchive, WZDirectory, Generics.Collections,
+  WZIMGFile, KeyHandler, WZReader, StrUtils, PngImage, Jpeg, {, Reactor,}
   Footholds, bass, BassHandler, MapPortal, AdvUtil, Mob2, Npc, {UI}
   MapleCharacter, {Boss,} Vectors2px, AbstractTextures, AbstractDevices, AbstractCanvas,
   AsphyreTimer, PXT.Sprites, AsphyreKeyboard, AsphyreFontsAlt, DirectInput, AsphyreFactory,
@@ -137,7 +137,7 @@ uses
   DamageSkinFormUnit, WorldMapFormUnit, CashFormUnit, TamingMobFormUnit, NameTag, MapleEffect,
   TamingMob, MapleChair, LabelRingFormUnit, PetFormUnit, Pet, FamiliarFormUnit, MonsterFamiliar,
   SkillFormUnit, Skill, OptionsFormUnit, AvatarFormUnit, AndroidFormUnit, Android, MiniMap,
-  ACtrlEngine, SetScreenFormUnit, UI.Utils,acontrols,Ui.Statusbar3;
+  ACtrlEngine, SetScreenFormUnit, UI.Utils, acontrols, Ui.Statusbar3;
 {$R *.dfm}
 
 procedure TMainForm.FamiliarButtonClick(Sender: TObject);
@@ -149,6 +149,7 @@ begin
   end
   else
     FamiliarForm.Show;
+
 end;
 
 procedure TMainForm.FormActivate(Sender: TObject);
@@ -269,9 +270,9 @@ begin
   GameMode := gmPlay;
 
   FDevice := DeviceInit(TDeviceBackend.Default, RenderForm.Handle, Point2i(1024, 768), PXT.Types.TPixelFormat.BGRA8,
-   PXT.Types.TPixelFormat.Unknown, 0, DeviceAttributes([TDeviceAttribute.VSync]));
-  GameDevice2 := DeviceInitShared(FDevice, AvatarForm.Panel1.Handle, Point2i(260, 200),PXT.Types.TPixelFormat.BGRA8,
-   PXT.Types.TPixelFormat.Unknown, 0, DeviceAttributes([TDeviceAttribute.VSync]));
+    PXT.Types.TPixelFormat.Unknown, 0, DeviceAttributes([TDeviceAttribute.VSync]));
+  GameDevice2 := DeviceInitShared(FDevice, AvatarForm.Panel1.Handle, Point2i(260, 200), PXT.Types.TPixelFormat.BGRA8,
+    PXT.Types.TPixelFormat.Unknown, 0, DeviceAttributes([TDeviceAttribute.VSync]));
   GameDevice2.Resize(Point2i(260, 200));
   if Screen.MonitorCount > 0 then
   begin
@@ -544,6 +545,8 @@ begin
     GameFont.Draw(Point2f(10, 50), '音樂: ' + TMap.BgmPath, cRGB1(255, 0, 0));
     //FontsAlt[4].TextOut('音樂: ' + TMap.BgmPath, 10, 10, cRGB1(255, 0, 0));
   UIEngine.Render(Canvas.Handle);
+  GameCursor.Draw;
+
 end;
 
 procedure TMainForm.CirCleMouseDown;
@@ -559,6 +562,19 @@ begin
     Exit;
   if TMap.ID = ID then
     Exit;
+  var LeftNum := LeftStr(ID, 1);
+
+  if TMap.Has002Wz then
+  begin
+    if not HasImgFile('Map002.wz/Map/Map' + LeftNum + '/' + ID + '.img') then
+      Exit;
+  end
+  else
+  begin
+    if not HasImgFile('Map.wz/Map/Map' + LeftNum + '/' + ID + '.img') then
+      Exit;
+  end;
+
   WorldMapForm.Canvas.Font.Size := 18;
   WorldMapForm.Canvas.TextOut(150, 150, 'Loading...');
   TMap.ReLoad := True;
@@ -670,7 +686,7 @@ begin
     Circle.ShowHint := True;
 
     if TMap.MapNameList.ContainsKey(ID) then
-      Circle.Hint := ID + '-' +TMap.MapNameList[ID].MapName;
+      Circle.Hint := ID + '-' + TMap.MapNameList[ID].MapName;
 
     Circle.Width := 23;
     Circle.Height := 25;
@@ -763,7 +779,12 @@ begin
     //
     end;
     }
-    tstatus.CreateUI;
+
+  tstatus.CreateUI;
+  DumpData(GetImgEntry('UI.wz/Basic.img/Cursor/2'),UIData,UIImages);
+  DumpData(GetImgEntry('UI.wz/Basic.img/Cursor/0'),UIData,UIImages);
+  DumpData(GetImgEntry('UI.wz/Basic.img/Cursor/12'),UIData,UIImages);
+  RenderForm.Cursor:=crNone;
   ActiveControl := nil;
 end;
 
@@ -1043,7 +1064,7 @@ begin
   Parameters.Width := Width; //DisplaySize.X;
   Parameters.Height := Height; //DisplaySize.Y;
   Parameters.Attributes := TextureDrawable;
-  Parameters.Format :=pxt.types.TPixelFormat.BGRA8;
+  Parameters.Format := pxt.types.TPixelFormat.BGRA8;
   if Texture.Initialized then
     Texture.Free;
   Texture := TextureInit(FDevice, Parameters);

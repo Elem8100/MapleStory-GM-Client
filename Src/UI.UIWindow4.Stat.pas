@@ -15,7 +15,7 @@ uses
   UI.Utils, ACtrlLabels;
 
 var
-  HyperValues: array of Integer;
+  HyperValues: array[0..18] of Integer;
   HyperStatPoint:Integer;
 
 procedure CreateStatForm;
@@ -102,14 +102,13 @@ begin
     UIButton['HyperButton' + i.ToString].OnMouseDown :=
       procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
       begin
-        var n := TAButton(Sender).Tag;
-        HyperValues[n] := UILabel['HyperValue' + n.ToString].Text.ToInteger;
-        HyperValues[n] := HyperValues[n] + 1;
-        UILabel['HyperValue' + n.ToString].Text := HyperValues[n].ToString;
+        var ButtonTag := TAButton(Sender).Tag;
+        HyperValues[ButtonTag] := UILabel['HyperValue' + ButtonTag.ToString].Text.ToInteger;
+        Inc(HyperValues[ButtonTag]);
+        UILabel['HyperValue' + ButtonTag.ToString].Text := HyperValues[ButtonTag].ToString;
         HyperStatPoint:=UILabel['HyperStatPoint'].Text.ToInteger;
         Dec(HyperStatPoint);
         UILabel['HyperStatPoint'].Text:=HyperStatPoint.ToString;
-
       end;
   end;
   CreateImage('HyperStatVScr', 'UI.wz/Basic.img/VScr9/enabled/base', 1, 17.7, 163, 42);
@@ -166,8 +165,6 @@ begin
    CreateLabel('HyperStatPoint', '99', 156, 266);
 end;
 
-initialization
-  HyperValues := [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
 end.
 

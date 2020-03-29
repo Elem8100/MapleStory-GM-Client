@@ -3,12 +3,15 @@ unit UI.Utils;
 interface
 
 uses
-  Windows, Types, controls, SysUtils, StrUtils, AsphyreSprite, Generics.Collections, WZIMGFile, Math,
-  AbstractTextures, WZArchive, ACtrlEditBoxes, AsphyreTypes, DX9Textures, AControls, ACtrlEngine,
-  ACtrlForms, ACtrlButtons, TypInfo, ACtrlImages, ACtrlDropPanels, ACtrlLabels, Tools, WZDirectory,
-  WZReader, KeyHandler, Global, Classes, AsphyreFonts, ACtrlTypes, PXT.Graphics,PXT.Canvas;
- type
-  TLabelColor=(lcBlack,lcRed,lcWhite);
+  Windows, System.Types, messages, controls, SysUtils, StrUtils, AsphyreSprite, Generics.Collections,
+  WZIMGFile, Math, AbstractTextures, WZArchive, ACtrlEditBoxes, AsphyreTypes, DX9Textures, AControls,
+  ACtrlEngine, ACtrlForms, ACtrlButtons, TypInfo, ACtrlImages, ACtrlDropPanels, ACtrlLabels, Tools,
+  WZDirectory, WZReader, KeyHandler, Global, Classes, AsphyreFonts, ACtrlTypes, PXT.Graphics,
+  PXT.Canvas;
+
+type
+  TLabelColor = (lcBlack, lcRed, lcWhite);
+
 procedure CreateUIs(EntryName: string; X, Y: Integer; wClose: Boolean = True);
 
 procedure CreateButton(ImageEntry: string; X: Integer = 0; Y: Integer = 0); overload;
@@ -31,7 +34,7 @@ procedure CreateFormEx(EntryName: string; X, Y: Integer);
 
 procedure CreateEdit(EntryName: string; X, Y, AWidth: Integer);
 
-procedure CreateLabel(EntryName, AText: string; X, Y: Integer;  LabelColor:TLabelColor =lcBlack);
+procedure CreateLabel(EntryName, AText: string; X, Y: Integer; LabelColor: TLabelColor = lcBlack);
 
 procedure CreateImage(ImageEntry: string; AScaleX: Single = 1; AScaleY: Single = 1; X: Integer = 0;
   Y: Integer = 0); overload;
@@ -48,7 +51,6 @@ procedure ShowForm(Name: string);
 function HasUI(Key: TWZIMGEntry): Boolean;
 
 type
-
   TAttachForm = class(TAForm)
   public
     OffsetX, OffsetY: Integer;
@@ -56,7 +58,21 @@ type
     procedure Paint(DC: HDC); override;
   end;
 
+  TGameCursor = class
+  private
+    Frame: Integer;
+    CursorNumber: string;
+    FTime: Integer;
+    Origin: TPoint;
+    Offset: TPoint;
+    ImagEntry: TWZImgEntry;
+  public
+    procedure Change(Number:string);
+    procedure Draw;
+  end;
+
 var
+  GameCursor: TGameCursor;
   UIImages: TObjectDictionary<TWZIMGEntry, TTexture>;
   UIData: TObjectDictionary<string, TWZIMGEntry>;
   UIButton: TDictionary<string, TAButton>;
@@ -69,7 +85,7 @@ var
 implementation
 
 uses
-  WzUtils, ColorUtils, minimap;
+  WzUtils, ColorUtils, minimap, RenderFormUnit;
 
 procedure TAttachForm.Paint(DC: HDC);
 begin
@@ -79,6 +95,37 @@ begin
     Top := UIForm[AttachFormName].Top + OffsetY;
     inherited;
   end;
+end;
+
+procedure TGameCursor.Draw;
+begin
+  var ImageEntry := UIData['UI.wz/Basic.img/Cursor/' + CursorNumber + '/' + Frame.ToString];
+  var Delay := ImageEntry.Get('delay', '100');
+  FTime := FTime + 17;
+  if FTime > Delay then
+  begin
+    Frame := Frame + 1;
+    if not UIData.ContainsKey('UI.wz/Basic.img/Cursor/' + CursorNumber + '/' + Frame.ToString) then
+      Frame := 0;
+    FTime := 0;
+  end;
+  if ImageEntry.Get('origin') <> nil then
+    Origin := ImageEntry.Get('origin').Vector;
+
+  Offset.X := -Origin.X + 3;
+  Offset.Y := -Origin.Y + 3;
+  var Pos := Mouse.CursorPos;
+  Pos := RenderForm.ScreenToClient(Pos);
+  var X := Trunc(Pos.X * (Global.DisplaySize.X / RenderForm.ClientWidth));
+  var Y := Trunc(Pos.y * (Global.DisplaySize.y / RenderForm.Clientheight));
+  GameCanvas.Draw(UIImages[ImageEntry], X + Offset.X, Y + Offset.Y);
+end;
+
+procedure TGameCursor.Change(Number: string);
+begin
+ if Frame<>0 then
+   Frame:=0;
+  CursorNumber:=Number;
 end;
 
 function ToName(S: string): string;
@@ -194,7 +241,8 @@ begin
   if UIButton.ContainsKey(ImageEntry) then
     Exit;
   var Entry := GetImgEntry(ImageEntry);
-  if Entry=nil then Exit;
+  if Entry = nil then
+    Exit;
   if not UIData.ContainsKey(Entry.GetPath) then
     DumpData(Entry, UIData, UIImages);
   var Button := TAButton.Create(UIEngine.AForm(UIOwner));
@@ -217,7 +265,8 @@ begin
   if UIButton.ContainsKey(ButtonName) then
     Exit;
   var Entry := GetImgEntry(ImageEntry);
-  if Entry=nil then Exit;
+  if Entry = nil then
+    Exit;
   if not UIData.ContainsKey(Entry.GetPath) then
     DumpData(Entry, UIData, UIImages);
   var Button := TAButton.Create(UIEngine.AForm(UIOwner));
@@ -368,7 +417,7 @@ begin
   end;
 end;
 
-procedure CreateLabel(EntryName: string; AText: string; X, Y: Integer;  LabelColor:TLabelColor =lcBlack);
+procedure CreateLabel(EntryName: string; AText: string; X, Y: Integer; LabelColor: TLabelColor = lcBlack);
 var
   ALabel: TALabel;
 begin
@@ -378,13 +427,16 @@ begin
     with ALabel do
     begin
       case LabelColor of
-         lcBlack:  FontColor := ARGB(255, 80, 80, 80);
-         lcRed:  FontColor := ARGB(255,220,0,0);
-         lcWhite: FontColor := $FFFFFFFF;
+        lcBlack:
+          FontColor := ARGB(255, 80, 80, 80);
+        lcRed:
+          FontColor := ARGB(255, 220, 0, 0);
+        lcWhite:
+          FontColor := $FFFFFFFF;
       end;
       Left := X;
       Top := Y;
-      Width := 100;//AWidth;
+      Width := 100; //AWidth;
       Height := 17;
       Text := AText;
       CanMoveHandle := False;
@@ -477,6 +529,9 @@ initialization
   UIImage := TDictionary<string, TAImage>.Create;
   UILabel := TDictionary<string, TALabel>.Create;
   //UITab := TDictionary<string, TUITab>.Create;
+
+  GameCursor := TGameCursor.Create;
+  GameCursor.CursorNumber := '2';
 
 end.
 
