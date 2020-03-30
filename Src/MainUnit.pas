@@ -137,7 +137,7 @@ uses
   DamageSkinFormUnit, WorldMapFormUnit, CashFormUnit, TamingMobFormUnit, NameTag, MapleEffect,
   TamingMob, MapleChair, LabelRingFormUnit, PetFormUnit, Pet, FamiliarFormUnit, MonsterFamiliar,
   SkillFormUnit, Skill, OptionsFormUnit, AvatarFormUnit, AndroidFormUnit, Android, MiniMap,
-  ACtrlEngine, SetScreenFormUnit, UI.Utils, acontrols, Ui.Statusbar3;
+  ACtrlEngine, SetScreenFormUnit, UI.Utils, acontrols, Ui.Statusbar3,UI.StatusBar3.Chat;
 {$R *.dfm}
 
 procedure TMainForm.FamiliarButtonClick(Sender: TObject);
@@ -781,6 +781,7 @@ begin
     }
 
   tstatus.CreateUI;
+  CreateMainChat;
   DumpData(GetImgEntry('UI.wz/Basic.img/Cursor/2'),UIData,UIImages);
   DumpData(GetImgEntry('UI.wz/Basic.img/Cursor/0'),UIData,UIImages);
   DumpData(GetImgEntry('UI.wz/Basic.img/Cursor/12'),UIData,UIImages);

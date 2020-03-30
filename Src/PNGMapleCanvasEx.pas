@@ -309,22 +309,17 @@ end;
 
 function TPNGMapleCanvas.Parse1(Input: TMemoryStream): TTexture;
 var
-  x, y: Integer;
   b1: array[0..1] of Byte;
-  P: PLongword;
   A, R, G, B: Word;
-  //ARGB: PRGB32;
-  Surface: TRasterSurface;
-  SurfParams: TRasterSurfaceParameters;
   Params: TTextureParameters;
+  Pixels: array of TIntColor;
+  Pixel: PIntColor;
 begin
-  Surface := RasterSurfaceInit(FWidth, FHeight, TPixelFormat.BGRA8);
-  SurfParams := Surface.Parameters;
-
-  for y := 0 to FHeight - 1 do
+  SetLength(Pixels, Width * Height);
+  for var J := 0 to Height - 1 do
   begin
-    P := SurfParams.Scanline[y];
-    for x := 0 to FWidth - 1 do
+    Pixel := @Pixels[J * Width];
+    for var i := 0 to Width - 1 do
     begin
       Input.Read(b1[0], 2);
       B := b1[0] and 15;
@@ -339,18 +334,16 @@ begin
       A := b1[1] and 240;
       A := A or (A shr 4);
 
-      P^ := cRGB1(R,G,B,A);
-      Inc(P);
+      Pixel^ := cRGB1(R, G, B, A);
+      Inc(Pixel);
     end;
   end;
-
   FillChar(Params, SizeOf(TTextureParameters), 0);
   Params.Width := FWidth;
   Params.Height := FHeight;
   Params.Format := TPixelFormat.BGRA8;
   Result := TextureInit(FDevice, Params);
-  Result.Copy(Surface, 0, ZeroPoint2i, ZeroIntRect);
-  Surface.Free;
+  Result.Update(@Pixels[0], Width * SizeOf(TIntColor), 0, ZeroIntRect);
 end;
 
 function TPNGMapleCanvas.Parse2(Input: TMemoryStream): TTexture;
@@ -358,24 +351,18 @@ var
   x, y: Integer;
   b1, b2, b3, b4: Byte;
   A, R, G, B: Word;
-  ARGB: PByte;
   bytes: array of PByte;
-  P: PLongword;
-  Surface: TRasterSurface;
-  SurfParams: TRasterSurfaceParameters;
   Params: TTextureParameters;
+  Pixels: array of TIntColor;
+  Pixel: PIntColor;
 begin
-  Surface := RasterSurfaceInit(FWidth, FHeight, TPixelFormat.BGRA8);
-  SurfParams := Surface.Parameters;
-  // SetLength(bytes, Input.Size);
-
-  // for official wz--ultra fast
+   // SetLength(bytes, Input.Size);
+   // for official wz--ultra fast
   {
    ARGB :=pDest;
    Input.Read(bytes[0], Input.Size);
    Move(bytes[0], ARGB[0], Input.Size);
   }
-
   // for custom-- fast
   {
     for y := 0 to FHeight - 1 do
@@ -388,18 +375,18 @@ begin
     end;
     end;
   }
-  for y := 0 to FHeight - 1 do
+  SetLength(Pixels, Width * Height);
+  for var J := 0 to Height - 1 do
   begin
-    P := SurfParams.Scanline[y];
-    for x := 0 to FWidth - 1 do
+    Pixel := @Pixels[J * Width];
+    for var i := 0 to Width - 1 do
     begin
       Input.Read(b1, 1);
       Input.Read(b2, 1);
       Input.Read(b3, 1);
       Input.Read(b4, 1);
-    //  P^ := cRGB1(b3, b2, b1, b4);
-      P^ := cRGB1(b3,b2,b1,b4);
-      Inc(P);
+      Pixel^ := cRGB1(b3, b2, b1, b4);
+      Inc(Pixel);
     end;
   end;
   FillChar(Params, SizeOf(TTextureParameters), 0);
@@ -407,28 +394,22 @@ begin
   Params.Height := FHeight;
   Params.Format := TPixelFormat.BGRA8;
   Result := TextureInit(FDevice, Params);
-  Result.Copy(Surface, 0, ZeroPoint2i, ZeroIntRect);
-  Surface.Free;
-
+  Result.Update(@Pixels[0], Width * SizeOf(TIntColor), 0, ZeroIntRect);
 end;
 
 function TPNGMapleCanvas.Parse513(Input: TMemoryStream): TTexture;
 var
-  x, y: Integer;
   b1, b2: Byte;
   R, G, B, A: Word;
-  P: PLongword;
-  Surface: TRasterSurface;
-  SurfParams: TRasterSurfaceParameters;
   Params: TTextureParameters;
+  Pixels: array of TIntColor;
+  Pixel: PIntColor;
 begin
-  Surface := RasterSurfaceInit(FWidth, FHeight, TPixelFormat.BGRA8);
-  SurfParams := Surface.Parameters;
-
-  for y := 0 to FHeight - 1 do
+  SetLength(Pixels, Width * Height);
+  for var J := 0 to Height - 1 do
   begin
-    P := SurfParams.Scanline[y];
-    for x := 0 to FWidth - 1 do
+    Pixel := @Pixels[J * Width];
+    for var i := 0 to Width - 1 do
     begin
       Input.Read(b1, 1);
       Input.Read(b2, 1);
@@ -439,62 +420,54 @@ begin
       R := b2 and $F8;
       R := R or (R shr 5);
       A := $FF;
-      P^ := cRGB1(R,G,B,A);
-      Inc(P);
+      Pixel^ := cRGB1(R, G, B, A);
+      Inc(Pixel);
     end;
-
   end;
   FillChar(Params, SizeOf(TTextureParameters), 0);
   Params.Width := FWidth;
   Params.Height := FHeight;
   Params.Format := TPixelFormat.BGRA8;
   Result := TextureInit(FDevice, Params);
-  Result.Copy(Surface, 0, ZeroPoint2i, ZeroIntRect);
-  Surface.Free;
+  Result.Update(@Pixels[0], Width * SizeOf(TIntColor), 0, ZeroIntRect);
 end;
 
 function TPNGMapleCanvas.Parse517(Input: TMemoryStream): TTexture;
 var
-  x, y: Integer;
-  P: PLongword;
-  Surface: TRasterSurface;
-  SurfParams: TRasterSurfaceParameters;
   Params: TTextureParameters;
+  Pixels: array of TIntColor;
+  Pixel: PIntColor;
 begin
-
-  Surface := RasterSurfaceInit(FWidth, FHeight, TPixelFormat.BGRA8);
-  SurfParams := Surface.Parameters;
-  for y := 0 to FHeight - 1 do
+   SetLength(Pixels, Width * Height);
+  for var J := 0 to Height - 1 do
   begin
-    P := SurfParams.Scanline[y];
-    for x := 0 to FWidth - 1 do
+    Pixel := @Pixels[J * Width];
+    for var i := 0 to Width - 1 do
     begin
-       if FWidth = 128 then
-        P^ := cRGB1(66, 159, 255, 255)
+      if FWidth = 128 then
+        Pixel^ := cRGB1(66, 159, 255, 255)
       else
-        P^ := cRGB1(83, 134, 239, 255);
-      Inc(P);
+        Pixel^ := cRGB1(83, 134, 239, 255);
+       Inc(Pixel);
     end;
-
   end;
   FillChar(Params, SizeOf(TTextureParameters), 0);
   Params.Width := FWidth;
   Params.Height := FHeight;
   Params.Format := TPixelFormat.BGRA8;
   Result := TextureInit(FDevice, Params);
-  Result.Copy(Surface, 0, ZeroPoint2i, ZeroIntRect);
-  Surface.Free;
+  Result.Update(@Pixels[0], Width * SizeOf(TIntColor), 0, ZeroIntRect);
 end;
 
 function TPNGMapleCanvas.Parse1026(Input: TMemoryStream): TTexture;
 var
-  x,Y:Integer;
+  x, Y: Integer;
   bytes: array of PByte;
   Surface: TRasterSurface;
   SurfParams: TRasterSurfaceParameters;
   Params: TTextureParameters;
-  Line,ARGB: PRGB32Array;
-  Bmp:TBitmap;
+  Line, ARGB: PRGB32Array;
+  Bmp: TBitmap;
 begin
   Surface := RasterSurfaceInit(fWidth, fHeight, TPixelFormat.BGRA8);
   SurfParams := Surface.Parameters;
@@ -503,19 +476,19 @@ begin
   Bmp.AlphaFormat := afPremultiplied;
   Bmp.Width := FWidth;
   Bmp.Height := FHeight;
-  SetLength(Bytes, Input.Size);
+  SetLength(bytes, Input.Size);
   ARGB := Bmp.Scanline[Bmp.Height - 1];
-  Input.Read(Bytes[0], Input.Size);
-  DecompressDDS(PByte(ARGB), Width, Height, PByte(Bytes), 2);
-  for y := 0 to FHeight - 1 do
+  Input.Read(bytes[0], Input.Size);
+  DecompressDDS(PByte(ARGB), Width, Height, PByte(bytes), 2);
+  for Y := 0 to FHeight - 1 do
   begin
-    ARGB := Bmp.Scanline[y];
-    line := SurfParams.Scanline[y];
+    ARGB := Bmp.Scanline[Y];
+    Line := SurfParams.Scanline[Y];
     for x := 0 to FWidth - 1 do
     begin
-      line[x].B := ARGB[x].B;
-      line[x].G := ARGB[x].G;
-      line[x].R := ARGB[x].R;
+      Line[x].B := ARGB[x].B;
+      Line[x].G := ARGB[x].G;
+      Line[x].R := ARGB[x].R;
       Line[x].A := ARGB[x].A;
     end;
   end;
@@ -532,13 +505,13 @@ end;
 
 function TPNGMapleCanvas.Parse2050(Input: TMemoryStream): TTexture;
 var
-  x,Y:Integer;
+  x, Y: Integer;
   bytes: array of PByte;
   Surface: TRasterSurface;
   SurfParams: TRasterSurfaceParameters;
   Params: TTextureParameters;
-  Line,ARGB: PRGB32Array;
-  Bmp:TBitmap;
+  Line, ARGB: PRGB32Array;
+  Bmp: TBitmap;
 begin
   Surface := RasterSurfaceInit(fWidth, fHeight, TPixelFormat.BGRA8);
   SurfParams := Surface.Parameters;
@@ -547,19 +520,19 @@ begin
   Bmp.AlphaFormat := afPremultiplied;
   Bmp.Width := FWidth;
   Bmp.Height := FHeight;
-  SetLength(Bytes, Input.Size);
+  SetLength(bytes, Input.Size);
   ARGB := Bmp.Scanline[Bmp.Height - 1];
-  Input.Read(Bytes[0], Input.Size);
-  DecompressDDS(PByte(ARGB), Width, Height, PByte(Bytes), 4);
-  for y := 0 to FHeight - 1 do
+  Input.Read(bytes[0], Input.Size);
+  DecompressDDS(PByte(ARGB), Width, Height, PByte(bytes), 4);
+  for Y := 0 to FHeight - 1 do
   begin
-    ARGB := Bmp.Scanline[y];
-    line := SurfParams.Scanline[y];
+    ARGB := Bmp.Scanline[Y];
+    Line := SurfParams.Scanline[Y];
     for x := 0 to FWidth - 1 do
     begin
-      line[x].B := ARGB[x].B;
-      line[x].G := ARGB[x].G;
-      line[x].R := ARGB[x].R;
+      Line[x].B := ARGB[x].B;
+      Line[x].G := ARGB[x].G;
+      Line[x].R := ARGB[x].R;
       Line[x].A := ARGB[x].A;
     end;
   end;
