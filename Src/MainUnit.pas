@@ -781,10 +781,11 @@ begin
     }
 
   tstatus.CreateUI;
-  CreateMainChat;
+  CreateUIStatusBar3Chat;
   DumpData(GetImgEntry('UI.wz/Basic.img/Cursor/2'),UIData,UIImages);
   DumpData(GetImgEntry('UI.wz/Basic.img/Cursor/0'),UIData,UIImages);
   DumpData(GetImgEntry('UI.wz/Basic.img/Cursor/12'),UIData,UIImages);
+  DumpData(GetImgEntry('UI.wz/Basic.img/Cursor/67'),UIData,UIImages);
   RenderForm.Cursor:=crNone;
   ActiveControl := nil;
 end;

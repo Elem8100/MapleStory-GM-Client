@@ -81,7 +81,7 @@ var
   UILabel: TDictionary<string, TALabel>;
  // UITab: TDictionary<string, TUITab>;
   UIOwner: string;
-
+  UIVersion: Integer;
 implementation
 
 uses
@@ -297,6 +297,8 @@ begin
   if UIImage.ContainsKey(ImageEntry) then
     Exit;
   var Entry := GetImgEntry(ImageEntry);
+  if Entry = nil then
+    Exit;
   if not UIData.ContainsKey(Entry.GetPath) then
     DumpData(Entry, UIData, UIImages);
   var Image := TAImage.Create(UIEngine.AForm(UIOwner));
@@ -531,7 +533,7 @@ initialization
   //UITab := TDictionary<string, TUITab>.Create;
 
   GameCursor := TGameCursor.Create;
-  GameCursor.CursorNumber := '2';
+  GameCursor.CursorNumber := '0';
 
 end.
 
