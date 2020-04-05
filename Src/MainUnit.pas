@@ -108,6 +108,7 @@ type
     procedure OptionButtonClick(Sender: TObject);
     procedure AndroidButtonClick(Sender: TObject);
     procedure ScreeenSetButtonClick(Sender: TObject);
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
   private
     OldX, OldY: Integer;
     MoveOn: Boolean;
@@ -137,7 +138,7 @@ uses
   DamageSkinFormUnit, WorldMapFormUnit, CashFormUnit, TamingMobFormUnit, NameTag, MapleEffect,
   TamingMob, MapleChair, LabelRingFormUnit, PetFormUnit, Pet, FamiliarFormUnit, MonsterFamiliar,
   SkillFormUnit, Skill, OptionsFormUnit, AvatarFormUnit, AndroidFormUnit, Android, MiniMap,
-  ACtrlEngine, SetScreenFormUnit, UI.Utils, acontrols, Ui.Statusbar3,UI.StatusBar3.Chat;
+  ACtrlEngine, SetScreenFormUnit, UI.Utils, acontrols, UI.Statusbar3.MainBar, UI.StatusBar3.Chat;
 {$R *.dfm}
 
 procedure TMainForm.FamiliarButtonClick(Sender: TObject);
@@ -159,17 +160,14 @@ end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
-//  FreeAndNil(LockRenderTargets);
   GameCanvas.Free;
   //FreeAndNil(GameDevice);
-//  FreeAndNil(GameTargets);
   FreeAndNil(SpriteEngine);
   FreeAndNil(Keyboard);
   BackEngine[0].Free;
   BackEngine[1].Free;
   TFootholdTree.This.Free;
   Keyboard.Free;
- // FreeAndNil(FontsAlt);
   FreeAndNil(CharData);
   MapWz.Free;
   if Map2Wz <> nil then
@@ -208,8 +206,7 @@ begin
   Data.Free;
   CircleList.Free;
   // DropList
-
-  //ReportMemoryLeaksOnShutdown := True;
+   //ReportMemoryLeaksOnShutdown := True;
 end;
 
 procedure TMainForm.FormKeyDown(Sender: TObject; var KEY: Word; Shift: TShiftState);
@@ -234,7 +231,14 @@ begin
   end;
   if KEY = VK_MENU then
     KEY := 0;
+  if ActiveEdit <> nil then
+    ActiveEdit.KeyDown(Key, Shift);
+end;
 
+procedure TMainForm.FormKeyPress(Sender: TObject; var Key: Char);
+begin
+  if ActiveEdit <> nil then
+    ActiveEdit.KeyPress(Key);
 end;
 
 procedure TMainForm.FormMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
@@ -284,7 +288,6 @@ begin
   CreateTexture(AvatarPanelTexture, 4096, 4096);
   GameFont := TextRendererInit(GameCanvas, Point2i(128, 128));
   GameFont.FontSettings := TFontSettings.Create('Segoe UI', 12.0, TFontWeight.Thin);
- // GameTargets := TAsphyreRenderTargets.Create();
   Keyboard := TAsphyreKeyboard.Create(MainForm);
   Keyboard.Foreground := False;
   UIEngine := TControlEngine.Create(MainForm, FDevice, GameCanvas);
@@ -534,8 +537,7 @@ begin
 
  // if TMap.ShowFPS then
   GameFont.Draw(Point2f(10, 10), 'FPS: ' + IntToStr(Timer.FrameRate), cRGB1(255, 0, 0));
-    //FontsAlt[0].TextOut('FPS: ' + IntToStr(Timer.FrameRate), 10, 10, cRGB1(255, 0, 0));
- // if TMap.ShowMobInfo then
+  // if TMap.ShowMobInfo then
    // GameCanvas.Draw(GameTargetMobInfo[0], 0, 20, 1, False, 255, 255, 255, 255);
   if TMap.FadeScreen.DoFade then
     GameCanvas.FillRect(FloatRect(0, 0, DisplaySize.X, DisplaySize.Y), cRGB1(0, 0, 0, TMap.FadeScreen.AlphaCounter));
@@ -543,7 +545,6 @@ begin
     TFootholdTree.This.DrawFootHolds;
   if TMap.ShowMusic then
     GameFont.Draw(Point2f(10, 50), '音樂: ' + TMap.BgmPath, cRGB1(255, 0, 0));
-    //FontsAlt[4].TextOut('音樂: ' + TMap.BgmPath, 10, 10, cRGB1(255, 0, 0));
   UIEngine.Render(Canvas.Handle);
   GameCursor.Draw;
 
@@ -769,24 +770,14 @@ begin
     OpenMSFolder.Enabled := False;
     ComboKey.Enabled := False;
   end;
-  {
-  var Dir := 'UI/StatusBar2.img/mainBar/';
-  CreateForm(Dir + 'quickSlot/quickSlot', 512, 600, False);
-  uiform['UI/StatusBar2.img/mainBar/quickSlot/quickSlot'].Enabled := false;
-  uiform['UI/StatusBar2.img/mainBar/quickSlot/quickSlot'].OnMouseDown :=
-    procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
-    begin
-    //
-    end;
-    }
 
-  tstatus.CreateUI;
+  TStatusBar3MainBar.CreateUI;
   CreateUIStatusBar3Chat;
-  DumpData(GetImgEntry('UI.wz/Basic.img/Cursor/2'),UIData,UIImages);
-  DumpData(GetImgEntry('UI.wz/Basic.img/Cursor/0'),UIData,UIImages);
-  DumpData(GetImgEntry('UI.wz/Basic.img/Cursor/12'),UIData,UIImages);
-  DumpData(GetImgEntry('UI.wz/Basic.img/Cursor/67'),UIData,UIImages);
-  RenderForm.Cursor:=crNone;
+  DumpData(GetImgEntry('UI.wz/Basic.img/Cursor/2'), UIData, UIImages);
+  DumpData(GetImgEntry('UI.wz/Basic.img/Cursor/0'), UIData, UIImages);
+  DumpData(GetImgEntry('UI.wz/Basic.img/Cursor/12'), UIData, UIImages);
+  DumpData(GetImgEntry('UI.wz/Basic.img/Cursor/67'), UIData, UIImages);
+  RenderForm.Cursor := crNone;
   ActiveControl := nil;
 end;
 
@@ -1003,10 +994,6 @@ end;
 
 procedure TMainForm.SpeedButton3Click(Sender: TObject);
 begin
-  //FontsAlt.UpdateAll;
-  //GameDevice.Windowed := False;
- // TMobInfo.ReDrawTarget;
-
   if Screen.MonitorCount > 0 then
   begin
     BorderStyle := bsNone;

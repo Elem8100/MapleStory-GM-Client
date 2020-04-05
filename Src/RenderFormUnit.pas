@@ -25,20 +25,24 @@ var
 implementation
 
 uses
-  Global,  UI.Utils,UI.StatusBar3;
+  Global,  UI.Utils,UI.StatusBar3.MainBar;
 {$R *.dfm}
 
 procedure TRenderForm.FormMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
-
+  if UIData.Count=0 then
+    Exit;
+  UIForm['StatusBar3Chat'].SendToBack;
   GameCursor.Change('12');
 end;
 
 procedure TRenderForm.FormMouseUp(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
-   GameCursor.Change('0');
+ if UIData.Count=0 then
+    Exit;
+  GameCursor.Change('0');
 end;
 
 procedure TRenderForm.FormResize(Sender: TObject);

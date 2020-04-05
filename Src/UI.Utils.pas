@@ -7,7 +7,7 @@ uses
   WZIMGFile, Math, AbstractTextures, WZArchive, ACtrlEditBoxes, AsphyreTypes, DX9Textures, AControls,
   ACtrlEngine, ACtrlForms, ACtrlButtons, TypInfo, ACtrlImages, ACtrlDropPanels, ACtrlLabels, Tools,
   WZDirectory, WZReader, KeyHandler, Global, Classes, AsphyreFonts, ACtrlTypes, PXT.Graphics,
-  PXT.Canvas;
+  PXT.Canvas,PXT.Types;
 
 type
   TLabelColor = (lcBlack, lcRed, lcWhite);
@@ -32,7 +32,7 @@ procedure CreateAttachForm(ImageEntry, AAttachFormName: string; X, Y: Integer; A
 
 procedure CreateFormEx(EntryName: string; X, Y: Integer);
 
-procedure CreateEdit(EntryName: string; X, Y, AWidth: Integer);
+procedure CreateEdit(EditName: string; X, Y, AWidth: Integer;AFontColor,ATicColor:TColorPair);
 
 procedure CreateLabel(EntryName, AText: string; X, Y: Integer; LabelColor: TLabelColor = lcBlack);
 
@@ -67,7 +67,7 @@ type
     Offset: TPoint;
     ImagEntry: TWZImgEntry;
   public
-    procedure Change(Number:string);
+    procedure Change(Number: string);
     procedure Draw;
   end;
 
@@ -79,9 +79,12 @@ var
   UIForm: TDictionary<string, TAForm>;
   UIImage: TDictionary<string, TAImage>;
   UILabel: TDictionary<string, TALabel>;
+  UIEdit: TDictionary<string, TAEditBox>;
  // UITab: TDictionary<string, TUITab>;
   UIOwner: string;
   UIVersion: Integer;
+  ActiveEdit:TAEditBox;
+
 implementation
 
 uses
@@ -123,9 +126,9 @@ end;
 
 procedure TGameCursor.Change(Number: string);
 begin
- if Frame<>0 then
-   Frame:=0;
-  CursorNumber:=Number;
+  if Frame <> 0 then
+    Frame := 0;
+  CursorNumber := Number;
 end;
 
 function ToName(S: string): string;
@@ -402,21 +405,25 @@ begin
 
 end;
 
-procedure CreateEdit(EntryName: string; X, Y, AWidth: Integer);
+procedure CreateEdit(EditName: string; X, Y, AWidth: Integer;AFontColor,ATicColor:TColorPair);
 begin
-  with TAEditBox.Create(UIEngine.AForm(UIOwner)) do // UIEngine.AForm(ParentName)
+  if  UIEdit.ContainsKey(EditName) then
+    Exit;
+  var Edit := TAEditBox.Create(UIEngine.AForm(UIOwner));
+  with Edit do
   begin
     Color.SetFillColor(cRGB4(0, 0, 0, 0));
-   // Zfont := ZFonta;
     BorderWidth := 0;
     Left := X;
     Top := Y;
     Width := AWidth;
-    Height := 40;
-    Name := ToName(EntryName);
-
+    Height := 20;
     SelStart := 0;
+    FontColor:= AFontColor;
+    TicColor:=ATicColor;
   end;
+
+  UIEdit.AddOrSetValue(EditName, Edit);
 end;
 
 procedure CreateLabel(EntryName: string; AText: string; X, Y: Integer; LabelColor: TLabelColor = lcBlack);
@@ -530,6 +537,7 @@ initialization
   UIForm := TDictionary<string, TAForm>.Create;
   UIImage := TDictionary<string, TAImage>.Create;
   UILabel := TDictionary<string, TALabel>.Create;
+  UIEdit := TDictionary<string, TAEditBox>.Create;
   //UITab := TDictionary<string, TUITab>.Create;
 
   GameCursor := TGameCursor.Create;
