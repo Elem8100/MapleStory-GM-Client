@@ -167,7 +167,7 @@ begin
   BorderWidth := 0;
   Color.SetFillColor($FFA6CAF0, $FFA6CAF0, $FFA6CAF0, $FFA6CAF0);
   Font := 'tahoma10b';
-  FontColor.SetFontColor($40FFFFFF, $40FFFFFF);
+  FontColor:=ColorPairWhite;
   Margin := 1;
   //TabStop := False;
 

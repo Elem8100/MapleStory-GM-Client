@@ -109,7 +109,7 @@ type
 implementation
 
 uses
-  PXT.Graphics, PXT.Types, PXT.Canvas, Global;
+  PXT.Graphics, PXT.Types, PXT.Canvas, Global,UI.Utils;
 // ----------------------------------------------------------------------------
 
 var
@@ -202,7 +202,7 @@ begin
       Inc(Num);
     Name := 'Form' + IntToStr(Num);
   end;
-
+  UIOwner:= Name;
   // fields
   FCanMove := True;
   FIsMoving := False;
@@ -223,7 +223,7 @@ begin
   BorderWidth := 1;
   Color.SetFillColor($FFA6CAF0, $FFA6CAF0, $FF4090F0, $FF4090F0);
   Font := 'tahoma10b';
-  FontColor.SetFontColor(clWhite2);
+  FontColor:=ColorPairWhite;
   Margin := 3;
 
   ControlState := ControlState - [csCreating];
@@ -246,75 +246,10 @@ begin
   // Set initial values
   X := ClientLeft;
   Y := ClientTop;
-
-  // Draw Border
-  if BorderWidth > 0 then
-  begin
-    AEngine.Canvas.FillRect(FloatRect(X, Y, X + Width, Y + BorderWidth), BorderColor);
-    AEngine.Canvas.FillRect(FloatRect(X, Y + BorderWidth, X + BorderWidth, Y + Height - BorderWidth), BorderColor);
-    AEngine.Canvas.FillRect(FloatRect(X, Y + Height - BorderWidth, X + Width, Y + Height), BorderColor);
-    AEngine.Canvas.FillRect(FloatRect(X + Width - BorderWidth, Y + BorderWidth, X + Width, Y +
-      Height - BorderWidth), BorderColor);
-  end;
-
-  // Draw Background
-  if AImage.Initialized then
-  begin
-   // AEngine.Canvas.UseTexturePx(AImage,
-
-    AEngine.Canvas.Draw(AImage,X,Y);
-  end
-  else
-  begin
-    AEngine.Canvas.FillRect(FloatRect(X + BorderWidth, Y + BorderWidth, X + Width - BorderWidth, Y +
-      Height - BorderWidth), cardinal(Color));
-  end;
-
-  {
-  // Draw Text and Caption
-  if AFont <> nil then
-  begin
-    // Draw Text
-    if Text <> '' then
-      AFont.TextRectEx(Point2(X + BorderWidth + Margin,
-          Y + BorderWidth + Margin+1),
-        Point2(Width - (BorderWidth * 2) - (Margin * 2),
-          Height - (BorderWidth * 2) - (Margin * 2)), Text,
-        cColor2(FontColor), 1.0, FHAlign, FVAlign, FPLine);
-  end;
-  }
-
-  // Draw Text and Caption New
-  if FZFont <> nil then
-  begin
-    if Text <> '' then
-    begin
-      FZFont.Color := cColor4(FontColor.Top, FontColor.Top, FontColor.Bottom, FontColor.Bottom);
-      FZFont.TextOutRect(DC, Point2(X + BorderWidth + Margin, Y + BorderWidth + Margin + 1), Point2(Width
-        - (BorderWidth * 2) - (Margin * 2), Height - (BorderWidth * 2) - (Margin * 2)), Text, 0, 0,
-        FPLine, GetZHAlign(FHAlign), GetZVAlign(FVAlign));
-    end;
-  end; { else
-  if AFont <> nil then
-  begin
-    // Draw Text
-    if Text <> '' then
-      AFont.TextRectEx(Point2(X + BorderWidth + Margin,
-          Y + BorderWidth + Margin+1),
-        Point2(Width - (BorderWidth * 2) - (Margin * 2),
-          Height - (BorderWidth * 2) - (Margin * 2)), Text,
-        cColor2(FontColor), 1.0, FHAlign, FVAlign, FPLine);
-  end;
-       }
-  // Draw Shadow
-  if (FShowShadow) and (FShadowWidth > 0) then
-  begin
-    AEngine.Canvas.FillRect(FloatRect(X + Width, Y + FShadowWidth, X + Width + FShadowWidth, Y + Height),
-      FShadowColor, TBlendingEffect.Shadow);
-    AEngine.Canvas.FillRect(FloatRect(X + FShadowWidth, Y + Height, X + Width + FShadowWidth, Y + Height
-      + FShadowWidth), FShadowColor,TBlendingEffect.Shadow);
-  end;
-
+  if (AImage.Initialized) and (ImageEntry<> nil) then
+     AEngine.Canvas.Draw(AImage,X,Y);
+//  else
+  //   AEngine.Canvas.FillRect(FloatRect(X, Y, Width,Height),cRGB1(255,0,0,100));
   inherited Paint(DC);
 end;
 

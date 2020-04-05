@@ -196,7 +196,7 @@ begin
   Color.SetFillColor($FF4090F0, $FF4090F0, $FF4090F0, $FF4090F0);
 
   Font := 'tahoma10b';
-  FontColor.SetFontColor(clWhite2);
+  FontColor:=ColorPairWhite;
 
   Margin := 2;
 
@@ -693,7 +693,7 @@ begin
           }
           if FZFont <> nil then
           begin
-            FZFont.Color := cColor4(FontColor.Top, FontColor.Top, FontColor.Bottom, FontColor.Bottom);
+           // FZFont.Color := cColor4(FontColor.Top, FontColor.Top, FontColor.Bottom, FontColor.Bottom);
             FZFont.TextOut(DC, Point2(X + BorderWidth + Margin + 1, Y + BorderWidth + Margin +
               VirtualPosition + (FLineHeight * Index)), FStrings[Index]);
           end; { else

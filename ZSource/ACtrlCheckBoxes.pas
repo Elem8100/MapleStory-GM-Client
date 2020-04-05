@@ -186,7 +186,7 @@ begin
   BorderWidth := 0;
   Color.SetFillColor($FF4090F0, $FF4090F0, $FF4090F0, $FF4090F0);
   Font := 'tahoma10b';
-  FontColor.SetFontColor(clWhite2);
+  FontColor:=ColorPairWhite;
   Margin := 3;
   TabStop := True;
   Text := Name;
@@ -373,7 +373,7 @@ begin
   begin
     if Text <> '' then
     begin
-      FZFont.Color := cColor4(FontColor.Top, FontColor.Top, FontColor.Bottom, FontColor.Bottom);
+     // FZFont.Color := cColor4(FontColor.Top, FontColor.Top, FontColor.Bottom, FontColor.Bottom);
       FZFont.TextOutRect(DC, Point2(X + BorderWidth + Margin + FBoxSize + 4, Y + BorderWidth +
         Margin + 1), Point2(Width - (BorderWidth * 2) - (Margin * 2), Height - (BorderWidth * 2) - (Margin
         * 2)), Text, 0, 0, False, zhLeft, zvMiddle);

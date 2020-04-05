@@ -173,7 +173,7 @@ begin
 
   Color.SetFillColor($FF4090F0, $FF4090F0, $FF4090F0, $FF4090F0);
   Font := 'tahoma10b';
-  FontColor.SetFontColor(clWhite2);
+  FontColor:=ColorPairWhite;
   Margin := 2;
   TabStop := True;
 

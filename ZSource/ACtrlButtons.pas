@@ -205,7 +205,7 @@ begin
   BorderWidth := 0;
   Color.SetFillColor($FFA6CAF0, $FFA6CAF0, $FF4090F0, $FF4090F0);
   Font := 'tahoma10b';
-  FontColor.SetFontColor(clWhite2);
+  //FontColor.SetFontColor(clWhite2);
   Margin := 3;
   Text := Name;
   Visible := True;
@@ -296,49 +296,13 @@ begin
   // Set initial values
   X := ClientLeft;
   Y := ClientTop;
-  AColor := cColor4(Color);
-  AFontColor := cColor2(FontColor);
-
-  if FHover then
-  begin
-    AColor := cColor4(ColorHover);
-    AFontColor := cColor2(FontColorHover);
-  end;
-
-  if FPressed then
-  begin
-    X := ClientLeft + 1;
-    Y := ClientTop + 1;
-    AColor := cColor4(ColorPressed);
-    AFontColor := cColor2(FontColorPressed);
-  end;
-
-  // Draw Border
-  if BorderWidth > 0 then
-  begin
-    AEngine.Canvas.FillRect(FloatRect(X, Y, X + Width, Y + BorderWidth), BorderColor);
-    AEngine.Canvas.FillRect(FloatRect(X, Y + BorderWidth, X + BorderWidth, Y + Height - BorderWidth), BorderColor);
-    AEngine.Canvas.FillRect(FloatRect(X, Y + Height - BorderWidth, X + Width, Y + Height), BorderColor);
-    AEngine.Canvas.FillRect(FloatRect(X + Width - BorderWidth, Y + BorderWidth, X + Width, Y + Height - BorderWidth),
-      BorderColor);
-  end;
 
   // Draw Background
   if not FTransparent then
   begin
     if AImage.Initialized then
     begin
-    {
-      AEngine.Canvas.UseTexturePx(AImage, pxBounds4(0 + BorderWidth, 0 + BorderWidth, AImage.Width - (BorderWidth * 2),
-        AImage.Height - (BorderWidth * 2)));
-      AEngine.Canvas.TexMap(pRect4(Rect(X + BorderWidth, Y + BorderWidth, X + Width - BorderWidth,
-        Y + Height - BorderWidth)), cAlpha4(ImageAlpha), deNormal);
-        }
-         var TexCoord := Quad(0 + BorderWidth, 0 + BorderWidth, AImage.Parameters.Width - (BorderWidth *
-      2), AImage.Parameters.Height - (BorderWidth * 2));
-    AEngine.Canvas.Quad(AImage, Quad(IntRectBDS(X + BorderWidth, Y + BorderWidth, X + Width -
-      BorderWidth, Y + Height - BorderWidth)), TexCoord,$FFFFFFFF);
-
+       AEngine.Canvas.Draw(AImage,X,Y)
     end
     else
     begin
@@ -347,41 +311,6 @@ begin
     end;
   end;
 
-  // Draw Text
-  {
-    if AFont <> nil then
-    begin
-    if Text <> '' then
-    AFont.TextRectEx(Point2(X + BorderWidth + Margin,
-    Y + BorderWidth + Margin+1),
-    Point2(Width - (BorderWidth * 2) - (Margin * 2),
-    Height - (BorderWidth * 2) - (Margin * 2)), Text,
-    AFontColor, 1.0, FHAlign, FVAlign, False);
-    end;
-  }
-
-  // Draw Text New
-  if FZFont <> nil then
-  begin
-    FZFont.Color := cColor4(AFontColor[0], AFontColor[0], AFontColor[1], AFontColor[1]);
-    if Text <> '' then
-      FZFont.TextOutRect(DC, Point2(X + BorderWidth + Margin, Y + BorderWidth + Margin + 1),
-        Point2(Width - (BorderWidth * 2) - (Margin * 2), Height - (BorderWidth * 2) - (Margin * 2)), Text, 0, 0, True,
-        GetZHAlign(FHAlign), GetZVAlign(FVAlign));
-  end; { else
-    if AFont <> nil then
-    begin
-    if Text <> '' then
-    AFont.TextRectEx(Point2(X + BorderWidth + Margin,
-    Y + BorderWidth + Margin+1),
-    Point2(Width - (BorderWidth * 2) - (Margin * 2),
-    Height - (BorderWidth * 2) - (Margin * 2)), Text,
-    AFontColor, 1.0, FHAlign, FVAlign, False);
-    end;
-  }
-  // Draw Shadow
-  AEngine.Canvas.FillRect(FloatRect(X + Width, Y + 1, X + Width + 1, Y + Height), FShadowColor, TBlendingEffect.Shadow);
-  AEngine.Canvas.FillRect(FloatRect(X + 1, Y + Height, X + Width + 1, Y + Height + 1), FShadowColor, TBlendingEffect.Shadow);
 end;
 
 procedure TCustomAButton.SetAEngine(AEngine: TCustomEngine);

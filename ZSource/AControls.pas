@@ -14,7 +14,7 @@ unit AControls;
 interface
 
 uses
-  Windows, SysUtils, Classes, Controls,
+  PXT.Types,Windows, SysUtils, Classes, Controls,
   // Asphyre units
   AbstractCanvas, AbstractDevices, AsphyreFonts, AsphyreImages, AsphyreDB,
   AsphyreTypes, ZGameFonts,  Generics.Collections,WZIMGFile,
@@ -127,7 +127,7 @@ type
     FColor: TFillColor;
     FControlState: TControlState;
     FFont: ShortString;
-    FFontColor: TFontColor;
+    FFontColor: TColorPair;
     FHandle: Pointer;
     FHeight: Integer;
     //FImage: ShortString;
@@ -156,7 +156,6 @@ type
     procedure SetBorderColor(Color: TBorderColor);
     procedure SetColor(Color: TFillColor);
     procedure SetFont(Name: ShortString);
-    procedure SetFontColor(Color: TFontColor);
 
     procedure SetImage(Entry: TWZIMGEntry);
     procedure SetImageAlpha(Color: TAlphaColor);
@@ -263,7 +262,7 @@ type
     property Enabled: Boolean read GetEnabled write SetEnabled;
     property Engine: TCustomEngine read AEngine write SetAEngine;
     property Font: ShortString read FFont write SetFont;
-    property FontColor: TFontColor read FFontColor write SetFontColor;
+    property FontColor: TColorPair read FFontColor write FFontColor;
     property Handle: TWControl read GetHandle;
     //property Image: ShortString read FImage write SetImage;
     property ImageEntry: TWZIMGEntry read FImageEntry write FImageEntry;
@@ -1074,7 +1073,6 @@ begin
   FHandle := Self;
   FText := '';
   FColor := TFillColor.Create;
-  FFontColor := TFontColor.Create;
   FImageAlpha := $FFFFFFFF;
   FEnabled := True;
   FVisible := True;
@@ -1371,12 +1369,6 @@ begin
   FFont := Name;
  // if AEngine <> nil then
   //  FAFont := AEngine.Fonts.FindFont(Name);
-end;
-
-procedure TAControl.SetFontColor(Color: TFontColor);
-begin
-  if Color <> nil then
-    FFontColor.Assign(Color);
 end;
 
 procedure TAControl.SetColor(Color: TFillColor);

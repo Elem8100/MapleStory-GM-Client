@@ -14,7 +14,7 @@ unit ACtrlEditBoxes;
 interface
 
 uses
-  Windows, SysUtils, Classes, Clipbrd, Math, Controls,
+  PXT.Types, Windows, SysUtils, Classes, Clipbrd, Math, Controls,
   // Aspryre units
   AbstractCanvas, AsphyreFonts, AsphyreImages, AsphyreTypes, Vectors2, Vectors2px,
   // Asphyre GUI Engine
@@ -31,11 +31,12 @@ type
     FOnChange: TNotifyEvent;
     FSelection: TSelection;
     FSelectColor: TFontColor;
+    FTicColor: TColorPair;
     FSelectFontColor: TFontColor;
     FVirtualPosition: Integer;
     function GetTic: Integer;
     procedure SetReadOnly(Value: Boolean);
-  protected
+  public
     procedure AssignTo(Dest: TPersistent); override;
     procedure Click; override;
     procedure DoEnter; override;
@@ -75,6 +76,7 @@ type
     property MaxLength: Integer read FMaxLength write SetMaxLength;
     property SelectColor: TFontColor read FSelectColor write SetSelectColor;
     property SelectFontColor: TFontColor read FSelectFontColor write SetSelectFontColor;
+    property TicColor: TColorPair read FTicColor write FTicColor;
     property SelLength: Integer read GetSelLength write SetSelLength;
     property SelStart: Integer read GetSelStart write SetSelStart;
     property SelText: string read GetSelText write SetSelText;
@@ -130,7 +132,7 @@ type
 implementation
 
 uses
-  PXT.Types, PXT.Graphics;
+  PXT.Graphics, Global;
 // ----------------------------------------------------------------------------
 
 var
@@ -223,7 +225,7 @@ begin
   Color.SetFillColor($FF4090F0, $FF4090F0, $FF4090F0, $FF4090F0);
 
   Font := 'tahoma10b';
-  FontColor.SetFontColor(clWhite2);
+  FontColor := ColorPairWhite;
 
   Margin := 3;
 
@@ -250,6 +252,7 @@ begin
   FReadOnly := False;
 
   Tic := 0;
+  TicColor := $FF000000;
   Counter := GetTickCount;
 
   ControlState := ControlState - [csCreating];
@@ -550,93 +553,46 @@ var
   Index, XPos, AVirtualCursor: Integer;
   AChars: TAChars;
 begin
-  {
-  if AFont <> nil then
+  // Get chars from text
+  Index := 0;
+  SetLength(AChars, Length(Text) + 1);
+  while Index < Length(Text) do
   begin
-    // Get chars from text
-    Index := 0;
-    SetLength(AChars, Length(Text) + 1);
-    while Index < Length(Text) do
-    begin
-      AChars[Index].Char := Text[Index + 1];
-      AChars[Index].Width := Round(AFont.TextWidth(Text[Index + 1])
-          + AFont.Kerning);
-      Inc(Index);
-    end;
-
-    // Set position to 0
-    FSelection.StartPos := 0;
-    FSelection.EndPos := 0;
-
-    // Get virtual Bounds
-    XPos := ClientLeft + BorderWidth + Margin + FVirtualPosition;
-
-    // Set virtual Pos
-    AVirtualCursor := XPos;
-    for Index := 0 to High(AChars) do
-    begin
-      if (X > AVirtualCursor) and (X <= AVirtualCursor + AChars[Index].Width)
-        then
-      begin
-        if Index < Length(Text) then
-        begin
-          FSelection.StartPos := Index + 1;
-          FSelection.EndPos := Index + 1;
-        end;
-        Break;
-      end;
-      AVirtualCursor := AVirtualCursor + AChars[Index].Width;
-
-      if (Index = High(AChars)) and (X >= AVirtualCursor) then
-      begin
-        FSelection.StartPos := Index;
-        FSelection.EndPos := Index;
-      end;
-    end;
-  end;
-  }
-  if ZFont <> nil then
-  begin
-    // Get chars from text
-    Index := 0;
-    SetLength(AChars, Length(Text) + 1);
-    while Index < Length(Text) do
-    begin
-      AChars[Index].Char := Text[Index + 1];
-      AChars[Index].Width := Round(ZFont.CharWidth(0, Text[Index + 1]));
+    AChars[Index].Char := Text[Index + 1];
+    AChars[Index].Width := Round(GameFont.Extent(Text[Index + 1]).X);
       //AChars[Index].Width := Round(ZFont.GetTextLength(0,Text[Index + 1],1,1) + ZFont.Spacing);
-      Inc(Index);
-    end;
+    Inc(Index);
+  end;
 
     // Set position to 0
-    FSelection.StartPos := 0;
-    FSelection.EndPos := 0;
+  FSelection.StartPos := 0;
+  FSelection.EndPos := 0;
 
     // Get virtual Bounds
-    XPos := ClientLeft + BorderWidth + Margin + FVirtualPosition;
+  XPos := ClientLeft + BorderWidth + Margin + FVirtualPosition;
 
     // Set virtual Pos
-    AVirtualCursor := XPos;
-    for Index := 0 to High(AChars) do
+  AVirtualCursor := XPos;
+  for Index := 0 to High(AChars) do
+  begin
+    if (X > AVirtualCursor) and (X <= AVirtualCursor + AChars[Index].Width) then
     begin
-      if (X > AVirtualCursor) and (X <= AVirtualCursor + AChars[Index].Width) then
+      if Index < Length(Text) then
       begin
-        if Index < Length(Text) then
-        begin
-          FSelection.StartPos := Index + 1;
-          FSelection.EndPos := Index + 1;
-        end;
-        Break;
+        FSelection.StartPos := Index + 1;
+        FSelection.EndPos := Index + 1;
       end;
-      AVirtualCursor := AVirtualCursor + AChars[Index].Width;
+      Break;
+    end;
+    AVirtualCursor := AVirtualCursor + AChars[Index].Width;
 
-      if (Index = High(AChars)) and (X >= AVirtualCursor) then
-      begin
-        FSelection.StartPos := Index;
-        FSelection.EndPos := Index;
-      end;
+    if (Index = High(AChars)) and (X >= AVirtualCursor) then
+    begin
+      FSelection.StartPos := Index;
+      FSelection.EndPos := Index;
     end;
   end;
+
   inherited MouseDown(Button, Shift, X, Y);
 end;
 
@@ -651,7 +607,7 @@ end;
 procedure TCustomAEditBox.MouseLeave;
 begin
   // Change the cursor
-  AEngine.Parent.Cursor := crDefault;
+  AEngine.Parent.Cursor := crNone;
 
   inherited MouseLeave;
 end;
@@ -661,8 +617,7 @@ var
   Index, XPos, AVirtualCursor: Integer;
   AChars: TAChars;
 begin
-  {
-  if (AFont <> nil) and (Shift = [ssLeft]) then
+  if{ (ZFont <> nil) and} (Shift = [ssLeft]) then
   begin
     // Get chars from text
     Index := 0;
@@ -670,49 +625,7 @@ begin
     while Index < Length(Text) do
     begin
       AChars[Index].Char := Text[Index + 1];
-      AChars[Index].Width := Round(AFont.TextWidth(Text[Index + 1])
-          + AFont.Kerning);
-      Inc(Index);
-    end;
-
-    // Set position to 0
-    FSelection.EndPos := 0;
-
-    // Get virtual Bounds
-    XPos := ClientLeft + BorderWidth + Margin + FVirtualPosition;
-
-    // Set virtual Pos
-    AVirtualCursor := XPos;
-    for Index := 0 to High(AChars) do
-    begin
-      if (X > AVirtualCursor) and (X <= AVirtualCursor + AChars[Index].Width)
-        then
-      begin
-        if Index < Length(Text) then
-        begin
-          FSelection.EndPos := Index + 1;
-        end;
-        Break;
-      end;
-      AVirtualCursor := AVirtualCursor + AChars[Index].Width;
-
-      if (Index = High(AChars)) and (X >= AVirtualCursor) then
-      begin
-        FSelection.EndPos := Index;
-      end;
-    end;
-  end;
-  }
-
-  if (ZFont <> nil) and (Shift = [ssLeft]) then
-  begin
-    // Get chars from text
-    Index := 0;
-    SetLength(AChars, Length(Text) + 1);
-    while Index < Length(Text) do
-    begin
-      AChars[Index].Char := Text[Index + 1];
-      AChars[Index].Width := Round(ZFont.CharWidth(0, Text[Index + 1]));
+      AChars[Index].Width := Round(GameFont.Extent(Text[Index + 1]).X);
       Inc(Index);
     end;
 
@@ -759,222 +672,84 @@ var
   AFontColor: TColor2;
   ASelectColor: TColor4;
   AChars: TAChars;
-  ARect: TIntRect;
 begin
-  // Get size Canvas
-  ARect := AEngine.Canvas.ClipRect;
-
+  var FontSetting := TFontSettings.Create('Consolas', 12);
+  FontSetting.Effect.BorderType := TFontBorder.None;
+  FontSetting.Effect.BorderOpacity := 1;
+  FontSetting.Weight := TFontWeight.Thin;
+  GameFont.FontSettings := FontSetting;
+  var ARect := AEngine.Canvas.ClipRect;
   // Set initial values
   X := ClientLeft;
   Y := ClientTop;
-
-  // Draw Border
-  if BorderWidth > 0 then
+  AWidth := Width;
+  AHeight := Height;
+  GameCanvas.ContextState := TCanvasContextState.FlatScene;
+  AEngine.Canvas.ClipRect := IntRect(X - 2, Y, AWidth + 2, Y + AHeight);
+  // Get chars from text
+  Index := 0;
+  SetLength(AChars, Length(Text) + 1);
+  while Index < Length(Text) do
   begin
-    AEngine.Canvas.FillRect(FloatRect(X, Y, X + Width, Y + BorderWidth), BorderColor);
-    AEngine.Canvas.FillRect(FloatRect(X, Y + BorderWidth, X + BorderWidth, Y + Height - BorderWidth), BorderColor);
-    AEngine.Canvas.FillRect(FloatRect(X, Y + Height - BorderWidth, X + Width, Y + Height), BorderColor);
-    AEngine.Canvas.FillRect(FloatRect(X + Width - BorderWidth, Y + BorderWidth, X + Width, Y +
-      Height - BorderWidth), BorderColor);
+    AChars[Index].Char := Text[Index + 1];
+    AChars[Index].Width := Round(GameFont.Extent(Text[Index + 1]).X);
+    Inc(Index);
   end;
-
-  // Set Bounds
-  X := X + BorderWidth;
-  Y := Y + BorderWidth;
-  AWidth := Width - BorderWidth * 2;
-  AHeight := Height - BorderWidth * 2;
-
-  // Draw Background
-  if AImage.Initialized then
+    // Set virtual Pos
+  AVirtualCursor := 0;
+  FVirtualPosition := 0;
+  for Index := 0 to FSelection.EndPos - 1 do
   begin
-  {
-    AEngine.Canvas.UseTexturePx(AImage,
-      pxBounds4(0 + BorderWidth, 0 + BorderWidth,
-        AImage.Width - (BorderWidth * 2),
-        AImage.Height - (BorderWidth * 2)));
-    AEngine.Canvas.TexMap(pRect4(Rect(X, Y, X + AWidth, Y + AHeight)),
-      cAlpha4(ImageAlpha), deNormal);
+    AVirtualCursor := AVirtualCursor + AChars[Index].Width;
+
+  end;
+  if AVirtualCursor > AWidth then
+  begin
+    FVirtualPosition := AWidth - AVirtualCursor;
+    X := X + FVirtualPosition;
+  end;
+  AMin := Min(FSelection.StartPos, FSelection.EndPos);
+  AMax := Max(FSelection.StartPos, FSelection.EndPos);
+
+  ASelectColor := cColor4(FSelectColor.Top, FSelectColor.Top, FSelectColor.Bottom, FSelectColor.Bottom);
+   // Draw Text char by char
+  Y := Y + AHeight - 20;
+
+  for Index := 0 to High(AChars) do
+  begin
+       // Draw Selection
+    if (AMin < AMax) then
+    begin
+      if (Index >= AMin) and (Index < AMax) then
+        AEngine.Canvas.FillRect(FloatRect(X, Y, AChars[Index].Width, AHeight - 5), TColorRect(ASelectColor));
+      AFontColor := cColor2(FSelectFontColor);
+    end;
+      // Set Font Color
+     {
+      if (AMin < AMax) then
+      begin
+        if (Index >= AMin) and (Index < AMax) then
+          AFontColor := cColor2(FSelectFontColor)
+        else
+          AFontColor := cColor2(FontColor);
+      end
+      else
+        AFontColor := cColor2(FontColor);
       }
 
-    var TexCoord := Quad(0 + BorderWidth, 0 + BorderWidth, AImage.Parameters.Width - (BorderWidth *
-      2), AImage.Parameters.Height - (BorderWidth * 2));
-    AEngine.Canvas.Quad(AImage, Quad(IntRectBDS(X, Y, X + AWidth, Y + AHeight)), TexCoord, $FFFFFFFF);
-  end
-  else
-  begin
-    AEngine.Canvas.FillRect(FloatRect(X, Y, X + AWidth, Y + AHeight), Cardinal(Color));
-  end;
-
-  // Set Bounds
-  X := X + Margin;
-  Y := Y + Margin;
-  AWidth := AWidth - Margin * 2;
-  AHeight := AHeight - Margin * 2;
-
-  {
-  // Get chars from text and draw all
-  if AFont <> nil then
-  begin
-    // Set Rect Canvas
-    AEngine.Canvas.ClipRect := Rect(X - 1, Y, X + AWidth, Y + AHeight);
-
-    // Get chars from text
-    Index := 0;
-    SetLength(AChars, Length(Text) + 1);
-    while Index < Length(Text) do
-    begin
-      AChars[Index].Char := Text[Index + 1];
-      AChars[Index].Width := Round(AFont.TextWidth(Text[Index + 1])
-          + AFont.Kerning);
-      Inc(Index);
-    end;
-
-    // Set virtual Pos
-    AVirtualCursor := 0;
-    FVirtualPosition := 0;
-    for Index := 0 to FSelection.EndPos - 1 do
-    begin
-      AVirtualCursor := AVirtualCursor + AChars[Index].Width;
-
-    end;
-    if AVirtualCursor > AWidth then
-    begin
-      FVirtualPosition := AWidth - AVirtualCursor;
-      X := X + FVirtualPosition;
-    end;
-
-    AMin := Min(FSelection.StartPos, FSelection.EndPos);
-    AMax := Max(FSelection.StartPos, FSelection.EndPos);
-
-    ASelectColor := cColor4(FSelectColor.Top, FSelectColor.Top,
-      FSelectColor.Bottom, FSelectColor.Bottom);
-
-    // Draw Text char by char
-    for Index := 0 to High(AChars) do
-    begin
-
-      // Draw Selection
-      if (AMin < AMax) then
-      begin
-        if (Index >= AMin) and (Index < AMax) then
-          AEngine.Canvas.FillRect(Rect(X, Y, X + AChars[Index].Width,
-              Y + AHeight), ASelectColor, deNormal);
-        AFontColor := cColor2(FSelectFontColor);
-      end;
-
-      // Set Font Color
-      if (AMin < AMax) then
-      begin
-        if (Index >= AMin) and (Index < AMax) then
-          AFontColor := cColor2(FSelectFontColor)
-        else
-          AFontColor := cColor2(FontColor);
-      end
-      else
-        AFontColor := cColor2(FontColor);
-
-      // Draw char
-      AFont.TextOut(Point2(X, Y), AChars[Index].Char, AFontColor, 1.0);
-
-      // Draw Tic
-      if (GetTic <= 1) and (AEngine.ActiveControl = Self) then
-      begin
-        if Index = FSelection.EndPos then
-          AEngine.Canvas.Line(Point2(X - 1, Y), Point2(X - 1, Y + AHeight),
-            clBlack1);
-      end;
-
-      // Set Next X position
-      X := X + AChars[Index].Width;
-    end;
-
-    // Set Rect Canvas
-    AEngine.Canvas.ClipRect := ARect;
-  end;
-  }
-
-  if ZFont <> nil then
-  begin
-    // Set Rect Canvas
-    AEngine.Canvas.ClipRect := intRect(X - 1, Y, X + AWidth, Y + AHeight);
-
-    // Get chars from text
-    Index := 0;
-    SetLength(AChars, Length(Text) + 1);
-    while Index < Length(Text) do
-    begin
-      AChars[Index].Char := Text[Index + 1];
-      AChars[Index].Width := Round(ZFont.CharWidth(DC, Text[Index + 1]));
-      //AChars[Index].Width := Round(ZFont.GetTextLength(DC,Text[Index + 1],1,1) + ZFont.Spacing);
-      Inc(Index);
-    end;
-
-    // Set virtual Pos
-    AVirtualCursor := 0;
-    FVirtualPosition := 0;
-    for Index := 0 to FSelection.EndPos - 1 do
-    begin
-      AVirtualCursor := AVirtualCursor + AChars[Index].Width;
-
-    end;
-    if AVirtualCursor > AWidth then
-    begin
-      FVirtualPosition := AWidth - AVirtualCursor;
-      X := X + FVirtualPosition;
-    end;
-
-    AMin := Min(FSelection.StartPos, FSelection.EndPos);
-    AMax := Max(FSelection.StartPos, FSelection.EndPos);
-
-    ASelectColor := cColor4(FSelectColor.Top, FSelectColor.Top, FSelectColor.Bottom, FSelectColor.Bottom);
-
-    // Draw Text char by char
-    Y := Y + AHeight - ZFont.MaxHeight - Margin;
-
-    for Index := 0 to High(AChars) do
-    begin
-
-      // Draw Selection
-      if (AMin < AMax) then
-      begin
-        if (Index >= AMin) and (Index < AMax) then
-          AEngine.Canvas.FillRect(FloatRect(X, Y, X + AChars[Index].Width, Y + AHeight), tcolorrect(ASelectColor));
-        AFontColor := cColor2(FSelectFontColor);
-      end;
-
-      // Set Font Color
-      if (AMin < AMax) then
-      begin
-        if (Index >= AMin) and (Index < AMax) then
-          AFontColor := cColor2(FSelectFontColor)
-        else
-          AFontColor := cColor2(FontColor);
-      end
-      else
-        AFontColor := cColor2(FontColor);
-
-      // Draw char
-      //AFont.TextOut(Point2(X, Y), AChars[Index].Char, AFontColor, 1.0);
-      ZFont.Color := cColor4(AFontColor[0], AFontColor[0], AFontColor[1], AFontColor[1]);
       //if AChars[Index].Char <> #0 then
-      ZFont.TextOut(DC, Point2px(X, Y), AChars[Index].Char);
-      //ZCEdit
-
+    GameFont.Draw(Point2f(X, Y), AChars[Index].Char, FontColor);
       // Draw Tic
-      if (GetTic <= 1) and (AEngine.ActiveControl = Self) then
-      begin
-        if Index = FSelection.EndPos then
-          AEngine.Canvas.Line(Point2f(X - 1, Y), Point2f(X - 1, Y + ZFont.MaxHeight), clBlack1);
-      end;
-
-      // Set Next X position
-      X := X + AChars[Index].Width;
-      //if Index = High(AChars) then ZFont.Flush(DC);
+    if (GetTic <= 1) and (AEngine.ActiveControl = Self) then
+    begin
+      if Index = FSelection.EndPos then
+        AEngine.Canvas.Line(Point2f(X, Y), Point2f(X, Y + 15), TicColor);
     end;
-
-    // Set Rect Canvas
-    AEngine.Canvas.ClipRect := ARect;
+     // Set Next X position
+    X := X + AChars[Index].Width;
+      //if Index = High(AChars) then ZFont.Flush(DC);
   end;
+  AEngine.Canvas.ClipRect := ARect;
 end;
 
 procedure TCustomAEditBox.PasteFromClipboard;

@@ -158,7 +158,7 @@ begin
 
   Color.SetFillColor($FF4090F0, $FF4090F0, $FF4090F0, $FF4090F0);
   Font := 'tahoma10b';
-  FontColor.SetFontColor(clWhite2);
+  FontColor:=ColorPairWhite;
   Margin := 1;
 
   ControlState := ControlState - [csCreating];
@@ -294,7 +294,7 @@ begin
     // Draw Text
     if FShowPercentage = True then
     begin
-      FZFont.Color   := cColor4(FontColor.Top,FontColor.Top,FontColor.Bottom,FontColor.Bottom);
+    //  FZFont.Color   := cColor4(FontColor.Top,FontColor.Top,FontColor.Bottom,FontColor.Bottom);
       FZFont.TextOutRect(DC,
                          Point2(X + BorderWidth + Margin,Y + BorderWidth + Margin+1),
                          Point2(Width-(BorderWidth*2)-(Margin*2),Height-(BorderWidth*2)-(Margin*2)),
