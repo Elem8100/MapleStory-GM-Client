@@ -8,13 +8,12 @@ uses
 
 type
   TGameCanvas = object(TCanvas)
-
     procedure Create(Device: TDevice);
     procedure Draw(ATexture: TTexture; X, Y: Single; AEffect: TBlendingEffect = TBlendingEffect.Normal); overload;
     procedure Draw(ATexture: TTexture; X, Y: Single; Mirror: Boolean; AEffect: TBlendingEffect =
       TBlendingEffect.Normal); overload;
-    procedure DrawScale(ATexture: TTexture; X, Y: Single; ScaleX,ScaleY: Single; AEffect: TBlendingEffect =
-      TBlendingEffect.Normal); overload;
+    procedure DrawScale(ATexture: TTexture; X, Y: Single; ScaleX, ScaleY: Single; AEffect:
+      TBlendingEffect = TBlendingEffect.Normal); overload;
     procedure DrawColor1(ATexture: TTexture; X, Y: Single; Mirror: Boolean; const AColors:
       TColorRect; AEffect: TBlendingEffect = TBlendingEffect.Normal); overload;
     procedure DrawStretch(ATexture: TTexture; X, Y, Width, Height: Single; Mirror: Boolean; const
@@ -33,6 +32,7 @@ type
     procedure DrawSaturation(ATexture: TTexture; Saturation: Byte; X, Y: Single; Mirror: Boolean;
       AEffect: TBlendingEffect = TBlendingEffect.Normal);
     procedure DrawTarget(var ATexture: TTexture; Width, Height: Integer; Proc: TProc);
+    procedure DrawTargetStatic(var ATexture: TTexture; Width, Height: Integer; Proc: TProc);
   end;
 
 function GetA(const Color: LongWord): Byte; inline;
@@ -46,7 +46,10 @@ function GetB(const Color: LongWord): Byte; inline;
 function ARGB(const A, R, G, B: Byte): LongWord; inline;
 
 implementation
-     uses Global;
+
+uses
+  Global;
+
 procedure TGameCanvas.Create;
 begin
   TCanvas(Self) := CanvasInit(Device);
@@ -70,12 +73,12 @@ begin
   Quad(ATexture, PXT.Types.Quad(X, Y, Width, Height), TexCoord, $FFFFFFFF, AEffect);
 end;
 
-procedure TGameCanvas.DrawScale(ATexture: TTexture; X, Y: Single; ScaleX,ScaleY: Single; AEffect: TBlendingEffect =
-      TBlendingEffect.Normal);
+procedure TGameCanvas.DrawScale(ATexture: TTexture; X, Y: Single; ScaleX, ScaleY: Single; AEffect:
+  TBlendingEffect = TBlendingEffect.Normal);
 begin
   var Width := ATexture.Parameters.Width;
   var Height := ATexture.Parameters.Height;
-   Quad(ATexture, PXT.Types.Quad(X, Y, Width*ScaleX, Height*ScaleY),  QuadUnity, $FFFFFFFF, AEffect);
+  Quad(ATexture, PXT.Types.Quad(X, Y, Width * ScaleX, Height * ScaleY), QuadUnity, $FFFFFFFF, AEffect);
 end;
 
 procedure TGameCanvas.DrawColor1(ATexture: TTexture; X, Y: Single; Mirror: Boolean; const AColors:
@@ -170,21 +173,48 @@ begin
   DrawColor1(ATexture, X, Y, Mirror, ARGB(255, 128, Saturation, 128), AEffect);
 end;
 
-procedure  TGameCanvas.DrawTarget(var ATexture: TTexture; Width, Height: Integer; Proc: TProc);
+procedure TGameCanvas.DrawTarget(var ATexture: TTexture; Width, Height: Integer; Proc: TProc);
 begin
-  var   Parameters: TTextureParameters;
+  if ATexture.Initialized then
+    ATexture.Free;
+  var Parameters: TTextureParameters;
   FillChar(Parameters, SizeOf(TTextureParameters), 0);
   Parameters.Width := Width;
   Parameters.Height := Height;
-  Parameters.Attributes := TextureDrawable;
+  Parameters.Attributes := TextureDrawable or TexturePremultipliedAlpha;
+  Parameters.Multisamples := 0;
   Parameters.Format := TPixelFormat.BGRA8;
-  if ATexture.Initialized then
-     ATexture.Free;
   ATexture := TextureInit(FDevice, Parameters);
+  ATexture.Clear;
+  ATexture.BeginScene;
+  BeginScene;
+  Proc;
+  var LRenderState := FDevice.RenderingState;
+  LRenderState.BlendAlpha.Dest := TBlendFactor.InvSourceAlpha;
+  FDevice.RenderingState := LRenderState;
+  EndScene;
+  ATexture.EndScene;
+end;
+
+procedure TGameCanvas.DrawTargetStatic(var ATexture: TTexture; Width, Height: Integer; Proc: TProc);
+begin
+  if not ATexture.Initialized then
+  begin
+    var Parameters: TTextureParameters;
+    FillChar(Parameters, SizeOf(TTextureParameters), 0);
+    Parameters.Width := Width;
+    Parameters.Height := Height;
+    Parameters.Attributes := TextureDrawable or TexturePremultipliedAlpha;
+    Parameters.Format := TPixelFormat.BGRA8;
+    ATexture := TextureInit(FDevice, Parameters);
+  end;
   ATexture.Clear(FloatColor($0));
   ATexture.BeginScene;
   BeginScene;
   Proc;
+   var LRenderState := FDevice.RenderingState;
+  LRenderState.BlendAlpha.Dest := TBlendFactor.InvSourceAlpha;
+  FDevice.RenderingState := LRenderState;
   EndScene;
   ATexture.EndScene;
 end;
