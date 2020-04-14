@@ -231,8 +231,29 @@ begin
   end;
   if KEY = VK_MENU then
     KEY := 0;
-  if ActiveEdit <> nil then
-    ActiveEdit.KeyDown(Key, Shift);
+ // if ActiveEdit <> nil then
+   // ActiveEdit.KeyDown(KEY, Shift);
+
+  if (KEY = VK_RETURN) and (Length(UIEdit['StatusBar3/Chat'].Text) > 0) then
+  begin
+    var ShowRows := Round(UIImage['UI.wz/StatusBar3.img/chat/ingame/view/min/center'].ScaleY) div 20;
+    const EditBox = UIEdit['StatusBar3/Chat'];
+    TChatViewImage.StrList.Add(EditBox.Text);
+    EditBox.Clear;
+    var Pos := TChatViewImage.StrList.Count * 20;
+    GameCanvas.DrawTargetStatic(TChatViewImage.Instance.TargetTexture, 410, 595,
+      procedure
+      begin
+        var FontSetting := TFontSettings.Create('Arial', 12);
+        FontSetting.Effect.BorderType := TFontBorder.None;
+        FontSetting.Effect.BorderOpacity := 1;
+        FontSetting.Weight := TFontWeight.Thin;
+        GameFont.FontSettings := FontSetting;
+        for var i := TChatViewImage.StrList.Count - 1 downto 0 do
+          GameFont.Draw(Point2f(20, 480 + (20 * I) - Pos), TChatViewImage.StrList[i], $FFFFFFFF);
+
+      end);
+  end;
 end;
 
 procedure TMainForm.FormKeyPress(Sender: TObject; var Key: Char);
@@ -286,7 +307,7 @@ begin
 
   GameCanvas.Create(FDevice);
   CreateTexture(AvatarPanelTexture, 4096, 4096);
-  GameFont := TextRendererInit(GameCanvas, Point2i(128, 128));
+  GameFont := TextRendererInit(GameCanvas, Point2i(512, 512));
   GameFont.FontSettings := TFontSettings.Create('Segoe UI', 12.0, TFontWeight.Thin);
   Keyboard := TAsphyreKeyboard.Create(MainForm);
   Keyboard.Foreground := False;
@@ -439,7 +460,7 @@ begin
   case ScreenMode of
     smScale:
       begin
-        FullScreenTexture.Clear(FloatColor($0));
+        FullScreenTexture.Clear;
         FullScreenTexture.BeginScene;
         GameCanvas.BeginScene;
         RenderEvent;
@@ -455,7 +476,7 @@ begin
       end;
     smFullScreen:
       begin
-        FullScreenTexture.Clear(FloatColor($0));
+        FullScreenTexture.Clear;
         FullScreenTexture.BeginScene;
         GameCanvas.BeginScene;
         RenderEvent;
@@ -472,7 +493,7 @@ begin
     smNormal:
       begin
         FDevice.BeginScene;
-        FDevice.Clear([TClearLayer.Color], FloatColor($0));
+        FDevice.Clear([TClearLayer.Color], FloatColor($ffbbbbbb));
         GameCanvas.BeginScene;
         RenderEvent;
         GameCanvas.EndScene;
@@ -832,6 +853,10 @@ begin
       end;
       WzPath := Path;
       StringWZ := TWZArchive.Create(Path + '\String.wz');
+      if GetImgEntry('String/Mob.img/100000').Get('name','')='Snail' then
+        TNpc.FontSize:=13 //GMS
+      else
+        TNpc.FontSize :=12; //TMS
 
       MapWz := TWZArchive.Create(Path + '\Map.wz');
       if FileExists(Path + '\Map2.wz') then

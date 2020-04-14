@@ -3,9 +3,9 @@ unit Mob2;
 interface
 
 uses
-  Windows, System.Types, SysUtils, StrUtils, AsphyreSprite, Generics.Collections, WZIMGFile, Math,
-  Footholds, LadderRopes, AsphyreTypes, DX9Textures, WZArchive, ChatBalloon, MapPortal,
-  MapleCharacter, DamageNumber, MobDrop, Global, Tools, WzUtils, MapleMap,ColorUtils;
+  Winapi.Windows, System.Types, System.SysUtils, System.StrUtils, PXT.Sprites, Generics.Collections, WZIMGFile, Math,
+  Footholds, LadderRopes, AsphyreTypes, WZArchive, ChatBalloon, MapPortal, MapleCharacter,
+  DamageNumber, MobDrop, Global, Tools, WzUtils, MapleMap, ColorUtils, PXT.Graphics, PXT.Canvas, PXT.Types;
 
 type
   TMoveDirection = (mdLeft, mdRight, mdNone);
@@ -54,7 +54,7 @@ type
     FHP: Int64;
     FDie: Boolean;
     DieActionName: string;
-    TargetIndex: Integer;
+    TargetTexture: TTexture;
     FPathW: string;
     HitIndex: Integer;
     HeadX: Integer;
@@ -74,7 +74,8 @@ type
     procedure DoDraw; override;
     constructor Create(const AParent: TSprite); override;
     procedure TargetEvent(Sender: TObject);
-    class procedure Drop(ID: string; PosX, PosY: Integer; aRX0: Integer = 0; aRX1: Integer = 0;ColorEffect: TColorEffect = ceNone; Value: Integer = 0);
+    class procedure Drop(ID: string; PosX, PosY: Integer; aRX0: Integer = 0; aRX1: Integer = 0;
+      ColorEffect: TColorEffect = ceNone; Value: Integer = 0);
     class procedure CreateMapMobs;
     class var
       MobList: TList<string>;
@@ -179,7 +180,8 @@ begin
   Mob := Self;
 end;
 
-class procedure TMob.Drop(ID: string; PosX, PosY: Integer; aRX0: Integer = 0; aRX1: Integer = 0;ColorEffect: TColorEffect = ceNone; Value: Integer = 0);
+class procedure TMob.Drop(ID: string; PosX, PosY: Integer; aRX0: Integer = 0; aRX1: Integer = 0;
+  ColorEffect: TColorEffect = ceNone; Value: Integer = 0);
 var
   c: Integer;
   Entry, Iter, Iter2: TWZIMGEntry;
@@ -213,9 +215,9 @@ begin
   if not MobList.contains(ID) then
   begin
     MobList.Add(ID);
-    DumpData(WZ.GetImgFile(ID + '.img').Root, WzData, Images,ColorEffect,Value);
+    DumpData(WZ.GetImgFile(ID + '.img').Root, WzData, Images, ColorEffect, Value);
     if Entry <> nil then
-      DumpData(WZ.GetImgFile(Entry.Data + '.img').Root, WzData, Images,ColorEffect,Value);
+      DumpData(WZ.GetImgFile(Entry.Data + '.img').Root, WzData, Images, ColorEffect, Value);
   end;
 
   if Entry <> nil then
@@ -270,9 +272,10 @@ begin
     Level := Entry.Get('level', '1');
     FMobName := StringWZ.GetImgFile('Mob.img').Root.Get(IDToInt(InfoID) + '/' + 'name', '');
     // WzData.AddOrSetValue(FID, FMobName);
-
-    FNameWidth := FontsAlt[1].TextWidth('Lv.' + IntToStr(Level) + '  ' + FMobName);
-    FIDWidth := FontsAlt[1].TextWidth('ID: ' + InfoID);
+            //gamefont.
+    fNameWidth := Round(GameFont.ExtentByPixels('Lv.' + IntToStr(Level) + '  ' + FMobName).Right);
+    FIDWidth :=  Round(GameFont.ExtentByPixels('ID: ' + InfoID).Right);
+   // FontsAlt[1].TextWidth('ID: ' + InfoID);
 
     MoveType := mtMove;
     Action := 'stand';
@@ -342,10 +345,12 @@ begin
         end;
     end;
     Offset.Y := -Origin.Y;
-
-    TargetIndex := GameTargets.Add(1, FNameWidth + 4, 20, apf_A8R8G8B8, True, True);
-    GameDevice.RenderTo(TargetEvent, 0, True, GameTargets[TargetIndex]);
-
+    GameCanvas.DrawTarget(TargetTexture, FNameWidth + 4, 20,
+      procedure
+      begin
+        GameCanvas.FillRect(FloatRect(0, 0, FNameWidth + 4, 15), cRGB1(0, 0, 0, 190));
+        GameFont.Draw(Point2f(2,0),'Lv.' + IntToStr(Level) + '  ' + FMobName,$FFFFFFFF);
+      end);
   end;
 
 end;
@@ -895,7 +900,7 @@ end;
 
 destructor TMob.Destroy;
 begin
-
+  TargetTexture.Free;
   inherited;
 end;
 
@@ -914,14 +919,14 @@ begin
   if TMap.ShowMobName then
   begin
     // if gametargets[TargetIndex]<> nil then
-    GameCanvas.Draw(GameTargets[TargetIndex], NamePos - 3, WY + 2, 1, False, 255, 255, 255, 255);
+    GameCanvas.Draw(TargetTexture, NamePos - 3, WY + 2);
   end;
 
   if TMap.ShowID then
   begin
-    GameCanvas.FillRect(IDPos - 3, WY + 18, FIDWidth + 4, 15, cRGB1(0, 0, 0, 160));
-
-    FontsAlt[1].TextOut('ID: ' + InfoID, IDPos - 1, WY + 18, cRGB1(255, 255, 255));
+    GameCanvas.FillRect(FloatRect(IDPos - 3, WY + 18, FIDWidth + 4, 15), cRGB1(0, 0, 0, 160));
+    GameFont.Draw(Point2f(IDPos - 1, WY + 18),'ID: ' + InfoID,$FFFFFFFF);
+    //FontsAlt[1].TextOut('ID: ' + InfoID, IDPos - 1, WY + 18, cRGB1(255, 255, 255));
   end;
   {
     if WzData.ContainsKey(ImageName + '/lt.x') then
@@ -947,9 +952,7 @@ end;
 
 procedure TMob.TargetEvent(Sender: TObject);
 begin
-  GameCanvas.FillRect(0, 0, FNameWidth + 4, 15, cRGB1(0, 0, 0, 190));
-  GameCanvas.Flush;
-  FontsAlt[1].TextOut('Lv.' + IntToStr(Level) + '  ' + FMobName, 2, 0, clWhite1);
+
 end;
 
 procedure TMobCollision.DoMove(const Movecount: Single);
@@ -1017,5 +1020,6 @@ finalization
   TMob.MobList.Free;
   DropList.Free;
   TMob.SummonedList.Free;
+
 end.
 

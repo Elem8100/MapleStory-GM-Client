@@ -68,7 +68,7 @@ begin
         1920..4000:
           Entry1 := Entry.Get('1920');
       end;
-      Engine.Canvas.Draw(UIImages[Entry1.Get('layer:back')], 0, 0,TBlendingeffect.Copy);
+      Engine.Canvas.Draw(UIImages[Entry1.Get('layer:back')], 0, 0);
       Engine.Canvas.Draw(UIImages[Entry1.Get('layer:gauge')], 15, 2);
       Engine.Canvas.Draw(UIImages[Entry1.Get('layer:cover')], 97, 1);
 

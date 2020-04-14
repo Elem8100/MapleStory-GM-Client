@@ -3,10 +3,10 @@ unit Pet;
 interface
 
 uses
-  Windows, System.Types, SysUtils, StrUtils, AsphyreSprite, Generics.Collections,
+  Windows, System.Types, SysUtils, StrUtils, PXT.Sprites, Generics.Collections,
   WZIMGFile, Math, Footholds, LadderRopes, AsphyreTypes, DX9Textures, WZArchive,
   ChatBalloon, MapPortal, MapleCharacter, DamageNumber, MobDrop, Global, Tools,
-  WzUtils, MapleMap, NameTag;
+  WzUtils, MapleMap, NameTag,PXT.Graphics;
 
 type
   TMoveDirection = (mdLeft, mdRight, mdNone);
@@ -37,6 +37,7 @@ type
     Distance: TPoint;
     OnLadder: Boolean;
   public
+
      FH: TFoothold;
     class var
       Pet: TPet;
@@ -422,7 +423,10 @@ end;
 procedure TPetNameTag.DoMove(const MoveCount: Single);
 begin
   if IsReDraw then
-    GameDevice.RenderTo(TargetEvent, 0, True, AvatarTargets[TargetIndex]);
+   GameCanvas.DrawTarget(TargetTexture,300,100,procedure
+   begin
+     TargetEvent;
+   end);
   x := TPet.Pet.X;
   y := TPet.Pet.Y;
   Z := TPet.Pet.Z;
@@ -442,7 +446,7 @@ begin
   begin
     WX := Round(TPet.Pet.X) - Round(Engine.WorldX);
     WY := Round(TPet.Pet.Y) - Round(Engine.WorldY);
-    GameCanvas.Draw(AvatarTargets[TargetIndex], WX - 150, WY - 28, 1, False, 255, 255, 255, 255);
+    GameCanvas.Draw(TargetTexture, WX - 150, WY - 28);
   end;
   if IsReDraw then
     IsReDraw := False;

@@ -125,7 +125,7 @@ begin
       GameCanvas.DrawTarget(TargetTexture, 150, 512,
         procedure
         begin
-          TargetTexture.Clear(FloatColor($00404040));
+          TargetTexture.Clear;
           TargetEvent;
         end);
 

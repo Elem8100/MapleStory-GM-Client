@@ -142,16 +142,10 @@ const
   DefaultEqps: array[0..7] of string = ('01302030', '00002000', '01062055', '01072054', '01040005',
     '00020000', '00030020', '00012000');
 begin
- // AvatarTargets := TAsphyreRenderTargets.Create();
-
-  //AvatarTargetIndex := AvatarTargets.Add(1, 1024, 1024, apf_A8R8G8B8, True, True);
- // AvatarPanelIndex := AvatarTargets.Add(1, 4096, 4096, apf_A8R8G8B8, True, True);
   GameCanvas.DrawTarget(AvatarTargetTexture,1024,1024,
   procedure
   begin
   end);
-
-
   Player := TPlayer.Create(SpriteEngine);
   Player.AvatarEngine := TSpriteEngine.Create(nil);
   Player.AvatarEngine.Canvas := GameCanvas;
@@ -621,7 +615,7 @@ begin
   inherited;
   if GameMode = gmView then
     Exit;
-  AvatarTargetTexture.Clear(FloatColor($00404040));
+  AvatarTargetTexture.Clear;
   AvatarTargetTexture.BeginScene;
   GameCanvas.BeginScene;
   TargetEvent;

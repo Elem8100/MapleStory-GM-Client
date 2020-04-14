@@ -7,12 +7,38 @@ uses
   StdCtrls, WZIMGFile, WZArchive, StrUtils, Generics.Collections, WzUtils, AControls, ACtrlEngine,
   ACtrlForms, ACtrlButtons, Global, PXT.Canvas, PXT.Graphics;
 
+type
+  TChatViewImage = class(TAImage)
+  public
+    TargetTexture: TTexture;
+    procedure Redraw;
+    procedure Paint(DC: HDC); override;
+    class var
+      StrList: TList<string>;
+      Instance:TChatViewImage;
+  end;
+
 procedure CreateUIStatusBar3Chat;
 
 implementation
 
 uses
   UI.Utils, ACtrlLabels;
+
+
+procedure TChatViewImage.Paint(DC: HDC);
+begin
+  var x := ClientLeft;
+  var y := ClientTop;
+  if TargetTexture.Initialized then
+
+  Engine.Canvas.Draw(TargetTexture, x, y);
+end;
+
+procedure TChatViewImage.Redraw;
+begin
+
+end;
 
 procedure CreateUIStatusBar3Chat;
 begin
@@ -97,11 +123,25 @@ begin
     CreateButton('UI.wz/StatusBar3.img/chat/ingame/input/button:outChat', 358, 552);
   end;
 
+  TChatViewImage.Instance := TChatViewImage.Create(UIEngine.AForm(UIOwner));
+  with TChatViewImage.Instance do
+  begin
+    Width := 200;
+    Height := 200;
+    Left := 10;
+    Top := 60;
+  end;
+
   CreateEdit('StatusBar3/Chat', 62, 553, 230, $FFFFFFFF, $FFFFFFFF);
+
   ActiveEdit := UIEdit['StatusBar3/Chat'];
+
   ActiveEdit.SetFocus;
   ActiveEdit.MaxLength := 45;
 end;
+
+initialization
+  TChatViewImage.StrList := TList<string>.Create;
 
 end.
 

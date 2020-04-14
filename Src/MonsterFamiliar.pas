@@ -3,10 +3,9 @@ unit MonsterFamiliar;
 interface
 
 uses
-  Windows, System.Types, SysUtils, StrUtils, AsphyreSprite, Generics.Collections,
-  WZIMGFile, Math, Footholds, LadderRopes, AsphyreTypes, DX9Textures, WZArchive,
-  ChatBalloon, MapPortal, MapleCharacter, DamageNumber, MobDrop, Global, Tools,
-  WzUtils, MapleMap, NameTag;
+  Windows, System.Types, SysUtils, StrUtils, PXT.Sprites, Generics.Collections, WZIMGFile, Math,
+  Footholds, LadderRopes, AsphyreTypes, DX9Textures, WZArchive, ChatBalloon, MapPortal,
+  MapleCharacter, DamageNumber, MobDrop, Global, Tools, WzUtils, MapleMap, NameTag;
 
 type
   TMoveDirection = (mdLeft, mdRight, mdNone);
@@ -38,7 +37,7 @@ type
     OnLadder: Boolean;
     FollowDistance: Integer;
   public
-     FH: TFoothold;
+    FH: TFoothold;
     class var
       MonsterFamiliar: TMonsterFamiliar;
     procedure DoMove(const Movecount: Single); override;
@@ -59,13 +58,13 @@ type
   end;
 
 implementation
-
+      uses PXT.Canvas;
 class procedure TMonsterFamiliar.Delete;
 begin
   if MonsterFamiliar <> nil then
   begin
     MonsterFamiliar.Dead;
-    MonsterFamiliar:=nil;
+    MonsterFamiliar := nil;
     for var Iter in EquipImages.Keys do
       if (LeftStr(Iter.GetPath, 7) = 'Mob.wz/') or (LeftStr(Iter.GetPath, 8) = 'Mob2.wz/') then
       begin
@@ -77,7 +76,7 @@ end;
 
 class procedure TMonsterFamiliar.Create(ID: string);
 begin
-  var Entry : TWZImgEntry;
+  var Entry: TWZIMGEntry;
   if HasImgFile('Mob.wz/' + ID + '.img') then
     Entry := GetImgEntry('Mob.wz/' + ID + '.img/')
   else if HasImgFile('Mob001.wz/' + ID + '.img') then
@@ -104,7 +103,7 @@ begin
             UpPath := Entry.GetPath;
             ImageEntry := EquipData[Iter2.GetPath];
             FollowDistance := 130;
-            var StartX := Player.X -  FollowDistance;
+            var StartX := Player.X - FollowDistance;
             if StartX < TMap.Left then
               StartX := Player.X;
             var Pos := TFootholdTree.This.FindBelow(Point(Round(StartX), Round(Player.Y - 100)), BelowFH);
@@ -118,7 +117,7 @@ begin
             MaxFallSpeed := 8;
             MoveDirection := mdNone;
             MoveSpeed := 2.5;
-         end;
+          end;
         end;
       end;
 
@@ -181,15 +180,15 @@ begin
     MoveDirection := mdNone;
   end;
 
-  if (Player.Y < Y) and (not player.InLadder) then
+  if (Player.Y < Y) and (not Player.InLadder) then
   begin
     case Distance.Y of
       100..150:
         begin
-          if (JumpState = jsNone) and (Player.JumpState=jsNone) then
+          if (JumpState = jsNone) and (Player.JumpState = jsNone) then
           begin
-           Below := TFootholdTree.This.FindBelow(Point(Round(X), Round(Y - 80)), BelowFH);
-           if Y - Below.Y <> 0 then
+            Below := TFootholdTree.This.FindBelow(Point(Round(X), Round(Y - 80)), BelowFH);
+            if Y - Below.Y <> 0 then
               DoJump := True;
 
           end;
@@ -407,14 +406,17 @@ end;
 
 class procedure TFamiliarNameTag.Delete;
 begin
-  if (FamiliarNameTag <> nil)  then
-     FamiliarNameTag.Dead;
+  if (FamiliarNameTag <> nil) then
+    FamiliarNameTag.Dead;
 end;
 
 procedure TFamiliarNameTag.DoMove(const MoveCount: Single);
 begin
   if IsReDraw then
-    GameDevice.RenderTo(TargetEvent, 0, True, AvatarTargets[TargetIndex]);
+    GameCanvas.DrawTarget(TargetTexture,300,100,procedure
+    begin
+     TargetEvent;
+    end);
   X := TMonsterFamiliar.MonsterFamiliar.X;
   y := TMonsterFamiliar.MonsterFamiliar.Y;
   Z := TMonsterFamiliar.MonsterFamiliar.Z;
@@ -434,7 +436,7 @@ begin
   begin
     WX := Round(TMonsterFamiliar.MonsterFamiliar.X) - Round(Engine.WorldX);
     WY := Round(TMonsterFamiliar.MonsterFamiliar.Y) - Round(Engine.WorldY);
-    GameCanvas.Draw(AvatarTargets[TargetIndex], WX - 150, WY - 28, 1, False, 255, 255, 255, 255);
+    GameCanvas.Draw(TargetTexture, WX - 150, WY - 28);
   end;
   if IsReDraw then
     IsReDraw := False;
@@ -448,12 +450,6 @@ begin
   begin
     TruncMove := True;
     Tag := 1;
-  //  var TagNum := GetImgEntry('Character.wz/Accessory/' + ItemID + '.img/info').Get('medalTag', '');
-  //  Entry := GetImgEntry('UI.wz/NameTag.img/medal/' + string(TagNum));
-  //  DumpData(Entry, EquipData, EquipImages);
-   // InitData;
-
-
     var TagNum := GetImgEntry('Character.WZ/Ring/' + ItemID + '.img/info').Get('nameTag', '');
     Entry := GetImgEntry('UI.wz/NameTag.img/' + string(TagNum));
     DumpData(Entry, EquipData, EquipImages);
@@ -461,8 +457,6 @@ begin
   end;
 
 end;
-
-
 
 end.
 

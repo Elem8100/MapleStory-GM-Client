@@ -38,6 +38,7 @@ type
     destructor Destroy; override;
     class var
       ReDrawTarget: Boolean;
+      FontSize:Integer;
       SummonedList: TList<string>;
     class procedure Create; overload;
     class procedure Drop(ID: string; PosX, PosY: Integer; Flip: Integer);
@@ -61,8 +62,8 @@ begin
     Exit;
   if ID = '9010088' then
     Exit;
-  if GetImgEntry('String/Npc.img/' + IDToInt(ID))= nil
-    then Exit;
+  if GetImgEntry('String/Npc.img/' + IDToInt(ID)) = nil then
+    Exit;
   DumpList := TList<string>.Create;
   Randomize;
 
@@ -162,8 +163,6 @@ begin
       begin
         TargetEvent;
       end);
-   // TargetIndex := GameTargets.Add(1, TargetWidth, TargetHeight, apf_A8R8G8B8, True, True);
-  //  GameDevice.RenderTo(TargetEvent, 0, True, GameTargets[TargetIndex]);
   end;
   DumpList.Free;
 end;
@@ -276,27 +275,23 @@ end;
 procedure TNpc.TargetEvent;
 var
   NameMiddle, FuncMiddle: Integer;
-  ss: TFontSettings;
 begin
-  ss := TFontSettings.Create('Arial', 12);
-  ss.Effect.BorderType := TFontBorder.Normal;
-  ss.Effect.BorderOpacity := 1;
-  ss.Weight := TFontWeight.Thin;
-  GameFont.FontSettings := ss;
+  var FontSettings := TFontSettings.Create('Arial', FontSize, TFontWeight.Thin);
+  FontSettings.Effect.BorderType := TFontBorder.None;
+  GameFont.FontSettings := FontSettings;
   if HasFunc then
   begin
     NameMiddle := (TargetWidth - FNameWidth) div 2;
     FuncMiddle := (TargetWidth - FFuncWidth) div 2;
-    GameCanvas.FillRect(FloatRect(NameMiddle - 3, 0, FNameWidth + 5, 15), cRGB1(0, 0, 0, 150));
-    GameCanvas.FillRect(FloatRect(FuncMiddle - 3, 17, FFuncWidth + 5, 15), cRGB1(0, 0, 0, 150));
-
-    GameFont.Draw(Point2f(NameMiddle, -1), NpcName, ARGB(255, 255, 255, 0));
-    GameFont.Draw(Point2f(FuncMiddle, 16), NpcFunc, ARGB(255, 255, 255, 0));
+    GameCanvas.FillRect(FloatRect(NameMiddle - 3, 0, FNameWidth + 5, 15), Colorrect($96000000));
+    GameCanvas.FillRect(FloatRect(FuncMiddle - 3, 17, FFuncWidth + 5, 15),Colorrect($96000000));
+    GameFont.Draw(Point2f(NameMiddle, -1), NpcName, Colorpair($FF00FFFF));
+    GameFont.Draw(Point2f(FuncMiddle, 16), NpcFunc, Colorpair($FF00FFFF));
   end
   else
   begin
-    GameCanvas.FillRect(FloatRect(0, 0, FNameWidth + 5, 15), cRGB1(0, 0, 0, 150));
-    GameFont.Draw(Point2f(3, -1), NpcName, ARGB(255, 255, 255, 0));
+    GameCanvas.FillRect(FloatRect(0, 0, FNameWidth + 5, 15),Colorrect($96000000));
+    GameFont.Draw(Point2f(3, -1), NpcName, Colorpair($FF00FFFF));
   end;
 end;
 

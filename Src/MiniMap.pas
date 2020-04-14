@@ -5,8 +5,8 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Controls, Forms, Dialogs, ZGameFonts, Graphics,
   AbstractTextures, ACtrlImages, StdCtrls, WZIMGFile, WZArchive, StrUtils, Generics.Collections,
-  WzUtils, AsphyreRenderTargets, AControls, ACtrlEngine, ACtrlForms, ACtrlButtons,
-  Global,PXT.Canvas,PXT.Graphics,PXT.Types;
+  WzUtils, AsphyreRenderTargets, AControls, ACtrlEngine, ACtrlForms, ACtrlButtons, Global,
+  PXT.Canvas, PXT.Graphics, PXT.Types;
 
 type
   TMiniMap = class(TAForm)
@@ -25,12 +25,11 @@ type
 var
   AMiniMap: TMiniMap;
 
-
 implementation
 
 uses
   AbstractCanvas, AsphyreFactory, AsphyreTypes, AsphyreDb, AbstractDevices, AsphyreImages,
-  AsphyreTimer, DX9Providers, Vectors2, Vectors2px, MapleMap, MapleCharacter,UI.Utils;
+  AsphyreTimer, DX9Providers, Vectors2, Vectors2px, MapleMap, MapleCharacter, UI.Utils;
 
 procedure TMiniMap.Paint(DC: HDC);
 var
@@ -75,7 +74,7 @@ begin
       PicWidth := MiniMap.Canvas.Width;
       OffX := 0;
     end;
-    Engine.Canvas.FillRect(FloatRect(9, 62, PicWidth, PicHeight), ARGB(180,0, 0, 0));
+    Engine.Canvas.FillRect(FloatRect(9, 62, PicWidth, PicHeight), ARGB(180, 0, 0, 0));
     Engine.Canvas.Draw(UIImages[MiniMap], 9 + OffX, 62);
   end
   else
@@ -86,20 +85,20 @@ begin
     OffY := 0;
     PicWidth := 150;
     PicHeight := 100;
-    AEngine.Canvas.FillRect(FloatRect(9, 62, PicWidth, PicHeight),ARGB(180,0,0,0));
+    AEngine.Canvas.FillRect(FloatRect(9, 62, PicWidth, PicHeight), ARGB(180, 0, 0, 0));
   end;
 
   for var x := 0 to PicWidth - 111 do
   begin
-    AEngine.Canvas.Draw(UIImages[Entry.Get2('n')], 64 + x, 0 );
+    AEngine.Canvas.Draw(UIImages[Entry.Get2('n')], 64 + x, 0);
     AEngine.Canvas.Draw(UIImages[Entry.Get2('s')], 64 + x, PicHeight + 62);
   end;
   for var y := 0 to PicHeight - 24 do
   begin
-    AEngine.Canvas.Draw(UIImages[Entry.Get('w')], 0, 67 + y );
+    AEngine.Canvas.Draw(UIImages[Entry.Get('w')], 0, 67 + y);
     AEngine.Canvas.Draw(UIImages[Entry.Get('e')], PicWidth + 9, 67 + y);
   end;
-  AEngine.Canvas.Draw(UIImages[Entry.Get('nw')], 0, 0 ); //left top
+  AEngine.Canvas.Draw(UIImages[Entry.Get('nw')], 0, 0); //left top
   AEngine.Canvas.Draw(UIImages[Entry.Get('ne')], PicWidth - 46, 0); //right top
   AEngine.Canvas.Draw(UIImages[Entry.Get('sw')], 0, PicHeight + 44); // right bottom
   AEngine.Canvas.Draw(UIImages[Entry.Get('se')], PicWidth - 46, PicHeight + 44); // left botton
@@ -125,10 +124,13 @@ begin
     AEngine.Canvas.Draw(UIImages[MapMarkPic], 7, 17);
   end;
   PlayerMark := GetImgEntry('Map.wz/MapHelper.img/minimap/user');
-   GameFont.Draw(Point2f(50, 20),TMap.MapNameList[TMap.ID].StreetName,$FFFFFFFF);
-    GameFont.Draw(Point2f(50, 40),TMap.MapNameList[TMap.ID].MapName,$FFFFFFFF);
-  //FontsAlt[5].TextOut(TMap.MapNameList[TMap.ID].StreetName, 50, 20, cRGB1(255, 255, 255));
- // FontsAlt[5].TextOut(TMap.MapNameList[TMap.ID].MapName, 50, 40, cRGB1(255, 255, 255));
+  var FontSetting := TFontSettings.Create('Arial', 12);
+  FontSetting.Effect.BorderType := TFontBorder.None;
+  FontSetting.Effect.BorderOpacity := 1;
+  FontSetting.Weight := TFontWeight.SemiBold;
+  GameFont.FontSettings :=  FontSetting;
+  GameFont.Draw(Point2f(50, 20), TMap.MapNameList[TMap.ID].StreetName, $FFFFFFFF);
+  GameFont.Draw(Point2f(50, 40), TMap.MapNameList[TMap.ID].MapName, $FFFFFFFF);
 end;
 
 constructor TMiniMap.Create(AOwner: TComponent);
@@ -150,11 +152,11 @@ end;
 
 procedure TMiniMap.ReDraw;
 begin
-  GameCanvas.DrawTarget(TargetTexture,TMap.MiniMapWidth + 145,TMap.MiniMapHeight + 80,
-  procedure
-  begin
-    TargetEvent;
-  end);
+  GameCanvas.DrawTarget(TargetTexture, TMap.MiniMapWidth + 145, TMap.MiniMapHeight + 80,
+    procedure
+    begin
+      TargetEvent;
+    end);
   if TMap.MiniMapWidth < 200 then
     Width := TMap.MiniMapWidth + 90
   else
