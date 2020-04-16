@@ -845,7 +845,7 @@ begin
           if not InRange(20, 23) then
             Continue;
         16: // Face2
-          if not InRange(24, 28) then
+          if not InRange(24, 50) then
             Continue;
         17:
           if Left4 <> '0101' then

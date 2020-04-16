@@ -471,6 +471,8 @@ begin
         FDevice.Clear([TClearLayer.Color], FloatColor($0));
         GameCanvas.BeginScene;
         GameCanvas.DrawStretch(FullScreenTexture, 0, 0, RenderForm.ClientWidth, RenderForm.ClientHeight);
+        if OptionsForm.ScanlineCheckBox.Checked then
+          GameCanvas.Draw(OptionsForm.ScanlineTexture, 0, 0, TBlendingEffect.Multiply);
         GameCanvas.EndScene;
         FDevice.EndScene;
       end;
@@ -487,6 +489,8 @@ begin
         FDevice.Clear([TClearLayer.Color], FloatColor($0));
         GameCanvas.BeginScene;
         GameCanvas.DrawStretch(FullScreenTexture, 0, 0, MonitorWidth, MonitorHeight);
+        if OptionsForm.ScanlineCheckBox.Checked then
+          GameCanvas.Draw(OptionsForm.ScanlineTexture, 0, 0, TBlendingEffect.Multiply);
         GameCanvas.EndScene;
         FDevice.EndScene;
       end;
@@ -496,6 +500,8 @@ begin
         FDevice.Clear([TClearLayer.Color], FloatColor($ffbbbbbb));
         GameCanvas.BeginScene;
         RenderEvent;
+        if OptionsForm.ScanlineCheckBox.Checked then
+          GameCanvas.Draw(OptionsForm.ScanlineTexture, 0, 0, TBlendingEffect.Multiply);
         GameCanvas.EndScene;
         FDevice.EndScene;
       end;
@@ -853,10 +859,10 @@ begin
       end;
       WzPath := Path;
       StringWZ := TWZArchive.Create(Path + '\String.wz');
-      if GetImgEntry('String/Mob.img/100000').Get('name','')='Snail' then
-        TNpc.FontSize:=13 //GMS
+      if GetImgEntry('String/Mob.img/100000').Get('name', '') = 'Snail' then
+        TNpc.FontSize := 13 //GMS
       else
-        TNpc.FontSize :=12; //TMS
+        TNpc.FontSize := 12; //TMS
 
       MapWz := TWZArchive.Create(Path + '\Map.wz');
       if FileExists(Path + '\Map2.wz') then

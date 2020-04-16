@@ -2,9 +2,9 @@ object OptionsForm: TOptionsForm
   Left = 0
   Top = 0
   BorderStyle = bsDialog
-  Caption = 'Options'
-  ClientHeight = 194
-  ClientWidth = 298
+  Caption = #36984#38917
+  ClientHeight = 277
+  ClientWidth = 382
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -13,8 +13,8 @@ object OptionsForm: TOptionsForm
   Font.Style = []
   KeyPreview = True
   OldCreateOrder = False
-  Position = poDesigned
   Scaled = False
+  OnActivate = FormActivate
   OnClick = FormClick
   OnCreate = FormCreate
   OnKeyDown = FormKeyDown
@@ -22,10 +22,10 @@ object OptionsForm: TOptionsForm
   TextHeight = 16
   object CheckBox1: TCheckBox
     Left = 80
-    Top = 31
+    Top = 39
     Width = 65
     Height = 25
-    Caption = 'Mute'
+    Caption = #38748#38899
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -15
@@ -35,19 +35,12 @@ object OptionsForm: TOptionsForm
     TabOrder = 0
     OnClick = CheckBox1Click
   end
-  object CheckBox2: TCheckBox
+  object ScanlineCheckBox: TCheckBox
     Left = 80
-    Top = 70
-    Width = 129
+    Top = 72
+    Width = 89
     Height = 25
-    Caption = 'Grayscale Map'
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -15
-    Font.Name = 'Tahoma'
-    Font.Style = []
-    ParentFont = False
+    Caption = 'Scanline'
     TabOrder = 1
-    OnClick = CheckBox2Click
   end
 end

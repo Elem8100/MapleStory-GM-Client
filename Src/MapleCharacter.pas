@@ -6,7 +6,7 @@ uses
   Windows, SysUtils, StrUtils, Generics.Collections, System.Types, WZIMGFile, Math, PXT.Sprites,
   Footholds, LadderRopes, ChatBalloon, MapPortal, DirectInput, Classes, AsphyreKeyboard,
   AsphyreRenderTargets, DamageNumber, Skill, AsphyreTypes, AbstractTextures, Global, Tools, MapleMap,
-  WzUtils, ColorUtils,PXT.Types,PXT.Graphics,PXT.Canvas;
+  WzUtils, ColorUtils, PXT.Types, PXT.Graphics, PXT.Canvas;
 
 type
   TDir = (dLeft, dRight, no);
@@ -53,7 +53,7 @@ type
     OtherPlayer: Boolean;
     Neck, Navel, Hand, Brow, HandMove: TPoint;
     ArmHand, ArmNavel, BodyNeck, BodyNavel, BodyHand, lHandMove, HeadBrow, HeadNeck: TPoint;
-    TamingNavel:TPoint;
+    TamingNavel: TPoint;
     MoveX, MoveY: Double;
     BrowPos: TPoint;
     NewZ: Integer;
@@ -128,7 +128,7 @@ implementation
 
 uses
   MainUnit, Morph, AfterImage, MapleChair, MapleEffect, TamingMob, Pet, MonsterFamiliar,
-  MapleCharacterEx,Android;
+  MapleCharacterEx, Android;
 
 procedure TPlayer.SpawnNew;
 var
@@ -142,10 +142,10 @@ const
   DefaultEqps: array[0..7] of string = ('01302030', '00002000', '01062055', '01072054', '01040005',
     '00020000', '00030020', '00012000');
 begin
-  GameCanvas.DrawTarget(AvatarTargetTexture,1024,1024,
-  procedure
-  begin
-  end);
+  GameCanvas.DrawTarget(AvatarTargetTexture, 1024, 1024,
+    procedure
+    begin
+    end);
   Player := TPlayer.Create(SpriteEngine);
   Player.AvatarEngine := TSpriteEngine.Create(nil);
   Player.AvatarEngine.Canvas := GameCanvas;
@@ -246,7 +246,12 @@ begin
           CapType := 1;
         //cover all
         if Length(Data) > 12 then
-          CapType := 2;
+        begin
+          if LeftStr(Data, 6) = 'CpH1H3' then
+            CapType := 1
+          else
+            CapType := 2;
+        end;
       end;
     Hair:
       ShowHair := True;
@@ -438,7 +443,7 @@ begin
   case ID.ToInteger div 10000 of
     0, 1:
       Result := '';
-    2:
+    2, 5:
       Result := 'Face/';
     3, 4:
       Result := 'Hair/';
@@ -474,7 +479,7 @@ begin
       Result := Body;
     1:
       Result := Head;
-    2:
+    2, 5:
       Result := Face;
     3, 4:
       Result := Hair;
@@ -1287,6 +1292,12 @@ begin
     end;
   end;
 
+  if (Part = Weapon) and (LeftStr(ID, 4) = '0121') then
+  begin
+    if (Image = 'weapon') or (Image = 'weapon1') or (Image = 'weapon2') then
+      Visible := False;
+  end;
+
   with Owner do
   begin
     if HasEntry(Path + '/origin') then
@@ -1317,10 +1328,9 @@ begin
     end
     else
     begin
-      TamingNavel.X:=  TTamingMob.Navel.X;
-      TamingNavel.Y:=  TTamingMob.Navel.Y;
+      TamingNavel.X := TTamingMob.Navel.X;
+      TamingNavel.Y := TTamingMob.Navel.Y;
     end;
-
 
     if HasEntry(Path + '/map/brow') then
     begin
