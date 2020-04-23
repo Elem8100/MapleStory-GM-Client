@@ -125,7 +125,7 @@ end;
 
 procedure TAddMobForm.PageControl1Change(Sender: TObject);
 begin
- {
+
   case PageControl1.TabIndex of
     1:
       begin
@@ -142,7 +142,6 @@ begin
         Boss2Grid.LoadFromCSV(ExtractFilePath(ParamStr(0)) + 'Boss2.txt');
       end;
   end;
-  }
 end;
 
 procedure TAddMobForm.Boss1GridClickCell(Sender: TObject; ARow, ACol: Integer);
@@ -294,7 +293,7 @@ end;
 
 procedure TAddMobForm.Edit2Change(Sender: TObject);
 begin
-  MobGrid.NarrowDown(TrimS(Edit2.Text));
+  MobGrid.NarrowDown(Trim(Edit2.Text));
 
 end;
 

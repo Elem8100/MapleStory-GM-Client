@@ -107,7 +107,7 @@ end;
 
 procedure TChairForm.Edit1Change(Sender: TObject);
 begin
- ChairGrid.NarrowDown(TrimS(Edit1.Text));
+ ChairGrid.NarrowDown(Trim(Edit1.Text));
 end;
 
 procedure TChairForm.FormActivate(Sender: TObject);

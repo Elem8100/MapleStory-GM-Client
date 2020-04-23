@@ -62,7 +62,7 @@ end;
 
 procedure TPetForm.Edit2Change(Sender: TObject);
 begin
-  PetGrid.NarrowDown(TrimS(Edit2.Text));
+  PetGrid.NarrowDown(Trim(Edit2.Text));
 end;
 
 procedure TPetForm.FormActivate(Sender: TObject);

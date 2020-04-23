@@ -161,7 +161,7 @@ end;
 
 procedure TAddNpcForm.Edit2Change(Sender: TObject);
 begin
-  NpcGrid.NarrowDown(TrimS(Edit2.Text));
+  NpcGrid.NarrowDown(Trim(Edit2.Text));
 
 end;
 

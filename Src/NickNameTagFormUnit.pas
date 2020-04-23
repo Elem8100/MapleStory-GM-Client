@@ -45,7 +45,7 @@ end;
 
 procedure TNickNameForm.Edit1Change(Sender: TObject);
 begin
-    NickNameGrid.NarrowDown(TrimS(Edit1.Text));
+    NickNameGrid.NarrowDown(Trim(Edit1.Text));
 end;
 
 procedure TNickNameForm.FormActivate(Sender: TObject);

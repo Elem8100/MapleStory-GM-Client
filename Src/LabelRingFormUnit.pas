@@ -38,7 +38,7 @@ uses
 
 procedure TLabelRingForm.Edit1Change(Sender: TObject);
 begin
-    LabelRingGrid.NarrowDown(TrimS(Edit1.Text));
+    LabelRingGrid.NarrowDown(Trim(Edit1.Text));
 end;
 
 procedure TLabelRingForm.FormActivate(Sender: TObject);

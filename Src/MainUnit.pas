@@ -231,28 +231,46 @@ begin
   end;
   if KEY = VK_MENU then
     KEY := 0;
- // if ActiveEdit <> nil then
-   // ActiveEdit.KeyDown(KEY, Shift);
+  if ActiveEdit <> nil then
+    ActiveEdit.KeyDown(KEY, Shift);
 
-  if (KEY = VK_RETURN) and (Length(UIEdit['StatusBar3/Chat'].Text) > 0) then
+  if (KEY = VK_RETURN) then
   begin
-    var ShowRows := Round(UIImage['UI.wz/StatusBar3.img/chat/ingame/view/min/center'].ScaleY) div 20;
-    const EditBox = UIEdit['StatusBar3/Chat'];
-    TChatViewImage.StrList.Add(EditBox.Text);
-    EditBox.Clear;
-    var Pos := TChatViewImage.StrList.Count * 20;
-    GameCanvas.DrawTargetStatic(TChatViewImage.Instance.TargetTexture, 410, 595,
-      procedure
+    if UIForm['Input/ChatEnter'].Visible = False then
+    begin
+      UIForm['Input/ChatEnter'].Visible := True;
+      UIEdit['StatusBar3/Chat'].Text := '  ';
+      UIEdit['StatusBar3/Chat'].SelStart := 0;
+      UIEdit['StatusBar3/Chat'].SetFocus;
+    end
+    else
+    begin
+      if Trims(UIEdit['StatusBar3/Chat'].Text) = '' then
       begin
-        var FontSetting := TFontSettings.Create('Arial', 12);
-        FontSetting.Effect.BorderType := TFontBorder.None;
-        FontSetting.Effect.BorderOpacity := 1;
-        FontSetting.Weight := TFontWeight.Thin;
-        GameFont.FontSettings := FontSetting;
-        for var i := TChatViewImage.StrList.Count - 1 downto 0 do
-          GameFont.Draw(Point2f(20, 480 + (20 * I) - Pos), TChatViewImage.StrList[i], $FFFFFFFF);
+        UIForm['Input/ChatEnter'].Visible := False;
+      end
+      else
+      begin
+        var ShowRows := Round(UIImage['UI.wz/StatusBar3.img/chat/ingame/view/min/center'].ScaleY) div 20;
+        const EditBox = UIEdit['StatusBar3/Chat'];
+        TChatViewImage.StrList.Add(EditBox.Text);
+        UIEdit['StatusBar3/Chat'].Text := '  ';
+        UIEdit['StatusBar3/Chat'].SelStart := 0;
 
-      end);
+        var Pos := TChatViewImage.StrList.Count * 13;
+
+        GameCanvas.DrawTargetStatic(TChatViewImage.Instance.TargetTexture, 410, 595,
+          procedure
+          begin
+            var FontSetting := TFontSettings.Create('Arial', 11, TFontWeight.Normal);
+            FontSetting.Effect.BorderType := TFontBorder.None;
+            GameFont.FontSettings := FontSetting;
+            for var i := TChatViewImage.StrList.Count - 1 downto 0 do
+              GameFont.Draw(Point2f(20, 480 + (13 * I) - Pos), TChatViewImage.StrList[i], $FFFFFFFF);
+          end);
+
+      end;
+    end;
   end;
 end;
 
@@ -308,7 +326,7 @@ begin
   GameCanvas.Create(FDevice);
   CreateTexture(AvatarPanelTexture, 4096, 4096);
   GameFont := TextRendererInit(GameCanvas, Point2i(512, 512));
-  GameFont.FontSettings := TFontSettings.Create('Segoe UI', 12.0, TFontWeight.Thin);
+  GameFont.FontSettings := TFontSettings.Create('Segoe UI', 12.0, TFontWeight.Normal);
   Keyboard := TAsphyreKeyboard.Create(MainForm);
   Keyboard.Foreground := False;
   UIEngine := TControlEngine.Create(MainForm, FDevice, GameCanvas);
@@ -1010,7 +1028,7 @@ end;
 
 procedure TMainForm.SearchMapEditChange(Sender: TObject);
 begin
-  Grid.NarrowDown(TrimS(SearchMapEdit.Text));
+  Grid.NarrowDown(Trim(SearchMapEdit.Text));
 end;
 
 procedure TMainForm.SpeedButton1Click(Sender: TObject);

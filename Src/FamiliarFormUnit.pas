@@ -67,7 +67,7 @@ end;
 
 procedure TFamiliarForm.Edit1Change(Sender: TObject);
 begin
-   FamiliarGrid.NarrowDown(TrimS(Edit1.Text));
+   FamiliarGrid.NarrowDown(Trim(Edit1.Text));
 end;
 
 procedure TFamiliarForm.FamiliarGridClick(Sender: TObject);

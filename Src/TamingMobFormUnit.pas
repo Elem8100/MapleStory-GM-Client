@@ -98,7 +98,7 @@ end;
 
 procedure TTamingMobForm.Edit1Change(Sender: TObject);
 begin
-  TamingMobGrid.NarrowDown(TrimS(Edit1.Text));
+  TamingMobGrid.NarrowDown(Trim(Edit1.Text));
 end;
 
 procedure TTamingMobForm.FormActivate(Sender: TObject);

@@ -964,7 +964,7 @@ end;
 
 procedure TAvatarForm.Edit1Change(Sender: TObject);
 begin
-  SearchGrid.NarrowDown(TrimS(Edit1.Text));
+  SearchGrid.NarrowDown(Trim(Edit1.Text));
 end;
 
 end.

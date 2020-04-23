@@ -45,7 +45,7 @@ end;
 
 procedure TMedalTagForm.Edit1Change(Sender: TObject);
 begin
-  MedalGrid.NarrowDown(TrimS(Edit1.Text));
+  MedalGrid.NarrowDown(Trim(Edit1.Text));
 end;
 
 procedure TMedalTagForm.FormActivate(Sender: TObject);
