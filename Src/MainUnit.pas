@@ -123,7 +123,8 @@ type
   public
     ScreenMode: TScreenMode;
     FullScreenTexture: TTexture;
-    procedure CreateTexture(var Texture: TTexture; Width, Height: Integer);
+    CheckBoardtexture: TTexture;
+    procedure CreateTexture(var Texture: TTexture; Width, Height: Integer; PremultipliedAlpha: Boolean);
     { Public declarations }
   end;
 
@@ -246,30 +247,9 @@ begin
     else
     begin
       if Trims(UIEdit['StatusBar3/Chat'].Text) = '' then
-      begin
-        UIForm['Input/ChatEnter'].Visible := False;
-      end
+        UIForm['Input/ChatEnter'].Visible := False
       else
-      begin
-        var ShowRows := Round(UIImage['UI.wz/StatusBar3.img/chat/ingame/view/min/center'].ScaleY) div 20;
-        const EditBox = UIEdit['StatusBar3/Chat'];
-        TChatViewImage.StrList.Add(EditBox.Text);
-        UIEdit['StatusBar3/Chat'].Text := '  ';
-        UIEdit['StatusBar3/Chat'].SelStart := 0;
-
-        var Pos := TChatViewImage.StrList.Count * 13;
-
-        GameCanvas.DrawTargetStatic(TChatViewImage.Instance.TargetTexture, 410, 595,
-          procedure
-          begin
-            var FontSetting := TFontSettings.Create('Arial', 11, TFontWeight.Normal);
-            FontSetting.Effect.BorderType := TFontBorder.None;
-            GameFont.FontSettings := FontSetting;
-            for var i := TChatViewImage.StrList.Count - 1 downto 0 do
-              GameFont.Draw(Point2f(20, 480 + (13 * I) - Pos), TChatViewImage.StrList[i], $FFFFFFFF);
-          end);
-
-      end;
+        TChatViewImage.Redraw;
     end;
   end;
 end;
@@ -302,6 +282,8 @@ begin
 end;
 
 procedure TMainForm.FormShow(Sender: TObject);
+var
+  LPixels: array of TIntColor;
 begin
   if HasShow then
     Exit;
@@ -317,6 +299,10 @@ begin
   GameDevice2 := DeviceInitShared(FDevice, AvatarForm.Panel1.Handle, Point2i(260, 200), PXT.Types.TPixelFormat.BGRA8,
     PXT.Types.TPixelFormat.Unknown, 0, DeviceAttributes([TDeviceAttribute.VSync]));
   GameDevice2.Resize(Point2i(260, 200));
+
+  GameDevice3 := DeviceInitShared(FDevice, AvatarForm.Panel2.Handle, Point2i(512, 512), PXT.Types.TPixelFormat.BGRA8,
+    PXT.Types.TPixelFormat.Unknown, 0, DeviceAttributes([TDeviceAttribute.VSync]));
+  GameDevice3.Resize(Point2i(512, 512));
   if Screen.MonitorCount > 0 then
   begin
     MonitorWidth := Screen.Monitors[0].Width;
@@ -324,7 +310,32 @@ begin
   end;
 
   GameCanvas.Create(FDevice);
-  CreateTexture(AvatarPanelTexture, 4096, 4096);
+  CreateTexture(AvatarPanelTexture, 4096, 4096, True);
+
+  var Parameters: TTextureParameters;
+  FillChar(Parameters, SizeOf(TTextureParameters), 0);
+  Parameters.Width := 512;
+  Parameters.Height := 512;
+  Parameters.Format := PXT.Types.TPixelFormat.RGBA8;
+  Parameters.Attributes := TextureMipMapping;
+  CheckBoardTexture := TextureInit(FDevice, Parameters);
+  SetLength(LPixels, Parameters.Width * Parameters.Height);
+  for var J := 0 to Parameters.Height - 1 do
+  begin
+    var LPixel: PIntColor := @LPixels[J * Parameters.Width];
+    for var I := 0 to Parameters.Width - 1 do
+    begin
+      if (I = 0) or (J = 0) or (I = Parameters.Width - 1) or (J = Parameters.Height - 1) then
+        LPixel^ := $FFFFFFFF // black border
+      else if ((I div 8) + (J div 8)) mod 2 = 0 then // put checkboard pattern
+        LPixel^ := $FFCDCDCD
+      else
+        LPixel^ := $FFFFFFFF;
+      Inc(LPixel);
+    end;
+  end;
+  CheckBoardTexture.Update(@LPixels[0], Parameters.Width * SizeOf(TIntColor), 0, ZeroIntRect);
+
   GameFont := TextRendererInit(GameCanvas, Point2i(512, 512));
   GameFont.FontSettings := TFontSettings.Create('Segoe UI', 12.0, TFontWeight.Normal);
   Keyboard := TAsphyreKeyboard.Create(MainForm);
@@ -358,7 +369,7 @@ begin
 
   TTimers.AddTimer('FreeSounds');
   TTimers.AddTimer('DropMobTicks');
-
+  TTimers.AddTimer('aaa');
   var strList := TList<string>.Create;
   var n: DWORD := 0;
   var Mode: TDevMode;
@@ -527,7 +538,7 @@ begin
 
   if AvatarForm.Active then
   begin
-    AvatarPanelTexture.Clear(FloatColor($FFFFFFFF));
+    AvatarPanelTexture.Clear;
     AvatarPanelTexture.BeginScene;
     GameCanvas.BeginScene;
     SpriteEngine.DrawEx(['TPlayer', 'TItemEffect', 'TSetEffect']);
@@ -537,11 +548,27 @@ begin
     var WX := Round(Player.X - SpriteEngine.WorldX - 130 + TMapleChair.BodyRelMove.X - TTamingMob.Navel.X);
     var WY := Round(Player.y - SpriteEngine.WorldY - 160 + TMapleChair.BodyRelMove.Y - TTamingMob.Navel.Y);
     GameDevice2.BeginScene;
-    GameDevice2.Clear([TClearLayer.Color], FloatColor($0));
+    GameDevice2.Clear([TClearLayer.Color], FloatColor($FFFFFFFF));
     GameCanvas.BeginScene;
+    GameCanvas.Draw(CheckBoardtexture, 0, 0);
     GameCanvas.DrawPortion(AvatarPanelTexture, 0, 0, WX, WY, WX + 280, WY + 200, False, $FFFFFFFF);
     GameCanvas.EndScene;
     GameDevice2.EndScene;
+
+    var WX2 := Round(Player.X - SpriteEngine.WorldX - 155);
+    var WY2 := Round(Player.Y - SpriteEngine.WorldY - 160);
+    GameDevice3.BeginScene;
+    GameDevice3.Clear([TClearLayer.Color], FloatColor($FFFFFFFF));
+    GameCanvas.BeginScene;
+    GameCanvas.Draw(CheckBoardtexture, 0, 0);
+    var X := AvatarForm.TrackBarX.Position;
+    var Y := AvatarForm.TrackBarY.Position;
+    var Width := AvatarForm.TrackBarW.Position;
+    var Height := AvatarForm.TrackBarH.Position;
+    GameCanvas.DrawPortion(AvatarPanelTexture, 100, 150, WX2, WY2, WX2 + 250, WY2 + 230, False, $FFFFFFFF);
+    Gamecanvas.FrameRect(FloatRect(100 + X, 150 + Y, Width, Height), ColorRect($FFFF0000), 2);
+    GameCanvas.EndScene;
+    GameDevice3.EndScene;
   end;
 
   if (TMapleChair.IsUse) then
@@ -1095,14 +1122,17 @@ begin
   ChairForm.Show;
 end;
 
-procedure TMainForm.CreateTexture(var Texture: TTexture; Width, Height: Integer);
+procedure TMainForm.CreateTexture(var Texture: TTexture; Width, Height: Integer; PremultipliedAlpha: Boolean);
 begin
   var Parameters: TTextureParameters;
   FillChar(Parameters, SizeOf(TTextureParameters), 0);
-  Parameters.Width := Width; //DisplaySize.X;
-  Parameters.Height := Height; //DisplaySize.Y;
-  Parameters.Attributes := TextureDrawable;
-  Parameters.Format := pxt.types.TPixelFormat.BGRA8;
+  Parameters.Width := Width;
+  Parameters.Height := Height;
+  if PremultipliedAlpha then
+    Parameters.Attributes := TextureDrawable or TexturePremultipliedAlpha
+  else
+    Parameters.Attributes := TextureDrawable;
+  Parameters.Format := PXT.Types.TPixelFormat.BGRA8;
   if Texture.Initialized then
     Texture.Free;
   Texture := TextureInit(FDevice, Parameters);
@@ -1132,7 +1162,7 @@ begin
     BackEngine[I].VisibleWidth := DisplaySize.X;
     BackEngine[I].VisibleHeight := DisplaySize.Y;
   end;
-  CreateTexture(FullScreenTexture, DisplaySize.X, DisplaySize.Y);
+  CreateTexture(FullScreenTexture, DisplaySize.X, DisplaySize.Y, False);
 
   TMap.OffsetY := (DisplaySize.Y - 600) div 2;
   TMapBack.ResetPos := True;

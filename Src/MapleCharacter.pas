@@ -128,7 +128,7 @@ implementation
 
 uses
   MainUnit, Morph, AfterImage, MapleChair, MapleEffect, TamingMob, Pet, MonsterFamiliar,
-  MapleCharacterEx, Android;
+  MapleCharacterEx, Android, avatarformunit;
 
 procedure TPlayer.SpawnNew;
 var
@@ -1049,7 +1049,7 @@ begin
   else
     AnimZigzag := False;
 
-  if ((Part = Weapon) or (Part = CashWeapon)) and (FTime = 0) then
+  if (not AvatarForm.SaveSingleFrame) and ((Part = Weapon) or (Part = CashWeapon)) and (FTime = 0) then
   begin
     AfterImagePath := 'Character.wz/Afterimage/' + Owner.AfterImageStr + '.img/0/' + State + '/' +
       IntToStr(Frame) + '/0';
@@ -1089,6 +1089,38 @@ begin
   begin
     if NEWFRAME <= FrameCount then
       Frame := NEWFRAME;
+  end;
+
+  if AvatarForm.SaveAllFrames then
+  begin
+    var WX := Round(Player.X - SpriteEngine.WorldX - 155);
+    var WY := Round(Player.Y - SpriteEngine.WorldY - 160);
+    Animate := False;
+    FTime := 0;
+    BodyDelay := 0;
+    Animend := False;
+    TTimers.DoTick(50, 'aaa',
+      procedure
+      begin
+        Inc(AvatarForm.Frame);
+        AvatarPanelTexture.SaveToFile('c:/' + AvatarForm.AllFrames[AvatarForm.Frame - 1] + '.png',
+          nil, 0, IntRectBDS(WX, WY, WX + 250, WY + 230));
+      end);
+    var S := AvatarForm.AllFrames[AvatarForm.Frame].Split(['.']);
+    State := S[0];
+    Frame := S[1].ToInteger;
+   // avatarform.Caption := AllFrames[ii5];
+  end;
+  if AvatarForm.SaveSingleFrame then
+  begin
+    Animate := False;
+    FTime := 0;
+    BodyDelay := 0;
+    Animend := False;
+    var Index:=  AvatarForm.AllFrameListBox.ItemIndex;
+    var S := AvatarForm.AllFrameListBox.Items[Index].Split(['.']);
+    State := S[0];
+    Frame := S[1].ToInteger;
   end;
 
   if Owner.ResetAction then
@@ -1149,8 +1181,8 @@ begin
 
   if (Image = 'face') or (Part = Glass) or (Part = FaceAcc) then
   begin
-    if (State = 'ladder') or (State = 'rope') or (MidStr(Path, 10, 9) = 'swingOF/1') or (MidStr(Path,
-      10, 9) = 'swingTF/0') then
+    if (State = 'ladder') or (State = 'rope') or ((State = 'swingOF') and (Frame = 1)) or ((State =
+      'swingTF') and (Frame = 0)) then
       Alpha := 0
     else
       Alpha := 255;
@@ -1659,6 +1691,9 @@ procedure TAvatarParts.DoDraw;
 var
   WX, WY, NamePos: Integer;
 begin
+  if (AvatarForm.SaveAllFrames) and (AvatarForm.Frame = 96) then
+    AvatarForm.SaveAllFrames := False;
+
   if GameMode = gmView then
     Exit;
   if ChangeFrame then

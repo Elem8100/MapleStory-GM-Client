@@ -7,10 +7,14 @@ uses
   WZIMGFile, Math, AbstractTextures, WZArchive, ACtrlEditBoxes, AsphyreTypes, DX9Textures, AControls,
   ACtrlEngine, ACtrlForms, ACtrlButtons, TypInfo, ACtrlImages, ACtrlDropPanels, ACtrlLabels, Tools,
   WZDirectory, WZReader, KeyHandler, Global, Classes, AsphyreFonts, ACtrlTypes, PXT.Graphics,
-  PXT.Canvas,PXT.Types;
+  PXT.Canvas, PXT.Types;
 
 type
   TLabelColor = (lcBlack, lcRed, lcWhite);
+
+function GetMouseDownY(UIName: string; MouseY: Integer): Integer;
+
+procedure MoveImage(UIName: string; MouseY, MouseDownY: Integer);
 
 procedure CreateUIs(EntryName: string; X, Y: Integer; wClose: Boolean = True);
 
@@ -30,9 +34,12 @@ procedure CreateEmptyForm(EntryName: string; X, Y, AWidth, AHeight: Integer; ACa
 
 procedure CreateAttachForm(ImageEntry, AAttachFormName: string; X, Y: Integer; AVisible: Boolean = False);
 
+procedure CreateEmptyAttachForm(FormName, AAttachFormName: string; X, Y, AWidth, AHeight: Integer;
+  AVisible: Boolean = False);
+
 procedure CreateFormEx(EntryName: string; X, Y: Integer);
 
-procedure CreateEdit(EditName: string; X, Y, AWidth: Integer;AFontColor,ATicColor:TColorPair);
+procedure CreateEdit(EditName: string; X, Y, AWidth: Integer; AFontColor, ATicColor: TColorPair);
 
 procedure CreateLabel(EntryName, AText: string; X, Y: Integer; LabelColor: TLabelColor = lcBlack);
 
@@ -83,12 +90,22 @@ var
  // UITab: TDictionary<string, TUITab>;
   UIOwner: string;
   UIVersion: Integer;
-  ActiveEdit:TAEditBox;
+  ActiveEdit: TAEditBox;
 
 implementation
 
 uses
   WzUtils, ColorUtils, minimap, RenderFormUnit;
+
+function GetMouseDownY(UIName: string; MouseY: Integer): Integer;
+begin
+  Result := MouseY - UIImage[UIName].Parent.Top + 1000 - UIImage[UIName].Top;
+end;
+
+procedure MoveImage(UIName: string; MouseY, MouseDownY: Integer);
+begin
+  UIImage[UIName].Top := MouseY - UIImage[UIName].Parent.Top + 1000 - MouseDownY;
+end;
 
 procedure TAttachForm.Paint(DC: HDC);
 begin
@@ -193,6 +210,28 @@ begin
     Visible := AVisible;
   end;
   UIForm.Add(ImageEntry, Form);
+end;
+
+procedure CreateEmptyAttachForm(FormName, AAttachFormName: string; X, Y, Awidth, Aheight: Integer;
+  AVisible: Boolean = False);
+begin
+  if UIForm.ContainsKey(FormName) then
+  begin
+    UIForm[FormName].Visible := AVisible;
+    Exit;
+  end;
+
+  var Form := TAttachForm.Create(UIEngine.Root);
+  with Form do
+  begin
+    AttachFormName := AAttachFormName;
+    Width := Awidth;
+    Height := Aheight;
+    OffsetX := X;
+    OffsetY := Y;
+    Visible := AVisible;
+  end;
+  UIForm.Add(FormName, Form);
 end;
 
 procedure CreateEmptyForm(EntryName: string; X, Y, AWidth, AHeight: Integer; ACanMove: Boolean = True);
@@ -405,9 +444,9 @@ begin
 
 end;
 
-procedure CreateEdit(EditName: string; X, Y, AWidth: Integer;AFontColor,ATicColor:TColorPair);
+procedure CreateEdit(EditName: string; X, Y, AWidth: Integer; AFontColor, ATicColor: TColorPair);
 begin
-  if  UIEdit.ContainsKey(EditName) then
+  if UIEdit.ContainsKey(EditName) then
     Exit;
   var Edit := TAEditBox.Create(UIEngine.AForm(UIOwner));
   with Edit do
@@ -419,8 +458,8 @@ begin
     Width := AWidth;
     Height := 20;
     SelStart := 0;
-    FontColor:= AFontColor;
-    TicColor:=ATicColor;
+    FontColor := AFontColor;
+    TicColor := ATicColor;
   end;
 
   UIEdit.AddOrSetValue(EditName, Edit);

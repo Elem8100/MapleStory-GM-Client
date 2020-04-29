@@ -51,6 +51,20 @@ type
     Button1: TButton;
     Image1: TImage;
     TabSheet5: TTabSheet;
+    TabSheet6: TTabSheet;
+    AllFrameListBox: TListBox;
+    Label2: TLabel;
+    SaveAllButton: TButton;
+    SaveSingleButton: TButton;
+    Panel2: TPanel;
+    TrackBarW: TTrackBar;
+    TrackBarH: TTrackBar;
+    TrackBarX: TTrackBar;
+    TrackBarY: TTrackBar;
+    Label3: TLabel;
+    Label4: TLabel;
+    Label5: TLabel;
+    Label6: TLabel;
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure SpeedButton9Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -66,7 +80,10 @@ type
     procedure SearchGridClickCell(Sender: TObject; ARow, ACol: Integer);
     procedure Button1Click(Sender: TObject);
     procedure Edit1Change(Sender: TObject);
-
+    procedure SaveAllButtonClick(Sender: TObject);
+    procedure SaveSingleButtonClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure AllFrameListBoxClick(Sender: TObject);
   private
     HasShow: Boolean;
     HasShowSearchGrid: Boolean;
@@ -87,6 +104,10 @@ type
     procedure DumpEqpString(Entry: TWZIMGEntry);
      { Private declarations }
   public
+    SaveAllFrames: Boolean;
+    SaveSingleFrame: Boolean;
+    Frame: Integer;
+    AllFrames: array of string;
     procedure AddEqps(EqpID: string);
     { Public declarations }
   end;
@@ -102,7 +123,6 @@ uses
 
 {$R *.dfm}
 
-
 procedure TAvatarForm.AddInventory(ID: string; Icon: TBitmap; Name: string; ARow: Integer);
 begin
   Inventory.Cells[0, ARow] := ID;
@@ -110,6 +130,12 @@ begin
   Inventory.Cells[2, ARow] := Name;
   if (LeftStr(ID, 4) <> '0000') and (LeftStr(ID, 4) <> '0001') then
     Inventory.AddButton(3, ARow, 20, 20, 'X', haCenter, vaCenter);
+end;
+
+procedure TAvatarForm.AllFrameListBoxClick(Sender: TObject);
+begin
+  SaveSingleFrame := True;
+  SaveSingleButton.Enabled := True;
 end;
 
 procedure TAvatarForm.AddEqps(EqpID: string);
@@ -280,24 +306,31 @@ begin
       begin
         SaveButton.Enabled := True;
         DeleteButton.Enabled := False;
+        AvatarForm.SaveSingleFrame := False;
       end;
 
     1:
       begin
-
         DeleteButton.Enabled := True;
         AvatarView.Parent := PageControl1.Pages[1];
         AvatarView.Clear;
         AvatarView.FillFromDirectory(ExtractFilePath(ParamStr(0)) + 'Images\');
+        AvatarForm.SaveSingleFrame := False;
       end;
     2:
-      SaveButton.Enabled := True;
+      begin
+        SaveButton.Enabled := True;
+        AvatarForm.SaveSingleFrame := False;
+      end;
+    3:
+      AvatarForm.SaveSingleFrame := False;
     4:
       begin
         AvatarView.Parent := PageControl1.Pages[4];
         AvatarView.Clear;
         AvatarView.FillFromDirectory(ExtractFilePath(ParamStr(0)) + 'Images\');
         SaveButton.Enabled := True;
+        AvatarForm.SaveSingleFrame := False;
       end;
   end;
 end;
@@ -356,7 +389,23 @@ begin
   ResetColorGrid;
 end;
 
+procedure TAvatarForm.SaveAllButtonClick(Sender: TObject);
+begin
+  SaveAllFrames := True;
+  SaveSingleFrame := False;
+  Frame := 0;
+end;
 
+procedure TAvatarForm.SaveSingleButtonClick(Sender: TObject);
+begin
+  SaveSingleFrame := True;
+  SaveAllFrames := False;
+  var WX := Round(Player.X - SpriteEngine.WorldX - 155) + TrackBarX.Position;
+  var WY := Round(Player.Y - SpriteEngine.WorldY - 160) + TrackBarY.Position;
+  var Index := AllFrameListBox.ItemIndex;
+  AvatarPanelTexture.SaveToFile('c:/' + AllFrameListBox.Items[Index] + '.png', nil, 0, IntRectBDS(WX,
+    WY, WX + TrackBarW.Position, WY + TrackBarH.Position));
+end;
 
 procedure TAvatarForm.ResetColorGrid;
 begin
@@ -457,7 +506,7 @@ begin
   for var i := 0 to Inventory.RowCount - 1 do
     ImageName := ImageName + Inventory.Cells[0, i] + '-';
   ForceDirectories(ExtractFilePath(ParamStr(0)) + 'Images');
-  var FileName := ExtractFilePath(ParamStr(0)) + 'Images\' + ImageName + '.bmp';
+  var FileName := ExtractFilePath(ParamStr(0)) + 'Images\' + ImageName + '.png';
   var WX := Round(Player.X - SpriteEngine.WorldX - 55);
   var WY := Round(Player.Y - SpriteEngine.WorldY - 90);
   AvatarPanelTexture.SaveToFile(FileName, nil, 0, IntRectBDS(WX, WY, WX + 100, WY + 100));
@@ -495,6 +544,12 @@ begin
   Bmp.Free;
   SearchEqpID := EqpID;
   ActiveControl := nil;
+end;
+
+procedure TAvatarForm.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  AvatarForm.SaveSingleFrame := False;
+  AvatarForm.SaveAllFrames := False;
 end;
 
 procedure TAvatarForm.FormCreate(Sender: TObject);
@@ -545,7 +600,9 @@ begin
   AvatarView.DefaultInfoText := iedtNone;
   AvatarView.MultiSelectionOptions := [];
   AvatarView.ShowText := False;
-  AvatarView.ThumbnailsBackground := RGB(200, 200, 200);
+  AvatarView.ThumbnailsBackground := clwhite;
+  AvatarView.ThumbnailsBorderColor := RGB(200, 200, 200);
+  AvatarView.ThumbnailsBorderWidth := 1;
   AvatarView.ThumbsRounded := 100;
   AvatarView.SelectionColor := clRed;
   AvatarView.OnImageSelect := AvatarViewImageSelect;
@@ -626,7 +683,23 @@ begin
   end;
   Inventory.SortByColumn(0);
   ResetColorGrid;
-
+  AllFrames := ['walk1.0', 'walk1.0', 'walk1.1', 'walk1.2', 'walk1.3', 'walk2.0', 'walk2.1',
+    'walk2.2', 'walk2.3', 'stand1.0', 'stand1.1', 'stand1.2', 'stand2.0', 'stand2.1', 'stand2.2',
+    'alert.0', 'alert.1', 'alert.2', 'swingO1.0', 'swingO1.1', 'swingO1.2', 'swingO2.0', 'swingO2.1',
+    'swingO2.2', 'swingO3.0', 'swingO3.1', 'swingO3.2', 'swingOF.0', 'swingOF.1', 'swingOF.2',
+    'swingOF.3', 'swingT1.0', 'swingT1.1', 'swingT1.2', 'swingT2.0', 'swingT2.1', 'swingT2.2',
+    'swingT3.0', 'swingT3.1', 'swingT3.2', 'swingTF.0', 'swingTF.1', 'swingTF.2', 'swingTF.3',
+    'swingP1.0', 'swingP1.1', 'swingP1.2', 'swingP2.0', 'swingP2.1', 'swingP2.2', 'swingPF.0',
+    'swingPF.1', 'swingPF.2', 'swingPF.3', 'stabO1.0', 'stabO1.1', 'stabO2.0', 'stabO2.1',
+    'stabOF.0', 'stabOF.1', 'stabOF.2', 'stabT1.0', 'stabT1.1', 'stabT1.2', 'stabT2.0', 'stabT2.1',
+    'stabT2.2', 'stabTF.0', 'stabTF.1', 'stabTF.2', 'stabTF.3', 'shoot1.0', 'shoot1.1', 'shoot1.2',
+    'shoot2.0', 'shoot2.1', 'shoot2.2', 'shoot2.3', 'shoot2.4', 'shootF.0', 'shootF.1', 'shootF.2',
+    'proneStab.0', 'proneStab.1', 'prone.0', 'heal.0', 'heal.1', 'heal.2', 'fly.0', 'fly.1',
+    'jump.0', 'sit.0', 'ladder.0', 'ladder.1', 'rope.0', 'rope.1', 'rope.1'];
+  for var i in AllFrames do
+    AllFrameListBox.Items.Add(i);
+  AllFrameListBox.Items.Delete(0);
+  AllFrameListBox.Items.Delete(AllFrameListBox.Count - 1);
 end;
 
 function NoIMG(const Name: string): string; inline;

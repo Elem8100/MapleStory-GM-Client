@@ -26,6 +26,7 @@ var
   WzPath: string;
   FDevice: TDevice;
   GameDevice2: TDevice;
+  GameDevice3: TDevice;
   DisplaySize: TPoint2i;
   GameFont: TTextRenderer;
   GameCanvas: TGameCanvas;

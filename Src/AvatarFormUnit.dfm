@@ -14,6 +14,7 @@ object AvatarForm: TAvatarForm
   KeyPreview = True
   OldCreateOrder = False
   Scaled = False
+  OnClose = FormClose
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnKeyDown = FormKeyDown
@@ -2682,7 +2683,7 @@ object AvatarForm: TAvatarForm
     Top = 220
     Width = 108
     Height = 33
-    Caption = 'Save Character'
+    Caption = #20786#23384#35282#33394
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -15
@@ -2712,7 +2713,7 @@ object AvatarForm: TAvatarForm
     Margins.Left = 7
     Margins.Top = 260
     Margins.Bottom = 7
-    ActivePage = TabSheet4
+    ActivePage = TabSheet6
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -2723,14 +2724,14 @@ object AvatarForm: TAvatarForm
     TabOrder = 4
     OnChange = PageControl1Change
     object TabSheet1: TTabSheet
-      Caption = 'Equip'
+      Caption = #25563#35037
     end
     object TabSheet2: TTabSheet
-      Caption = 'Load Character'
+      Caption = #36617#20837#35282#33394
       ImageIndex = 1
     end
     object TabSheet3: TTabSheet
-      Caption = 'Dye'
+      Caption = #26579#33394
       ImageIndex = 2
       object ColorGrid: TAdvStringGrid
         Left = 0
@@ -2884,7 +2885,7 @@ object AvatarForm: TAvatarForm
       end
     end
     object TabSheet4: TTabSheet
-      Caption = 'Search'
+      Caption = #25628#23563
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -15
@@ -2894,11 +2895,11 @@ object AvatarForm: TAvatarForm
       ParentFont = False
       OnShow = TabSheet4Show
       object Label1: TLabel
-        Left = 205
+        Left = 215
         Top = 63
-        Width = 44
+        Width = 30
         Height = 18
-        Caption = 'Search'
+        Caption = #25628#23563
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -15
@@ -3111,8 +3112,128 @@ object AvatarForm: TAvatarForm
       end
     end
     object TabSheet5: TTabSheet
-      Caption = 'Spawn'
+      Caption = #25918#20154#29289
       ImageIndex = 4
+    end
+    object TabSheet6: TTabSheet
+      Caption = #20786#23384'Png'
+      ImageIndex = 5
+      object Label2: TLabel
+        Left = 367
+        Top = 16
+        Width = 41
+        Height = 18
+        Caption = 'Label2'
+      end
+      object Label3: TLabel
+        Left = 310
+        Top = 50
+        Width = 30
+        Height = 18
+        Caption = #23532#24230
+      end
+      object Label4: TLabel
+        Left = 310
+        Top = 90
+        Width = 30
+        Height = 18
+        Caption = #39640#24230
+      end
+      object Label5: TLabel
+        Left = 555
+        Top = 50
+        Width = 9
+        Height = 18
+        Caption = 'X'
+      end
+      object Label6: TLabel
+        Left = 555
+        Top = 90
+        Width = 10
+        Height = 18
+        Caption = 'Y'
+      end
+      object AllFrameListBox: TListBox
+        AlignWithMargins = True
+        Left = 10
+        Top = 40
+        Width = 143
+        Height = 600
+        Margins.Left = 10
+        Margins.Top = 40
+        Margins.Bottom = 15
+        Align = alLeft
+        ItemHeight = 18
+        TabOrder = 0
+        OnClick = AllFrameListBoxClick
+      end
+      object SaveAllButton: TButton
+        Left = 180
+        Top = 85
+        Width = 81
+        Height = 28
+        Caption = #20786#23384#20840#37096
+        TabOrder = 1
+        OnClick = SaveAllButtonClick
+      end
+      object SaveSingleButton: TButton
+        Left = 180
+        Top = 42
+        Width = 81
+        Height = 28
+        Caption = #20786#23384
+        Enabled = False
+        TabOrder = 2
+        OnClick = SaveSingleButtonClick
+      end
+      object Panel2: TPanel
+        Left = 190
+        Top = 128
+        Width = 512
+        Height = 512
+        Caption = 'Panel2'
+        Color = clGradientActiveCaption
+        ParentBackground = False
+        TabOrder = 3
+      end
+      object TrackBarW: TTrackBar
+        Left = 341
+        Top = 50
+        Width = 154
+        Height = 20
+        Max = 512
+        Min = 100
+        Position = 100
+        TabOrder = 4
+      end
+      object TrackBarH: TTrackBar
+        Left = 341
+        Top = 90
+        Width = 154
+        Height = 17
+        Max = 512
+        Min = 100
+        Position = 100
+        TabOrder = 5
+      end
+      object TrackBarX: TTrackBar
+        Left = 566
+        Top = 50
+        Width = 154
+        Height = 17
+        Max = 256
+        Min = -256
+        TabOrder = 6
+      end
+      object TrackBarY: TTrackBar
+        Left = 566
+        Top = 90
+        Width = 154
+        Height = 17
+        Max = 256
+        Min = -256
+        TabOrder = 7
+      end
     end
   end
 end

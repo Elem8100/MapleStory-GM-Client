@@ -3,9 +3,9 @@ object MainForm: TMainForm
   Top = 77
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
-  Caption = 'MapleStoryGM v3.2'
+  Caption = #26963#20043#35895#22320#22294#27169#25836#22120' v3.2'
   ClientHeight = 711
-  ClientWidth = 1844
+  ClientWidth = 1794
   Color = clBtnFace
   Constraints.MaxHeight = 5000
   Constraints.MaxWidth = 5000
@@ -16,12 +16,12 @@ object MainForm: TMainForm
   Font.Style = []
   KeyPreview = True
   OldCreateOrder = False
-  Position = poDesigned
+  Position = poScreenCenter
   Scaled = False
   OnActivate = FormActivate
-  OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnKeyDown = FormKeyDown
+  OnKeyPress = FormKeyPress
   OnMouseDown = FormMouseDown
   OnMouseMove = FormMouseMove
   OnMouseUp = FormMouseUp
@@ -47,11 +47,11 @@ object MainForm: TMainForm
     Pen.Width = 2
   end
   object Label1: TLabel
-    Left = 10
+    Left = 22
     Top = 187
-    Width = 37
+    Width = 24
     Height = 14
-    Caption = 'Search'
+    Caption = #25628#23563
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -12
@@ -60,14 +60,14 @@ object MainForm: TMainForm
     ParentFont = False
   end
   object Label2: TLabel
-    Left = 115
-    Top = 6
-    Width = 58
-    Height = 16
-    Caption = 'MS Folder'
+    Left = 100
+    Top = 9
+    Width = 72
+    Height = 14
+    Caption = #26963#20043#35895#36039#26009#22846
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
-    Font.Height = -13
+    Font.Height = -12
     Font.Name = 'Tahoma'
     Font.Style = []
     ParentFont = False
@@ -79,11 +79,11 @@ object MainForm: TMainForm
     Height = 122
   end
   object LoadMapButton: TButton
-    Left = 7
+    Left = 8
     Top = 158
     Width = 204
     Height = 23
-    Caption = 'LOAD  MAP'
+    Caption = #36617#20837#22320#22294
     Enabled = False
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -99,7 +99,7 @@ object MainForm: TMainForm
     Tag = -1
     Left = 0
     Top = 688
-    Width = 1844
+    Width = 1794
     Height = 23
     Align = alBottom
     BackgroundTransparent = False
@@ -162,7 +162,7 @@ object MainForm: TMainForm
   object AdvGroupBox2: TAdvGroupBox
     Left = 215
     Top = 4
-    Width = 1621
+    Width = 1570
     Height = 68
     BorderColor = clActiveCaption
     BorderStyle = bsDouble
@@ -182,33 +182,33 @@ object MainForm: TMainForm
       ParentFont = False
     end
     object Label4: TLabel
-      Left = 22
-      Top = 41
-      Width = 27
+      Left = 21
+      Top = 42
+      Width = 30
       Height = 16
-      Caption = 'Size'
-      Font.Charset = ANSI_CHARSET
+      Caption = #30059#38754
+      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -13
-      Font.Name = 'Verdana'
+      Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
     end
     object Label5: TLabel
-      Left = 16
+      Left = 21
       Top = 14
-      Width = 35
+      Width = 30
       Height = 16
-      Caption = 'Mode'
-      Font.Charset = ANSI_CHARSET
+      Caption = #27169#24335
+      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -13
-      Font.Name = 'Verdana'
+      Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
     end
     object ComboBox1: TComboBox
-      Left = 56
+      Left = 57
       Top = 38
       Width = 95
       Height = 22
@@ -239,18 +239,18 @@ object MainForm: TMainForm
       ItemIndex = 0
       ParentFont = False
       TabOrder = 0
-      Text = 'Play Mode'
+      Text = #36938#25138#27169#24335
       OnChange = ComboBox2Change
       OnCloseUp = ComboBox2CloseUp
       Items.Strings = (
-        'Play Mode'
-        'Viewer Mode')
+        #36938#25138#27169#24335
+        #28687#35261#27169#24335)
     end
     object scScrollPanel1: TscScrollPanel
       AlignWithMargins = True
       Left = 157
       Top = 5
-      Width = 1456
+      Width = 1405
       Height = 58
       Margins.Left = 152
       Margins.Top = 0
@@ -268,17 +268,17 @@ object MainForm: TMainForm
       ScrollTimerInterval = 50
       StorePaintBuffer = False
       TouchScroll = False
-      ExplicitWidth = 1356
+      ExplicitWidth = 1285
       object PicInfoButton: TSpeedButton
-        Left = 770
+        Left = 732
         Top = 0
         Width = 65
         Height = 58
-        Caption = 'Obj Info'
+        Caption = #22294#29255#36039#35338
         Enabled = False
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
-        Font.Height = -13
+        Font.Height = -15
         Font.Name = #24494#36575#27491#40657#39636
         Font.Style = []
         Glyph.Data = {
@@ -420,13 +420,13 @@ object MainForm: TMainForm
       object SaveMapButton: TSpeedButton
         Left = 69
         Top = 0
-        Width = 74
+        Width = 68
         Height = 58
-        Caption = 'Save Map'
+        Caption = #20786#23384#22320#22294
         Enabled = False
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
-        Font.Height = -13
+        Font.Height = -15
         Font.Name = #24494#36575#27491#40657#39636
         Font.Style = []
         Glyph.Data = {
@@ -503,15 +503,15 @@ object MainForm: TMainForm
         OnClick = SaveMapButtonClick
       end
       object AvatarButton1: TSpeedButton
-        Left = 215
+        Left = 204
         Top = 0
         Width = 65
         Height = 58
-        Caption = 'Avatar'
+        Caption = #25563#35037
         Enabled = False
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
-        Font.Height = -13
+        Font.Height = -15
         Font.Name = #24494#36575#27491#40657#39636
         Font.Style = []
         Glyph.Data = {
@@ -578,19 +578,19 @@ object MainForm: TMainForm
           FF7FFF7FFF7FFF7FFF7F}
         Layout = blGlyphTop
         ParentFont = False
-        Spacing = 3
+        Spacing = 0
         OnClick = AvatarButton1Click
       end
       object DropMobButton1: TSpeedButton
-        Left = 347
+        Left = 336
         Top = 0
-        Width = 68
+        Width = 60
         Height = 58
-        Caption = 'Mob'
+        Caption = #25918#24618#29289
         Enabled = False
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
-        Font.Height = -13
+        Font.Height = -15
         Font.Name = #24494#36575#27491#40657#39636
         Font.Style = []
         Glyph.Data = {
@@ -667,15 +667,15 @@ object MainForm: TMainForm
         OnClick = DropMobButton1Click
       end
       object DropNpcButton1: TSpeedButton
-        Left = 416
+        Left = 397
         Top = 0
-        Width = 67
+        Width = 65
         Height = 58
-        Caption = 'Npc'
+        Caption = #25918'Npc'
         Enabled = False
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
-        Font.Height = -13
+        Font.Height = -15
         Font.Name = #24494#36575#27491#40657#39636
         Font.Style = []
         Glyph.Data = {
@@ -752,15 +752,15 @@ object MainForm: TMainForm
         OnClick = DropNpcButton1Click
       end
       object ChairButton1: TSpeedButton
-        Left = 281
+        Left = 270
         Top = 0
         Width = 65
         Height = 58
-        Caption = 'Chair'
+        Caption = #26885#23376
         Enabled = False
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
-        Font.Height = -13
+        Font.Height = -15
         Font.Name = #24494#36575#27491#40657#39636
         Font.Style = []
         Glyph.Data = {
@@ -876,19 +876,19 @@ object MainForm: TMainForm
           0000}
         Layout = blGlyphTop
         ParentFont = False
-        Spacing = 5
+        Spacing = 3
         OnClick = ChairButton1Click
       end
       object TamingMobButton: TSpeedButton
-        Left = 484
+        Left = 463
         Top = 0
         Width = 65
         Height = 58
-        Caption = 'Mount'
+        Caption = #39438#23541
         Enabled = False
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
-        Font.Height = -13
+        Font.Height = -15
         Font.Name = #24494#36575#27491#40657#39636
         Font.Style = []
         Glyph.Data = {
@@ -961,19 +961,19 @@ object MainForm: TMainForm
           0000FF7FFF7F}
         Layout = blGlyphTop
         ParentFont = False
-        Spacing = 1
+        Spacing = 2
         OnClick = TamingMobButtonClick
       end
       object CashButton: TSpeedButton
-        Left = 550
+        Left = 529
         Top = 0
-        Width = 68
+        Width = 65
         Height = 58
-        Caption = 'Cash Effect'
+        Caption = #40670#21830
         Enabled = False
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
-        Font.Height = -13
+        Font.Height = -15
         Font.Name = #24494#36575#27491#40657#39636
         Font.Style = []
         Glyph.Data = {
@@ -1046,19 +1046,19 @@ object MainForm: TMainForm
           FF7FFF7FFF7F}
         Layout = blGlyphTop
         ParentFont = False
-        Spacing = 1
+        Spacing = 0
         OnClick = CashButtonClick
       end
       object SpeedButton2: TSpeedButton
-        Left = 685
+        Left = 661
         Top = 0
-        Width = 84
+        Width = 70
         Height = 58
-        Caption = 'Damage Skin'
+        Caption = #20663#23475#23383#22411
         Enabled = False
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
-        Font.Height = -13
+        Font.Height = -15
         Font.Name = #24494#36575#27491#40657#39636
         Font.Style = []
         Glyph.Data = {
@@ -1139,11 +1139,11 @@ object MainForm: TMainForm
         Top = 0
         Width = 65
         Height = 58
-        Caption = 'Display'
+        Caption = #39023#31034
         Enabled = False
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
-        Font.Height = -13
+        Font.Height = -15
         Font.Name = #24494#36575#27491#40657#39636
         Font.Style = []
         Glyph.Data = {
@@ -1227,15 +1227,15 @@ object MainForm: TMainForm
         OnClick = SpeedButton1Click
       end
       object SpeedButton3: TSpeedButton
-        Left = 144
+        Left = 138
         Top = 0
-        Width = 70
+        Width = 65
         Height = 58
-        Caption = 'Full Screen'
+        Caption = #20840#34722#24149
         Enabled = False
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
-        Font.Height = -13
+        Font.Height = -15
         Font.Name = #24494#36575#27491#40657#39636
         Font.Style = []
         Glyph.Data = {
@@ -1324,15 +1324,15 @@ object MainForm: TMainForm
         OnClick = SpeedButton3Click
       end
       object SpeedButton4: TSpeedButton
-        Left = 619
+        Left = 595
         Top = 0
         Width = 65
         Height = 58
-        Caption = 'Morph'
+        Caption = #35722#36523
         Enabled = False
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
-        Font.Height = -13
+        Font.Height = -15
         Font.Name = #24494#36575#27491#40657#39636
         Font.Style = []
         Glyph.Data = {
@@ -1472,15 +1472,15 @@ object MainForm: TMainForm
         OnClick = SpeedButton4Click
       end
       object MedalButton: TSpeedButton
-        Left = 836
+        Left = 798
         Top = 0
         Width = 65
         Height = 58
-        Caption = 'Medal'
+        Caption = #21235#31456
         Enabled = False
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
-        Font.Height = -13
+        Font.Height = -15
         Font.Name = #24494#36575#27491#40657#39636
         Font.Style = []
         Glyph.Data = {
@@ -1616,15 +1616,15 @@ object MainForm: TMainForm
         OnClick = MedalButtonClick
       end
       object NickNameButton: TSpeedButton
-        Left = 902
+        Left = 864
         Top = 0
-        Width = 68
+        Width = 65
         Height = 58
-        Caption = 'Title'
+        Caption = #31281#34399
         Enabled = False
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
-        Font.Height = -13
+        Font.Height = -15
         Font.Name = #24494#36575#27491#40657#39636
         Font.Style = []
         Glyph.Data = {
@@ -1752,19 +1752,19 @@ object MainForm: TMainForm
           00FF222211FF0000000000000000000000000000000000000000}
         Layout = blGlyphTop
         ParentFont = False
-        Spacing = 2
+        Spacing = 0
         OnClick = NickNameButtonClick
       end
       object LabelRingButton: TSpeedButton
-        Left = 971
+        Left = 930
         Top = 0
-        Width = 68
+        Width = 65
         Height = 58
-        Caption = 'Ring'
+        Caption = #21517#29260#25106#25351
         Enabled = False
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
-        Font.Height = -13
+        Font.Height = -15
         Font.Name = #24494#36575#27491#40657#39636
         Font.Style = []
         Glyph.Data = {
@@ -1842,15 +1842,15 @@ object MainForm: TMainForm
         OnClick = LabelRingButtonClick
       end
       object PetButton: TSpeedButton
-        Left = 1040
+        Left = 996
         Top = 0
-        Width = 68
+        Width = 65
         Height = 58
-        Caption = 'Pet'
+        Caption = #23541#29289
         Enabled = False
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
-        Font.Height = -13
+        Font.Height = -15
         Font.Name = #24494#36575#27491#40657#39636
         Font.Style = []
         Glyph.Data = {
@@ -1945,19 +1945,19 @@ object MainForm: TMainForm
           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF202020}
         Layout = blGlyphTop
         ParentFont = False
-        Spacing = 2
+        Spacing = 0
         OnClick = PetButtonClick
       end
-      object SpeedButton5: TSpeedButton
-        Left = 1109
+      object FamiliarButton: TSpeedButton
+        Left = 1062
         Top = 0
-        Width = 68
+        Width = 65
         Height = 58
-        Caption = 'Familiar'
+        Caption = #33804#29560
         Enabled = False
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
-        Font.Height = -13
+        Font.Height = -15
         Font.Name = #24494#36575#27491#40657#39636
         Font.Style = []
         Glyph.Data = {
@@ -2037,19 +2037,19 @@ object MainForm: TMainForm
           0101010101010101010101010101010101010101010101FFFFFF}
         Layout = blGlyphTop
         ParentFont = False
-        Spacing = 2
-        OnClick = SpeedButton5Click
+        Spacing = 0
+        OnClick = FamiliarButtonClick
       end
-      object SpeedButton6: TSpeedButton
-        Left = 1178
+      object SpeedButton5: TSpeedButton
+        Left = 1128
         Top = 0
-        Width = 68
+        Width = 65
         Height = 58
-        Caption = 'Skill'
+        Caption = #25216#33021
         Enabled = False
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
-        Font.Height = -13
+        Font.Height = -15
         Font.Name = #24494#36575#27491#40657#39636
         Font.Style = []
         Glyph.Data = {
@@ -2153,11 +2153,11 @@ object MainForm: TMainForm
           0101010101010101010101010101010101FFFFFFFFFFFFFFFFFF}
         Layout = blGlyphTop
         ParentFont = False
-        Spacing = 2
-        OnClick = SpeedButton6Click
+        Spacing = 0
+        OnClick = SpeedButton5Click
       end
-      object SpeedButton7: TSpeedButton
-        Left = 1320
+      object OptionButton: TSpeedButton
+        Left = 1263
         Top = 0
         Width = 68
         Height = 58
@@ -2253,18 +2253,18 @@ object MainForm: TMainForm
         Layout = blGlyphTop
         ParentFont = False
         Spacing = -5
-        OnClick = SpeedButton7Click
+        OnClick = OptionButtonClick
       end
       object AndroidButton: TSpeedButton
-        Left = 1246
+        Left = 1194
         Top = 0
         Width = 68
         Height = 58
-        Caption = 'Android'
+        Caption = #27231#22120#20154
         Enabled = False
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
-        Font.Height = -13
+        Font.Height = -15
         Font.Name = #24494#36575#27491#40657#39636
         Font.Style = []
         Glyph.Data = {
@@ -2357,6 +2357,105 @@ object MainForm: TMainForm
         ParentFont = False
         OnClick = AndroidButtonClick
       end
+      object ScreeenSetButton: TSpeedButton
+        Left = 1334
+        Top = 0
+        Width = 68
+        Height = 58
+        Caption = 'Options'
+        Enabled = False
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = #24494#36575#27491#40657#39636
+        Font.Style = []
+        Glyph.Data = {
+          1A0A0000424D1A0A000000000000420000002800000023000000230000000100
+          100003000000D8090000120B0000120B00000000000000000000007C0000E003
+          00001F000000FF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7F
+          FF7FDF7B783AB319B31DD41DB319983EDE77FF7FFF7FFF7FFF7FFF7FFF7FFF7F
+          FF7FFF7FFF7FFF7FFF7FFF7F0000FF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7F
+          FF7FFF7FFF7FFF7FFF7F5C5F1722382218223826D41D152A9D6BFF7FFF7FFF7F
+          FF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7F0000FF7FFF7FFF7FFF7FFF7F
+          FF7FFF7FFF7FBE77DE77FF7FFF7FFF7FFF7F1B5738227B1E7B1E5A22F51DD421
+          5C63FF7FFF7FFF7FFF7FFF7FFF7FFF7FBE73DF7BFF7FFF7FFF7FFF7F0000FF7F
+          FF7FFF7FFF7FFF7FFF7F9D6B362ED9469D6BDE77FF7FFF7FFF7FD94659229C22
+          9D225B22161EB3193C5BFF7FFF7FFF7FFF7FFF7F1B5B152A1B57BE73DF7BFF7F
+          FF7FFF7F0000FF7FFF7FFF7FFF7FFF7F3C5F372AB319510D57367D63DE77FF7F
+          DF7B78365A229D229D227C1E17227111FA4EDE77DF7BFF7FBE77B946F5219215
+          B31D3B5BBE73DF7BFF7FFF7F0000FF7FFF7FFF7FFF7F5C5F582EFC3A9A32D51D
+          510DF5253B5B5C63983E17267B269C227D1E7C1E39229215D425983E3C5B5C5F
+          57321722391E171E9215B31D1B57BE73FF7FFF7F0000FF7FFF7FFF7F7D6B7832
+          FC3AFD36FD36BB3637267211B319F521F6215A267C227C227C227C1E5A1E171E
+          B4197211D321F52138225A1E5B1E391A171E9215152ADF7BFF7FFF7F0000FF7F
+          FF7FFF7FDA4A1B437E47FD2EDD2EFD36FC36582A16267A2E9B2A9C267C227C22
+          7C1E7C1E5B1E5A1E39221722161E391E5B1E7C1E9D225B1E391EF521FA4EFF7F
+          FF7FFF7F0000FF7FFF7FFF7FBE77B93E7D4F7E3FFE2EDD2EDD32DD32BC32BD2E
+          BD269C267C227C227C225C1E5C1E5C1E5C1E5B1E5B1E5B1E7C1E7D1E7C1E5B1E
+          1722783AFF7FFF7FFF7FFF7F0000FF7FFF7FFF7FFF7F7D6B993ABE577E3BDD2E
+          DD2EDD2EDD2ABD2A9D269C227C225C1E5C1A5C1A3C165C1A5C1A5C1E5C1E7C1E
+          7C1E7C1E5B1E3922162A9E6FFF7FFF7FFF7FFF7F0000FF7FFF7FFF7FFF7FFF7F
+          1B5BDA42BF535E3BDD2EDD2EBD2ABD2A9D269D2ABD2EBD36BD36BD36BD2E7C26
+          5C1A5C1A5C1E5C1E7C1E5C1E5A1E16263B5BFF7FFF7FFF7FFF7FFF7F0000FF7F
+          FF7FFF7FFF7FFF7FFF7FB9421C4BDF4F5E3BDD2EBD2ABD2ABC2EBC36BB36BB3A
+          BB3ABB3ADC3EDC3EBD365C223C1A5C1E5C1E5B1E1722B31D3C5BDF7BFF7FFF7F
+          FF7FFF7F0000FF7FFF7FFF7FFF7FFF7FBE73B9423C4B7E4FBF4B5E3BDD2E9C2E
+          9B32792EFB4A7D637D673C579A32592ABB3ADD3A5C225C1A5C1E5B1E17227211
+          983EDE77FF7FFF7FFF7FFF7F0000FF7FFF7FBE6F7D677D679942DB427E531D43
+          5E47BF4B3D377A2A58327D67FF7FFF7FFF7FFF7FFF7BFC4A3922BB36BD325C1A
+          5C1A5C1E3A22B419D321FB525C5F7D6BBE73DF7B0000FF7B9842162AD4219315
+          372A5D575E4F3E431D433E471C3B17223C5FFF7FFF7FFF7FFF7FFF7FFF7FFF7F
+          FC4A5926BC367C225C1A5C1E5A1E171E92159215B31D152A5632B9420000DA42
+          372A993ADA421C4F7E5B7E575E473E473E47FD3E792E362EBE73FF7FFF7FFF7F
+          FF7FFF7FFF7FFF7FFF7F9A32BB369D2A5C1A5C1E5B1E5A1E38221722F61DD51D
+          D41972110000B93ABF67BF5FBF5FBF5F9F577E4F5E4B5E4B3E4B1E431622983E
+          DE77FF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7F3C579B329D2E5C1A5C1E7C1E7C1E
+          7C1E7B1E5B225A223826D41D0000DA42DF6B9F539F539E537E4F7E4F7E4F5E4B
+          5E4B3E47F621783EBE73FF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7F7E679B32BD32
+          5C1A7C227C1E7C227D1E9D229D227C1E3822B31D0000DB46FF6FBF5FBF5B9F57
+          9E577E537E537E4F5E4F5E4BF621162E9D6BFF7BFF7FFF7FFF7FFF7FFF7FFF7F
+          FF7F7D639B36BD325C1E7C227C227C229D229D229D227C1E382292150000BA3A
+          5D577D5F9E5FBE63BE639E5B7E537E537E535E4F582A72111B57BE73FF7FFF7F
+          FF7FFF7FFF7FFF7FFF7FDB46BB36BD2E7C227C229C227C227B267B225A223922
+          1722573600009D6B5D5F3C571B4FFB4A5D5BBE679E5B7E577E577E53FC429315
+          F5257D67BE73FF7BFF7FFF7FFF7FFF7F7D67792EBC369D2A9C269C269C267A26
+          37265732B942DA4A3B5BDF7B0000FF7FFF7FFF7FFF7BDF773C577D5FDF679E5B
+          9E5B7E575E5399367211D4251B579D6BBE73DE77BE733C5F58329B32BC2E9D26
+          9D269D269B2A1722983EBE73FF7FFF7FFF7FFF7F0000FF7FFF7FFF7FFF7FFF7F
+          9E6B3C53DF6FBE5F9E5B9E5B7E575E539A3A93157211152E783E983E36321726
+          7A2EBC2EBD2ABD2ABD2ABD2E9A2EF5255C63FF7FFF7FFF7FFF7FFF7F0000FF7F
+          FF7FFF7FFF7FFF7FFF7F3C539E67DF679E5F9E5F9F5B7E5B7E571C4B79321626
+          162617269A321C3F3E3BDD2EBD2ABD2ADD2ABC323726D4213C5FDE77FF7FFF7F
+          FF7FFF7F0000FF7FFF7FFF7FFF7FFF7FBE6F1B4BDF6FDF6BBF63BF639F5F9E5F
+          9E5B7E5B7F577F575F533E4B3E475E4BBF4F5E3BDD2EDD2ADD2EDD36582A7211
+          152A7D67DE77FF7FFF7FFF7F0000FF7FFF7FFF7FFF7FDE77FB46BE6FFF73BF67
+          BF67BF67BF639F639E5F9E5B7E5B7E577E535E535E4F3E4B5E4BBF4F5E3BDD2E
+          DD2EDD32DC361626510D983E9D6FDF7BFF7FFF7F0000FF7FFF7FFF7FFF7FFB4E
+          7D5FFF7BDF6BDF6BDF6BDF6FDF6FBF679F639E5F9E5B7E5B7E577E535E4F5E4B
+          3E4B7E4FDF4F5E3BDD2EDD2EFD36BB36D41D7211FA4EBE77FF7FFF7F0000FF7F
+          FF7FFF7FBE6F3C53FF77DF6FDF6FDF6FFF77DF739E67DF73DF6F9F639E5F9E5B
+          7E5B7E577E537E579F5B3D535D53BF535E3BFD2EDD2EFD369932B3193632FF7F
+          FF7FFF7F0000FF7FFF7FFF7F7D637D5FFF7BDF73DF73FF7BBE6F1C4B3C533C53
+          9E67DF73BF639F5F9E5B7E579E637D5BFB4ADA42B942FB46BE577E3FFE2EFD36
+          DC3A16267C67FF7FFF7FFF7F0000FF7FFF7FFF7FFF7F7D5F9E67FF7FFF7B7E5F
+          DB469E6FFF7F9E6F3C539D67DF6FBF639F5FBF639E63572EB942BE73DF7B1B53
+          BA3E9E537E47FC3E582E5C5FFF7FFF7FFF7FFF7F0000FF7FFF7FFF7FFF7FFF7F
+          7D639D675C575C5FDF7BFF7FFF7FFF7FDE771B4BDF6FBF67BF63DF6B1C4FB419
+          7D6BFF7FFF7FFF7F5C63B93E3C4B99365C5FFF7FFF7FFF7FFF7FFF7F0000FF7F
+          FF7FFF7FFF7FFF7FFF7F9E67DE73FF7FFF7FFF7FFF7FFF7FFF7B1B4FBE6BDF6B
+          BF67DF6BDA42F5259D6BFF7FFF7FFF7FFF7FBE73DA469D6BFF7FFF7FFF7FFF7F
+          FF7FFF7F0000FF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7F
+          FF7F3C579E67DF6FDF67BF6B78365632DE77FF7FFF7FFF7FFF7FFF7FFF7FFF7F
+          FF7FFF7FFF7FFF7FFF7FFF7F0000FF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7F
+          FF7FFF7FFF7FFF7FFF7F5C5B7D63FF7BFF77DF6F572EB946FF7FFF7FFF7FFF7F
+          FF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7F0000FF7FFF7FFF7FFF7FFF7F
+          FF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7F9D67DB42FB46FB46FB46DA4ADE7B
+          FF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7F0000}
+        Layout = blGlyphTop
+        ParentFont = False
+        Spacing = -5
+        OnClick = ScreeenSetButtonClick
+      end
     end
   end
   object SearchMapEdit: TEdit
@@ -2379,21 +2478,21 @@ object MainForm: TMainForm
   end
   object ComboKey: TComboBox
     Left = 8
-    Top = 3
-    Width = 88
+    Top = 6
+    Width = 81
     Height = 22
     Style = csOwnerDrawVariable
     BiDiMode = bdLeftToRight
     ItemIndex = 0
     ParentBiDiMode = False
     TabOrder = 5
-    Text = 'GMS/KMS/BMS(new)'
+    Text = #21488#28771'/'#38867'/'#22283#38555'/'#26085#26412
     OnChange = ComboKeyChange
     OnCloseUp = ComboKeyCloseUp
     Items.Strings = (
-      'GMS/KMS/BMS(new)'
-      'GMS(old)'
-      'EMS/KMS(old)')
+      #21488#28771'/'#38867'/'#22283#38555'/'#26085#26412
+      #22283#38555#29256'('#33290')'
+      #21488#28771'/'#38867#22283'('#33290')')
   end
   object PageControl1: TPageControl
     Left = 8
@@ -2411,7 +2510,7 @@ object MainForm: TMainForm
     TabOrder = 6
     OnChange = PageControl1Change
     object TabSheet1: TTabSheet
-      Caption = 'Map'
+      Caption = #22320#22294
       object Grid: TAdvStringGrid
         Left = 0
         Top = 0
@@ -2540,8 +2639,12 @@ object MainForm: TMainForm
       end
     end
     object TabSheet2: TTabSheet
-      Caption = 'World  Map'
+      Caption = #19990#30028#22320#22294
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object WorldMapGrid: TAdvStringGrid
         Left = 0
         Top = 0
