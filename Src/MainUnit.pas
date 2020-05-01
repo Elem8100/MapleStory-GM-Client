@@ -515,7 +515,7 @@ begin
         FullScreenTexture.EndScene;
 
         FDevice.BeginScene;
-        FDevice.Clear([TClearLayer.Color], FloatColor($0));
+        FDevice.Clear([TClearLayer.Color], FloatColor($FFFFC800));
         GameCanvas.BeginScene;
         GameCanvas.DrawStretch(FullScreenTexture, 0, 0, MonitorWidth, MonitorHeight);
         if OptionsForm.ScanlineCheckBox.Checked then
@@ -526,7 +526,7 @@ begin
     smNormal:
       begin
         FDevice.BeginScene;
-        FDevice.Clear([TClearLayer.Color], FloatColor($ffbbbbbb));
+        FDevice.Clear([TClearLayer.Color], FloatColor($FFFFC800));
         GameCanvas.BeginScene;
         RenderEvent;
         if OptionsForm.ScanlineCheckBox.Checked then
@@ -554,21 +554,23 @@ begin
     GameCanvas.DrawPortion(AvatarPanelTexture, 0, 0, WX, WY, WX + 280, WY + 200, False, $FFFFFFFF);
     GameCanvas.EndScene;
     GameDevice2.EndScene;
-
-    var WX2 := Round(Player.X - SpriteEngine.WorldX - 155);
-    var WY2 := Round(Player.Y - SpriteEngine.WorldY - 160);
-    GameDevice3.BeginScene;
-    GameDevice3.Clear([TClearLayer.Color], FloatColor($FFFFFFFF));
-    GameCanvas.BeginScene;
-    GameCanvas.Draw(CheckBoardtexture, 0, 0);
-    var X := AvatarForm.TrackBarX.Position;
-    var Y := AvatarForm.TrackBarY.Position;
-    var Width := AvatarForm.TrackBarW.Position;
-    var Height := AvatarForm.TrackBarH.Position;
-    GameCanvas.DrawPortion(AvatarPanelTexture, 100, 150, WX2, WY2, WX2 + 250, WY2 + 230, False, $FFFFFFFF);
-    Gamecanvas.FrameRect(FloatRect(100 + X, 150 + Y, Width, Height), ColorRect($FFFF0000), 2);
-    GameCanvas.EndScene;
-    GameDevice3.EndScene;
+    if AvatarForm.PageControl1.ActivePageIndex = 5 then
+    begin
+      var WX2 := Round(Player.X - SpriteEngine.WorldX - 155);
+      var WY2 := Round(Player.Y - SpriteEngine.WorldY - 160);
+      GameDevice3.BeginScene;
+      GameDevice3.Clear([TClearLayer.Color], FloatColor($FFFFFFFF));
+      GameCanvas.BeginScene;
+      GameCanvas.Draw(CheckBoardtexture, 0, 0);
+      var X := AvatarForm.TrackBarX.Position;
+      var Y := AvatarForm.TrackBarY.Position;
+      var Width := AvatarForm.TrackBarW.Position;
+      var Height := AvatarForm.TrackBarH.Position;
+      GameCanvas.DrawPortion(AvatarPanelTexture, 100, 150, WX2, WY2, WX2 + 250, WY2 + 230, False, $FFFFFFFF);
+      Gamecanvas.FrameRect(FloatRect(100 + X, 150 + Y, Width, Height), ColorRect($FFFF0000), 2);
+      GameCanvas.EndScene;
+      GameDevice3.EndScene;
+    end;
   end;
 
   if (TMapleChair.IsUse) then

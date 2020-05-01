@@ -2527,16 +2527,17 @@ object AvatarForm: TAvatarForm
     OnClick = SpeedButton9Click
   end
   object Shape1: TShape
-    Left = 450
+    Left = 452
     Top = 11
-    Width = 264
-    Height = 204
+    Width = 262
+    Height = 202
   end
   object Panel1: TPanel
     Left = 453
     Top = 12
     Width = 260
     Height = 200
+    BevelOuter = bvNone
     Caption = 'Panel1'
     TabOrder = 0
   end
@@ -3119,11 +3120,10 @@ object AvatarForm: TAvatarForm
       Caption = #20786#23384'Png'
       ImageIndex = 5
       object Label2: TLabel
-        Left = 367
+        Left = 310
         Top = 16
-        Width = 41
+        Width = 5
         Height = 18
-        Caption = 'Label2'
       end
       object Label3: TLabel
         Left = 310
@@ -3152,6 +3152,44 @@ object AvatarForm: TAvatarForm
         Width = 10
         Height = 18
         Caption = 'Y'
+      end
+      object Shape2: TShape
+        Left = 189
+        Top = 127
+        Width = 514
+        Height = 514
+      end
+      object LabelW: TLabel
+        Tag = 1
+        Left = 495
+        Top = 50
+        Width = 24
+        Height = 18
+        Caption = '200'
+      end
+      object LabelH: TLabel
+        Tag = 2
+        Left = 496
+        Top = 90
+        Width = 24
+        Height = 18
+        Caption = '200'
+      end
+      object LabelX: TLabel
+        Tag = 3
+        Left = 719
+        Top = 50
+        Width = 16
+        Height = 18
+        Caption = '45'
+      end
+      object LabelY: TLabel
+        Tag = 4
+        Left = 719
+        Top = 88
+        Width = 16
+        Height = 18
+        Caption = '18'
       end
       object AllFrameListBox: TListBox
         AlignWithMargins = True
@@ -3191,6 +3229,7 @@ object AvatarForm: TAvatarForm
         Top = 128
         Width = 512
         Height = 512
+        BevelOuter = bvNone
         Caption = 'Panel2'
         Color = clGradientActiveCaption
         ParentBackground = False
@@ -3203,36 +3242,49 @@ object AvatarForm: TAvatarForm
         Height = 20
         Max = 512
         Min = 100
-        Position = 100
+        PageSize = 1
+        Position = 200
         TabOrder = 4
+        OnChange = TrackBarWChange
       end
       object TrackBarH: TTrackBar
+        Tag = 1
         Left = 341
         Top = 90
         Width = 154
         Height = 17
         Max = 512
         Min = 100
-        Position = 100
+        PageSize = 1
+        Position = 200
         TabOrder = 5
+        OnChange = TrackBarWChange
       end
       object TrackBarX: TTrackBar
+        Tag = 2
         Left = 566
         Top = 50
         Width = 154
         Height = 17
         Max = 256
         Min = -256
+        PageSize = 1
+        Position = 45
         TabOrder = 6
+        OnChange = TrackBarWChange
       end
       object TrackBarY: TTrackBar
+        Tag = 3
         Left = 566
         Top = 90
         Width = 154
         Height = 17
         Max = 256
         Min = -256
+        PageSize = 1
+        Position = 18
         TabOrder = 7
+        OnChange = TrackBarWChange
       end
     end
   end

@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Jpeg,PngImage, MapleMap,StrUtils;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Jpeg, PngImage, MapleMap, StrUtils;
 
 type
   TSaveMapForm = class(TForm)
@@ -12,11 +12,7 @@ type
     ComboBox1: TComboBox;
     Label2: TLabel;
     ComboBox2: TComboBox;
-    Label3: TLabel;
-    ComboBox3: TComboBox;
     Button1: TButton;
-    Label4: TLabel;
-    ComboBox4: TComboBox;
     procedure FormCreate(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -32,48 +28,25 @@ var
 
 implementation
 
-uses MainUnit, Global, LockRenderTarget, AsphyreTypes, MapBack,PXT.Graphics,PXT.Types;
+uses
+  MainUnit, Global, AsphyreTypes, MapBack, PXT.Graphics, PXT.Types;
 {$R *.dfm}
 
-
 function StrReplace(const oldChars, newChars: array of Char; const str: string): string;
-var
-  i: Integer;
 begin
   Assert(Length(oldChars) = Length(newChars));
   Result := str;
-  for i := 0 to high(oldChars) do
+  for var i := 0 to high(oldChars) do
     Result := StringReplace(Result, oldChars[i], newChars[i], [rfReplaceAll])
 end;
 
 procedure TSaveMapForm.Button1Click(Sender: TObject);
-type
-  TRGB32 = record
-    B, G, R, A: Byte;
-  end;
-
-  TRGB32Array = array [0 .. MaxInt div SizeOf(TRGB32) - 1] of TRGB32;
-  PRGB32Array = ^TRGB32Array;
-
 var
-  Index: Integer;
-  pDest: Pointer;
-  nPitch: Integer;
-  A, R, G, B: Byte;
-  i, j: Integer;
+  i: Integer;
   MapName: string;
-  PSrcTex: PLongWord;
-  Line: PRGB32Array;
-  Bmp: TBitmap;
-  Jpg: TJpegImage;
-  Png:TPngImage;
   MapWidth, MapHeight: Integer;
-  Color: Cardinal;
 begin
-
-
   MapWidth := TMap.Right - TMap.Left;
-
   if TMap.Info.ContainsKey('VRLeft') then
     MapHeight := TMap.Bottom - TMap.Top
   else
@@ -90,51 +63,42 @@ begin
     BackEngine[i].VisibleWidth := MapWidth;
     BackEngine[i].VisibleHeight := MapHeight;
   end;
-
-
   TMap.SaveMap := True;
-
-  var SaveTexture:TTexture;
-  var  Params: TTextureParameters;
+  var SaveTexture: TTexture;
+  var Params: TTextureParameters;
   FillChar(Params, SizeOf(TTextureParameters), 0);
   Params.Width := MapWidth;
   Params.Height := MapHeight;
   Params.Format := TPixelFormat.RGBA8;
-  Params.Attributes := TextureDrawable;
+  Params.Attributes := TextureDrawable or  TexturePremultipliedAlpha;
   SaveTexture := TextureInit(FDevice, Params);
 
- fdevice.BeginScene;
-
+  FDevice.BeginScene;
   SaveTexture.BeginScene;
   GameCanvas.BeginScene;
-
   BackEngine[0].Draw;
   SpriteEngine.Draw;
   BackEngine[1].Draw;
   BackEngine[0].Move(1);
   BackEngine[1].Move(1);
-
   GameCanvas.EndScene;
   SaveTexture.EndScene;
-
- fdevice.EndScene;
-
-
-  case ComboBox3.ItemIndex of
-    0:
-      Color := $FFC8C8C8;
-    1:
-      Color := $FFFFFFFF;
-    2:
-      Color := $FF000000;
-    3:
-      Color := $FF00C8FF;
-  end;
-
+  FDevice.EndScene;
+  //repeat
+  FDevice.BeginScene;
+  SaveTexture.BeginScene;
+  GameCanvas.BeginScene;
+  BackEngine[0].Draw;
+  SpriteEngine.Draw;
+  BackEngine[1].Draw;
+  BackEngine[0].Move(1);
+  BackEngine[1].Move(1);
+  GameCanvas.EndScene;
+  SaveTexture.EndScene;
+  FDevice.EndScene;
 
   TMap.SaveMap := False;
   TMapBack.ResetPos := True;
-
 
   SpriteEngine.VisibleWidth := DisplaySize.x;
   SpriteEngine.VisibleHeight := DisplaySize.y;
@@ -145,49 +109,19 @@ begin
   end;
 
   if TMap.MapNamelist.ContainsKey(TMap.SaveMapID) then
-     MapName := TMap.MapNameList[TMap.SaveMapID].MapName;
+    MapName := TMap.MapNameList[TMap.SaveMapID].MapName;
 
   MapName := StrReplace(['<', '>'], ['(', ')'], MapName);
   if MapName.Contains('(') then
-    MapName:=LeftStr(MapName,9);
+    MapName := LeftStr(MapName, 9);
 
-  var FileExt:string;
-  var FileName:=ExtractFilePath(ParamStr(0)) + TMap.SaveMapID + '-' + MapName;
-  {
-  case ComboBox4.ItemIndex of
-    0:
-    begin
-      FileExt:='.jpg';
-      Jpg := TJpegImage.Create;
-      Jpg.Assign(Bmp);
-      Jpg.CompressionQuality := 100;
-      Jpg.SaveToFile(FileName+'.jpg');
-    end;
-    1:
-    begin
-      fileExt:='.png';
-      Png := TPngImage.Create;
-      Png.Assign(Bmp);
-      Png.SaveToFile(FileName+'.png');
-     end;
-    2:
-    begin
-      fileExt:='.bmp';
-      Bmp.SaveToFile(FileName+'.bmp');
-    end;
-  end;
-
-  FreeAndNil(Bmp);
-  FreeAndNil(Jpg);
-  FreeAndNil(Png);
-  }
-
-  SaveTexture.SaveToFile(FileName+'.png',nil,0,ZeroIntRect);
+  var FileName := ExtractFilePath(ParamStr(0)) + TMap.SaveMapID + '-' + MapName;
+  SaveTexture.SaveToFile(FileName + '.png', nil, 0, ZeroIntRect);
   SaveTexture.Free;
   ComboBox1.ItemIndex := 0;
   ComboBox2.ItemIndex := 0;
   SaveMapForm.Close;
-  MessageDlg('儲存  ' + TMap.SaveMapID + '-' + MapName + FileExt+'完成', mtinformation, [mbOk], 0);
+  MessageDlg('儲存  ' + TMap.SaveMapID + '-' + MapName + '.PNG' + '完成', mtinformation, [mbOk], 0);
 end;
 
 procedure TSaveMapForm.FormCreate(Sender: TObject);
@@ -196,10 +130,10 @@ begin
   Top := (Screen.Height - Height) div 2;
 end;
 
-procedure TSaveMapForm.FormKeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
+procedure TSaveMapForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
- Key:=0;
+  Key := 0;
 end;
 
 end.
+

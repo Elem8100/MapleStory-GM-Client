@@ -2,9 +2,9 @@ object SaveMapForm: TSaveMapForm
   Left = 0
   Top = 0
   BorderStyle = bsDialog
-  Caption = 'Save Map'
-  ClientHeight = 281
-  ClientWidth = 283
+  Caption = #20786#23384#22320#22294
+  ClientHeight = 212
+  ClientWidth = 304
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -22,9 +22,9 @@ object SaveMapForm: TSaveMapForm
   object Label1: TLabel
     Left = 48
     Top = 32
-    Width = 99
+    Width = 120
     Height = 18
-    Caption = 'Back Y Position'
+    Caption = #32972#26223#19978#19979#20301#32622#35519#25972
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -15
@@ -34,46 +34,14 @@ object SaveMapForm: TSaveMapForm
   end
   object Label2: TLabel
     Left = 48
-    Top = 65
-    Width = 32
-    Height = 18
-    Caption = 'Ratio'
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -15
-    Font.Name = 'Tahoma'
-    Font.Style = []
-    ParentFont = False
-  end
-  object Label3: TLabel
-    Left = 48
-    Top = 98
-    Width = 68
-    Height = 18
-    Caption = 'Back Color'
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -15
-    Font.Name = 'Tahoma'
-    Font.Style = []
-    ParentFont = False
-  end
-  object Label4: TLabel
-    Left = 48
-    Top = 131
-    Width = 47
-    Height = 18
-    Caption = 'Format'
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -15
-    Font.Name = 'Tahoma'
-    Font.Style = []
-    ParentFont = False
+    Top = 72
+    Width = 75
+    Height = 16
+    Caption = #32972#26223#25844#25955#29575
   end
   object ComboBox1: TComboBox
-    Left = 153
-    Top = 31
+    Left = 180
+    Top = 30
     Width = 80
     Height = 22
     Style = csOwnerDrawFixed
@@ -99,8 +67,8 @@ object SaveMapForm: TSaveMapForm
       '200')
   end
   object ComboBox2: TComboBox
-    Left = 85
-    Top = 65
+    Left = 133
+    Top = 68
     Width = 60
     Height = 22
     Style = csOwnerDrawFixed
@@ -113,48 +81,13 @@ object SaveMapForm: TSaveMapForm
       '-1.5'
       '-2')
   end
-  object ComboBox3: TComboBox
-    Left = 125
-    Top = 97
-    Width = 70
-    Height = 22
-    Style = csOwnerDrawFixed
-    ItemIndex = 0
-    TabOrder = 2
-    Text = 'Gray'
-    Items.Strings = (
-      'Gray'
-      'White'
-      'Black'
-      'Blue')
-  end
   object Button1: TButton
-    Left = 74
-    Top = 184
+    Left = 93
+    Top = 128
     Width = 121
     Height = 41
-    Caption = 'Save'
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -15
-    Font.Name = 'Tahoma'
-    Font.Style = []
-    ParentFont = False
-    TabOrder = 3
+    Caption = #20786#23384
+    TabOrder = 2
     OnClick = Button1Click
-  end
-  object ComboBox4: TComboBox
-    Left = 100
-    Top = 130
-    Width = 70
-    Height = 22
-    Style = csOwnerDrawFixed
-    ItemIndex = 0
-    TabOrder = 4
-    Text = 'JPG'
-    Items.Strings = (
-      'JPG'
-      'PNG'
-      'BMP')
   end
 end

@@ -65,6 +65,11 @@ type
     Label4: TLabel;
     Label5: TLabel;
     Label6: TLabel;
+    Shape2: TShape;
+    LabelW: TLabel;
+    LabelH: TLabel;
+    LabelX: TLabel;
+    LabelY: TLabel;
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure SpeedButton9Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -84,6 +89,7 @@ type
     procedure SaveSingleButtonClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure AllFrameListBoxClick(Sender: TObject);
+    procedure TrackBarWChange(Sender: TObject);
   private
     HasShow: Boolean;
     HasShowSearchGrid: Boolean;
@@ -291,6 +297,8 @@ begin
     Player.Spawn(Inventory.Cells[0, i]);
 
   ResetColorGrid;
+  SaveSingleFrame := False;
+  SaveAllFrames := False;
 end;
 
 procedure TAvatarForm.DeleteButtonClick(Sender: TObject);
@@ -332,6 +340,8 @@ begin
         SaveButton.Enabled := True;
         AvatarForm.SaveSingleFrame := False;
       end;
+     5: Label2.Caption:='';
+
   end;
 end;
 
@@ -387,6 +397,7 @@ begin
     Player.Spawn(Inventory.Cells[0, i]);
 
   ResetColorGrid;
+
 end;
 
 procedure TAvatarForm.SaveAllButtonClick(Sender: TObject);
@@ -403,7 +414,10 @@ begin
   var WX := Round(Player.X - SpriteEngine.WorldX - 155) + TrackBarX.Position;
   var WY := Round(Player.Y - SpriteEngine.WorldY - 160) + TrackBarY.Position;
   var Index := AllFrameListBox.ItemIndex;
-  AvatarPanelTexture.SaveToFile('c:/' + AllFrameListBox.Items[Index] + '.png', nil, 0, IntRectBDS(WX,
+  ForceDirectories(ExtractFilePath(ParamStr(0)) + 'Export');
+  var FileName := ExtractFilePath(ParamStr(0)) + 'Export\'+ AllFrameListBox.Items[Index] + '.png';
+  Label2.Caption :='Save to:  '+ FileName;
+  AvatarPanelTexture.SaveToFile(FileName, nil, 0, IntRectBDS(WX,
     WY, WX + TrackBarW.Position, WY + TrackBarH.Position));
 end;
 
@@ -728,6 +742,8 @@ const
   end;
 
 begin
+  SaveAllFrames := False;
+  SaveSingleFrame := False;
   PageControl1.TabIndex := 0;
   SaveButton.Enabled := True;
   case TSpeedButton(Sender).Tag of
@@ -1003,6 +1019,20 @@ begin
   AvatarForm.searchGrid.BeginUpdate;
   DumpEqpString(StringWZ.GetImgFile('Eqp.img').Root.Child['Eqp']);
   AvatarForm.searchGrid.EndUpdate;
+end;
+
+procedure TAvatarForm.TrackBarWChange(Sender: TObject);
+begin
+  case TTrackBar(Sender).Tag of
+    0:
+      LabelW.Caption := TrackBarW.Position.ToString;
+    1:
+      LabelH.Caption := TrackBarH.Position.ToString;
+    2:
+      LabelX.Caption := TrackBarX.Position.ToString;
+    3:
+      LabelY.Caption := TrackBarY.Position.ToString;
+  end;
 end;
 
 procedure TAvatarForm.DumpEqpString(Entry: TWZIMGEntry);

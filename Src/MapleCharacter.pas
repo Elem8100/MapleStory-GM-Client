@@ -1091,10 +1091,10 @@ begin
       Frame := NEWFRAME;
   end;
 
-  if AvatarForm.SaveAllFrames then
+  if AvatarForm.SaveAllFrames and (not Owner.OtherPlayer) then
   begin
-    var WX := Round(Player.X - SpriteEngine.WorldX - 155);
-    var WY := Round(Player.Y - SpriteEngine.WorldY - 160);
+    var WX := Round(Player.X - SpriteEngine.WorldX - 155) + AvatarForm.TrackBarX.Position;
+    var WY := Round(Player.Y - SpriteEngine.WorldY - 160) + AvatarForm.TrackBarY.Position;
     Animate := False;
     FTime := 0;
     BodyDelay := 0;
@@ -1103,21 +1103,24 @@ begin
       procedure
       begin
         Inc(AvatarForm.Frame);
-        AvatarPanelTexture.SaveToFile('c:/' + AvatarForm.AllFrames[AvatarForm.Frame - 1] + '.png',
-          nil, 0, IntRectBDS(WX, WY, WX + 250, WY + 230));
+        ForceDirectories(ExtractFilePath(ParamStr(0)) + 'Export');
+        var FileName := ExtractFilePath(ParamStr(0)) + 'Export\' + AvatarForm.AllFrames[AvatarForm.Frame - 1] + '.png';
+        AvatarForm.Label2.Caption :='Save to:  '+ FileName;
+        AvatarPanelTexture.SaveToFile(FileName, nil, 0, IntRectBDS(WX, WY, WX + AvatarForm.TrackBarW.Position,
+          WY + AvatarForm.TrackBarH.Position));
       end);
     var S := AvatarForm.AllFrames[AvatarForm.Frame].Split(['.']);
     State := S[0];
     Frame := S[1].ToInteger;
-   // avatarform.Caption := AllFrames[ii5];
   end;
-  if AvatarForm.SaveSingleFrame then
+
+  if (AvatarForm.SaveSingleFrame) and (not Owner.OtherPlayer) then
   begin
     Animate := False;
     FTime := 0;
     BodyDelay := 0;
     Animend := False;
-    var Index:=  AvatarForm.AllFrameListBox.ItemIndex;
+    var Index := AvatarForm.AllFrameListBox.ItemIndex;
     var S := AvatarForm.AllFrameListBox.Items[Index].Split(['.']);
     State := S[0];
     Frame := S[1].ToInteger;
@@ -1125,7 +1128,6 @@ begin
 
   if Owner.ResetAction then
   begin
-
     Frame := 1;
     State := Owner.NewAction;
     Inc(Counter);
