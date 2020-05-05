@@ -70,6 +70,7 @@ type
     LabelH: TLabel;
     LabelX: TLabel;
     LabelY: TLabel;
+    ExpressionListBox: TComboBox;
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure SpeedButton9Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -90,6 +91,7 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure AllFrameListBoxClick(Sender: TObject);
     procedure TrackBarWChange(Sender: TObject);
+    procedure ExpressionListBoxChange(Sender: TObject);
   private
     HasShow: Boolean;
     HasShowSearchGrid: Boolean;
@@ -112,6 +114,7 @@ type
   public
     SaveAllFrames: Boolean;
     SaveSingleFrame: Boolean;
+    ChangeExpressionListBox: Boolean;
     Frame: Integer;
     AllFrames: array of string;
     procedure AddEqps(EqpID: string);
@@ -340,7 +343,8 @@ begin
         SaveButton.Enabled := True;
         AvatarForm.SaveSingleFrame := False;
       end;
-     5: Label2.Caption:='';
+    5:
+      Label2.Caption := '';
 
   end;
 end;
@@ -415,10 +419,9 @@ begin
   var WY := Round(Player.Y - SpriteEngine.WorldY - 160) + TrackBarY.Position;
   var Index := AllFrameListBox.ItemIndex;
   ForceDirectories(ExtractFilePath(ParamStr(0)) + 'Export');
-  var FileName := ExtractFilePath(ParamStr(0)) + 'Export\'+ AllFrameListBox.Items[Index] + '.png';
-  Label2.Caption :='Save to:  '+ FileName;
-  AvatarPanelTexture.SaveToFile(FileName, nil, 0, IntRectBDS(WX,
-    WY, WX + TrackBarW.Position, WY + TrackBarH.Position));
+  var FileName := ExtractFilePath(ParamStr(0)) + 'Export\' + AllFrameListBox.Items[Index] + '.png';
+  Label2.Caption := 'Save to:  ' + FileName;
+  AvatarPanelTexture.SaveToFile(FileName, nil, 0, IntRectBDS(WX, WY, WX + TrackBarW.Position, WY + TrackBarH.Position));
 end;
 
 procedure TAvatarForm.ResetColorGrid;
@@ -1068,6 +1071,11 @@ end;
 procedure TAvatarForm.Edit1Change(Sender: TObject);
 begin
   SearchGrid.NarrowDown(Trim(Edit1.Text));
+end;
+
+procedure TAvatarForm.ExpressionListBoxChange(Sender: TObject);
+begin
+  ChangeExpressionListBox := True;
 end;
 
 end.

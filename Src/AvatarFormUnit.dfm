@@ -3288,4 +3288,46 @@ object AvatarForm: TAvatarForm
       end
     end
   end
+  object ExpressionListBox: TComboBox
+    Left = 506
+    Top = 223
+    Width = 119
+    Height = 26
+    DropDownCount = 25
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -15
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ItemIndex = 0
+    ParentFont = False
+    TabOrder = 5
+    Text = 'blink'
+    OnChange = ExpressionListBoxChange
+    Items.Strings = (
+      'blink'
+      'hit'
+      'smile'
+      'troubled'
+      'cry'
+      'angry'
+      'bewildered'
+      'stunned'
+      'vomit'
+      'oops'
+      'cheers'
+      'chu'
+      'wink'
+      'pain'
+      'glitter'
+      'despair'
+      'love'
+      'shine'
+      'blaze'
+      'hum'
+      'bowing'
+      'hot'
+      'dam'
+      'qBlue')
+  end
 end

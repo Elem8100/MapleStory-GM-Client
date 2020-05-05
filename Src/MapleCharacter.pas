@@ -1029,6 +1029,7 @@ end;
 
 var
   BlinkNum: Integer;
+  ChangeExpressionCounter: Integer;
 
 procedure TAvatarParts.UpdateFrame;
 var
@@ -1105,7 +1106,7 @@ begin
         Inc(AvatarForm.Frame);
         ForceDirectories(ExtractFilePath(ParamStr(0)) + 'Export');
         var FileName := ExtractFilePath(ParamStr(0)) + 'Export\' + AvatarForm.AllFrames[AvatarForm.Frame - 1] + '.png';
-        AvatarForm.Label2.Caption :='Save to:  '+ FileName;
+        AvatarForm.Label2.Caption := 'Save to:  ' + FileName;
         AvatarPanelTexture.SaveToFile(FileName, nil, 0, IntRectBDS(WX, WY, WX + AvatarForm.TrackBarW.Position,
           WY + AvatarForm.TrackBarH.Position));
       end);
@@ -1124,6 +1125,13 @@ begin
     var S := AvatarForm.AllFrameListBox.Items[Index].Split(['.']);
     State := S[0];
     Frame := S[1].ToInteger;
+  end;
+
+  if AvatarForm.ChangeExpressionListBox then
+  begin
+    FaceFrame := 0;
+    Expression := AvatarForm.ExpressionListBox.Text;
+    Inc(ChangeExpressionCounter);
   end;
 
   if Owner.ResetAction then
@@ -1295,11 +1303,12 @@ begin
       BlinkNum := 2;
   end;
 
-  if DoFaceAnim then
+  if (DoFaceAnim) and (Expression <> 'oops') then
     FaceTime := FaceTime + 17;
 
   if FaceTime > FaceDelay then
   begin
+
     Inc(FaceFrame);
     if FaceFrame > FaceFrameCount then
     begin
@@ -1624,20 +1633,42 @@ begin
   with Keyboard do
   begin
     if Key[DIK_F1] then
+    begin
+      FaceFrame := 0;
       Expression := 'hit';
+    end;
     if Key[DIK_F2] then
+    begin
+      FaceFrame := 0;
       Expression := 'smile';
+    end;
     if Key[DIK_F3] then
+    begin
+      FaceFrame := 0;
       Expression := 'troubled';
+    end;
     if Key[DIK_F4] then
+    begin
+      FaceFrame := 0;
       Expression := 'cry';
+    end;
     if Key[DIK_F5] then
+    begin
+      FaceFrame := 0;
       Expression := 'angry';
+    end;
     if Key[DIK_F6] then
+    begin
+      FaceFrame := 0;
       Expression := 'bewildered';
+    end;
     if Key[DIK_F7] then
+    begin
+      FaceFrame := 0;
       Expression := 'stunned';
+    end;
   end;
+
 
 
   // MirrorX := NewFlip;
@@ -1695,7 +1726,14 @@ var
 begin
   if (AvatarForm.SaveAllFrames) and (AvatarForm.Frame = 96) then
     AvatarForm.SaveAllFrames := False;
-
+  if AvatarForm.ChangeExpressionListBox then
+  begin
+    if ChangeExpressionCounter > 5 then
+    begin
+      ChangeExpressionCounter := 0;
+      AvatarForm.ChangeExpressionListBox := False;
+    end;
+  end;
   if GameMode = gmView then
     Exit;
   if ChangeFrame then

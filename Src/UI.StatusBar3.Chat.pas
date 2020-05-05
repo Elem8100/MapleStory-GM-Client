@@ -112,6 +112,9 @@ begin
         MoveImage(Top, Y, MouseDownY);
         if UIImage[Top].Top < 50 then
           UIImage[Top].Top := 50;
+
+        if UIImage[Top].Top > 495 then
+          UIImage[Top].Top := 495;
         UIImage[Center].Top := UIImage[Top].Top + 15;
         UIImage[Center].ScaleY := 516 - UIImage[Top].Top;
         const buttons =['all', 'party', 'friend', 'guild', 'association'];
