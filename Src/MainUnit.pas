@@ -54,19 +54,20 @@ type
     ChairButton1: TSpeedButton;
     TamingMobButton: TSpeedButton;
     CashButton: TSpeedButton;
-    SpeedButton2: TSpeedButton;
-    SpeedButton1: TSpeedButton;
-    SpeedButton3: TSpeedButton;
-    SpeedButton4: TSpeedButton;
+    DamageButton: TSpeedButton;
+    DisplayButton: TSpeedButton;
+    FullscreenButton: TSpeedButton;
+    MorphButton: TSpeedButton;
     MedalButton: TSpeedButton;
     NickNameButton: TSpeedButton;
     LabelRingButton: TSpeedButton;
     PetButton: TSpeedButton;
     FamiliarButton: TSpeedButton;
-    SpeedButton5: TSpeedButton;
+    SkillButton: TSpeedButton;
     OptionButton: TSpeedButton;
     AndroidButton: TSpeedButton;
     ScreeenSetButton: TSpeedButton;
+    ConsumeButton: TSpeedButton;
     procedure LoadMapButtonClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure GridClickCell(Sender: TObject; ARow, ACol: Integer);
@@ -88,27 +89,28 @@ type
     procedure PageControl1Change(Sender: TObject);
     procedure WorldMapGridClickCell(Sender: TObject; ARow, ACol: Integer);
     procedure ChairButton1Click(Sender: TObject);
-    procedure SpeedButton2Click(Sender: TObject);
+    procedure DamageButtonClick(Sender: TObject);
     procedure CashButtonClick(Sender: TObject);
     procedure TamingMobButtonClick(Sender: TObject);
-    procedure SpeedButton3Click(Sender: TObject);
+    procedure FullscreenButtonClick(Sender: TObject);
     procedure DropMobButton1Click(Sender: TObject);
     procedure DropNpcButton1Click(Sender: TObject);
     procedure SaveMapButtonClick(Sender: TObject);
-    procedure SpeedButton1Click(Sender: TObject);
+    procedure DisplayButtonClick(Sender: TObject);
     procedure PicInfoButtonClick(Sender: TObject);
-    procedure SpeedButton4Click(Sender: TObject);
+    procedure MorphButtonClick(Sender: TObject);
     procedure MedalButtonClick(Sender: TObject);
     procedure AvatarButton1Click(Sender: TObject);
     procedure NickNameButtonClick(Sender: TObject);
     procedure LabelRingButtonClick(Sender: TObject);
     procedure FamiliarButtonClick(Sender: TObject);
     procedure PetButtonClick(Sender: TObject);
-    procedure SpeedButton5Click(Sender: TObject);
+    procedure SkillButtonClick(Sender: TObject);
     procedure OptionButtonClick(Sender: TObject);
     procedure AndroidButtonClick(Sender: TObject);
     procedure ScreeenSetButtonClick(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
+    procedure ConsumeButtonClick(Sender: TObject);
   private
     OldX, OldY: Integer;
     MoveOn: Boolean;
@@ -139,7 +141,7 @@ uses
   DamageSkinFormUnit, WorldMapFormUnit, CashFormUnit, TamingMobFormUnit, NameTag, MapleEffect,
   TamingMob, MapleChair, LabelRingFormUnit, PetFormUnit, Pet, FamiliarFormUnit, MonsterFamiliar,
   SkillFormUnit, Skill, OptionsFormUnit, AvatarFormUnit, AndroidFormUnit, Android, MiniMap,
-  ACtrlEngine, SetScreenFormUnit, UI.Utils, acontrols, UI.Statusbar3.MainBar, UI.StatusBar3.Chat;
+  ACtrlEngine, SetScreenFormUnit,ConsumeFormUnit, UI.Utils, acontrols, UI.Statusbar3.MainBar, UI.StatusBar3.Chat;
 {$R *.dfm}
 
 procedure TMainForm.FamiliarButtonClick(Sender: TObject);
@@ -1060,17 +1062,17 @@ begin
   Grid.NarrowDown(Trim(SearchMapEdit.Text));
 end;
 
-procedure TMainForm.SpeedButton1Click(Sender: TObject);
+procedure TMainForm.DisplayButtonClick(Sender: TObject);
 begin
   ShowOptionForm.Show;
 end;
 
-procedure TMainForm.SpeedButton2Click(Sender: TObject);
+procedure TMainForm.DamageButtonClick(Sender: TObject);
 begin
   DamageSkinForm.Show;
 end;
 
-procedure TMainForm.SpeedButton3Click(Sender: TObject);
+procedure TMainForm.FullscreenButtonClick(Sender: TObject);
 begin
   if Screen.MonitorCount > 0 then
   begin
@@ -1089,14 +1091,19 @@ begin
   ActiveControl := nil;
 end;
 
-procedure TMainForm.SpeedButton4Click(Sender: TObject);
+procedure TMainForm.MorphButtonClick(Sender: TObject);
 begin
   MorphForm.Show;
 end;
 
-procedure TMainForm.SpeedButton5Click(Sender: TObject);
+procedure TMainForm.SkillButtonClick(Sender: TObject);
 begin
   SkillForm.Show;
+end;
+
+procedure TMainForm.ConsumeButtonClick(Sender: TObject);
+begin
+  ConsumeForm.Show;
 end;
 
 procedure TMainForm.OptionButtonClick(Sender: TObject);

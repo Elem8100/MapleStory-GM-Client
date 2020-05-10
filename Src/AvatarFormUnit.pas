@@ -996,18 +996,22 @@ begin
     end));
 
   var Index := -1;
+
   if not HasLoaded.contains(PartIndex) then
   begin
     HasLoaded.Add(PartIndex);
+    ImageGrids[PartIndex].LockUpdate;
     for var Iter in IconList[Part] do
     begin
       ImageGrids[PartIndex].AppendImage(Iter);
       Inc(Index);
       ImageGrids[PartIndex].ImageInfoText[Index] := Iter.ID;
     end;
+    ImageGrids[PartIndex].UnlockUpdate;
     ImageGrids[PartIndex].ViewX := 0;
     ImageGrids[PartIndex].ViewY := 0;
   end;
+
   ActiveControl := nil;
 end;
 
