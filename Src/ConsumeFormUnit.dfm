@@ -10,6 +10,7 @@ object ConsumeForm: TConsumeForm
   Font.Height = -13
   Font.Name = 'Tahoma'
   Font.Style = []
+  FormStyle = fsStayOnTop
   OldCreateOrder = False
   Scaled = False
   OnActivate = FormActivate
@@ -29,13 +30,11 @@ object ConsumeForm: TConsumeForm
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = #28040#32791
-      ExplicitHeight = 601
     end
     object TabSheet2: TTabSheet
       Caption = #25628#23563
       ImageIndex = 1
       OnShow = TabSheet2Show
-      ExplicitHeight = 601
       object ConsumeGrid: TAdvStringGrid
         AlignWithMargins = True
         Left = 39
@@ -228,6 +227,7 @@ object ConsumeForm: TConsumeForm
       Font.Style = []
       ParentFont = False
       TabOrder = 0
+      OnClick = Button1Click
     end
   end
 end

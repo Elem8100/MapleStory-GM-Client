@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, CurvyControls, Vcl.Grids, AdvObj,
   BaseGrid, AdvGrid, Vcl.ComCtrls, hyieutils, iexBitmaps, hyiedefs, iesettings, iexLayers, iexRulers,
-  ieview, iemview, PNGMapleCanvasEx, Generics.Collections, Generics.Defaults,WZArchive;
+  ieview, iemview, PNGMapleCanvasEx, Generics.Collections, Generics.Defaults, WZArchive;
 
 type
   TConsumeForm = class(TForm)
@@ -26,13 +26,14 @@ type
     procedure TabSheet2Show(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure Edit1Change(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
   private
     HasLoad: Boolean;
     HasShowImageGrid: Boolean;
     ImageGrid: TImageEnMView;
     IconList: TObjectList<TBmpEx>;
-    Wz : TWZArchive;
-    procedure ImageAssignIcon(ID:string);
+    Wz: TWZArchive;
+    procedure ImageAssignIcon(ID: string);
     procedure ImageGridSelect(Sender: TObject; idx: Integer);
     { Private declarations }
   public
@@ -45,10 +46,10 @@ var
 implementation
 
 uses
-  WzUtils, Global, StrUtils,  WZDirectory;
+  WzUtils, Global, StrUtils, WZDirectory, MobDrop, MapleCharacter;
 {$R *.dfm}
 
-procedure TConsumeForm.ImageAssignIcon(ID:string);
+procedure TConsumeForm.ImageAssignIcon(ID: string);
 begin
   var ConsumeID := ID;
   var Left4 := LeftStr(ConsumeID, 4);
@@ -58,8 +59,14 @@ begin
     Image1.Picture.Assign(PNG);
     PNG.Free;
   end;
-  IDLabel.Caption:=ConsumeID;
+  IDLabel.Caption := ConsumeID;
   NameLabel.Caption := StringWZ.GetImgFile('Consume.img').Root.Get(IDToInt(ID) + '/name', '');
+end;
+
+procedure TConsumeForm.Button1Click(Sender: TObject);
+begin
+  if Trim(IDLabel.Caption) <> '' then
+    TMobDrop.Drop(Round(Player.X), Round(Player.Y), 0, Trim(IDLabel.Caption));
 end;
 
 procedure TConsumeForm.ConsumeGridClickCell(Sender: TObject; ARow, ACol: Integer);
@@ -69,7 +76,7 @@ end;
 
 procedure TConsumeForm.Edit1Change(Sender: TObject);
 begin
- ConsumeGrid.NarrowDown(Trim(Edit1.Text));
+  ConsumeGrid.NarrowDown(Trim(Edit1.Text));
 end;
 
 procedure TConsumeForm.FormActivate(Sender: TObject);
@@ -79,7 +86,7 @@ begin
   if HasLoad then
     Exit;
   HasLoad := True;
-   with ImageGrid.GetCanvas do
+  with ImageGrid.GetCanvas do
   begin
     Font.Size := 24;
     TextOut(100, 100, 'Loading...')
@@ -91,13 +98,12 @@ begin
   begin
     if not IsNumber(img.Name[1]) then
       Continue;
-       // Name := StringWZ.GetImgFile('Eqp.img').Root.Get('Eqp/' + CharacterDir + '/' + IDToInt(ID) + '/name', '');
-     with Wz.ParseFile(img) do
+    with Wz.ParseFile(img) do
     begin
       for var Iter in Root.Children do
       begin
         if not IsNumber(Iter.Name) then
-           Continue;
+          Continue;
         if Iter.Get('info/icon') <> nil then
         begin
           var Bmp := Iter.Get2('info/icon').Canvas.DumpBmpEx;
@@ -105,7 +111,6 @@ begin
           Bmp.Name := Name;
           IconList.Add(Bmp);
         end;
-
       end;
       Free;
     end;
@@ -159,7 +164,6 @@ end;
 
 procedure TConsumeForm.FormCreate(Sender: TObject);
 begin
-
   ImageGrid := TImageEnMView.Create(ConsumeForm);
   ImageGrid.Parent := PageControl1.Pages[0];
   ImageGrid.Visible := True;
@@ -185,7 +189,8 @@ end;
 
 procedure TConsumeForm.FormDestroy(Sender: TObject);
 begin
- Wz.Free;
+  Wz.Free;
+  IconList.Free;
 end;
 
 end.

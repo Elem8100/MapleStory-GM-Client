@@ -3,13 +3,14 @@ unit MobDrop;
 interface
 
 uses
-  Windows, SysUtils, StrUtils, AsphyreSprite, Generics.Collections,
-  WZIMGFile, Classes, Global, Footholds, Tools, WzUtils,System.Types;
+  Windows, SysUtils, StrUtils, PXT.Sprites, Generics.Collections, WZIMGFile, Classes, Global,
+  Footholds, Tools, WzUtils, System.Types;
 
 type
   TMobDrop = class(TJumperSprite)
   private
-    class var Value: Single;
+    class var
+      Value: Single;
   public
     FH: TFoothold;
     Number: Integer;
@@ -24,10 +25,14 @@ type
     constructor Create(const AParent: TSprite); override;
     procedure DoMove(const Movecount: Single); override;
     class procedure Drop(AX, AY: Integer; Num: Integer; DropList: Tlist<string>); overload;
+    class procedure Drop(AX, AY: Integer; Num: Integer; aID: string); overload;
   end;
 
 implementation
-        uses MapleCharacter;
+
+uses
+  MapleCharacter;
+
 constructor TMobDrop.Create(const AParent: TSprite);
 begin
   inherited;
@@ -43,11 +48,16 @@ end;
 function GetItemDir(ID: string): string;
 begin
   case StrToInt(ID) div 1000000 of
-    5: Result := 'Cash';
-    2: Result := 'Consume';
-    4: Result := 'Etc';
-    3: Result := 'Install';
-    9: Result := 'Special';
+    5:
+      Result := 'Cash';
+    2:
+      Result := 'Consume';
+    4:
+      Result := 'Etc';
+    3:
+      Result := 'Install';
+    9:
+      Result := 'Special';
   end;
 end;
 
@@ -91,6 +101,46 @@ begin
       if LeftStr(ID, 4) = '0900' then
       begin
         ParentPath := 'Item.wz/Special/0900.img/' + ID + '/iconRaw';
+        IconPath := ParentPath + '/0';
+        ImageEntry := EquipData[IconPath];
+        DrawMode := 0;
+      end;
+      X := AX;
+      Y := AY;
+      Z := Player.Z;
+      MoveX := Value * 0.5;
+      Offset.X := -ImageEntry.Get('origin').Vector.X;
+      Offset.Y := -ImageEntry.Get('origin').Vector.Y + 5;
+    end;
+  end;
+end;
+
+class procedure TMobDrop.Drop(AX, AY: Integer; Num: Integer; AID: string);
+var
+  I: Integer;
+  IconPath, Dir: string;
+begin
+
+  Value := Num div 2 + 1;
+  for I := 0 to Num do
+  begin
+    if I < 0 then
+      Value := Value + 1
+    else
+      Value := Value - 1;
+    with TMobDrop.Create(SpriteEngine) do
+    begin
+      if not Data.ContainsKey(AID + '/drop') then
+        AddItem(AID);
+      Dir := GetItemDir(AID);
+      IconPath := 'Item.wz/' + Dir + '/' + LeftStr(AID, 4) + '.img/' + AID + '/info/iconRaw';
+      if LeftStr(ID, 4) <> '0900' then
+        ImageEntry := EquipData[IconPath];
+      DrawMode := 1;
+      Angle := Random(100);
+      if LeftStr(ID, 4) = '0900' then
+      begin
+        ParentPath := 'Item.wz/Special/0900.img/' + AID + '/iconRaw';
         IconPath := ParentPath + '/0';
         ImageEntry := EquipData[IconPath];
         DrawMode := 0;
@@ -151,10 +201,11 @@ begin
   end;
 
   Inc(TimeCount);
-  if TimeCount>1000 then
-    Alpha:=Alpha- 7;
+  if TimeCount > 1000 then
+    Alpha := Alpha - 7;
   if Alpha < 10 then
     Dead;
 end;
 
 end.
+
