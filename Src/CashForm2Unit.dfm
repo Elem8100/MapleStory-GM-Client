@@ -1,9 +1,9 @@
-object ConsumeForm: TConsumeForm
+object CashForm2: TCashForm2
   Left = 0
   Top = 0
-  Caption = #28040#32791
-  ClientHeight = 638
-  ClientWidth = 411
+  Caption = #40670#21830'2'
+  ClientHeight = 557
+  ClientWidth = 384
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -22,32 +22,29 @@ object ConsumeForm: TConsumeForm
     AlignWithMargins = True
     Left = 3
     Top = 65
-    Width = 405
-    Height = 570
+    Width = 378
+    Height = 489
     Margins.Top = 65
     ActivePage = TabSheet1
     Align = alClient
     TabOrder = 0
-    ExplicitWidth = 377
     object TabSheet1: TTabSheet
       Caption = #28040#32791
-      ExplicitWidth = 369
     end
     object TabSheet2: TTabSheet
       Caption = #25628#23563
       ImageIndex = 1
       OnShow = TabSheet2Show
-      ExplicitWidth = 369
-      object ConsumeGrid: TAdvStringGrid
+      object CashGrid: TAdvStringGrid
         AlignWithMargins = True
         Left = 0
         Top = 40
-        Width = 364
-        Height = 499
+        Width = 297
+        Height = 418
         Cursor = crDefault
         Margins.Left = 0
         Margins.Top = 40
-        Margins.Right = 5
+        Margins.Right = 2
         Margins.Bottom = 0
         Align = alLeft
         ColCount = 3
@@ -66,7 +63,7 @@ object ConsumeForm: TConsumeForm
         ScrollBars = ssVertical
         TabOrder = 0
         HoverRowCells = [hcNormal, hcSelected]
-        OnClickCell = ConsumeGridClickCell
+        OnClickCell = CashGridClickCell
         ActiveCellFont.Charset = DEFAULT_CHARSET
         ActiveCellFont.Color = clWindowText
         ActiveCellFont.Height = -13
@@ -165,10 +162,8 @@ object ConsumeForm: TConsumeForm
         ShowDesignHelper = False
         SortSettings.DefaultFormat = ssAutomatic
         Version = '8.4.2.2'
-        ExplicitLeft = 39
-        ExplicitTop = 38
-        ExplicitWidth = 280
-        ExplicitHeight = 501
+        ExplicitTop = 120
+        ExplicitHeight = 338
         ColWidths = (
           8
           80
@@ -181,7 +176,6 @@ object ConsumeForm: TConsumeForm
         Height = 24
         TabOrder = 1
         Text = 'Edit1'
-        OnChange = Edit1Change
       end
     end
   end

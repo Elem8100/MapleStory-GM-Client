@@ -68,6 +68,8 @@ type
     AndroidButton: TSpeedButton;
     ScreeenSetButton: TSpeedButton;
     ConsumeButton: TSpeedButton;
+    CashButton2: TSpeedButton;
+    EtcButton: TSpeedButton;
     procedure LoadMapButtonClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure GridClickCell(Sender: TObject; ARow, ACol: Integer);
@@ -111,6 +113,8 @@ type
     procedure ScreeenSetButtonClick(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure ConsumeButtonClick(Sender: TObject);
+    procedure CashButton2Click(Sender: TObject);
+    procedure EtcButtonClick(Sender: TObject);
   private
     OldX, OldY: Integer;
     MoveOn: Boolean;
@@ -141,7 +145,8 @@ uses
   DamageSkinFormUnit, WorldMapFormUnit, CashFormUnit, TamingMobFormUnit, NameTag, MapleEffect,
   TamingMob, MapleChair, LabelRingFormUnit, PetFormUnit, Pet, FamiliarFormUnit, MonsterFamiliar,
   SkillFormUnit, Skill, OptionsFormUnit, AvatarFormUnit, AndroidFormUnit, Android, MiniMap,
-  ACtrlEngine, SetScreenFormUnit,ConsumeFormUnit, UI.Utils, acontrols, UI.Statusbar3.MainBar, UI.StatusBar3.Chat;
+  ACtrlEngine, SetScreenFormUnit, ConsumeFormUnit, CashForm2Unit, EtcFormUnit, UI.Utils, acontrols,
+  UI.Statusbar3.MainBar, UI.StatusBar3.Chat;
 {$R *.dfm}
 
 procedure TMainForm.FamiliarButtonClick(Sender: TObject);
@@ -1101,6 +1106,11 @@ begin
   SkillForm.Show;
 end;
 
+procedure TMainForm.EtcButtonClick(Sender: TObject);
+begin
+ Etcform.Show;
+end;
+
 procedure TMainForm.ConsumeButtonClick(Sender: TObject);
 begin
   ConsumeForm.Show;
@@ -1119,6 +1129,11 @@ end;
 procedure TMainForm.AvatarButton1Click(Sender: TObject);
 begin
   AvatarForm.Show;
+end;
+
+procedure TMainForm.CashButton2Click(Sender: TObject);
+begin
+  CashForm2.Show;
 end;
 
 procedure TMainForm.CashButtonClick(Sender: TObject);
