@@ -1,0 +1,43 @@
+object PlayActionForm: TPlayActionForm
+  Left = 0
+  Top = 0
+  Caption = 'PlayActionForm'
+  ClientHeight = 552
+  ClientWidth = 453
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -13
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  FormStyle = fsStayOnTop
+  OldCreateOrder = False
+  Scaled = False
+  OnActivate = FormActivate
+  OnClose = FormClose
+  PixelsPerInch = 120
+  TextHeight = 16
+  object ListBox1: TListBox
+    Left = 40
+    Top = 120
+    Width = 241
+    Height = 409
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -15
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ItemHeight = 18
+    ParentFont = False
+    TabOrder = 0
+  end
+  object Button1: TButton
+    Left = 80
+    Top = 56
+    Width = 145
+    Height = 41
+    Caption = 'Button1'
+    TabOrder = 1
+    OnClick = Button1Click
+  end
+end

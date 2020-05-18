@@ -27,7 +27,8 @@ uses
   SetScreenFormUnit in 'SetScreenFormUnit.pas' {SetScreenForm},
   ConsumeFormUnit in 'ConsumeFormUnit.pas' {ConsumeForm},
   CashForm2Unit in 'CashForm2Unit.pas' {CashForm2},
-  EtcFormUnit in 'EtcFormUnit.pas' {EtcForm};
+  EtcFormUnit in 'EtcFormUnit.pas' {EtcForm},
+  PlayActionFormUnit in 'PlayActionFormUnit.pas' {PlayActionForm};
 
 {$R *.res}
 
@@ -60,5 +61,6 @@ begin
   Application.CreateForm(TConsumeForm, ConsumeForm);
   Application.CreateForm(TCashForm2, CashForm2);
   Application.CreateForm(TEtcForm, EtcForm);
+  Application.CreateForm(TPlayActionForm, PlayActionForm);
   Application.Run;
 end.

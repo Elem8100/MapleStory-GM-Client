@@ -128,7 +128,7 @@ implementation
 
 uses
   MainUnit, Morph, AfterImage, MapleChair, MapleEffect, TamingMob, Pet, MonsterFamiliar,
-  MapleCharacterEx, Android, avatarformunit;
+  MapleCharacterEx, Android, AvatarFormUnit, PlayActionFormUnit;
 
 procedure TPlayer.SpawnNew;
 var
@@ -1030,7 +1030,7 @@ end;
 var
   BlinkNum: Integer;
   ChangeExpressionCounter: Integer;
-
+  PlayActionCounter: Integer;
 procedure TAvatarParts.UpdateFrame;
 var
   Path, AfterImagePath: string;
@@ -1125,6 +1125,15 @@ begin
     var S := AvatarForm.AllFrameListBox.Items[Index].Split(['.']);
     State := S[0];
     Frame := S[1].ToInteger;
+  end;
+
+  if PlayActionForm.DoPlay then
+  begin
+    Animend := False;
+    FTime := 0;
+    Frame := 0;
+    State:=  PlayActionForm.ListBox1.Items[PlayActionForm.ListBox1.ItemIndex];
+    Inc(PlayActionCounter);
   end;
 
   if AvatarForm.ChangeExpressionListBox then
@@ -1573,14 +1582,14 @@ begin
     end;
   end;
 
-  if (IsAttack) or (State = 'proneStab') or (IsSkillAttack) then
+  if (IsAttack) or (State = 'proneStab') or (IsSkillAttack)  or (PlayActionForm.Playing) then
     AnimRepeat := False
   else
     AnimRepeat := True;
 
   if AnimEnd then
   begin
-    if (IsSkillAttack) or (IsAttack) then
+    if (IsSkillAttack) or (IsAttack)  or (PlayActionForm.Playing) then
     begin
       Value := 1;
       FTime := 0;
@@ -1734,6 +1743,16 @@ begin
       AvatarForm.ChangeExpressionListBox := False;
     end;
   end;
+
+  if PlayActionForm.DoPlay then
+  begin
+    if PlayActionCounter > 2 then
+    begin
+     PlayActionCounter := 0;
+     PlayActionForm.DoPlay := False;
+    end;
+  end;
+
   if GameMode = gmView then
     Exit;
   if ChangeFrame then
