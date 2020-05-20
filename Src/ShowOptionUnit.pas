@@ -22,10 +22,10 @@ type
     CheckBox9: TCheckBox;
     c2: TCheckBox;
     CheckBox13: TCheckBox;
-    Edit1: TEdit;
     Bevel1: TBevel;
     Button1: TButton;
     Label1: TLabel;
+    Edit1: TEdit;
     procedure FormCreate(Sender: TObject);
     procedure CheckBox1Click(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -41,12 +41,14 @@ var
   ShowOptionForm: TShowOptionForm;
 
 implementation
-      uses  MainUnit,MapleMap,MobInfo,NameTag;
+      uses MainUnit,MapleMap,MobInfo,NameTag,UI.StatusBar3.MainBar,UI.Utils;
 {$R *.dfm}
 
 procedure TShowOptionForm.Button1Click(Sender: TObject);
 begin
   TLabelRingTag.LabelRingTag.MedalName := Edit1.Text;
+  TStatusBar3MainBar.Instance.ReDraw;
+  UILabel['UserInfoName'].Text:=  Edit1.Text;
   TLabelRingTag.LabelRingTag.InitData;
   TLabelRingTag.ReDraw;
   Button1.SetFocus;

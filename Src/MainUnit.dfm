@@ -158,7 +158,6 @@ object MainForm: TMainForm
     Style = esCustom
     Version = '1.6.0.2'
     OnClick = AdvToolPanel1Click
-    ExplicitWidth = 2004
   end
   object AdvGroupBox2: TAdvGroupBox
     Left = 215

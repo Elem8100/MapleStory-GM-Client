@@ -148,7 +148,7 @@ uses
   TamingMob, MapleChair, LabelRingFormUnit, PetFormUnit, Pet, FamiliarFormUnit, MonsterFamiliar,
   SkillFormUnit, Skill, OptionsFormUnit, AvatarFormUnit, AndroidFormUnit, Android, MiniMap,
   ACtrlEngine, SetScreenFormUnit, ConsumeFormUnit, CashForm2Unit, EtcFormUnit,PlayActionFormUnit, UI.Utils, acontrols,
-  UI.Statusbar3.MainBar, UI.StatusBar3.Chat;
+  UI.Statusbar3.MainBar, UI.StatusBar3.Chat,UI.UIWindow2.UserInfo;
 {$R *.dfm}
 
 procedure TMainForm.FamiliarButtonClick(Sender: TObject);
@@ -545,7 +545,7 @@ begin
       end;
   end;
 
-  if AvatarForm.Active then
+  if AvatarForm.Active or TUserInfoAvatarImage.Show then
   begin
     AvatarPanelTexture.Clear;
     AvatarPanelTexture.BeginScene;
@@ -854,12 +854,7 @@ begin
     ComboKey.Enabled := False;
   end;
 
-  TStatusBar3MainBar.CreateUI;
-  CreateUIStatusBar3Chat;
-  DumpData(GetImgEntry('UI.wz/Basic.img/Cursor/2'), UIData, UIImages);
-  DumpData(GetImgEntry('UI.wz/Basic.img/Cursor/0'), UIData, UIImages);
-  DumpData(GetImgEntry('UI.wz/Basic.img/Cursor/12'), UIData, UIImages);
-  DumpData(GetImgEntry('UI.wz/Basic.img/Cursor/67'), UIData, UIImages);
+ 
   RenderForm.Cursor := crNone;
   ActiveControl := nil;
 end;

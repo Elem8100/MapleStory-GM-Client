@@ -62,7 +62,7 @@ implementation
 uses
   MainUnit, Mob2, MapBack, MapPortal, Npc, MapTile, MapObj, MapleCharacter, Footholds, LadderRopes,
   AsphyreSprite, AsphyreTypes, AsphyreRenderTargets, MobInfo, NameTag, Boss, Skill, MapleCharacterEx,
-  Android, minimap, WZUtils, graphics;
+  Android, minimap, WZUtils, UI.StatusBar3.MainBar, UI.StatusBar3.Chat, UI.Utils, Graphics;
 
 class procedure TMap.LoadMap(ID: string);
 var
@@ -144,28 +144,34 @@ begin
   TMob.CreateMapMobs;
   DropBoss;
   TNpc.Create;
-  TNPC.ReDrawTarget :=true;
+  TNPC.ReDrawTarget := true;
   if not TMap.FirstLoad then
   begin
     TMobInfo.Create;
     Player.SpawnNew;
     FDevice.BeginScene;
+    TStatusBar3MainBar.CreateUI;
     TLabelRingTag.Create('01112101');
     AMiniMap := TMiniMap.Create(UIEngine.Root);
     FDevice.EndScene;
     with AMiniMap do
     begin
-      Width :=  TMap.MiniMapWidth + 125;
+      Width := TMap.MiniMapWidth + 125;
       Height := TMap.MiniMapHeight + 40;
       Left := 150 + 1000;
       Top := 150 + 1000;
     end;
+    CreateUIStatusBar3Chat;
+    DumpData(GetImgEntry('UI.wz/Basic.img/Cursor/2'), UIData, UIImages);
+    DumpData(GetImgEntry('UI.wz/Basic.img/Cursor/0'), UIData, UIImages);
+    DumpData(GetImgEntry('UI.wz/Basic.img/Cursor/12'), UIData, UIImages);
+    DumpData(GetImgEntry('UI.wz/Basic.img/Cursor/67'), UIData, UIImages);
   end;
   if ReLoad then
   begin
     var Entry: TWZIMGEntry;
     var Bmp: TBitmap;
-    var MapID :string;
+    var MapID: string;
 
     var LeftNum := LeftStr(ID, 1);
     if TMap.Has002Wz then
@@ -183,7 +189,7 @@ begin
       Entry := GetImgEntry('Map002.wz/Map/Map' + LeftNum + '/' + MapID + '.img/miniMap')
     else
       Entry := GetImgEntry('Map.wz/Map/Map' + LeftNum + '/' + MapID + '.img/miniMap');
-    if Entry=nil then
+    if Entry = nil then
       Exit;
     if Entry <> nil then
     begin
