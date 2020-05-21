@@ -37,7 +37,7 @@ type
 implementation
 
 uses
-  UI.Utils, ShowOptionUnit,UI.UIWindow4.Stat;
+  UI.Utils, ShowOptionUnit,UI.UIWindow4.Stat,UI.UIWindow2.UserInfo;
 
 procedure TEXPBar.Paint(DC: HDC);
 begin
@@ -136,10 +136,8 @@ begin
         var Char := MidStr(Level.ToString, I, 1);
         GameCanvas.Draw(UIImages[Entry.Get('lvNumber/' + Char)], 35 + I * 7, 8);
       end;
-      var FontSettings: TFontSettings;
-      FontSettings := TFontSettings.Create('Arial', 12);
+      var FontSettings := TFontSettings.Create('Arial', 12, TFontWeight.Normal);
       FontSettings.Effect.BorderType := TFontBorder.None;
-      FontSettings.Weight := TFontWeight.Thin;
       GameFont.FontSettings := FontSettings;
       GameFont.Draw(Point2f(85, 3), ShowOptionForm.Edit1.Text, $FFFFFFFF);
 
@@ -190,12 +188,22 @@ begin
   CreateImage(Path + 'title/character', 1, 1, 0, 0);
   CreateButtons(Path + 'character', ['button:character', 'button:Stat', 'button:Skill',
     'button:Equip', 'button:Item']);
- UiButton[Path + 'character/button:Stat'].OnMouseDown :=
+ UIButton[Path + 'character/button:Stat'].OnMouseDown :=
     procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
     begin
       CreateStatForm;
       UIForm['UI.wz/StatusBar3.img/mainBar/submenu/title/character'].Visible := False;
     end;
+
+  UIButton[Path + 'character/button:character'].OnMouseDown :=
+    procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
+    begin
+      CreateUserInfoForm;
+      UIForm['UI.wz/StatusBar3.img/mainBar/submenu/title/character'].Visible := False;
+    end;
+
+
+
   //community
   CreateEmptyForm(Path + 'title/community', 680, 585, 100, 120);
   CreateImage('community0',Path + 'backgrnd/0', 1, 1, 0, 0);
