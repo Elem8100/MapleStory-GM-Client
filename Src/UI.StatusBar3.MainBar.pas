@@ -37,7 +37,8 @@ type
 implementation
 
 uses
-  UI.Utils, ShowOptionUnit,UI.UIWindow4.Stat,UI.UIWindow2.UserInfo;
+  UI.Utils, ShowOptionUnit, UI.UIWindow4.Stat, UI.UIWindow2.UserInfo, UI.UIWindow2.EventList,
+  UI.UIWindow2.Item;
 
 procedure TEXPBar.Paint(DC: HDC);
 begin
@@ -73,16 +74,16 @@ begin
       Engine.Canvas.Draw(UIImages[Entry1.Get('layer:cover')], 97, 1);
 
       var EXPStr := Exp.ToString + '[' + Percent.ToString + '%' + ']';
-      var Middle := (DisplaySize.X div 2)- ((Length(EXPStr) * 7) div 2);
-      PosX:=0;
+      var Middle := (DisplaySize.X div 2) - ((Length(EXPStr) * 7) div 2);
+      PosX := 0;
       for var I := 1 to Length(EXPStr) do
       begin
         var Char := MidStr(EXPStr, I, 1);
         var Entry2 := Entry.Get('number/' + Char);
         var W := Entry2.Canvas.Width;
-        var OffsetY:=Entry2.Get('origin').Vector.Y;
+        var OffsetY := Entry2.Get('origin').Vector.Y;
         PosX := posX + W;
-        GameCanvas.Draw(UIImages[Entry2], {x+} PosX - W + Middle,-OffsetY+ 1{ y});
+        GameCanvas.Draw(UIImages[Entry2], {x+} PosX - W + Middle, -OffsetY + 1{ y});
       end;
 
     end);
@@ -175,20 +176,19 @@ begin
   var Path := 'UI.wz/StatusBar3.img/mainBar/submenu/';
   //event
   CreateEmptyForm(Path + 'title/event', 610, 630, 100, 100);
-  CreateImage('event0',Path + 'backgrnd/0', 1, 1, 0, 0);
-  CreateImage('event1',Path + 'backgrnd/1', 1, 15, 0, 30);
-  CreateImage('event2',Path + 'backgrnd/2', 1, 1, 0, 45);
+  CreateImage('event0', Path + 'backgrnd/0', 1, 1, 0, 0);
+  CreateImage('event1', Path + 'backgrnd/1', 1, 15, 0, 30);
+  CreateImage('event2', Path + 'backgrnd/2', 1, 1, 0, 45);
   CreateImage(Path + 'title/event', 1, 1, 0, 0);
   CreateButton(Path + 'event/button:schedule');
   //character
   CreateEmptyForm(Path + 'title/character', 650, 525, 100, 200);
-  CreateImage('char0',Path + 'backgrnd/0', 1, 1, 0, 0);
-  CreateImage('char1',Path + 'backgrnd/1', 1, 120, 0, 30);
-  CreateImage('char2',Path + 'backgrnd/2', 1, 1, 0, 150);
+  CreateImage('char0', Path + 'backgrnd/0', 1, 1, 0, 0);
+  CreateImage('char1', Path + 'backgrnd/1', 1, 120, 0, 30);
+  CreateImage('char2', Path + 'backgrnd/2', 1, 1, 0, 150);
   CreateImage(Path + 'title/character', 1, 1, 0, 0);
-  CreateButtons(Path + 'character', ['button:character', 'button:Stat', 'button:Skill',
-    'button:Equip', 'button:Item']);
- UIButton[Path + 'character/button:Stat'].OnMouseDown :=
+  CreateButtons(Path + 'character', ['button:character', 'button:Stat', 'button:Skill', 'button:Equip', 'button:Item']);
+  UIButton[Path + 'character/button:Stat'].OnMouseDown :=
     procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
     begin
       CreateStatForm;
@@ -202,27 +202,39 @@ begin
       UIForm['UI.wz/StatusBar3.img/mainBar/submenu/title/character'].Visible := False;
     end;
 
+     UIButton[Path + 'character/button:Item'].OnMouseDown :=
+    procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
+    begin
+      CreateItemForm;
+      UIForm['UI.wz/StatusBar3.img/mainBar/submenu/title/character'].Visible := False;
+    end;
 
+  UIButton[Path + 'event/button:schedule'].OnMouseDown :=
+    procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
+    begin
+      CreateEventListForm;
+      UIForm['UI.wz/StatusBar3.img/mainBar/submenu/title/event'].Visible := False;
+    end;
 
   //community
   CreateEmptyForm(Path + 'title/community', 680, 585, 100, 120);
-  CreateImage('community0',Path + 'backgrnd/0', 1, 1, 0, 0);
-  CreateImage('community1',Path + 'backgrnd/1', 1, 60, 0, 30);
-  CreateImage('community2',Path + 'backgrnd/2', 1, 1, 0, 90);
+  CreateImage('community0', Path + 'backgrnd/0', 1, 1, 0, 0);
+  CreateImage('community1', Path + 'backgrnd/1', 1, 60, 0, 30);
+  CreateImage('community2', Path + 'backgrnd/2', 1, 1, 0, 90);
   CreateImage(Path + 'title/community', 1, 1, 0, 0);
   CreateButtons(Path + 'community', ['button:friends', 'button:bossParty', 'button:guild']);
   //setting
   CreateEmptyForm(Path + 'title/setting', 705, 595, 100, 120);
-  CreateImage('setting0',Path + 'backgrnd/0', 1, 1, 0, 0);
-  CreateImage('setting1',Path + 'backgrnd/1', 1, 50, 0, 30);
-  CreateImage('setting2',Path + 'backgrnd/2', 1, 1, 0, 80);
+  CreateImage('setting0', Path + 'backgrnd/0', 1, 1, 0, 0);
+  CreateImage('setting1', Path + 'backgrnd/1', 1, 50, 0, 30);
+  CreateImage('setting2', Path + 'backgrnd/2', 1, 1, 0, 80);
   CreateImage(Path + 'title/setting', 1, 1, 0, 0);
   CreateButtons(Path + 'setting', ['button:channel', 'button:option', 'button:keysetting'{, 'button:GameQuit'}]);
   //menu
   CreateEmptyForm(Path + 'title/menu', 745, 365, 100, 370);
-  CreateImage('menu0',Path + 'backgrnd/0', 1, 1, 0, 0);
-  CreateImage('menu1',Path + 'backgrnd/1', 1, 280, 0, 30);
-  CreateImage('menu2',Path + 'backgrnd/2', 1, 1, 0, 310);
+  CreateImage('menu0', Path + 'backgrnd/0', 1, 1, 0, 0);
+  CreateImage('menu1', Path + 'backgrnd/1', 1, 280, 0, 30);
+  CreateImage('menu2', Path + 'backgrnd/2', 1, 1, 0, 310);
   CreateImage(Path + 'title/menu', 1, 1, 0, 0);
   CreateButtons(Path + 'menu', ['button:quest', 'button:medal', 'button:union',
     'button:MonsterCollection', 'button:auction', 'button:battleStats', 'button:achievement',

@@ -44,15 +44,8 @@ end;
 procedure CreateUserInfoForm;
 begin
   const Path = 'UI.wz/UIWindow2.img/UserInfo/character/';
-  CreateForm(Path + 'backgrnd', 617, 320);
+  CreateForm(Path + 'backgrnd', 517, 320);
   CreateButton('UserInfoFormClose', 'UI.wz/Basic.img/BtClose3', 250, 7);
-  UIButton['UserInfoFormClose'].OnMouseDown :=
-    procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
-    begin
-      UIForm['UI.wz/UIWindow2.img/UserInfo/character/backgrnd'].Visible := False;
-      TUserInfoAvatarImage.Show := False;
-    end;
-
   CreateImage(Path + 'backgrnd2');
   TUserInfoAvatarImage.Show := True;
   if not UIImage.ContainsKey('UserInfoAvatarImage') then
@@ -94,7 +87,7 @@ begin
   CreateButton(Path + 'BtParty');
   CreateButton(Path + 'BtTrad');
   CreateButton(Path + 'BtItem');
-  //
+   //
   CreateButton(Path + 'BtPersonality');
   CreateButton(Path + 'BtCollect');
   CreateButton(Path + 'BtRide');
@@ -121,6 +114,14 @@ begin
   CreateImage('UI.wz/UIWindow2.img/UserInfo/damage/backgrnd2');
   CreateImage('UI.wz/UIWindow2.img/UserInfo/damage/backgrnd3');
   //
+   UIButton['UserInfoFormClose'].OnMouseDown :=
+    procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
+    begin
+      UIForm['UI.wz/UIWindow2.img/UserInfo/character/backgrnd'].Visible := False;
+      HideForms(['personality','collect', 'ride', 'pet', 'damage']);
+      TUserInfoAvatarImage.Show := False;
+    end;
+
   UIButton[Path + 'BtPersonality'].OnMouseDown :=
     procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
     begin
@@ -156,6 +157,26 @@ begin
       const Path = 'UI.wz/UIWindow2.img/UserInfo/damage/backgrnd';
       HideForms(['personality', 'ride', 'pet', 'collect']);
       UIForm[Path].Visible := not UIForm[Path].Visible;
+    end;
+
+  CreateForm('UI.wz/GuildUI.img/backgrnd1', 317, 220);
+  UIForm['UI.wz/GuildUI.img/backgrnd1'].Visible := False;
+  CreateImage('UI.wz/GuildUI.img/backgrnd2');
+  CreateImage('UI.wz/GuildUI.img/noGuild/backgrnd');
+  CreateButton('UI.wz/GuildUI.img/noGuild/button:Search');
+  CreateButton('UI.wz/GuildUI.img/noGuild/button:Make');
+  UIButton[Path + 'BtFamily'].OnMouseDown :=
+    procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
+    begin
+      const path = 'UI.wz/GuildUI.img/backgrnd1';
+      UIForm[Path].Visible := not UIForm[Path].Visible;
+      UIForm[Path].BringToFront;
+    end;
+  CreateButton('GuildFormClose', 'UI.wz/Basic.img/BtClose3', 514, 5);
+  UIButton['GuildFormClose'].OnMouseDown :=
+    procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
+    begin
+      UIForm['UI.wz/GuildUI.img/backgrnd1'].Visible := False;
     end;
 
 end;
