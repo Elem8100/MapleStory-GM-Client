@@ -856,6 +856,7 @@ begin
 
  
   RenderForm.Cursor := crNone;
+  RenderForm.FormResize(Sender);
   ActiveControl := nil;
 end;
 

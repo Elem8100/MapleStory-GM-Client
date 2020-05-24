@@ -25,7 +25,7 @@ var
 implementation
 
 uses
-  Global,  UI.Utils,UI.StatusBar3.MainBar;
+  Global,  UI.Utils,UI.StatusBar3.MainBar,UI.StatusBar3.Chat;
 {$R *.dfm}
 
 procedure TRenderForm.FormMouseDown(Sender: TObject; Button: TMouseButton;
@@ -81,6 +81,8 @@ begin
     UIForm[Path2+'setting'].Top:= UIForm[Path].Top-125;
     UIForm[Path2+'menu'].Left:= UIForm[Path].Left+125;
     UIForm[Path2+'menu'].Top:= UIForm[Path].Top-355;
+    if UIForm.ContainsKey('StatusBar3Chat') then
+      UIForm['StatusBar3Chat'].Top :=  UIForm[Path].Top-540;
     TEXPBar.Instance.ReDraw;
   end;
 

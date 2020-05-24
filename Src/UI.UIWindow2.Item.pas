@@ -7,19 +7,298 @@ uses
   StdCtrls, WZIMGFile, WZArchive, StrUtils, Generics.Collections, WzUtils, AControls, ACtrlEngine,
   ACtrlForms, ACtrlButtons, Global, PXT.Canvas, PXT.Graphics;
 
+type
+  TPickType = (ptNone, ptItem, ptChar);
+
+  TSlots = class
+    class var
+      PickUp: Boolean;
+      PickUpItem: TWZIMGEntry;
+      PickType: TPickType;
+      SlotA: TAImage;
+  private
+    FSlots: array[0..95] of TAImage;
+    procedure DrawArea;
+    procedure ExChange(Index1, Index2: TAImage);
+  public
+    class procedure Swap(var S1, S2: TAImage);
+    procedure ReDraw;
+    procedure Show;
+    procedure Hide;
+    procedure Move(Y: Integer);
+    procedure AddItem(ID: string);
+    constructor Create;
+  end;
+
+var
+  EquipSlot, ConsumeSlot, EtcSlot, InstallSlot, CashSlot: TSlots;
+
 procedure CreateItemForm;
 
 implementation
 
 uses
-  UI.Utils, ACtrlLabels, MainUnit, MapleCharacter, MapleChair, Tamingmob;
+  UI.Utils, ACtrlLabels, MainUnit, MapleCharacter, MapleChair;
+
+var
+  HasLoad: Boolean;
+
+procedure TSlots.ReDraw;
+var
+  i, X, Y: Integer;
+begin
+
+  X := -2;
+  Y := 15;
+  for i := 0 to 95 do
+  begin
+    Inc(X, 36);
+    if (i mod 4 = 0) then
+    begin
+      X := 10;
+      Inc(Y, 35);
+    end;
+    FSlots[i].Left := X;
+    FSlots[i].Top := Y;
+    FSlots[i].Tag := i
+  end;
+end;
+
+procedure TSlots.ExChange(Index1, Index2: TAImage);
+var
+  Left, Top, Tag: Integer;
+  Temp: TAImage;
+begin
+  Temp := FSlots[Index1.Tag];
+  FSlots[Index1.Tag] := FSlots[Index2.Tag];
+  FSlots[Index2.Tag] := Temp;
+
+  Left := Index1.Left;
+  Index1.Left := Index2.Left;
+  Index2.Left := Left;
+  Top := Index1.Top;
+  Index1.Top := Index2.Top;
+  Index2.Top := Top;
+
+  Tag := Index1.Tag;
+  Index1.Tag := Index2.Tag;
+  Index2.Tag := Tag;
+end;
+
+class procedure TSlots.Swap(var S1, S2: TAImage);
+var
+  Temp: TAImage;
+begin
+  Temp := TAImage.Create(nil);
+  Temp.ImageEntry := S1.ImageEntry;
+  S1.ImageEntry := S2.ImageEntry;
+  S2.ImageEntry := Temp.ImageEntry;
+
+  Temp.Width := S1.Width;
+  S1.Width := S2.Width;
+  S2.Width := Temp.Width;
+
+  Temp.Height := S1.Height;
+  S1.Height := S2.Height;
+  S2.Height := Temp.Height;
+
+  Temp.Free;
+end;
+
+constructor TSlots.Create;
+var
+  i, X, Y: Integer;
+  b: TAImage;
+begin
+  X := -2;
+  Y := 15;
+  for i := 0 to 95 do
+  begin
+    Inc(X, 36);
+    if (i mod 4 = 0) then
+    begin
+      X := 10;
+      Inc(Y, 35);
+    end;
+    FSlots[i] := TAImage.Create(UIEngine.AForm(UIOwner));
+    FSlots[i].ImageEntry := nil;
+    FSlots[i].Width := 35;
+    FSlots[i].Height := 35;
+    FSlots[i].BorderWidth := 0;
+    FSlots[i].CanMoveHandle := False;
+    FSlots[i].Left := X;
+    FSlots[i].Top := Y;
+    FSlots[i].Tag := i;
+    FSlots[i].OnMouseDown :=
+      procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
+      begin
+   //   mainform.Caption := variant(TAImage(Sender).ID);
+        if (PickType = ptNone) and (TAImage(Sender).ImageEntry <> nil) then
+        begin
+          SlotA := TAImage(Sender);
+          PickUpItem := SlotA.ImageEntry;
+          PickType := ptItem;
+          PickUpItem := SlotA.ImageEntry;
+        end
+        else if (PickType = ptItem) then
+        begin
+          b := TAImage(Sender);
+          ExChange(SlotA, b);
+          PickType := ptNone;
+          PickUpItem := nil;
+        end;
+     {
+      if (PickType = ptChar) and (PickUpItem <> nil) then
+      begin
+        if TAImage(Sender).ImageEntry = nil then
+          Swap(TAImage(Sender), TCharSlot.SlotA);
+        PickType := ptNone;
+        PickUpItem := nil;
+      end;
+      }
+
+      end;
+
+  end;
+
+  DrawArea;
+end;
+
+procedure TSlots.Show;
+var
+  i: Integer;
+begin
+  for i := 0 to 95 do
+    FSlots[i].Visible := True;
+
+end;
+
+procedure TSlots.Hide;
+var
+  i: Integer;
+begin
+  for i := 0 to 95 do
+    FSlots[i].Visible := False;
+end;
+
+procedure TSlots.DrawArea;
+var
+  i: Integer;
+begin
+  for i := 0 to 95 do
+  begin
+    FSlots[i].Visible := False;
+    if (FSlots[i].Top > 20) and (FSlots[i].Top < 250) then
+      FSlots[i].Visible := True;
+  end;
+end;
+
+function GetItemDir(ID: string): string;
+begin
+  case StrToInt(ID) div 1000000 of
+    5:
+      Result := 'Cash';
+    2:
+      Result := 'Consume';
+    4:
+      Result := 'Etc';
+    3:
+      Result := 'Install';
+    9:
+      Result := 'Special';
+  end;
+end;
+
+procedure TSlots.AddItem(ID: string);
+var
+  IconPath, Dir: string;
+  Entry: TWZIMGEntry;
+  i: Integer;
+  p: Boolean;
+  a: TAImage;
+begin
+  case ID.ToInteger div 1000000 of
+    2, 3, 4, 5, 9:
+      begin
+        Dir := GetItemDir(ID);
+        IconPath := 'Item.wz/' + Dir + '/' + LeftStr(ID, 4) + '.img/' + ID + '/info/icon';
+        Entry := GetImgEntry(IconPath);
+      end
+  else
+    begin
+      Dir := GetDir(ID);
+      Entry := CharacterWZ.GetImgFile(Dir + ID + '.img').Root.Get('info/icon');
+    end;
+  end;
+
+  DumpData(Entry, UIData, UIImages);
+  for i := 0 to 95 do
+  begin
+    if FSlots[i].ImageEntry = nil then
+    begin
+      FSlots[i].ImageEntry := Entry;
+      FSlots[i].Width := TWZIMGEntry(Entry.Parent).Get2('icon').Canvas.Width;
+      FSlots[i].Height := TWZIMGEntry(Entry.Parent).Get2('icon').Canvas.Height;
+      FSlots[i].ID := ID;
+      Exit;
+    end;
+  end;
+end;
+
+procedure TSlots.Move(Y: Integer);
+var
+  py, i: Integer;
+begin
+  py := 15;
+  for i := 0 to 95 do
+  begin
+    if (i mod 4 = 0) then
+      Inc(py, 35);
+    FSlots[i].Top := py - Y * 35;
+  end;
+  DrawArea;
+end;
 
 procedure SelectTab(Index: Integer);
 begin
   const Path = 'UI.wz/UIWindow2.img/Item/Tab/enabled/';
   for var i := 0 to 4 do
     UIImage[Path + i.ToString].Visible := False;
+
   UIImage[Path + Index.ToString].Visible := True;
+  EquipSlot.Hide;
+  ConsumeSlot.Hide;
+  EtcSlot.Hide;
+  InstallSlot.Hide;
+  CashSlot.Hide;
+
+  case Index of
+    0:
+      begin
+        Equipslot.PickType := ptNone;
+        EquipSlot.Show;
+      end;
+    1:
+      begin
+        consumeSlot.PickType := ptNone;
+        ConsumeSlot.Show;
+      end;
+    2:
+      begin
+        EtcSlot.PickType := ptNone;
+        EtcSlot.Show;
+      end;
+    3:
+      begin
+        InstallSlot.PickType := ptNone;
+        InstallSlot.Show;
+      end;
+    4:
+      begin
+        CashSlot.PickType := ptNone;
+        CashSlot.Show;
+      end;
+  end;
 end;
 
 procedure CreateItemForm;
@@ -39,7 +318,40 @@ begin
     CreateImage(Path + 'Tab/disabled/' + i.ToString);
     CreateImage(Path + 'Tab/enabled/' + i.ToString);
   end;
-  SelectTab(0);
+
+  if not HasLoad then
+  begin
+    EquipSlot := TSlots.Create;
+    EquipSlot.AddItem('01302001');
+    ConsumeSlot := TSlots.Create;
+    ConsumeSlot.AddItem('05010000');
+    ConsumeSlot.AddItem('05010001');
+    ConsumeSlot.AddItem('05010000');
+    ConsumeSlot.AddItem('02010009');
+    consumeSlot.AddItem('02000005');
+    ConsumeSlot.AddItem('02000001');
+    EtcSlot := TSlots.Create;
+    InstallSlot := TSlots.Create;
+    CashSlot := TSlots.Create;
+    SelectTab(0);
+    HasLoad := True;
+  end;
+
+  CreateButton(Path + 'BtCoin3');
+  CreateButton(Path + 'BtFull3');
+  CreateButton(Path + 'BtSmall3');
+  CreateButton(Path + 'BtPoint0');
+
+  CreateButton(Path + 'BtBits3');
+  CreateButton(Path + 'BtDisassemble3');
+  CreateButton(Path + 'BtExtract3');
+  CreateButton(Path + 'BtGather3');
+  CreateButton(Path + 'BtSort3');
+  CreateButton(Path + 'BtToad3');
+  CreateButton(Path + 'BtUpgrade3');
+  CreateButton(Path + 'BtAppraise3');
+  CreateButton(Path + 'BtPot3');
+
   UIImage[Path + 'Tab/disabled/0'].OnMouseDown :=
     procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
     begin
@@ -65,20 +377,7 @@ begin
     begin
       SelectTab(4);
     end;
-  CreateButton(Path + 'BtCoin3');
-  CreateButton(Path + 'BtFull3');
-  CreateButton(Path + 'BtSmall3');
-  CreateButton(Path + 'BtPoint0');
 
-  CreateButton(Path + 'BtBits3');
-  CreateButton(Path + 'BtDisassemble3');
-  CreateButton(Path + 'BtExtract3');
-  CreateButton(Path + 'BtGather3');
-  CreateButton(Path + 'BtSort3');
-  CreateButton(Path + 'BtToad3');
-  CreateButton(Path + 'BtUpgrade3');
-  CreateButton(Path + 'BtAppraise3');
-  CreateButton(Path + 'BtPot3');
 end;
 
 end.

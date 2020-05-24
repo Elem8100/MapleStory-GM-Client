@@ -25,7 +25,7 @@ procedure CreateUIStatusBar3Chat;
 implementation
 
 uses
-  UI.Utils, ACtrlLabels, mainunit;
+  UI.Utils, ACtrlLabels;
 
 procedure TChatViewImage.Paint(DC: HDC);
 begin
@@ -33,6 +33,7 @@ begin
   var y := ClientTop;
   if TargetTexture.Initialized then
     Engine.Canvas.DrawPortion(TargetTexture, x, y + y1, 0, Y1, 410, 595, False, $FFFFFFFF);
+
 end;
 
 class procedure TChatViewImage.Redraw;
@@ -58,7 +59,8 @@ end;
 
 procedure CreateUIStatusBar3Chat;
 begin
-  CreateEmptyForm('StatusBar3Chat', 100, 130, 410, 595);
+  CreateEmptyForm('StatusBar3Chat', 0, 130, 410, 595);
+  UIForm['StatusBar3Chat'].CanMove := False;
   CreateButton('UI.wz/StatusBar3.img/chat/common/chatTarget/all', 6, 420);
   CreateButton('UI.wz/StatusBar3.img/chat/common/chatTarget/party', 56, 420);
   CreateButton('UI.wz/StatusBar3.img/chat/common/chatTarget/friend', 106, 420);
