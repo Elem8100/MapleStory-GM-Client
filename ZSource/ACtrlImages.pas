@@ -26,6 +26,8 @@ type
     FCanMoveHandle: Boolean;
     FFocusControl: string;
     FID: string;
+    FScaleX:Single;
+    FScaleY:Single;
     procedure SetCanMoveHandle(Value: Boolean); virtual;
     procedure SetFocusControl(Value: string); virtual;
   protected
@@ -40,6 +42,8 @@ type
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+    property ScaleX:Single  read FScaleX write FScaleX;
+    property ScaleY:Single  read FScaleY write FScaleY;
     property ID: string read FID write FID;
     property CanMoveHandle: Boolean read FCanMoveHandle write SetCanMoveHandle;
     property FocusControl: string read FFocusControl write SetFocusControl;
@@ -77,7 +81,7 @@ type
   TAImageClass = class of TAImage;
 
 implementation
-     uses PXT.Types,PXT.Graphics;
+     uses PXT.Graphics,PXT.Types;
 var
   XOffSet, YOffSet: Integer;
 
@@ -139,7 +143,8 @@ begin
   BorderColor := $80FFFFFF;
   BorderWidth := 1;
   Visible := True;
-
+  ScaleX:=1;
+  ScaleY:=1;
   // Fields
   FCanMoveHandle := True;
 
@@ -202,35 +207,9 @@ begin
   X := ClientLeft;
   Y := ClientTop;
 
-  // Draw Border
-  if BorderWidth > 0 then
+  if (AImage.Initialized)  and (ImageEntry<> nil)then
   begin
-    AEngine.Canvas.FillRect(FloatRect(X, Y, X + Width, Y + BorderWidth),
-      BorderColor);
-    AEngine.Canvas.FillRect(FloatRect(X, Y + BorderWidth, X + BorderWidth,
-        Y + Height - BorderWidth), BorderColor);
-    AEngine.Canvas.FillRect(FloatRect(X, Y + Height - BorderWidth, X + Width,
-        Y + Height), BorderColor);
-    AEngine.Canvas.FillRect(FloatRect(X + Width - BorderWidth, Y + BorderWidth,
-        X + Width, Y + Height - BorderWidth), BorderColor);
-  end;
-
-  if AImage.Initialized then
-  begin
-  {
-    AEngine.Canvas.UseTexturePx(AImage,
-      pxBounds4(0 + BorderWidth, 0 + BorderWidth,
-        AImage.Width - (BorderWidth * 2),
-        AImage.Height - (BorderWidth * 2)));
-    AEngine.Canvas.TexMap(pRect4(Rect(X + BorderWidth, Y + BorderWidth,
-          X + Width - BorderWidth, Y + Height - BorderWidth)),
-      cAlpha4(ImageAlpha), deNormal);
-      }
-
-       var TexCoord := Quad(0 + BorderWidth, 0 + BorderWidth, AImage.Parameters.Width - (BorderWidth *
-      2), AImage.Parameters.Height - (BorderWidth * 2));
-    AEngine.Canvas.Quad(AImage, Quad(IntRectBDS(X + BorderWidth, Y + BorderWidth, X + Width -
-      BorderWidth, Y + Height - BorderWidth)), TexCoord,$FFFFFFFF);
+   AEngine.Canvas.DrawScale(AImage,X,Y,ScaleX,ScaleY)
   end;
 end;
 
