@@ -70,6 +70,13 @@ begin
   CreateButton('UI.wz/UIWindow4.img/Stat/detail/BtAbility');
   CreateButton('UI.wz/UIWindow4.img/Stat/detail/BtHpUp');
 
+   UIButton['UI.wz/UIWindow4.img/Stat/detail/BtHpUp'].OnMouseDown :=
+    procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
+    begin
+       UIForm['UI.wz/UIWindow4.img/Stat/detail/backgrnd'].Visible := False;
+    end;
+
+
   UIButton[Path + 'BtDetailOpen'].OnMouseDown :=
     procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
     begin
@@ -161,6 +168,12 @@ begin
       end;
     end;
    CreateButton('UI.wz/UIWindow4.img/HyperStat/Window/BtReduce');
+   UIButton['UI.wz/UIWindow4.img/HyperStat/Window/BtReduce'].OnMouseDown :=
+    procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
+    begin
+      UIForm['UI.wz/UIWindow4.img/HyperStat/Window/backgrnd'].Visible := False;
+    end;
+
    CreateButton('UI.wz/UIWindow4.img/HyperStat/Window/BtReset');
    CreateLabel('HyperStatPoint', '99', 156, 266);
 end;

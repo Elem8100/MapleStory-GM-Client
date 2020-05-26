@@ -35,6 +35,8 @@ var
 
 procedure CreateItemForm;
 
+procedure AddItemToSlot(ID: string);
+
 implementation
 
 uses
@@ -245,6 +247,22 @@ begin
   end;
 end;
 
+procedure AddItemToSlot(ID: string);
+begin
+  case ID.ToInteger div 1000000 of
+    2:
+      ConsumeSlot.AddItem(ID);
+    3:
+      InstallSlot.AddItem(ID);
+    4:
+      EtcSlot.AddItem(ID);
+    5:
+      CashSlot.AddItem(ID);
+  else
+    EquipSlot.AddItem(ID);
+  end;
+end;
+
 procedure TSlots.Move(Y: Integer);
 var
   py, i: Integer;
@@ -254,10 +272,14 @@ begin
   begin
     if (i mod 4 = 0) then
       Inc(py, 35);
-    FSlots[i].Top := py - Y * 35;
+    FSlots[i].Top := py + Y * 35;
   end;
   DrawArea;
 end;
+
+var
+  TabIndex: Integer;
+  Pos: array of Integer;
 
 procedure SelectTab(Index: Integer);
 begin
@@ -272,31 +294,39 @@ begin
   InstallSlot.Hide;
   CashSlot.Hide;
 
+  if UIImage.ContainsKey('ItemSlotVScr/thumb0') then
+    UIImage['ItemSlotVScr/thumb0'].Top := Pos[Index];
+
   case Index of
     0:
       begin
+        TabIndex := 0;
         Equipslot.PickType := ptNone;
-        EquipSlot.Show;
+        EquipSlot.DrawArea;
       end;
     1:
       begin
-        consumeSlot.PickType := ptNone;
-        ConsumeSlot.Show;
+        TabIndex := 1;
+        ConsumeSlot.PickType := ptNone;
+        ConsumeSlot.DrawArea;
       end;
     2:
       begin
+        TabIndex := 2;
         EtcSlot.PickType := ptNone;
-        EtcSlot.Show;
+        EtcSlot.DrawArea;
       end;
     3:
       begin
+        TabIndex := 3;
         InstallSlot.PickType := ptNone;
-        InstallSlot.Show;
+        InstallSlot.DrawArea;
       end;
     4:
       begin
+        TabIndex := 4;
         CashSlot.PickType := ptNone;
-        CashSlot.Show;
+        CashSlot.DrawArea;
       end;
   end;
 end;
@@ -305,6 +335,7 @@ procedure CreateItemForm;
 begin
   const Path = 'UI.wz/UIWindow2.img/Item/';
   CreateForm(Path + 'backgrnd', 417, 200);
+
   CreateButton('ItemFormClose', 'UI.wz/Basic.img/BtClose3', 150, 5);
   UIButton['ItemFormClose'].OnMouseDown :=
     procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
@@ -313,6 +344,7 @@ begin
     end;
   CreateImage(Path + 'backgrnd2');
   CreateImage(Path + 'backgrnd3');
+
   for var i := 0 to 4 do
   begin
     CreateImage(Path + 'Tab/disabled/' + i.ToString);
@@ -321,19 +353,20 @@ begin
 
   if not HasLoad then
   begin
+    Pos := [58, 58, 58, 58, 58];
     EquipSlot := TSlots.Create;
-    EquipSlot.AddItem('01302001');
     ConsumeSlot := TSlots.Create;
-    ConsumeSlot.AddItem('05010000');
-    ConsumeSlot.AddItem('05010001');
-    ConsumeSlot.AddItem('05010000');
-    ConsumeSlot.AddItem('02010009');
-    consumeSlot.AddItem('02000005');
-    ConsumeSlot.AddItem('02000001');
     EtcSlot := TSlots.Create;
     InstallSlot := TSlots.Create;
     CashSlot := TSlots.Create;
     SelectTab(0);
+    AddItemToSlot('05010000');
+    AddItemToSlot('05010001');
+    AddItemToSlot('05010000');
+    AddItemToSlot('02010009');
+    AddItemToSlot('02000005');
+    AddItemToSlot('02000001');
+    AddItemToSlot('01302001');
     HasLoad := True;
   end;
 
@@ -351,6 +384,72 @@ begin
   CreateButton(Path + 'BtUpgrade3');
   CreateButton(Path + 'BtAppraise3');
   CreateButton(Path + 'BtPot3');
+
+  CreateImage('ItemSlotVScr', 'UI.wz/Basic.img/VScr9/enabled/base', 1, 17.7, 153, 47);
+  CreateImage('ItemSlotVScr/prev0', 'UI.wz/Basic.img/VScr9/enabled/prev0', 1, 1, 153, 47);
+  CreateImage('ItemSlotVScr/next0', 'UI.wz/Basic.img/VScr9/enabled/next0', 1, 1, 153, 247);
+  CreateImage('ItemSlotVScr/thumb0', 'UI.wz/Basic.img/VScr9/enabled/thumb0', 1, 1, 153, 58);
+  UIImage['ItemSlotVScr/thumb0'].Width := 11;
+  UIImage['ItemSlotVScr/thumb0'].Height := 26;
+  var OnDrag: Boolean;
+  var MouseDownY: Integer;
+  UIImage['ItemSlotVScr/thumb0'].OnMouseDown :=
+    procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
+    begin
+      MouseDownY := GetMouseDownY('ItemSlotVScr/thumb0', Y);
+      OnDrag := True;
+    end;
+
+  UIImage['ItemSlotVScr/thumb0'].OnMouseMove :=
+    procedure(Sender: TObject; Shift: TShiftState; X, Y: Integer)
+    begin
+      if OnDrag then
+      begin
+        MoveImage('ItemSlotVScr/thumb0', Y, MouseDownY);
+        var Thumb := UIImage['ItemSlotVScr/thumb0'];
+        if Thumb.Top < 58 then
+          Thumb.Top := 58;
+
+        if Thumb.Top > 223 then
+          Thumb.Top := 223;
+
+        case TabIndex of
+          0:
+            begin
+             Pos[0] := Thumb.Top;
+              EquipSlot.Move((50 - Thumb.Top) div 10);
+            end;
+          1:
+            begin
+              pos[1] := Thumb.Top;
+              ConsumeSlot.Move((50 - Thumb.Top) div 10);
+            end;
+
+          2:
+            begin
+              Pos[2] := Thumb.Top;
+              EtcSlot.Move((50 - Thumb.Top) div 10);
+            end;
+          3:
+            begin
+              pos[3] := Thumb.Top;
+              InstallSlot.Move((50 - Thumb.Top) div 10);
+            end;
+          4:
+            begin
+              pos[4] := Thumb.Top;
+              CashSlot.Move((50 - Thumb.Top) div 10);
+            end;
+
+        end;
+      end;
+    end;
+
+  UIImage['ItemSlotVScr/thumb0'].OnMouseUp :=
+    procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
+    begin
+      OnDrag := False;
+    end;
 
   UIImage[Path + 'Tab/disabled/0'].OnMouseDown :=
     procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)

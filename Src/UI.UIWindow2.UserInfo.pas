@@ -93,6 +93,16 @@ begin
   CreateButton(Path + 'BtRide');
   CreateButton(Path + 'BtPet');
   CreateButton(Path + 'BtDamage');
+
+  CreateAttachForm('UI.wz/UIWindow2.img/UserInfo/item/backgrnd', Path + 'backgrnd', 272, 0);
+  CreateImage('UI.wz/UIWindow2.img/UserInfo/item/backgrnd2');
+  UIButton[Path + 'BtItem'].OnMouseDown :=
+    procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
+    begin
+      const Path = 'UI.wz/UIWindow2.img/UserInfo/item/backgrnd';
+      UIForm[Path].Visible := not UIForm[Path].Visible;
+    end;
+
   // personality
   CreateAttachForm('UI.wz/UIWindow2.img/UserInfo/personality/backgrnd', Path + 'backgrnd', 0, 191);
   CreateImage('UI.wz/UIWindow2.img/UserInfo/personality/backgrnd2');
@@ -114,11 +124,12 @@ begin
   CreateImage('UI.wz/UIWindow2.img/UserInfo/damage/backgrnd2');
   CreateImage('UI.wz/UIWindow2.img/UserInfo/damage/backgrnd3');
   //
-   UIButton['UserInfoFormClose'].OnMouseDown :=
+  UIButton['UserInfoFormClose'].OnMouseDown :=
     procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
     begin
       UIForm['UI.wz/UIWindow2.img/UserInfo/character/backgrnd'].Visible := False;
-      HideForms(['personality','collect', 'ride', 'pet', 'damage']);
+      UIForm['UI.wz/UIWindow2.img/UserInfo/item/backgrnd'].Visible := False;
+      HideForms(['personality', 'collect', 'ride', 'pet', 'damage']);
       TUserInfoAvatarImage.Show := False;
     end;
 
