@@ -38,7 +38,7 @@ implementation
 
 uses
   UI.Utils, ShowOptionUnit, UI.UIWindow4.Stat, UI.UIWindow2.UserInfo, UI.UIWindow2.EventList,
-  UI.UIWindow2.Item,UI.UIWindow4.Equip;
+  UI.UIWindow2.Item,UI.UIWindow2.Skill, UI.UIWindow4.Equip;
 
 procedure TEXPBar.Paint(DC: HDC);
 begin
@@ -206,6 +206,12 @@ begin
     procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
     begin
       CreateItemForm;
+      UIForm['UI.wz/StatusBar3.img/mainBar/submenu/title/character'].Visible := False;
+    end;
+     UIButton[Path + 'character/button:Skill'].OnMouseDown :=
+    procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
+    begin
+      CreateSkillForm;
       UIForm['UI.wz/StatusBar3.img/mainBar/submenu/title/character'].Visible := False;
     end;
 

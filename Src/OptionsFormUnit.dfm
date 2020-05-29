@@ -14,7 +14,6 @@ object OptionsForm: TOptionsForm
   KeyPreview = True
   OldCreateOrder = False
   Scaled = False
-  OnActivate = FormActivate
   OnClick = FormClick
   OnCreate = FormCreate
   OnKeyDown = FormKeyDown
@@ -34,13 +33,5 @@ object OptionsForm: TOptionsForm
     ParentFont = False
     TabOrder = 0
     OnClick = CheckBox1Click
-  end
-  object ScanlineCheckBox: TCheckBox
-    Left = 80
-    Top = 72
-    Width = 89
-    Height = 25
-    Caption = 'Scanline'
-    TabOrder = 1
   end
 end

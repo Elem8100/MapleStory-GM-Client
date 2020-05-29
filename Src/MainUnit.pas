@@ -509,8 +509,8 @@ begin
         FDevice.Clear([TClearLayer.Color], FloatColor($0));
         GameCanvas.BeginScene;
         GameCanvas.DrawStretch(FullScreenTexture, 0, 0, RenderForm.ClientWidth, RenderForm.ClientHeight);
-        if OptionsForm.ScanlineCheckBox.Checked then
-          GameCanvas.Draw(OptionsForm.ScanlineTexture, 0, 0, TBlendingEffect.Multiply);
+        if SetScreenForm.ScanlineCheckBox.Checked then
+          GameCanvas.Draw(SetScreenForm.ScanlineTexture, 0, 0, TBlendingEffect.Multiply);
         GameCanvas.EndScene;
         FDevice.EndScene;
       end;
@@ -527,8 +527,8 @@ begin
         FDevice.Clear([TClearLayer.Color], FloatColor($FFFFC800));
         GameCanvas.BeginScene;
         GameCanvas.DrawStretch(FullScreenTexture, 0, 0, MonitorWidth, MonitorHeight);
-        if OptionsForm.ScanlineCheckBox.Checked then
-          GameCanvas.Draw(OptionsForm.ScanlineTexture, 0, 0, TBlendingEffect.Multiply);
+        if SetScreenForm.ScanlineCheckBox.Checked then
+          GameCanvas.Draw(SetScreenForm.ScanlineTexture, 0, 0, TBlendingEffect.Multiply);
         GameCanvas.EndScene;
         FDevice.EndScene;
       end;
@@ -538,8 +538,8 @@ begin
         FDevice.Clear([TClearLayer.Color], FloatColor($FFFFC800));
         GameCanvas.BeginScene;
         RenderEvent;
-        if OptionsForm.ScanlineCheckBox.Checked then
-          GameCanvas.Draw(OptionsForm.ScanlineTexture, 0, 0, TBlendingEffect.Multiply);
+        if SetScreenForm.ScanlineCheckBox.Checked then
+          GameCanvas.Draw(SetScreenForm.ScanlineTexture, 0, 0, TBlendingEffect.Multiply);
         GameCanvas.EndScene;
         FDevice.EndScene;
       end;

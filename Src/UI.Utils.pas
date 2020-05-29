@@ -26,7 +26,7 @@ procedure CreateButtons(Dir: string; BtName: array of string; X: Integer = 0; Y:
 
 procedure CreateButtonAll(EntryName: string; IgnoreDir: array of string; X, Y: Integer);
 
-procedure CreateImages(Dir: string; ImageName: array of string; X: Integer = 0; Y: Integer = 0);
+procedure CreateImages(Dir: string; ImageName: array of string);
 
 procedure CreateForm(ImageEntry: string; X, Y: Integer);
 
@@ -381,12 +381,12 @@ begin
   UIImage.AddOrSetValue(UIName, Image);
 end;
 
-procedure CreateImages(Dir: string; ImageName: array of string; X: Integer = 0; Y: Integer = 0);
+procedure CreateImages(Dir: string; ImageName: array of string);
 var
   I: Integer;
 begin
   for I := 0 to High(ImageName) do
-    CreateImage(Dir + ImageName[I], X, Y);
+    CreateImage(Dir +'/'+ ImageName[I]);
 end;
 
 procedure CreateUIs(EntryName: string; X, Y: Integer; wClose: Boolean = True);

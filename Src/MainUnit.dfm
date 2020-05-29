@@ -3045,6 +3045,10 @@ object MainForm: TMainForm
     object TabSheet2: TTabSheet
       Caption = #19990#30028#22320#22294
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object WorldMapGrid: TAdvStringGrid
         Left = 0
         Top = 0

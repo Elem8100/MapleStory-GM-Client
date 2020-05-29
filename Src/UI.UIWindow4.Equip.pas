@@ -34,19 +34,24 @@ begin
   UIButton[Path + 'Equip/BtZeroCash'].Visible := False;
   UIButton[Path + 'Equip/BtZeroWp'].Visible := False;
   for I := 0 to High(S1) do
-    UIImage[Path + 'Equip/Slots/' + S1[I].ToString].Visible := False;
-  UIImage[Path + 'Equip/Slots/30_2'].Visible := False;
+    if UIImage.ContainsKey(Path + 'Equip/Slots/' + S1[I].ToString) then
+      UIImage[Path + 'Equip/Slots/' + S1[I].ToString].Visible := False;
+  if UIImage.ContainsKey(Path + 'Equip/Slots/30_2') then
+    UIImage[Path + 'Equip/Slots/30_2'].Visible := False;
   UIImage[Path + 'Equip/backgrnd'].Visible := False;
   //cash
   UIButton[Path + 'Cash/BtShop'].Visible := False;
-  for I := 101 to 117 do
+  for I := 101 to 128 do
   begin
     if I = 114 then
       Continue;
-    UIImage[Path + 'Cash/Slots/' + I.ToString].Visible := False;
+    if UIImage.ContainsKey(Path + 'Cash/Slots/' + I.ToString) then
+      UIImage[Path + 'Cash/Slots/' + I.ToString].Visible := False;
   end;
-  UIImage[Path + 'Cash/Slots/150'].Visible := False;
-  UIImage[Path + 'Cash/Slots/151'].Visible := False;
+  if UIImage.ContainsKey(Path + 'Cash/Slots/150') then
+    UIImage[Path + 'Cash/Slots/150'].Visible := False;
+  if UIImage.ContainsKey(Path + 'Cash/Slots/151') then
+    UIImage[Path + 'Cash/Slots/151'].Visible := False;
   UIImage[Path + 'Cash/Slots/face'].Visible := False;
   UIImage[Path + 'Cash/Slots/hair'].Visible := False;
   UIImage[Path + 'Cash/backgrnd'].Visible := False;
@@ -58,7 +63,8 @@ begin
   UIButton[Path + 'Pet/BtConsumeSetting'].Visible := False;
   UIButton[Path + 'Pet/BtException'].Visible := False;
   for I := 0 to High(S2) do
-    UIImage[Path + 'Pet/Slots/' + S2[I]].Visible := False;
+    if UIImage.ContainsKey(Path + 'Pet/Slots/' + S2[I]) then
+      UIImage[Path + 'Pet/Slots/' + S2[I]].Visible := False;
   //AD
   UIButton[Path + 'Android/BtShop'].Visible := False;
   for I := 1200 to 1206 do
@@ -73,7 +79,8 @@ begin
         UIButton[Path + 'Equip/BtZeroCash'].Visible := True;
         UIButton[Path + 'Equip/BtZeroWp'].Visible := True;
         for I := 0 to High(S1) do
-          UIImage[Path + 'Equip/Slots/' + S1[I].ToString].Visible := True;
+          if UIImage.ContainsKey(Path + 'Equip/Slots/' + S1[I].ToString) then
+            UIImage[Path + 'Equip/Slots/' + S1[I].ToString].Visible := True;
         UIImage[Path + 'Equip/Slots/30_2'].Visible := True;
         UIImage[Path + 'Equip/backgrnd'].Visible := True;
       end;
@@ -81,14 +88,17 @@ begin
       begin
         //cash
         UIButton[Path + 'Cash/BtShop'].Visible := True;
-        for I := 101 to 117 do
+        for I := 101 to 128 do
         begin
           if I = 114 then
             Continue;
-          UIImage[Path + 'Cash/Slots/' + I.ToString].Visible := True;
+          if UIImage.ContainsKey(Path + 'Cash/Slots/' + I.ToString) then
+            UIImage[Path + 'Cash/Slots/' + I.ToString].Visible := True;
         end;
-        UIImage[Path + 'Cash/Slots/150'].Visible := True;
-        UIImage[Path + 'Cash/Slots/151'].Visible := True;
+        if UIImage.ContainsKey(Path + 'Cash/Slots/150') then
+          UIImage[Path + 'Cash/Slots/150'].Visible := True;
+        if UIImage.ContainsKey(Path + 'Cash/Slots/151') then
+          UIImage[Path + 'Cash/Slots/151'].Visible := True;
         UIImage[Path + 'Cash/Slots/face'].Visible := True;
         UIImage[Path + 'Cash/Slots/hair'].Visible := True;
         UIImage[Path + 'Cash/backgrnd'].Visible := True;
@@ -102,7 +112,8 @@ begin
         UIButton[Path + 'Pet/BtConsumeSetting'].Visible := True;
         UIButton[Path + 'Pet/BtException'].Visible := True;
         for I := 0 to High(S2) do
-          UIImage[Path + 'Pet/Slots/' + S2[I]].Visible := True;
+          if UIImage.ContainsKey(Path + 'Pet/Slots/' + S2[I]) then
+            UIImage[Path + 'Pet/Slots/' + S2[I]].Visible := True;
       end;
     3:
       begin
@@ -120,8 +131,8 @@ end;
 procedure CreateEquipForm;
 begin
   const Path = 'UI.wz/UIWindow4.img/Equip/';
-  CreateForm(Path + 'backgrnd', 617, 320);
-  CreateButton('EquipFormClose', 'UI.wz/Basic.img/BtClose3', 190, 7);
+  CreateForm(Path + 'backgrnd', 317, 220);
+  CreateButton('EquipFormClose', 'UI.wz/Basic.img/BtClose3', 210, 5);
 
   CreateImage(Path + 'backgrnd2');
   for var I := 0 to 3 do
@@ -139,36 +150,33 @@ begin
   //Equip
   CreateButtons(Path + 'Equip', ['BtSlot', 'BtZeroCash', 'BtZeroWp']);
   S1 := [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15, 16, 17, 21, 22, 23, 26, 27, 28, 29, 30, 31,
-    49, 50, 51, 52, 53, 54, 55, 56, 61, 65];
+    33, 34, 35, 36, 37, 38, 50, 51, 52, 53, 54, 55, 56, 61, 65];
   for var I := 0 to High(S1) do
     CreateImage(Path + 'Equip/Slots/' + S1[I].ToString);
   CreateImage(Path + 'Equip/Slots/30_2');
   CreateImage(Path + 'Equip/backgrnd');
   //cash
   CreateButton(Path + 'Cash/BtShop');
-  for var I := 101 to 117 do
+  for var I := 101 to 128 do
   begin
     if I = 114 then
       Continue;
     CreateImage(Path + 'Cash/Slots/' + I.ToString);
   end;
-  CreateImage(Path + 'Cash/Slots/150');
-  CreateImage(Path + 'Cash/Slots/151');
-  CreateImage(Path + 'Cash/Slots/face');
-  CreateImage(Path + 'Cash/Slots/hair');
+  CreateImages(Path + 'Cash/Slots', ['150', '151', 'face', 'hair']);
   CreateImage(Path + 'Cash/backgrnd');
   //pet
   CreateImage(Path + 'Pet/backgrnd');
   CreateImage(Path + 'Pet/PetFood/0');
   CreateImage(Path + 'Pet/ItemRoot/0');
   CreateButtons(Path + 'Pet', ['BtConsumeSetting', 'BtException']);
-  S2 := ['114', '124', '125', '130', '138', '200', '201', '202', 'Pet1', 'Pet2', 'Pet3', 'Skill1', 'Skill2', 'Skill3'];
+  S2 := ['114', '121', '122', '123', '124', '125', '126', '130', '138', '200', '201', '202', 'Pet1',
+    'Pet2', 'Pet3', 'Skill1', 'Skill2', 'Skill3'];
   for var I := 0 to High(S2) do
     CreateImage(Path + 'Pet/Slots/' + S2[I]);
   //AD
   CreateButton(Path + 'Android/BtShop');
-  for var I := 1200 to 1206 do
-    CreateImage(Path + 'Android/Slots/' + I.ToString);
+  CreateImages(Path + 'Android/Slots', ['1200', '1201', '1202', '1203', '1204', '1205', '1206']);
   CreateImage(Path + 'Android/backgrnd');
 
   if not HasLoad then

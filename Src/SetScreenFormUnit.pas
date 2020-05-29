@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,PXT.Canvas, PXT.Graphics;
 
 type
   TSetScreenForm = class(TForm)
@@ -25,13 +25,18 @@ type
     Button15: TButton;
     Button16: TButton;
     Button17: TButton;
+    ScanlineCheckBox: TCheckBox;
     procedure Button1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormClick(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
   private
+    Hasload: Boolean;
     { Private declarations }
   public
+     ScanlineTexture: TTexture;
     { Public declarations }
   end;
 
@@ -160,7 +165,7 @@ begin
     BackEngine[I].VisibleWidth := DisplaySize.X;
     BackEngine[I].VisibleHeight := DisplaySize.Y;
   end;
-  MainForm.CreateTexture(MainForm.FullScreenTexture, DisplaySize.X, DisplaySize.Y,False);
+  MainForm.CreateTexture(MainForm.FullScreenTexture, DisplaySize.X, DisplaySize.Y, False);
   TMap.OffsetY := (DisplaySize.Y - 600) div 2;
   TMapBack.ResetPos := True;
   MainForm.Left := (Screen.Width - MainForm.Width) div 2;
@@ -168,6 +173,36 @@ begin
   ActiveControl := nil;
 
   MainForm.ScreenMode := smScale;
+end;
+
+procedure TSetScreenForm.FormActivate(Sender: TObject);
+var
+  LPixels: array of TIntColor;
+begin
+  if HasLoad then
+    Exit;
+  HasLoad := True;
+  var Parameters: TTextureParameters;
+  FillChar(Parameters, SizeOf(TTextureParameters), 0);
+  Parameters.Width := 4000;
+  Parameters.Height := 4000;
+  Parameters.Format := TPixelFormat.RGBA8;
+  Parameters.Attributes := TextureMipMapping; //TextureDynamic;
+  ScanlineTexture := TextureInit(FDevice, Parameters);
+  SetLength(LPixels, Parameters.Width * Parameters.Height);
+  for var J := 0 to Parameters.Height - 1 do
+  begin
+    var LPixel: PIntColor := @LPixels[J * Parameters.Width];
+    for var I := 0 to Parameters.Width - 1 do
+    begin
+      if J mod 2 = 1 then
+        LPixel^ := $FFFFFFFF
+      else
+        LPixel^ := $FFAEAEAE;
+      Inc(LPixel);
+    end;
+  end;
+  ScanlineTexture.Update(@LPixels[0], Parameters.Width * SizeOf(TIntColor), 0, ZeroIntRect)
 end;
 
 procedure TSetScreenForm.FormClick(Sender: TObject);
@@ -179,6 +214,11 @@ procedure TSetScreenForm.FormCreate(Sender: TObject);
 begin
   Left := (Screen.Width - Width) div 2;
   Top := (Screen.Height - Height) div 2;
+end;
+
+procedure TSetScreenForm.FormDestroy(Sender: TObject);
+begin
+  ScanlineTexture.Free;
 end;
 
 procedure TSetScreenForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);

@@ -23,7 +23,7 @@ var
   HyperImages: array[0..18] of TAImage;
 begin
   const Path = 'UI.wz/UIWindow4.img/Stat/main/';
-  CreateForm(Path + 'backgrnd', 617, 320);
+  CreateForm(Path + 'backgrnd', 417, 200);
   CreateButton('StatFormClose', 'UI.wz/Basic.img/BtClose3', 190, 7);
   CreateImage(Path + 'backgrnd2');
   CreateImage(Path + 'backgrnd3');
