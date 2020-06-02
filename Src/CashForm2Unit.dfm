@@ -14,8 +14,10 @@ object CashForm2: TCashForm2
   OldCreateOrder = False
   Scaled = False
   OnActivate = FormActivate
+  OnClick = FormClick
   OnCreate = FormCreate
   OnDestroy = FormDestroy
+  OnKeyDown = FormKeyDown
   PixelsPerInch = 120
   TextHeight = 16
   object PageControl1: TPageControl
@@ -62,6 +64,7 @@ object CashForm2: TCashForm2
         ParentFont = False
         ScrollBars = ssVertical
         TabOrder = 0
+        OnClick = CashGridClick
         HoverRowCells = [hcNormal, hcSelected]
         OnClickCell = CashGridClickCell
         ActiveCellFont.Charset = DEFAULT_CHARSET
@@ -218,10 +221,10 @@ object CashForm2: TCashForm2
     end
     object Button1: TButton
       Left = 292
-      Top = 10
+      Top = 6
       Width = 55
       Height = 33
-      Caption = 'Use'
+      Caption = 'Drop'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -15

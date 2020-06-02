@@ -3,8 +3,9 @@ unit MapBack;
 interface
 
 uses
-  Windows, SysUtils, StrUtils, AsphyreSprite, Generics.Collections, WZIMGFile, Global,
-  AbstractCanvas, Tools, MapleCharacter, MapleMap, WzUtils, System.Types;
+  Windows, SysUtils, StrUtils, PXT.Sprites, Generics.Collections, WZIMGFile, Global,
+  AbstractCanvas, Tools, MapleCharacter, MapleMap, WzUtils, System.Types,PXT.Types,
+  PXT.Graphics;
 
 type
   TMapBack = class(TBackgroundSprite)
@@ -34,7 +35,7 @@ type
 implementation
 
 uses
-  SaveMapFormUnit, MainUnit,ColorUtils, OptionsFormUnit;
+  SaveMapFormUnit, MainUnit;
 
 var
   cc: Integer;
@@ -84,10 +85,7 @@ begin
       if not HasLoad.contains(Entry) then
       begin
         HasLoad.Add(Entry);
-        if OptionsForm.CheckBox2.Checked then
-          DumpData(Entry, WzData, Images, ceSaturation, -100)
-        else
-          DumpData(Entry, WzData, Images);
+        DumpData(Entry, WzData, Images);
       end;
     end;
 
@@ -106,10 +104,7 @@ begin
       if not HasLoad.contains(AniEntry) then
       begin
         HasLoad.Add(AniEntry);
-        if OptionsForm.CheckBox2.Checked then
-          DumpData(AniEntry, WzData, Images, ceSaturation, -100)
-        else
-          DumpData(AniEntry, WzData, Images);
+        DumpData(AniEntry, WzData, Images);
       end;
     end;
 
@@ -136,7 +131,7 @@ begin
         InfoPath := Entry.GetPath;
         ImageEntry := Entry;
         if ImageEntry.Get('blend', '0') then
-          BlendMode := deAdd;
+          BlendMode := TBlendingEffect.Add;
       end;
 
       if Ani = 1 then

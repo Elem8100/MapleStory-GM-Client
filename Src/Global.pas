@@ -32,7 +32,7 @@ var
   GameCanvas: TGameCanvas;
   AvatarPanelTexture: TTexture;
   GameTargetMobInfo: TAsphyreRenderTargets = nil;
-
+  IsKMS: Boolean;
   UIEngine: TControlEngine = nil;
   SpriteEngine: TSpriteEngine;
   BackEngine: array[0..1] of TSpriteEngine;

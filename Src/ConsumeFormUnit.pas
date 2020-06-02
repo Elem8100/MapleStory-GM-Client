@@ -27,6 +27,9 @@ type
     procedure Edit1Change(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure FormClick(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure ConsumeGridClick(Sender: TObject);
   private
     HasLoad: Boolean;
     HasShowImageGrid: Boolean;
@@ -97,16 +100,24 @@ procedure TConsumeForm.Button1Click(Sender: TObject);
 begin
   if Trim(IDLabel.Caption) <> '' then
     TMobDrop.Drop(Round(Player.X), Round(Player.Y), 0, Trim(IDLabel.Caption));
+   ActiveControl := nil;
+end;
+
+procedure TConsumeForm.ConsumeGridClick(Sender: TObject);
+begin
+  ActiveControl := nil;
 end;
 
 procedure TConsumeForm.ConsumeGridClickCell(Sender: TObject; ARow, ACol: Integer);
 begin
   ImageAssignIcon(ConsumeGrid.Cells[1, ARow], 'Consume', IDLabel, NameLabel, Image1);
+  ActiveControl := nil;
 end;
 
 procedure TConsumeForm.Edit1Change(Sender: TObject);
 begin
   ConsumeGrid.NarrowDown(Trim(Edit1.Text));
+  ActiveControl := nil;
 end;
 
 procedure TConsumeForm.DumpIcons(AImageGrid: TImageEnMView; DirName: string; var AWZ: TWZArchive;
@@ -169,6 +180,11 @@ begin
   DumpIcons(ImageGrid, 'Consume', Wz, IconList);
 end;
 
+procedure TConsumeForm.FormClick(Sender: TObject);
+begin
+  ActiveControl := nil;
+end;
+
 procedure TConsumeForm.FormCreate(Sender: TObject);
 begin
   CreateImageGrid(ImageGrid, ConsumeForm, PageControl1.Pages[0]);
@@ -209,6 +225,13 @@ procedure TConsumeForm.FormDestroy(Sender: TObject);
 begin
   Wz.Free;
   IconList.Free;
+end;
+
+procedure TConsumeForm.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+ if Key = VK_MENU then
+    Key := 0;
 end;
 
 end.

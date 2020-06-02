@@ -3,7 +3,7 @@ object EtcForm: TEtcForm
   Top = 0
   Caption = 'EtcForm'
   ClientHeight = 553
-  ClientWidth = 345
+  ClientWidth = 384
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -14,36 +14,29 @@ object EtcForm: TEtcForm
   OldCreateOrder = False
   Scaled = False
   OnActivate = FormActivate
+  OnClick = FormClick
   OnCreate = FormCreate
   OnDestroy = FormDestroy
+  OnKeyDown = FormKeyDown
   PixelsPerInch = 120
   TextHeight = 16
   object PageControl1: TPageControl
     AlignWithMargins = True
     Left = 3
     Top = 65
-    Width = 339
+    Width = 378
     Height = 485
     Margins.Top = 65
     ActivePage = TabSheet1
     Align = alClient
     TabOrder = 0
-    ExplicitTop = -196
-    ExplicitWidth = 378
-    ExplicitHeight = 489
     object TabSheet1: TTabSheet
       Caption = #28040#32791
-      ExplicitWidth = 370
-      ExplicitHeight = 458
     end
     object TabSheet2: TTabSheet
       Caption = #25628#23563
       ImageIndex = 1
       OnShow = TabSheet2Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object EtcGrid: TAdvStringGrid
         AlignWithMargins = True
         Left = 0
@@ -71,6 +64,7 @@ object EtcForm: TEtcForm
         ParentFont = False
         ScrollBars = ssVertical
         TabOrder = 0
+        OnClick = EtcGridClick
         HoverRowCells = [hcNormal, hcSelected]
         OnClickCell = EtcGridClickCell
         ActiveCellFont.Charset = DEFAULT_CHARSET
@@ -227,10 +221,10 @@ object EtcForm: TEtcForm
     end
     object Button1: TButton
       Left = 292
-      Top = 10
+      Top = 7
       Width = 55
       Height = 33
-      Caption = 'Use'
+      Caption = 'Drop'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -15

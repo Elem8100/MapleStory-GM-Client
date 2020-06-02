@@ -3,8 +3,8 @@ unit ChatBalloon;
 interface
 
 uses
-  Windows, SysUtils, StrUtils, PXT.Sprites, Generics.Collections, Classes, WZIMGFile,
-   Global, WzUtils, PXT.Graphics;
+  Windows, SysUtils, StrUtils, PXT.Sprites, Generics.Collections, Classes, WZIMGFile, Global,
+  WzUtils, PXT.Graphics;
 
 type
   TBalloonInfo = record
@@ -41,7 +41,7 @@ type
 implementation
 
 uses
-  PXT.Types,PXT.Canvas;
+  PXT.Types, PXT.Canvas;
 
 class function TChatBalloon.GetS(var Remaining: string; const Width: Integer): string;
 var
@@ -66,11 +66,11 @@ begin
     begin
       NextWord := Copy(Remaining, 1, Index - 1);
       if PixelCount + Round(GameFont.ExtentByPixels(' ' + NextWord).Right)
-        {FontsAlt[3].TextWidth(' ' + NextWord)}   < Width then
+        {FontsAlt[3].TextWidth(' ' + NextWord)}    < Width then
       begin
         Result := Result + ' ' + NextWord;
         Inc(PixelCount, Round(GameFont.ExtentByPixels(' ' + NextWord).Right)
-          {FontsAlt[3].TextWidth(' ' + NextWord)}   - 5);
+          {FontsAlt[3].TextWidth(' ' + NextWord)}    - 5);
         Delete(Remaining, 1, Index)
       end
       else
@@ -92,7 +92,7 @@ begin
       else
       begin
         if PixelCount + Round(GameFont.ExtentByPixels(' ' + Remaining).Right)
-          {FontsAlt[3].TextWidth(' ' + Remaining)}   < Width then
+          {FontsAlt[3].TextWidth(' ' + Remaining)}    < Width then
         begin
           Result := Result + ' ' + Remaining;
           Remaining := ' '
@@ -181,13 +181,16 @@ end;
 
 procedure TChatBalloon.TextOut(X, Y, MaxWidth, FontHeight: Integer);
 begin
-  var FontSetting := TFontSettings.Create('Arial', 11);
-  FontSetting.Effect.BorderType := TFontBorder.None;
-  FontSetting.Effect.BorderOpacity := 1;
-  FontSetting.Weight := TFontWeight.Thin;
-  GameFont.FontSettings := FontSetting;
-   for var I := 0 to Round(GameFont.ExtentByPixels(FMsg).Right){FontsAlt[3].TextWidth(FMsg)}   div 80 + 1 do
-    GameFont.Draw(Point2f(X - 5, Y + I * 13), GetS(FMsg, 80), ARGB(255,125,0, 0));
+  var FontSettings: TFontSettings;
+  if ISKMS then
+    FontSettings := TFontSettings.Create('Tahoma', 10, TFontWeight.Normal)
+  else
+    FontSettings := TFontSettings.Create('Arial', 11, TFontWeight.Normal);
+
+  FontSettings.Effect.BorderType := TFontBorder.None;
+  GameFont.FontSettings := FontSettings;
+  for var I := 0 to Round(GameFont.ExtentByPixels(FMsg).Right){FontsAlt[3].TextWidth(FMsg)}    div 80 + 1 do
+    GameFont.Draw(Point2f(X - 5, Y + I * 13), GetS(FMsg, 80), ARGB(255, 125, 0, 0));
 end;
 
 function TChatBalloon.GetData(TileName: string): TBalloonInfo;
@@ -206,7 +209,7 @@ procedure TChatBalloon.TargetEvent;
 var
   I, J, Cx1, Cx2, Cx3, Mid: Integer;
 begin
-  Row := Round(GameFont.ExtentByPixels(FMsg).Right) {FontsAlt[3].TextWidth(FMsg)}   div 80 + 1;
+  Row := Round(GameFont.ExtentByPixels(FMsg).Right) {FontsAlt[3].TextWidth(FMsg)}    div 80 + 1;
   OffH := Row * C.Height + C.Origin.Y + S.Height;
   Cx1 := 0;
   Cx2 := 0;

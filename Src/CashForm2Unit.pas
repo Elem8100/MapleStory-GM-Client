@@ -26,6 +26,9 @@ type
     procedure TabSheet2Show(Sender: TObject);
     procedure CashGridClickCell(Sender: TObject; ARow, ACol: Integer);
     procedure Button1Click(Sender: TObject);
+    procedure CashGridClick(Sender: TObject);
+    procedure FormClick(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
   private
     HasLoad: Boolean;
     HasShowImageGrid: Boolean;
@@ -51,7 +54,7 @@ procedure TCashForm2.ImageGridSelect(Sender: TObject; idx: Integer);
 begin
   ConsumeForm.ImageAssignIcon(ImageGrid.ImageInfoText[idx], 'Cash', IDlabel, NameLabel, Image1);
   ActiveControl := nil;
-
+   ActiveControl := nil;
 end;
 
 procedure TCashForm2.TabSheet2Show(Sender: TObject);
@@ -80,6 +83,12 @@ procedure TCashForm2.Button1Click(Sender: TObject);
 begin
   if Trim(IDLabel.Caption) <> '' then
     TMobDrop.Drop(Round(Player.X), Round(Player.Y), 0, Trim(IDLabel.Caption));
+  ActiveControl := nil;
+end;
+
+procedure TCashForm2.CashGridClick(Sender: TObject);
+begin
+    ActiveControl := nil;
 end;
 
 procedure TCashForm2.CashGridClickCell(Sender: TObject; ARow, ACol: Integer);
@@ -98,6 +107,11 @@ begin
   ConsumeForm.DumpIcons(ImageGrid, 'Cash', Wz, IconList);
 end;
 
+procedure TCashForm2.FormClick(Sender: TObject);
+begin
+ ActiveControl := nil;
+end;
+
 procedure TCashForm2.FormCreate(Sender: TObject);
 begin
   ConsumeForm.CreateImageGrid(ImageGrid, CashForm2, PageControl1.Pages[0]);
@@ -110,6 +124,13 @@ procedure TCashForm2.FormDestroy(Sender: TObject);
 begin
   Wz.Free;
   IconList.Free;
+end;
+
+procedure TCashForm2.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+ if Key = VK_MENU then
+    Key := 0;
 end;
 
 end.

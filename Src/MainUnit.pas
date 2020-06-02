@@ -1,4 +1,4 @@
-unit MainUnit;
+ï»¿unit MainUnit;
 
 interface
 
@@ -155,7 +155,7 @@ procedure TMainForm.FamiliarButtonClick(Sender: TObject);
 begin
   if (not HasImgFile('String.wz/FamiliarSkill.img')) and (not HasImgFile('String.wz/Familiar.img')) then
   begin
-    MessageDlg('ÂÂª©wz¤£¤ä´©', mtInformation, [mbOK], 0);
+    MessageDlg('èˆŠç‰ˆwzä¸æ”¯æ´', mtInformation, [mbOK], 0);
     Exit;
   end
   else
@@ -627,7 +627,7 @@ begin
   if TMap.ShowFoothold then
     TFootholdTree.This.DrawFootHolds;
   if TMap.ShowMusic then
-    GameFont.Draw(Point2f(10, 50), '­µ¼Ö: ' + TMap.BgmPath, cRGB1(255, 0, 0));
+    GameFont.Draw(Point2f(10, 50), 'éŸ³æ¨‚: ' + TMap.BgmPath, cRGB1(255, 0, 0));
   UIEngine.Render(Canvas.Handle);
   GameCursor.Draw;
 
@@ -915,6 +915,8 @@ begin
         TNpc.FontSize := 13 //GMS
       else
         TNpc.FontSize := 12; //TMS
+      if StringWZ.GetImgFile('Mob.img').Root.Get('100000/name', '') = 'ë‹¬íŒ½ì´' then
+         IsKMS := True;
 
       MapWz := TWZArchive.Create(Path + '\Map.wz');
       if FileExists(Path + '\Map2.wz') then
@@ -1001,7 +1003,7 @@ begin
     end
     else
     begin
-      ShowMessage('¸ê®Æ§¨¸ô®|¿ù»~,  §ä¤£¨ì.wzÀÉ®×');
+      ShowMessage('è³‡æ–™å¤¾è·¯å¾‘éŒ¯èª¤,  æ‰¾ä¸åˆ°.wzæª”æ¡ˆ');
     end;
   end;
   ActiveControl := nil;

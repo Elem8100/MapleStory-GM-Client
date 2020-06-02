@@ -3,7 +3,7 @@ unit MapTile;
 interface
 
 uses
-  Windows, SysUtils, StrUtils, AsphyreSprite, Generics.Collections, WZIMGFile, Global, Tools,
+  Windows, SysUtils, StrUtils, PXT.Sprites, Generics.Collections, WZIMGFile, Global, Tools,
   WzUtils;
 
 type
@@ -16,7 +16,7 @@ type
 implementation
 
 uses
-  MapleMap, ColorUtils, OptionsFormUnit;
+  MapleMap;
 
 class procedure TMapTile.Create;
 var
@@ -35,12 +35,8 @@ begin
      // Entry := MapWZ.GetImgFile('Tile/' + tS + '.img').Root.Child[u].Child[no];
       Entry := GetImgEntry('Map.wz/Tile/' + tS + '.img/' + u + '/' + no);
       if not WzData.ContainsKey(Entry.GetPath) then
-      begin
-        if OptionsForm.CheckBox2.Checked then
-          DumpData(Entry, WzData, Images, ceSaturation, -100)
-        else
-          DumpData(Entry, WzData, Images);
-      end;
+        DumpData(Entry, WzData, Images);
+
       with TMapTile.Create(SpriteEngine) do
       begin
         ImageLib := Images;

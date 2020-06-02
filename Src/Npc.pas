@@ -38,7 +38,7 @@ type
     destructor Destroy; override;
     class var
       ReDrawTarget: Boolean;
-      FontSize:Integer;
+      FontSize: Integer;
       SummonedList: TList<string>;
     class procedure Create; overload;
     class procedure Drop(ID: string; PosX, PosY: Integer; Flip: Integer);
@@ -275,8 +275,12 @@ end;
 procedure TNpc.TargetEvent;
 var
   NameMiddle, FuncMiddle: Integer;
+  FontSettings: TFontSettings;
 begin
-  var FontSettings := TFontSettings.Create('Arial', FontSize, TFontWeight.Thin);
+  if ISKMS then
+    FontSettings := TFontSettings.Create('Tahoma', FontSize, TFontWeight.Normal)
+  else
+    FontSettings := TFontSettings.Create('Arial', FontSize, TFontWeight.Normal);
   FontSettings.Effect.BorderType := TFontBorder.None;
   GameFont.FontSettings := FontSettings;
   if HasFunc then
@@ -284,13 +288,13 @@ begin
     NameMiddle := (TargetWidth - FNameWidth) div 2;
     FuncMiddle := (TargetWidth - FFuncWidth) div 2;
     GameCanvas.FillRect(FloatRect(NameMiddle - 3, 0, FNameWidth + 5, 15), Colorrect($96000000));
-    GameCanvas.FillRect(FloatRect(FuncMiddle - 3, 17, FFuncWidth + 5, 15),Colorrect($96000000));
+    GameCanvas.FillRect(FloatRect(FuncMiddle - 3, 17, FFuncWidth + 5, 15), Colorrect($96000000));
     GameFont.Draw(Point2f(NameMiddle, -1), NpcName, Colorpair($FF00FFFF));
     GameFont.Draw(Point2f(FuncMiddle, 16), NpcFunc, Colorpair($FF00FFFF));
   end
   else
   begin
-    GameCanvas.FillRect(FloatRect(0, 0, FNameWidth + 5, 15),Colorrect($96000000));
+    GameCanvas.FillRect(FloatRect(0, 0, FNameWidth + 5, 15), Colorrect($96000000));
     GameFont.Draw(Point2f(3, -1), NpcName, Colorpair($FF00FFFF));
   end;
 end;

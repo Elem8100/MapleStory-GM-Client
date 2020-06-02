@@ -26,6 +26,9 @@ type
     procedure EtcGridClickCell(Sender: TObject; ARow, ACol: Integer);
     procedure FormActivate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure EtcGridClick(Sender: TObject);
+    procedure FormClick(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
   private
     HasLoad: Boolean;
     HasShowImageGrid: Boolean;
@@ -52,7 +55,6 @@ procedure TEtcForm.ImageGridSelect(Sender: TObject; idx: Integer);
 begin
   ConsumeForm.ImageAssignIcon(ImageGrid.ImageInfoText[idx], 'Etc', IDlabel, NameLabel, Image1,True);
   ActiveControl := nil;
-
 end;
 
 procedure TEtcForm.TabSheet2Show(Sender: TObject);
@@ -81,11 +83,18 @@ procedure TEtcForm.Button1Click(Sender: TObject);
 begin
   if Trim(IDLabel.Caption) <> '' then
     TMobDrop.Drop(Round(Player.X), Round(Player.Y), 0, Trim(IDLabel.Caption));
+  ActiveControl := nil;
+end;
+
+procedure TEtcForm.EtcGridClick(Sender: TObject);
+begin
+   ActiveControl := nil;
 end;
 
 procedure TEtcForm.EtcGridClickCell(Sender: TObject; ARow, ACol: Integer);
 begin
   ConsumeForm.ImageAssignIcon(EtcGrid.Cells[1, ARow], 'Etc', IDLabel, NameLabel, Image1,True);
+  ActiveControl := nil;
 end;
 
 procedure TEtcForm.FormActivate(Sender: TObject);
@@ -96,6 +105,11 @@ begin
     Exit;
   HasLoad := True;
   ConsumeForm.DumpIcons(ImageGrid, 'Etc', Wz, IconList);
+end;
+
+procedure TEtcForm.FormClick(Sender: TObject);
+begin
+  ActiveControl := nil;
 end;
 
 procedure TEtcForm.FormCreate(Sender: TObject);
@@ -110,6 +124,13 @@ procedure TEtcForm.FormDestroy(Sender: TObject);
 begin
   Wz.Free;
   IconList.Free;
+end;
+
+procedure TEtcForm.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+ if Key = VK_MENU then
+    Key := 0;
 end;
 
 end.

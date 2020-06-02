@@ -14,8 +14,10 @@ object ConsumeForm: TConsumeForm
   OldCreateOrder = False
   Scaled = False
   OnActivate = FormActivate
+  OnClick = FormClick
   OnCreate = FormCreate
   OnDestroy = FormDestroy
+  OnKeyDown = FormKeyDown
   PixelsPerInch = 120
   TextHeight = 16
   object PageControl1: TPageControl
@@ -28,16 +30,13 @@ object ConsumeForm: TConsumeForm
     ActivePage = TabSheet1
     Align = alClient
     TabOrder = 0
-    ExplicitWidth = 377
     object TabSheet1: TTabSheet
       Caption = #28040#32791
-      ExplicitWidth = 369
     end
     object TabSheet2: TTabSheet
       Caption = #25628#23563
       ImageIndex = 1
       OnShow = TabSheet2Show
-      ExplicitWidth = 369
       object ConsumeGrid: TAdvStringGrid
         AlignWithMargins = True
         Left = 0
@@ -65,6 +64,7 @@ object ConsumeForm: TConsumeForm
         ParentFont = False
         ScrollBars = ssVertical
         TabOrder = 0
+        OnClick = ConsumeGridClick
         HoverRowCells = [hcNormal, hcSelected]
         OnClickCell = ConsumeGridClickCell
         ActiveCellFont.Charset = DEFAULT_CHARSET
@@ -224,10 +224,10 @@ object ConsumeForm: TConsumeForm
     end
     object Button1: TButton
       Left = 292
-      Top = 10
+      Top = 6
       Width = 55
       Height = 33
-      Caption = 'Use'
+      Caption = 'Drop'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -15

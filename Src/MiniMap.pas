@@ -124,13 +124,20 @@ begin
     AEngine.Canvas.Draw(UIImages[MapMarkPic], 7, 17);
   end;
   PlayerMark := GetImgEntry('Map.wz/MapHelper.img/minimap/user');
-  var FontSetting := TFontSettings.Create('Arial', 12);
+
+  var FontSetting: TFontSettings;
+
+  if ISKMS then
+    FontSetting := TFontSettings.Create('Tahoma', 12, TFontWeight.Normal)
+  else
+    FontSetting := TFontSettings.Create('Arial', 12, TFontWeight.Normal);
+
   FontSetting.Effect.BorderType := TFontBorder.None;
   FontSetting.Effect.BorderOpacity := 1;
   FontSetting.Weight := TFontWeight.SemiBold;
-  GameFont.FontSettings :=  FontSetting;
-  GameFont.Draw(Point2f(50, 20), TMap.MapNameList[TMap.ID].StreetName, $FFFFFFFF);
-  GameFont.Draw(Point2f(50, 40), TMap.MapNameList[TMap.ID].MapName, $FFFFFFFF);
+  GameFont.FontSettings := FontSetting;
+  GameFont.Draw(Point2f(50, 17), TMap.MapNameList[TMap.ID].StreetName, $FFFFFFFF);
+  GameFont.Draw(Point2f(50, 37), TMap.MapNameList[TMap.ID].MapName, $FFFFFFFF);
 end;
 
 constructor TMiniMap.Create(AOwner: TComponent);

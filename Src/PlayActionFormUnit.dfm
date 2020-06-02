@@ -2,26 +2,36 @@ object PlayActionForm: TPlayActionForm
   Left = 0
   Top = 0
   Caption = 'PlayActionForm'
-  ClientHeight = 552
-  ClientWidth = 453
+  ClientHeight = 675
+  ClientWidth = 252
   Color = clBtnFace
+  Constraints.MaxWidth = 270
+  Constraints.MinWidth = 270
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -13
   Font.Name = 'Tahoma'
   Font.Style = []
   FormStyle = fsStayOnTop
+  KeyPreview = True
   OldCreateOrder = False
   Scaled = False
   OnActivate = FormActivate
+  OnClick = FormClick
   OnClose = FormClose
+  OnKeyDown = FormKeyDown
   PixelsPerInch = 120
   TextHeight = 16
   object ListBox1: TListBox
-    Left = 40
-    Top = 120
+    AlignWithMargins = True
+    Left = 5
+    Top = 45
     Width = 241
-    Height = 409
+    Height = 625
+    Margins.Left = 5
+    Margins.Top = 45
+    Margins.Bottom = 5
+    Align = alLeft
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -15
@@ -30,13 +40,20 @@ object PlayActionForm: TPlayActionForm
     ItemHeight = 18
     ParentFont = False
     TabOrder = 0
+    OnClick = ListBox1Click
   end
   object Button1: TButton
-    Left = 80
-    Top = 56
-    Width = 145
-    Height = 41
-    Caption = 'Button1'
+    Left = 40
+    Top = 8
+    Width = 161
+    Height = 30
+    Caption = 'Play'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -15
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
     TabOrder = 1
     OnClick = Button1Click
   end

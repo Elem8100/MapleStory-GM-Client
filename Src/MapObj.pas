@@ -3,8 +3,8 @@ unit MapObj;
 interface
 
 uses
-  Windows, SysUtils, StrUtils, AsphyreSprite, Generics.Collections, WZIMGFile, Global,
-  AbstractCanvas, Tools, Math, WzUtils;
+  Windows, SysUtils, StrUtils, PXT.Sprites, Generics.Collections, WZIMGFile, Global,
+  AbstractCanvas, Tools, Math, WzUtils,PXT.Types;
 
 type
   TMapObj = class(TSpriteEx)
@@ -38,7 +38,7 @@ type
 implementation
 
 uses
-  MapleMap, ColorUtils, OptionsFormUnit;
+  MapleMap;
 
 class procedure TMapObj.Create;
 var
@@ -68,13 +68,8 @@ begin
       else
         Entry := GetImgEntry('Map2.wz/Obj/' + oS + '.img/' + L0 + '/' + L1 + '/' + L2);
       if not WzData.ContainsKey(Entry.GetPath) then
-      begin
-       // DumpData(Entry, WzData, Images);
-        if OptionsForm.CheckBox2.Checked then
-          DumpData(Entry, WzData, Images, ceSaturation, -100)
-        else
-          DumpData(Entry, WzData, Images);
-      end;
+        DumpData(Entry, WzData, Images);
+
       _Flow := Iter.Get('flow', '0');
 
       if _Flow = 0 then
@@ -104,7 +99,7 @@ begin
           end;
 
           if ImageEntry.Get('blend', '0') then
-            BlendMode := deAdd;
+            BlendMode := TBlendingEffect.Add;
 
           Origin := ImageEntry.Get('origin').Vector;
           case MirrorX of
