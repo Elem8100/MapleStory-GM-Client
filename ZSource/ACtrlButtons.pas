@@ -96,7 +96,7 @@ type
 
     property BorderColor;
     property BorderWidth;
-    property Color;
+    //property Color;
     property Enabled;
     property Font;
     property FontColor;
@@ -203,7 +203,7 @@ begin
 
   BorderColor := clWhite1;
   BorderWidth := 0;
-  Color.SetFillColor($FFA6CAF0, $FFA6CAF0, $FF4090F0, $FF4090F0);
+  //Color.SetFillColor($FFA6CAF0, $FFA6CAF0, $FF4090F0, $FF4090F0);
   Font := 'tahoma10b';
   //FontColor.SetFontColor(clWhite2);
   Margin := 3;

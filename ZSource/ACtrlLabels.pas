@@ -62,7 +62,7 @@ type
     property Transparent;
     property BorderColor;
     property BorderWidth;
-    property Color;
+    //property Color;
     property Enabled;
     property Font;
     property FontColor;
@@ -159,7 +159,7 @@ begin
 
   BorderColor := $80FFFFFF;
   BorderWidth := 0;
-  Color.SetFillColor($FFA6CAF0, $FFA6CAF0, $FF4090F0, $FF4090F0);
+  //Color.SetFillColor($FFA6CAF0, $FFA6CAF0, $FF4090F0, $FF4090F0);
   Font := 'tahoma10b';
   //FontColor.SetFontColor(clWhite2);
   Margin := 2;
@@ -237,6 +237,11 @@ begin
   // Set initial values
   X := ClientLeft;
   Y := ClientTop;
+  var FontSetting := TFontSettings.Create('Arial', 11);
+  FontSetting.Effect.BorderType := TFontBorder.None;
+  FontSetting.Effect.BorderOpacity := 1;
+  FontSetting.Weight := TFontWeight.Thin;
+  GameFont.FontSettings := FontSetting;
   GameFont.Draw(Point2f(X, Y),Text,FontColor);
 
 end;

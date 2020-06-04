@@ -93,7 +93,7 @@ type
 
     property BorderColor;
     property BorderWidth;
-    property Color;
+    //property Color;
     property Enabled;
     property Font;
     property FontColor;
@@ -165,7 +165,7 @@ begin
   Top := 10;
   BorderColor := $80FFFFFF;
   BorderWidth := 0;
-  Color.SetFillColor($FFA6CAF0, $FFA6CAF0, $FFA6CAF0, $FFA6CAF0);
+  //Color.SetFillColor($FFA6CAF0, $FFA6CAF0, $FFA6CAF0, $FFA6CAF0);
   Font := 'tahoma10b';
   FontColor:=ColorPairWhite;
   Margin := 1;
@@ -453,8 +453,8 @@ begin
   end
   else
   begin
-    AEngine.Canvas.FillRect(FloatRect(X + BorderWidth, Y + BorderWidth,
-        X + Width - BorderWidth, Y + Height - BorderWidth), Cardinal(Color));
+  //  AEngine.Canvas.FillRect(FloatRect(X + BorderWidth, Y + BorderWidth,
+   //     X + Width - BorderWidth, Y + Height - BorderWidth), Cardinal(Color));
   end;
 
   // Draw Panels

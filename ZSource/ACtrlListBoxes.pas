@@ -87,7 +87,7 @@ type
     property SelectFontColor;
     property BorderColor;
     property BorderWidth;
-    property Color;
+   // property Color;
     property Enabled;
     property Font;
     property FontColor;
@@ -193,7 +193,7 @@ begin
   BorderColor := $80FFFFFF;
   BorderWidth := 1;
 
-  Color.SetFillColor($FF4090F0, $FF4090F0, $FF4090F0, $FF4090F0);
+  //Color.SetFillColor($FF4090F0, $FF4090F0, $FF4090F0, $FF4090F0);
 
   Font := 'tahoma10b';
   FontColor:=ColorPairWhite;
@@ -625,8 +625,8 @@ begin
   end
   else
   begin
-    AEngine.Canvas.FillRect(FloatRect(X + BorderWidth, Y + BorderWidth, X + Width - BorderWidth, Y +
-      Height - BorderWidth), Cardinal(Color));
+   // AEngine.Canvas.FillRect(FloatRect(X + BorderWidth, Y + BorderWidth, X + Width - BorderWidth, Y +
+    //  Height - BorderWidth), Cardinal(Color));
   end;
 
   // draw scroll bar

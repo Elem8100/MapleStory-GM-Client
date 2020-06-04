@@ -71,7 +71,7 @@ type
     property TextVerticalAlign;
     property BorderColor;
     property BorderWidth;
-    property Color;
+    //property Color;
     property Enabled;
     property Font;
     property FontColor;
@@ -221,7 +221,7 @@ begin
   Height := 240;
   BorderColor := clBlack1;
   BorderWidth := 1;
-  Color.SetFillColor($FFA6CAF0, $FFA6CAF0, $FF4090F0, $FF4090F0);
+  //Color.SetFillColor($FFA6CAF0, $FFA6CAF0, $FF4090F0, $FF4090F0);
   Font := 'tahoma10b';
   FontColor:=ColorPairWhite;
   Margin := 3;

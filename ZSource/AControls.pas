@@ -35,7 +35,7 @@ type
     FCanvas: TGameCanvas;
     //FImages: TAsphyreImages;
     //FFonts: TAsphyreFonts;
-    FImageLib: TObjectDictionary<TWZIMGEntry, TTexture>;
+    FImageLib: TDictionary<TWZIMGEntry, TTexture>;
     FParent: TControl;
 
     FActiveControl: TWControl;
@@ -110,7 +110,7 @@ type
     property Canvas: TGameCanvas read FCanvas;
     //property Fonts: TAsphyreFonts read FFonts;
     //property Images: TAsphyreImages read FImages;
-    property ImageLib: TObjectDictionary<TWZIMGEntry, TTexture> read FImageLib write FImageLib;
+    property ImageLib: TDictionary<TWZIMGEntry, TTexture> read FImageLib write FImageLib;
     property Parent: TControl read FParent write SetParent;
   end;
 
@@ -124,7 +124,7 @@ type
     FEnabled: Boolean;
     FBorderColor: TBorderColor;
     FBorderWidth: Word;
-    FColor: TFillColor;
+   // FColor: TFillColor;
     FControlState: TControlState;
     FFont: ShortString;
     FFontColor: TColorPair;
@@ -257,7 +257,7 @@ type
     property ClientLeft: Integer read GetClientLeft;
     property ClientTop: Integer read GetClientTop;
     property ClientRect: TRect read GetClientRect;
-    property Color: TFillColor read FColor write SetColor;
+    //property Color: TFillColor read FColor write SetColor;
     property ControlState: TControlState read FControlState write FControlState;
     property Enabled: Boolean read GetEnabled write SetEnabled;
     property Engine: TCustomEngine read AEngine write SetAEngine;
@@ -289,7 +289,7 @@ type
     FTabStop: Boolean;
     FOnEnter: TNotifyEvent;
     FOnExit: TNotifyEvent;
-    FOnKeyDown: TKeyEvent;
+    FOnKeyDown: TAKeyEvent;
     FOnKeyPress: TKeyPressEvent;
     FOnKeyUp: TKeyEvent;
     function GetControl(Index: Integer): TAControl;
@@ -319,7 +319,7 @@ type
 
     property OnEnter: TNotifyEvent read FOnEnter write FOnEnter;
     property OnExit: TNotifyEvent read FOnExit write FOnExit;
-    property OnKeyDown: TKeyEvent read FOnKeyDown write FOnKeyDown;
+    property OnKeyDown: TAKeyEvent read FOnKeyDown write FOnKeyDown;
     property OnKeyPress: TKeyPressEvent read FOnKeyPress write FOnKeyPress;
     property OnKeyUp: TKeyEvent read FOnKeyUp write FOnKeyUp;
   public
@@ -1018,7 +1018,7 @@ begin
       Enabled := Self.Enabled;
       BorderColor := Self.BorderColor;
       BorderWidth := Self.BorderWidth;
-      Color := Self.Color;
+      //Color := Self.Color;
       Font := Self.Font; // this set FAFont
       FontColor := Self.FontColor;
       Height := Self.Height;
@@ -1072,7 +1072,7 @@ begin
 
   FHandle := Self;
   FText := '';
-  FColor := TFillColor.Create;
+ // FColor := TFillColor.Create;
   FImageAlpha := $FFFFFFFF;
   FEnabled := True;
   FVisible := True;
@@ -1099,8 +1099,8 @@ end;
 
 destructor TAControl.Destroy;
 begin
-  FreeAndNil(FColor);
-  FreeAndNil(FFontColor);
+  //FreeAndNil(FColor);
+  //FreeAndNil(FFontColor);
 
   inherited Destroy;
 end;
@@ -1373,7 +1373,7 @@ end;
 
 procedure TAControl.SetColor(Color: TFillColor);
 begin
-  FColor.Assign(Color);
+  //FColor.Assign(Color);
 end;
 
 procedure TAControl.SetHeight(Value: Integer);

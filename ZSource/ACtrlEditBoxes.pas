@@ -94,7 +94,7 @@ type
     property SelectFontColor;
     property BorderColor;
     property BorderWidth;
-    property Color;
+    //property Color;
     property Enabled;
     property Font;
     property FontColor;
@@ -222,7 +222,7 @@ begin
   BorderColor := $80FFFFFF;
   BorderWidth := 1;
 
-  Color.SetFillColor($FF4090F0, $FF4090F0, $FF4090F0, $FF4090F0);
+  //Color.SetFillColor($FF4090F0, $FF4090F0, $FF4090F0, $FF4090F0);
 
   Font := 'tahoma10b';
   FontColor := ColorPairWhite;
@@ -673,7 +673,7 @@ var
   ASelectColor: TColor4;
   AChars: TAChars;
 begin
-  var FontSetting := TFontSettings.Create('Consolas', 12);
+  var FontSetting := TFontSettings.Create('Arial', 12);
   FontSetting.Effect.BorderType := TFontBorder.None;
   FontSetting.Effect.BorderOpacity := 1;
   FontSetting.Weight := TFontWeight.Thin;

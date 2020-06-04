@@ -81,7 +81,7 @@ type
     property Transparent;
     property BorderColor;
     property BorderWidth;
-    property Color;
+    //property Color;
     property Enabled;
     property Font;
     property FontColor;
@@ -184,7 +184,7 @@ begin
   Height := 24;
   BorderColor := $80FFFFFF;
   BorderWidth := 0;
-  Color.SetFillColor($FF4090F0, $FF4090F0, $FF4090F0, $FF4090F0);
+  //Color.SetFillColor($FF4090F0, $FF4090F0, $FF4090F0, $FF4090F0);
   Font := 'tahoma10b';
   FontColor:=ColorPairWhite;
   Margin := 3;
@@ -291,8 +291,8 @@ begin
     end
     else
     begin
-      AEngine.Canvas.FillRect(FloatRect(X + BorderWidth, Y + BorderWidth, X + Width - BorderWidth, Y
-        + Height - BorderWidth), Cardinal(Color));
+    //  AEngine.Canvas.FillRect(FloatRect(X + BorderWidth, Y + BorderWidth, X + Width - BorderWidth, Y
+     //   + Height - BorderWidth), Cardinal(Color));
     end;
   end;
 

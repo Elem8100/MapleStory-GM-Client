@@ -63,7 +63,7 @@ type
     property Transparent;
     property BorderColor;
     property BorderWidth;
-    property Color;
+    //property Color;
     property Enabled;
     //property Font;
     //property FontColor;
@@ -171,7 +171,7 @@ begin
   BorderWidth := 1;
   BorderColor := $80FFFFFF;
 
-  Color.SetFillColor($FF4090F0, $FF4090F0, $FF4090F0, $FF4090F0);
+  //Color.SetFillColor($FF4090F0, $FF4090F0, $FF4090F0, $FF4090F0);
   Font := 'tahoma10b';
   FontColor:=ColorPairWhite;
   Margin := 2;
