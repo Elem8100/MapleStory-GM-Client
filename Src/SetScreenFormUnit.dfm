@@ -2,7 +2,7 @@ object SetScreenForm: TSetScreenForm
   Left = 0
   Top = 0
   BorderStyle = bsDialog
-  Caption = 'SetScreen'
+  Caption = #30059#38754#32302#25918
   ClientHeight = 602
   ClientWidth = 200
   Color = clBtnFace

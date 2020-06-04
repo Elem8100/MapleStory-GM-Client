@@ -16,6 +16,7 @@ type
     procedure ListBox1Click(Sender: TObject);
     procedure FormClick(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure FormCreate(Sender: TObject);
   private
     HasLoad: Boolean;
     { Private declarations }
@@ -61,8 +62,13 @@ begin
   Playing := False;
 end;
 
-procedure TPlayActionForm.FormKeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
+procedure TPlayActionForm.FormCreate(Sender: TObject);
+begin
+  Left := (Screen.Width - Width) div 2;
+  Top := (Screen.Height - Height) div 2;
+end;
+
+procedure TPlayActionForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   if Key = VK_MENU then
     Key := 0;

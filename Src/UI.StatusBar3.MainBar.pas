@@ -130,7 +130,7 @@ begin
       GameCanvas.Draw(UIImages[Entry.Get('layer:cover')], -1, 0);
       NumberTextout(50, 30, '1000002\3258880022');
       PosX := 0;
-      NumberTextout(50, 46, '25\25668');
+      NumberTextout(50, 46, '25668\25668');
       GameCanvas.Draw(UIImages[Entry.Get('layer:lv')], 24, 8);
       for var I := 1 to Length(Level.ToString) do
       begin

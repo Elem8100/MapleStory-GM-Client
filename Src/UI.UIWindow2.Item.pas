@@ -416,7 +416,7 @@ begin
         case TabIndex of
           0:
             begin
-             Pos[0] := Thumb.Top;
+              Pos[0] := Thumb.Top;
               EquipSlot.Move((50 - Thumb.Top) div 10);
             end;
           1:
@@ -476,8 +476,18 @@ begin
     begin
       SelectTab(4);
     end;
-
+  CreateLabel('ItemMeso', '991,332,550', 52, 268);
+  CreateLabel('ItemMaplePoints', '601,888', 97, 285);
 end;
+
+initialization
+
+finalization
+  EquipSlot.Free;
+  ConsumeSlot.Free;
+  EtcSlot.Free;
+  InstallSlot.Free;
+  CashSlot.Free;
 
 end.
 

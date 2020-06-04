@@ -21,7 +21,7 @@ procedure CreateUserInfoForm;
 implementation
 
 uses
-  UI.Utils, ACtrlLabels, MainUnit, MapleCharacter, MapleChair, Tamingmob;
+  UI.Utils, ACtrlLabels, MainUnit, MapleCharacter, MapleChair, Tamingmob,ShowOptionUnit;
 
 procedure TUserInfoAvatarImage.Paint(DC: HDC);
 begin
@@ -62,7 +62,7 @@ begin
   end;
 
   CreateImage(Path + 'name');
-  CreateLabel('UserInfoName', 'SuperGM', 26, 137, lcWhite);
+  CreateLabel('UserInfoName', ShowOptionForm.Edit1.Text, 26, 137, lcWhite);
   CreateLabel('UserInfoLv', '255', 152, 69);
   CreateLabel('UserInfoJob', 'SuperGM', 152, 87);
   CreateLabel('UserInfoFame', '555', 152, 105);

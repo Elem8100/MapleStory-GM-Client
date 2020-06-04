@@ -2532,6 +2532,13 @@ object AvatarForm: TAvatarForm
     Width = 262
     Height = 202
   end
+  object Label7: TLabel
+    Left = 469
+    Top = 228
+    Width = 30
+    Height = 16
+    Caption = #34920#24773
+  end
   object Panel1: TPanel
     Left = 453
     Top = 12
@@ -2730,18 +2737,10 @@ object AvatarForm: TAvatarForm
     object TabSheet2: TTabSheet
       Caption = #36617#20837#35282#33394
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
     end
     object TabSheet3: TTabSheet
       Caption = #26579#33394
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object ColorGrid: TAdvStringGrid
         Left = 0
         Top = 0
@@ -3123,18 +3122,10 @@ object AvatarForm: TAvatarForm
     object TabSheet5: TTabSheet
       Caption = #25918#20154#29289
       ImageIndex = 4
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
     end
     object TabSheet6: TTabSheet
       Caption = #20786#23384'Png'
       ImageIndex = 5
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label2: TLabel
         Left = 310
         Top = 16

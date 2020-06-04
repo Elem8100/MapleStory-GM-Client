@@ -80,8 +80,8 @@ type
 
 var
   GameCursor: TGameCursor;
-  UIImages: TObjectDictionary<TWZIMGEntry, TTexture>;
-  UIData: TObjectDictionary<string, TWZIMGEntry>;
+  UIImages: TDictionary<TWZIMGEntry, TTexture>;
+  UIData: TDictionary<string, TWZIMGEntry>;
   UIButton: TDictionary<string, TAButton>;
   UIForm: TDictionary<string, TAForm>;
   UIImage: TDictionary<string, TAImage>;
@@ -451,7 +451,7 @@ begin
   var Edit := TAEditBox.Create(UIEngine.AForm(UIOwner));
   with Edit do
   begin
-    Color.SetFillColor(cRGB4(0, 0, 0, 0));
+    //Color.SetFillColor(cRGB4(0, 0, 0, 0));
     BorderWidth := 0;
     Left := X;
     Top := Y;
@@ -517,7 +517,7 @@ begin
     RowWidth := 30;
     RowHeight := 30;
     Name := ToName(AImagePath);
-    Color.SetFillColor(cRGB4(250, 0, 0, 0));
+    //Color.SetFillColor(cRGB4(250, 0, 0, 0));
     BorderWidth := 1;
     Rows := Row;
     Columns := Col;
@@ -553,7 +553,7 @@ begin
     Top := Y; //Y + -Entry.Child['origin'].Vector.Y + 1000;
     BorderWidth := 0;
     ShadowWidth := 0;
-    Color := fColor;
+    //Color := fColor;
    // Ax := Width - 22;
   end;
   fColor.Free;
@@ -570,17 +570,25 @@ var
   DragEnabled: Boolean;
 
 initialization
-  UIData := TObjectDictionary<string, TWZIMGEntry>.Create;
-  UIImages := TObjectDictionary<TWZIMGEntry, TTexture>.Create;
+  UIData := TDictionary<string, TWZIMGEntry>.Create;
+  UIImages := TDictionary<TWZIMGEntry, TTexture>.Create;
   UIButton := TDictionary<string, TAButton>.Create;
   UIForm := TDictionary<string, TAForm>.Create;
   UIImage := TDictionary<string, TAImage>.Create;
   UILabel := TDictionary<string, TALabel>.Create;
   UIEdit := TDictionary<string, TAEditBox>.Create;
   //UITab := TDictionary<string, TUITab>.Create;
-
   GameCursor := TGameCursor.Create;
   GameCursor.CursorNumber := '0';
-
+finalization
+  UIData.Free;
+  UIImages.Free;
+  UIButton.Free;
+  UIForm.Free;
+  UIImage.Free;
+  UILabel.Free;
+  UIEdit.Free;
+  GameCursor.Free;
+  UIEngine.Free;
 end.
 

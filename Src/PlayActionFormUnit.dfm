@@ -1,7 +1,7 @@
 object PlayActionForm: TPlayActionForm
   Left = 0
   Top = 0
-  Caption = 'PlayActionForm'
+  Caption = #21205#20316#21015#34920
   ClientHeight = 675
   ClientWidth = 252
   Color = clBtnFace
@@ -19,6 +19,7 @@ object PlayActionForm: TPlayActionForm
   OnActivate = FormActivate
   OnClick = FormClick
   OnClose = FormClose
+  OnCreate = FormCreate
   OnKeyDown = FormKeyDown
   PixelsPerInch = 120
   TextHeight = 16

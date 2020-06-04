@@ -247,7 +247,8 @@ begin
   if TMap.ShowNPC then
   begin
     inherited;
-    GameCanvas.Draw(TargetTexture, NamePos - 3, WY + 2);
+    if TMap.ShowNpcName then
+      GameCanvas.Draw(TargetTexture, NamePos - 3, WY + 2);
     Inc(Counter);
     if Counter > 700 then
     begin

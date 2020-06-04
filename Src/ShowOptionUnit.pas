@@ -26,6 +26,9 @@ type
     Button1: TButton;
     Label1: TLabel;
     Edit1: TEdit;
+    CheckBox14: TCheckBox;
+    CheckBox15: TCheckBox;
+    CheckBox16: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure CheckBox1Click(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -48,7 +51,8 @@ procedure TShowOptionForm.Button1Click(Sender: TObject);
 begin
   TLabelRingTag.LabelRingTag.MedalName := Edit1.Text;
   TStatusBar3MainBar.Instance.ReDraw;
-  UILabel['UserInfoName'].Text:=  Edit1.Text;
+  if UILabel.ContainsKey('UserInfoName') then
+    UILabel['UserInfoName'].Text:=  Edit1.Text;
   TLabelRingTag.LabelRingTag.InitData;
   TLabelRingTag.ReDraw;
   Button1.SetFocus;
@@ -76,6 +80,9 @@ begin
     11: TMap.ShowChar := not TMap.ShowChar;
     12: TMap.ShowFoothold := not TMap.ShowFoothold;
     13: TMap.ShowMusic := not TMap.ShowMusic;
+    14: TMap.ShowUI := not TMap.ShowUI;
+    15: TMap.ShowMiniMap := not TMap.ShowMiniMap;
+    16: TMap.ShowNpcName := not TMap.ShowNpcName;
   end;
   ActiveControl:= nil;
 end;

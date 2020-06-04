@@ -147,8 +147,9 @@ uses
   DamageSkinFormUnit, WorldMapFormUnit, CashFormUnit, TamingMobFormUnit, NameTag, MapleEffect,
   TamingMob, MapleChair, LabelRingFormUnit, PetFormUnit, Pet, FamiliarFormUnit, MonsterFamiliar,
   SkillFormUnit, Skill, OptionsFormUnit, AvatarFormUnit, AndroidFormUnit, Android, MiniMap,
-  ACtrlEngine, SetScreenFormUnit, ConsumeFormUnit, CashForm2Unit, EtcFormUnit,PlayActionFormUnit, UI.Utils, acontrols,
-  UI.Statusbar3.MainBar, UI.StatusBar3.Chat,UI.UIWindow2.UserInfo;
+  ACtrlEngine, SetScreenFormUnit, ConsumeFormUnit, CashForm2Unit, EtcFormUnit, PlayActionFormUnit,
+  UI.Utils, acontrols, UI.Statusbar3.MainBar, UI.StatusBar3.Chat, UI.UIWindow2.UserInfo,
+  UI.UIWindow2.Item;
 {$R *.dfm}
 
 procedure TMainForm.FamiliarButtonClick(Sender: TObject);
@@ -170,8 +171,6 @@ end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
-  GameCanvas.Free;
-  //FreeAndNil(GameDevice);
   FreeAndNil(SpriteEngine);
   FreeAndNil(Keyboard);
   BackEngine[0].Free;
@@ -215,8 +214,19 @@ begin
   Sound2Wz.Free;
   Data.Free;
   CircleList.Free;
+  {
+  AvatarPanelTexture.Free;
+  FullScreenTexture.Free;
+  CheckBoardtexture.Free;
+  GameCanvas.Free;
+  FDevice.Free;
+  GameDevice2.Free;
+  GameDevice3.Free;
+  GameFont.Free;
+   }
+  //UIEngine.Free;
   // DropList
-   //ReportMemoryLeaksOnShutdown := True;
+  ReportMemoryLeaksOnShutdown := True;
 end;
 
 procedure TMainForm.FormKeyDown(Sender: TObject; var KEY: Word; Shift: TShiftState);
@@ -619,7 +629,7 @@ begin
   BackEngine[1].Draw;
 
  // if TMap.ShowFPS then
-  GameFont.Draw(Point2f(10, 10), 'FPS: ' + IntToStr(Timer.FrameRate), cRGB1(255, 0, 0));
+  //GameFont.Draw(Point2f(10, 10), 'FPS: ' + IntToStr(Timer.FrameRate), cRGB1(255, 0, 0));
   // if TMap.ShowMobInfo then
    // GameCanvas.Draw(GameTargetMobInfo[0], 0, 20, 1, False, 255, 255, 255, 255);
   if TMap.FadeScreen.DoFade then
@@ -627,9 +637,25 @@ begin
   if TMap.ShowFoothold then
     TFootholdTree.This.DrawFootHolds;
   if TMap.ShowMusic then
-    GameFont.Draw(Point2f(10, 50), '音樂: ' + TMap.BgmPath, cRGB1(255, 0, 0));
-  UIEngine.Render(Canvas.Handle);
-  GameCursor.Draw;
+  begin
+    var FontSettings := TFontSettings.Create('Tahoma', 12, TFontWeight.Normal);
+    GameFont.FontSettings := FontSettings;
+    GameFont.Draw(Point2f(10, 50), '音樂: ' + TMap.BgmPath, $FFFF0000);
+  end;
+  if UIVersion = 3 then
+  begin
+    if TMap.ShowUI then
+    begin
+      UIEngine.Render(Canvas.Handle);
+      if TSlots.PickUpItem <> nil then
+      begin
+        var Mx := Mouse.CursorPos.X - MainForm.Left - 230; // .clMainForm.clientleft.;
+        var MY := Mouse.CursorPos.Y - MainForm.Top - 120;
+        GameCanvas.Draw(UIImages[TSlots.PickUpItem], Mx, MY);
+      end;
+      GameCursor.Draw;
+     end;
+  end;
 
 end;
 
@@ -853,9 +879,8 @@ begin
     OpenMSFolder.Enabled := False;
     ComboKey.Enabled := False;
   end;
-
- 
-  RenderForm.Cursor := crNone;
+  if UIVersion = 3 then
+    RenderForm.Cursor := crNone;
   RenderForm.FormResize(Sender);
   ActiveControl := nil;
 end;
@@ -911,12 +936,13 @@ begin
       end;
       WzPath := Path;
       StringWZ := TWZArchive.Create(Path + '\String.wz');
-      if GetImgEntry('String/Mob.img/100000').Get('name', '') = 'Snail' then
+
+      if StringWZ.GetImgFile('Mob.img').Root.Get('100100/name', '') = 'Snail' then
         TNpc.FontSize := 13 //GMS
       else
         TNpc.FontSize := 12; //TMS
-      if StringWZ.GetImgFile('Mob.img').Root.Get('100000/name', '') = '달팽이' then
-         IsKMS := True;
+      if StringWZ.GetImgFile('Mob.img').Root.Get('100100/name', '') = '달팽이' then
+        IsKMS := True;
 
       MapWz := TWZArchive.Create(Path + '\Map.wz');
       if FileExists(Path + '\Map2.wz') then
@@ -943,6 +969,8 @@ begin
       CharacterWZ := TWZArchive.Create(Path + '\Character.wz');
       BaseWZ := TWZArchive.Create(Path + '\Base.wz');
       UIWZ := TWZArchive.Create(Path + '\UI.wz');
+      if HasImgFile('UI.wz/UIWindow4.img') then
+        UIVersion := 3;
       ReactorWz := TWZArchive.Create(Path + '\Reactor.wz');
       EffectWz := TWZArchive.Create(Path + '\Effect.wz');
       SkillWZ := TWZArchive.Create(Path + '\Skill.wz');
@@ -1113,7 +1141,7 @@ end;
 
 procedure TMainForm.EtcButtonClick(Sender: TObject);
 begin
- Etcform.Show;
+  Etcform.Show;
 end;
 
 procedure TMainForm.ConsumeButtonClick(Sender: TObject);

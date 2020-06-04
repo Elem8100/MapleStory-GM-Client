@@ -71,6 +71,7 @@ type
     LabelX: TLabel;
     LabelY: TLabel;
     ExpressionListBox: TComboBox;
+    Label7: TLabel;
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure SpeedButton9Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);

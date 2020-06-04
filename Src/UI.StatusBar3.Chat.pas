@@ -170,5 +170,8 @@ end;
 initialization
   TChatViewImage.StrList := TList<string>.Create;
 
+finalization
+  TChatViewImage.StrList.Free;
+
 end.
 

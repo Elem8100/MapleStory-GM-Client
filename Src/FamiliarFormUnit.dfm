@@ -1,7 +1,7 @@
 object FamiliarForm: TFamiliarForm
   Left = 0
   Top = 0
-  Caption = 'Familiar'
+  Caption = #33804#29560
   ClientHeight = 614
   ClientWidth = 357
   Color = clBtnFace
@@ -25,13 +25,7 @@ object FamiliarForm: TFamiliarForm
     Top = 6
     Width = 169
     Height = 30
-    Caption = 'Remove'
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -15
-    Font.Name = 'Tahoma'
-    Font.Style = []
-    ParentFont = False
+    Caption = #21462#28040
     TabOrder = 0
     OnClick = Button1Click
   end
@@ -44,28 +38,22 @@ object FamiliarForm: TFamiliarForm
     Margins.Top = 45
     ActivePage = TabSheet1
     Align = alClient
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -15
-    Font.Name = 'Tahoma'
-    Font.Style = []
-    ParentFont = False
     TabOrder = 1
     object TabSheet1: TTabSheet
-      Caption = 'Familiar'
+      Caption = #33804#29560
       object Label1: TLabel
-        Left = 9
+        Left = 24
         Top = 7
-        Width = 44
-        Height = 18
-        Caption = 'Search'
+        Width = 30
+        Height = 16
+        Caption = #25628#23563
       end
       object FamiliarGrid: TAdvStringGrid
         AlignWithMargins = True
         Left = 4
         Top = 32
         Width = 329
-        Height = 493
+        Height = 495
         Cursor = crDefault
         Margins.Left = 4
         Margins.Top = 32
@@ -206,21 +194,20 @@ object FamiliarForm: TFamiliarForm
         Left = 60
         Top = 4
         Width = 129
-        Height = 26
-        Color = clCream
+        Height = 24
         TabOrder = 1
         OnChange = Edit1Change
       end
     end
     object TabSheet2: TTabSheet
-      Caption = 'Dye'
+      Caption = #26579#33394
       ImageIndex = 1
       object DyeGrid: TAdvStringGrid
         AlignWithMargins = True
         Left = 0
         Top = 5
         Width = 341
-        Height = 528
+        Height = 530
         Cursor = crDefault
         Margins.Left = 0
         Margins.Top = 5

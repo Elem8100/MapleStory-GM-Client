@@ -2,9 +2,9 @@ object ShowOptionForm: TShowOptionForm
   Left = 0
   Top = 0
   BorderStyle = bsDialog
-  Caption = 'Display'
-  ClientHeight = 175
-  ClientWidth = 590
+  Caption = #39023#31034
+  ClientHeight = 142
+  ClientWidth = 671
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -21,18 +21,18 @@ object ShowOptionForm: TShowOptionForm
   PixelsPerInch = 120
   TextHeight = 16
   object Bevel1: TBevel
-    Left = 60
-    Top = 127
+    Left = 161
+    Top = 94
     Width = 369
     Height = 40
     Shape = bsFrame
   end
   object Label1: TLabel
-    Left = 60
-    Top = 138
-    Width = 43
+    Left = 167
+    Top = 107
+    Width = 42
     Height = 16
-    Caption = 'Char ID'
+    Caption = #35282#33394'ID'
   end
   object CheckBox1: TCheckBox
     Left = 17
@@ -58,7 +58,7 @@ object ShowOptionForm: TShowOptionForm
     Width = 84
     Height = 17
     TabStop = False
-    Caption = 'Mob Info'
+    Caption = #24618#29289#36039#26009
     DoubleBuffered = True
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -76,7 +76,7 @@ object ShowOptionForm: TShowOptionForm
     Top = 59
     Width = 73
     Height = 17
-    Caption = 'Foothold'
+    Caption = #31449#33139#32218
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -13
@@ -88,8 +88,8 @@ object ShowOptionForm: TShowOptionForm
   end
   object CheckBox12: TCheckBox
     Tag = 10
-    Left = 315
-    Top = 82
+    Left = 18
+    Top = 98
     Width = 51
     Height = 17
     TabStop = False
@@ -112,7 +112,7 @@ object ShowOptionForm: TShowOptionForm
     Top = 55
     Width = 57
     Height = 22
-    Caption = 'Player'
+    Caption = #20154#29289
     Checked = True
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -130,7 +130,7 @@ object ShowOptionForm: TShowOptionForm
     Top = 60
     Width = 90
     Height = 17
-    Caption = 'Portal Info'
+    Caption = #20659#40670#36039#35338
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -13
@@ -147,7 +147,7 @@ object ShowOptionForm: TShowOptionForm
     Width = 49
     Height = 17
     TabStop = False
-    Caption = 'Back'
+    Caption = #32972#26223
     Checked = True
     DoubleBuffered = True
     Font.Charset = DEFAULT_CHARSET
@@ -189,7 +189,7 @@ object ShowOptionForm: TShowOptionForm
     Width = 49
     Height = 17
     TabStop = False
-    Caption = 'Mob'
+    Caption = #24618#29289
     Checked = True
     DoubleBuffered = True
     Font.Charset = DEFAULT_CHARSET
@@ -210,7 +210,7 @@ object ShowOptionForm: TShowOptionForm
     Width = 61
     Height = 17
     TabStop = False
-    Caption = 'Portal'
+    Caption = #20659#40670
     Checked = True
     DoubleBuffered = True
     Font.Charset = DEFAULT_CHARSET
@@ -231,7 +231,7 @@ object ShowOptionForm: TShowOptionForm
     Width = 124
     Height = 17
     TabStop = False
-    Caption = 'Mob Name/Lv'
+    Caption = #24618#29289' '#31561#32026'/'#21517#31281
     DoubleBuffered = True
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -269,7 +269,7 @@ object ShowOptionForm: TShowOptionForm
     Width = 49
     Height = 17
     TabStop = False
-    Caption = 'Obj'
+    Caption = #29289#20214
     Checked = True
     DoubleBuffered = True
     Font.Charset = DEFAULT_CHARSET
@@ -289,27 +289,63 @@ object ShowOptionForm: TShowOptionForm
     Top = 23
     Width = 81
     Height = 17
-    Caption = 'Bgm Name'
+    Caption = #38899#27138#21517#31281
     TabOrder = 13
     OnClick = CheckBox1Click
   end
+  object Button1: TButton
+    Left = 465
+    Top = 98
+    Width = 60
+    Height = 30
+    Caption = #30906#23450
+    TabOrder = 14
+    OnClick = Button1Click
+  end
   object Edit1: TEdit
-    Left = 110
-    Top = 135
+    Left = 215
+    Top = 102
     Width = 245
     Height = 24
     Alignment = taRightJustify
     MaxLength = 25
-    TabOrder = 14
+    TabOrder = 15
     Text = 'SuperGM'
   end
-  object Button1: TButton
-    Left = 360
-    Top = 130
-    Width = 60
-    Height = 30
-    Caption = 'OK'
-    TabOrder = 15
-    OnClick = Button1Click
+  object CheckBox14: TCheckBox
+    Tag = 14
+    Left = 538
+    Top = 23
+    Width = 46
+    Height = 17
+    Caption = 'UI'
+    Checked = True
+    State = cbChecked
+    TabOrder = 16
+    OnClick = CheckBox1Click
+  end
+  object CheckBox15: TCheckBox
+    Tag = 15
+    Left = 590
+    Top = 23
+    Width = 81
+    Height = 17
+    Caption = #23567#22320#22294
+    Checked = True
+    State = cbChecked
+    TabOrder = 17
+    OnClick = CheckBox1Click
+  end
+  object CheckBox16: TCheckBox
+    Tag = 16
+    Left = 523
+    Top = 58
+    Width = 81
+    Height = 17
+    Caption = 'Npc'#21517#31281
+    Checked = True
+    State = cbChecked
+    TabOrder = 18
+    OnClick = CheckBox1Click
   end
 end

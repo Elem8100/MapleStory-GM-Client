@@ -35,6 +35,8 @@ procedure TMiniMap.Paint(DC: HDC);
 var
   x, y, px, py: Integer;
 begin
+  if not TMap.ShowMiniMap then
+    Exit;
   x := ClientLeft;
   y := ClientTop;
   Engine.Canvas.Draw(TargetTexture, x, y);
@@ -171,9 +173,6 @@ begin
   Height := TMap.MiniMapHeight + 40;
 end;
 
-initialization
-  UIData := TObjectDictionary<string, TWZIMGEntry>.Create;
-  UIImages := TObjectDictionary<TWZIMGEntry, TTexture>.Create;
 
 end.
 
