@@ -125,7 +125,7 @@ end;
 
 procedure TAddMobForm.PageControl1Change(Sender: TObject);
 begin
-
+   exit;
   case PageControl1.TabIndex of
     1:
       begin
@@ -294,7 +294,6 @@ end;
 procedure TAddMobForm.Edit2Change(Sender: TObject);
 begin
   MobGrid.NarrowDown(Trim(Edit2.Text));
-
 end;
 
 procedure TAddMobForm.FormActivate(Sender: TObject);

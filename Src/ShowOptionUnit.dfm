@@ -2,7 +2,7 @@ object ShowOptionForm: TShowOptionForm
   Left = 0
   Top = 0
   BorderStyle = bsDialog
-  Caption = #39023#31034
+  Caption = 'Display'
   ClientHeight = 142
   ClientWidth = 671
   Color = clBtnFace
@@ -30,9 +30,9 @@ object ShowOptionForm: TShowOptionForm
   object Label1: TLabel
     Left = 167
     Top = 107
-    Width = 42
+    Width = 43
     Height = 16
-    Caption = #35282#33394'ID'
+    Caption = 'Char ID'
   end
   object CheckBox1: TCheckBox
     Left = 17
@@ -58,7 +58,7 @@ object ShowOptionForm: TShowOptionForm
     Width = 84
     Height = 17
     TabStop = False
-    Caption = #24618#29289#36039#26009
+    Caption = 'Mob Info'
     DoubleBuffered = True
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -76,7 +76,7 @@ object ShowOptionForm: TShowOptionForm
     Top = 59
     Width = 73
     Height = 17
-    Caption = #31449#33139#32218
+    Caption = 'Foothold'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -13
@@ -112,7 +112,7 @@ object ShowOptionForm: TShowOptionForm
     Top = 55
     Width = 57
     Height = 22
-    Caption = #20154#29289
+    Caption = 'Player'
     Checked = True
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -130,7 +130,7 @@ object ShowOptionForm: TShowOptionForm
     Top = 60
     Width = 90
     Height = 17
-    Caption = #20659#40670#36039#35338
+    Caption = 'Portal Info'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -13
@@ -147,7 +147,7 @@ object ShowOptionForm: TShowOptionForm
     Width = 49
     Height = 17
     TabStop = False
-    Caption = #32972#26223
+    Caption = 'Back'
     Checked = True
     DoubleBuffered = True
     Font.Charset = DEFAULT_CHARSET
@@ -189,7 +189,7 @@ object ShowOptionForm: TShowOptionForm
     Width = 49
     Height = 17
     TabStop = False
-    Caption = #24618#29289
+    Caption = 'Mob'
     Checked = True
     DoubleBuffered = True
     Font.Charset = DEFAULT_CHARSET
@@ -210,7 +210,7 @@ object ShowOptionForm: TShowOptionForm
     Width = 61
     Height = 17
     TabStop = False
-    Caption = #20659#40670
+    Caption = 'Portal'
     Checked = True
     DoubleBuffered = True
     Font.Charset = DEFAULT_CHARSET
@@ -231,7 +231,7 @@ object ShowOptionForm: TShowOptionForm
     Width = 124
     Height = 17
     TabStop = False
-    Caption = #24618#29289' '#31561#32026'/'#21517#31281
+    Caption = 'Mob  Lv/Name'
     DoubleBuffered = True
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -289,7 +289,7 @@ object ShowOptionForm: TShowOptionForm
     Top = 23
     Width = 81
     Height = 17
-    Caption = #38899#27138#21517#31281
+    Caption = 'Bgm Name'
     TabOrder = 13
     OnClick = CheckBox1Click
   end
@@ -298,7 +298,7 @@ object ShowOptionForm: TShowOptionForm
     Top = 98
     Width = 60
     Height = 30
-    Caption = #30906#23450
+    Caption = 'OK'
     TabOrder = 14
     OnClick = Button1Click
   end
@@ -330,7 +330,7 @@ object ShowOptionForm: TShowOptionForm
     Top = 23
     Width = 81
     Height = 17
-    Caption = #23567#22320#22294
+    Caption = 'Mini Map'
     Checked = True
     State = cbChecked
     TabOrder = 17
@@ -342,7 +342,7 @@ object ShowOptionForm: TShowOptionForm
     Top = 58
     Width = 81
     Height = 17
-    Caption = 'Npc'#21517#31281
+    Caption = 'Npc Name'
     Checked = True
     State = cbChecked
     TabOrder = 18

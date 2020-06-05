@@ -3,7 +3,7 @@ object MainForm: TMainForm
   Top = 77
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
-  Caption = #26963#20043#35895#22320#22294#27169#25836#22120' v3.2'
+  Caption = 'MapleStoryGM  v3.3'
   ClientHeight = 711
   ClientWidth = 2089
   Color = clBtnFace
@@ -11,7 +11,7 @@ object MainForm: TMainForm
   Constraints.MaxWidth = 5000
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
-  Font.Height = -11
+  Font.Height = -13
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
@@ -27,7 +27,7 @@ object MainForm: TMainForm
   OnMouseUp = FormMouseUp
   OnShow = FormShow
   PixelsPerInch = 120
-  TextHeight = 13
+  TextHeight = 16
   object Shape2: TShape
     Left = 8
     Top = 29
@@ -47,11 +47,11 @@ object MainForm: TMainForm
     Pen.Width = 2
   end
   object Label1: TLabel
-    Left = 22
+    Left = 12
     Top = 187
-    Width = 24
+    Width = 37
     Height = 14
-    Caption = #25628#23563
+    Caption = 'Search'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -12
@@ -60,11 +60,11 @@ object MainForm: TMainForm
     ParentFont = False
   end
   object Label2: TLabel
-    Left = 100
+    Left = 118
     Top = 9
-    Width = 72
+    Width = 53
     Height = 14
-    Caption = #26963#20043#35895#36039#26009#22846
+    Caption = 'MS Folder'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -12
@@ -83,7 +83,7 @@ object MainForm: TMainForm
     Top = 158
     Width = 204
     Height = 23
-    Caption = #36617#20837#22320#22294
+    Caption = 'LOAD MAP'
     Enabled = False
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -158,7 +158,6 @@ object MainForm: TMainForm
     Style = esCustom
     Version = '1.6.0.2'
     OnClick = AdvToolPanel1Click
-    ExplicitWidth = 2064
   end
   object AdvGroupBox2: TAdvGroupBox
     Left = 215
@@ -183,11 +182,11 @@ object MainForm: TMainForm
       ParentFont = False
     end
     object Label4: TLabel
-      Left = 21
+      Left = 27
       Top = 42
-      Width = 30
+      Width = 24
       Height = 16
-      Caption = #30059#38754
+      Caption = 'Size'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -13
@@ -198,9 +197,9 @@ object MainForm: TMainForm
     object Label5: TLabel
       Left = 21
       Top = 14
-      Width = 30
+      Width = 31
       Height = 16
-      Caption = #27169#24335
+      Caption = 'Mode'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -13
@@ -240,12 +239,12 @@ object MainForm: TMainForm
       ItemIndex = 0
       ParentFont = False
       TabOrder = 0
-      Text = #36938#25138#27169#24335
+      Text = 'Play Mode'
       OnChange = ComboBox2Change
       OnCloseUp = ComboBox2CloseUp
       Items.Strings = (
-        #36938#25138#27169#24335
-        #28687#35261#27169#24335)
+        'Play Mode'
+        'Viewer Mode')
     end
     object scScrollPanel1: TscScrollPanel
       AlignWithMargins = True
@@ -269,17 +268,16 @@ object MainForm: TMainForm
       ScrollTimerInterval = 50
       StorePaintBuffer = False
       TouchScroll = False
-      ExplicitWidth = 1710
       object PicInfoButton: TSpeedButton
-        Left = 801
+        Left = 811
         Top = 0
         Width = 65
         Height = 58
-        Caption = #22294#29255#36039#35338
+        Caption = 'Obj Info'
         Enabled = False
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
-        Font.Height = -15
+        Font.Height = -13
         Font.Name = #24494#36575#27491#40657#39636
         Font.Style = []
         Glyph.Data = {
@@ -423,11 +421,11 @@ object MainForm: TMainForm
         Top = 0
         Width = 68
         Height = 58
-        Caption = #20786#23384#22320#22294
+        Caption = 'Save Map'
         Enabled = False
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
-        Font.Height = -15
+        Font.Height = -13
         Font.Name = #24494#36575#27491#40657#39636
         Font.Style = []
         Glyph.Data = {
@@ -508,11 +506,11 @@ object MainForm: TMainForm
         Top = 0
         Width = 65
         Height = 58
-        Caption = #25563#35037
+        Caption = 'Avatar'
         Enabled = False
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
-        Font.Height = -15
+        Font.Height = -13
         Font.Name = #24494#36575#27491#40657#39636
         Font.Style = []
         Glyph.Data = {
@@ -587,11 +585,11 @@ object MainForm: TMainForm
         Top = 0
         Width = 60
         Height = 58
-        Caption = #25918#24618#29289
+        Caption = 'Mob'
         Enabled = False
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
-        Font.Height = -15
+        Font.Height = -13
         Font.Name = #24494#36575#27491#40657#39636
         Font.Style = []
         Glyph.Data = {
@@ -672,11 +670,11 @@ object MainForm: TMainForm
         Top = 0
         Width = 65
         Height = 58
-        Caption = #25918'Npc'
+        Caption = 'Npc'
         Enabled = False
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
-        Font.Height = -15
+        Font.Height = -13
         Font.Name = #24494#36575#27491#40657#39636
         Font.Style = []
         Glyph.Data = {
@@ -757,11 +755,11 @@ object MainForm: TMainForm
         Top = 0
         Width = 65
         Height = 58
-        Caption = #26885#23376
+        Caption = 'Chair'
         Enabled = False
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
-        Font.Height = -15
+        Font.Height = -13
         Font.Name = #24494#36575#27491#40657#39636
         Font.Style = []
         Glyph.Data = {
@@ -885,11 +883,11 @@ object MainForm: TMainForm
         Top = 0
         Width = 65
         Height = 58
-        Caption = #39438#23541
+        Caption = 'Mount'
         Enabled = False
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
-        Font.Height = -15
+        Font.Height = -13
         Font.Name = #24494#36575#27491#40657#39636
         Font.Style = []
         Glyph.Data = {
@@ -970,11 +968,11 @@ object MainForm: TMainForm
         Top = 0
         Width = 65
         Height = 58
-        Caption = #40670#21830
+        Caption = 'Cash Effect'
         Enabled = False
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
-        Font.Height = -15
+        Font.Height = -13
         Font.Name = #24494#36575#27491#40657#39636
         Font.Style = []
         Glyph.Data = {
@@ -1047,19 +1045,19 @@ object MainForm: TMainForm
           FF7FFF7FFF7F}
         Layout = blGlyphTop
         ParentFont = False
-        Spacing = 0
+        Spacing = 3
         OnClick = CashButtonClick
       end
       object DamageButton: TSpeedButton
         Left = 730
         Top = 0
-        Width = 70
+        Width = 80
         Height = 58
-        Caption = #20663#23475#23383#22411
+        Caption = 'Damage Skin'
         Enabled = False
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
-        Font.Height = -15
+        Font.Height = -13
         Font.Name = #24494#36575#27491#40657#39636
         Font.Style = []
         Glyph.Data = {
@@ -1140,11 +1138,11 @@ object MainForm: TMainForm
         Top = 0
         Width = 65
         Height = 58
-        Caption = #39023#31034
+        Caption = 'Display'
         Enabled = False
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
-        Font.Height = -15
+        Font.Height = -13
         Font.Name = #24494#36575#27491#40657#39636
         Font.Style = []
         Glyph.Data = {
@@ -1232,11 +1230,11 @@ object MainForm: TMainForm
         Top = 0
         Width = 65
         Height = 58
-        Caption = #20840#34722#24149
+        Caption = 'Full Screen'
         Enabled = False
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
-        Font.Height = -15
+        Font.Height = -13
         Font.Name = #24494#36575#27491#40657#39636
         Font.Style = []
         Glyph.Data = {
@@ -1329,11 +1327,11 @@ object MainForm: TMainForm
         Top = 0
         Width = 65
         Height = 58
-        Caption = #35722#36523
+        Caption = 'Morph'
         Enabled = False
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
-        Font.Height = -15
+        Font.Height = -13
         Font.Name = #24494#36575#27491#40657#39636
         Font.Style = []
         Glyph.Data = {
@@ -1473,15 +1471,15 @@ object MainForm: TMainForm
         OnClick = MorphButtonClick
       end
       object MedalButton: TSpeedButton
-        Left = 867
+        Left = 877
         Top = 0
         Width = 65
         Height = 58
-        Caption = #21235#31456
+        Caption = 'Medal'
         Enabled = False
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
-        Font.Height = -15
+        Font.Height = -13
         Font.Name = #24494#36575#27491#40657#39636
         Font.Style = []
         Glyph.Data = {
@@ -1617,15 +1615,15 @@ object MainForm: TMainForm
         OnClick = MedalButtonClick
       end
       object NickNameButton: TSpeedButton
-        Left = 933
+        Left = 943
         Top = 0
         Width = 65
         Height = 58
-        Caption = #31281#34399
+        Caption = 'Title'
         Enabled = False
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
-        Font.Height = -15
+        Font.Height = -13
         Font.Name = #24494#36575#27491#40657#39636
         Font.Style = []
         Glyph.Data = {
@@ -1757,15 +1755,15 @@ object MainForm: TMainForm
         OnClick = NickNameButtonClick
       end
       object LabelRingButton: TSpeedButton
-        Left = 999
+        Left = 1009
         Top = 0
         Width = 65
         Height = 58
-        Caption = #21517#29260#25106#25351
+        Caption = 'Ring'
         Enabled = False
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
-        Font.Height = -15
+        Font.Height = -13
         Font.Name = #24494#36575#27491#40657#39636
         Font.Style = []
         Glyph.Data = {
@@ -1843,15 +1841,15 @@ object MainForm: TMainForm
         OnClick = LabelRingButtonClick
       end
       object PetButton: TSpeedButton
-        Left = 1065
+        Left = 1075
         Top = 0
         Width = 65
         Height = 58
-        Caption = #23541#29289
+        Caption = 'Pet'
         Enabled = False
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
-        Font.Height = -15
+        Font.Height = -13
         Font.Name = #24494#36575#27491#40657#39636
         Font.Style = []
         Glyph.Data = {
@@ -1946,19 +1944,19 @@ object MainForm: TMainForm
           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF202020}
         Layout = blGlyphTop
         ParentFont = False
-        Spacing = 0
+        Spacing = 3
         OnClick = PetButtonClick
       end
       object FamiliarButton: TSpeedButton
-        Left = 1131
+        Left = 1141
         Top = 0
         Width = 65
         Height = 58
-        Caption = #33804#29560
+        Caption = 'Familiar'
         Enabled = False
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
-        Font.Height = -15
+        Font.Height = -13
         Font.Name = #24494#36575#27491#40657#39636
         Font.Style = []
         Glyph.Data = {
@@ -2042,15 +2040,15 @@ object MainForm: TMainForm
         OnClick = FamiliarButtonClick
       end
       object SkillButton: TSpeedButton
-        Left = 1197
+        Left = 1207
         Top = 0
         Width = 65
         Height = 58
-        Caption = #25216#33021
+        Caption = 'Skill'
         Enabled = False
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
-        Font.Height = -15
+        Font.Height = -13
         Font.Name = #24494#36575#27491#40657#39636
         Font.Style = []
         Glyph.Data = {
@@ -2158,7 +2156,7 @@ object MainForm: TMainForm
         OnClick = SkillButtonClick
       end
       object OptionButton: TSpeedButton
-        Left = 1332
+        Left = 1342
         Top = 0
         Width = 68
         Height = 58
@@ -2257,15 +2255,15 @@ object MainForm: TMainForm
         OnClick = OptionButtonClick
       end
       object AndroidButton: TSpeedButton
-        Left = 1263
+        Left = 1273
         Top = 0
         Width = 68
         Height = 58
-        Caption = #27231#22120#20154
+        Caption = 'Android'
         Enabled = False
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
-        Font.Height = -15
+        Font.Height = -13
         Font.Name = #24494#36575#27491#40657#39636
         Font.Style = []
         Glyph.Data = {
@@ -2363,11 +2361,11 @@ object MainForm: TMainForm
         Top = 0
         Width = 68
         Height = 58
-        Caption = #30059#38754#32302#25918
+        Caption = 'Scale'
         Enabled = False
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
-        Font.Height = -15
+        Font.Height = -13
         Font.Name = #24494#36575#27491#40657#39636
         Font.Style = []
         Glyph.Data = {
@@ -2449,19 +2447,19 @@ object MainForm: TMainForm
           1F1E1E1E222222D0D0D0}
         Layout = blGlyphTop
         ParentFont = False
-        Spacing = -5
+        Spacing = 3
         OnClick = ScreeenSetButtonClick
       end
       object ConsumeButton: TSpeedButton
-        Left = 1401
+        Left = 1411
         Top = 0
         Width = 68
         Height = 58
-        Caption = #28040#32791
+        Caption = 'Consume'
         Enabled = False
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
-        Font.Height = -15
+        Font.Height = -13
         Font.Name = #24494#36575#27491#40657#39636
         Font.Style = []
         Glyph.Data = {
@@ -2554,15 +2552,15 @@ object MainForm: TMainForm
         OnClick = ConsumeButtonClick
       end
       object CashButton2: TSpeedButton
-        Left = 1470
+        Left = 1480
         Top = 0
         Width = 68
         Height = 58
-        Caption = #40670#21830'2'
+        Caption = 'Cash'
         Enabled = False
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
-        Font.Height = -15
+        Font.Height = -13
         Font.Name = #24494#36575#27491#40657#39636
         Font.Style = []
         Glyph.Data = {
@@ -2661,15 +2659,15 @@ object MainForm: TMainForm
         OnClick = CashButton2Click
       end
       object EtcButton: TSpeedButton
-        Left = 1539
+        Left = 1549
         Top = 0
         Width = 68
         Height = 58
-        Caption = #20854#23427
+        Caption = 'Etc'
         Enabled = False
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
-        Font.Height = -15
+        Font.Height = -13
         Font.Name = #24494#36575#27491#40657#39636
         Font.Style = []
         Glyph.Data = {
@@ -2752,18 +2750,19 @@ object MainForm: TMainForm
           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF160C}
         Layout = blGlyphTop
         ParentFont = False
+        Spacing = 7
         OnClick = EtcButtonClick
       end
       object PlayActionButton: TSpeedButton
-        Left = 1608
+        Left = 1618
         Top = 0
         Width = 68
         Height = 58
-        Caption = #21205#20316#21015#34920
+        Caption = 'Actions'
         Enabled = False
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
-        Font.Height = -15
+        Font.Height = -13
         Font.Name = #24494#36575#27491#40657#39636
         Font.Style = []
         Glyph.Data = {
@@ -2875,7 +2874,7 @@ object MainForm: TMainForm
     Left = 49
     Top = 183
     Width = 162
-    Height = 21
+    Height = 24
     Enabled = False
     TabOrder = 3
     OnChange = SearchMapEditChange
@@ -2891,21 +2890,21 @@ object MainForm: TMainForm
   end
   object ComboKey: TComboBox
     Left = 8
-    Top = 6
-    Width = 81
+    Top = 4
+    Width = 95
     Height = 22
     Style = csOwnerDrawVariable
     BiDiMode = bdLeftToRight
     ItemIndex = 0
     ParentBiDiMode = False
     TabOrder = 5
-    Text = #21488#28771'/'#38867'/'#22283#38555'/'#26085#26412
+    Text = 'GMS/KMS/BMS(new)'
     OnChange = ComboKeyChange
     OnCloseUp = ComboKeyCloseUp
     Items.Strings = (
-      #21488#28771'/'#38867'/'#22283#38555'/'#26085#26412
-      #22283#38555#29256'('#33290')'
-      #21488#28771'/'#38867#22283'('#33290')')
+      'GMS/KMS/BMS(new)'
+      'GMS(old)'
+      'EMS/KMS(old)')
   end
   object PageControl1: TPageControl
     Left = 8
@@ -2923,7 +2922,7 @@ object MainForm: TMainForm
     TabOrder = 6
     OnChange = PageControl1Change
     object TabSheet1: TTabSheet
-      Caption = #22320#22294
+      Caption = 'Map'
       object Grid: TAdvStringGrid
         Left = 0
         Top = 0
@@ -3052,7 +3051,7 @@ object MainForm: TMainForm
       end
     end
     object TabSheet2: TTabSheet
-      Caption = #19990#30028#22320#22294
+      Caption = 'World Map'
       ImageIndex = 1
       object WorldMapGrid: TAdvStringGrid
         Left = 0

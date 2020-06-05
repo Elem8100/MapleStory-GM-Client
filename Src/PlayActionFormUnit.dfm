@@ -1,7 +1,7 @@
 object PlayActionForm: TPlayActionForm
   Left = 0
   Top = 0
-  Caption = #21205#20316#21015#34920
+  Caption = 'Actions'
   ClientHeight = 675
   ClientWidth = 252
   Color = clBtnFace

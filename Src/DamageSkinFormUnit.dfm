@@ -41,16 +41,16 @@ object DamageSkinForm: TDamageSkinForm
     ParentFont = False
   end
   object Label2: TLabel
-    Left = 120
+    Left = 96
     Top = 32
-    Width = 40
+    Width = 47
     Height = 18
     Caption = 'Using:'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -15
     Font.Name = 'Tahoma'
-    Font.Style = []
+    Font.Style = [fsBold]
     ParentFont = False
   end
   object DamageGrid: TAdvStringGrid
@@ -179,7 +179,7 @@ object DamageSkinForm: TDamageSkinForm
     SearchFooter.ResultFormat = '(%d of %d)'
     ShowDesignHelper = False
     SortSettings.DefaultFormat = ssAutomatic
-    Version = '8.2.4.1'
+    Version = '8.4.2.2'
     ExplicitLeft = 37
     ExplicitTop = 67
     ExplicitWidth = 268

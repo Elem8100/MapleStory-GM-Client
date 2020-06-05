@@ -1,7 +1,7 @@
 object FamiliarForm: TFamiliarForm
   Left = 0
   Top = 0
-  Caption = #33804#29560
+  Caption = 'Familiar'
   ClientHeight = 614
   ClientWidth = 357
   Color = clBtnFace
@@ -25,7 +25,7 @@ object FamiliarForm: TFamiliarForm
     Top = 6
     Width = 169
     Height = 30
-    Caption = #21462#28040
+    Caption = 'Remove'
     TabOrder = 0
     OnClick = Button1Click
   end
@@ -40,7 +40,7 @@ object FamiliarForm: TFamiliarForm
     Align = alClient
     TabOrder = 1
     object TabSheet1: TTabSheet
-      Caption = #33804#29560
+      Caption = 'Familiar'
       object Label1: TLabel
         Left = 24
         Top = 7
@@ -200,7 +200,7 @@ object FamiliarForm: TFamiliarForm
       end
     end
     object TabSheet2: TTabSheet
-      Caption = #26579#33394
+      Caption = 'Dye'
       ImageIndex = 1
       object DyeGrid: TAdvStringGrid
         AlignWithMargins = True

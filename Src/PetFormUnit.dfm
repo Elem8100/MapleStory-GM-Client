@@ -27,12 +27,6 @@ object PetForm: TPetForm
     Width = 153
     Height = 28
     Caption = 'Remove'
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -15
-    Font.Name = 'Tahoma'
-    Font.Style = []
-    ParentFont = False
     TabOrder = 0
     OnClick = Button1Click
   end
@@ -45,20 +39,14 @@ object PetForm: TPetForm
     Margins.Top = 42
     ActivePage = TabSheet1
     Align = alClient
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -15
-    Font.Name = 'Tahoma'
-    Font.Style = []
-    ParentFont = False
     TabOrder = 1
     object TabSheet1: TTabSheet
       Caption = 'Pet'
       object Label1: TLabel
-        Left = 32
-        Top = 5
-        Width = 44
-        Height = 18
+        Left = 38
+        Top = 7
+        Width = 40
+        Height = 16
         Margins.Top = 7
         Caption = 'Search'
       end
@@ -67,7 +55,7 @@ object PetForm: TPetForm
         Left = 4
         Top = 30
         Width = 309
-        Height = 532
+        Height = 534
         Cursor = crDefault
         Margins.Left = 4
         Margins.Top = 30
@@ -208,8 +196,7 @@ object PetForm: TPetForm
         Left = 82
         Top = 2
         Width = 160
-        Height = 26
-        Color = clCream
+        Height = 24
         TabOrder = 1
         OnChange = Edit2Change
       end
@@ -222,7 +209,7 @@ object PetForm: TPetForm
         Left = 0
         Top = 5
         Width = 321
-        Height = 562
+        Height = 564
         Cursor = crDefault
         Margins.Left = 0
         Margins.Top = 5

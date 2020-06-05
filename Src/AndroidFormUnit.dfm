@@ -2,7 +2,7 @@ object AndroidForm: TAndroidForm
   Left = 0
   Top = 0
   Caption = 'Android'
-  ClientHeight = 590
+  ClientHeight = 685
   ClientWidth = 337
   Color = clBtnFace
   Constraints.MaxWidth = 355
@@ -40,7 +40,7 @@ object AndroidForm: TAndroidForm
     Left = 3
     Top = 40
     Width = 331
-    Height = 547
+    Height = 642
     Margins.Top = 40
     ActivePage = TabSheet1
     Align = alClient
@@ -54,15 +54,12 @@ object AndroidForm: TAndroidForm
     OnChange = PageControl1Change
     object TabSheet1: TTabSheet
       Caption = 'Android'
-      ExplicitTop = 27
-      ExplicitWidth = 257
-      ExplicitHeight = 74
       object AndroidGrid: TAdvStringGrid
         AlignWithMargins = True
         Left = 4
         Top = 40
         Width = 309
-        Height = 466
+        Height = 561
         Cursor = crDefault
         Margins.Left = 4
         Margins.Top = 40
@@ -201,9 +198,6 @@ object AndroidForm: TAndroidForm
     object TabSheet2: TTabSheet
       Caption = 'Custom'
       ImageIndex = 1
-      ExplicitTop = 27
-      ExplicitWidth = 257
-      ExplicitHeight = 74
     end
   end
 end

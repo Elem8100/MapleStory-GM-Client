@@ -1,7 +1,7 @@
 object EtcForm: TEtcForm
   Left = 0
   Top = 0
-  Caption = #20854#23427
+  Caption = 'Etc'
   ClientHeight = 553
   ClientWidth = 384
   Color = clBtnFace
@@ -31,16 +31,12 @@ object EtcForm: TEtcForm
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
-      Caption = #28040#32791
+      Caption = 'Etc'
     end
     object TabSheet2: TTabSheet
-      Caption = #25628#23563
+      Caption = 'Search'
       ImageIndex = 1
       OnShow = TabSheet2Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object EtcGrid: TAdvStringGrid
         AlignWithMargins = True
         Left = 0

@@ -61,6 +61,12 @@ begin
         ImageInfoGrid.CreatePicture(2, Row, False, StretchWithAspectRatio, 1, haCenter, vaCenter).Assign(Bmp);
       end
       else
+       if (Bmp.Height < 5) then
+      begin
+        ImageInfoGrid.RowHeights[Row] := 120;
+        ImageInfoGrid.CreatePicture(2, Row, False, StretchWithAspectRatio, 1, haCenter, vaCenter).Assign(Bmp);
+      end
+      else
       begin
         ImageInfoGrid.RowHeights[Row] := Bmp.Height;
         ImageInfoGrid.CreateBitmap(2, Row, False, haCenter, vaCenter).Assign(Bmp);

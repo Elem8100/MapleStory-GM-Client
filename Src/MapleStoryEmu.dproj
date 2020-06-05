@@ -77,7 +77,7 @@
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
         <VerInfo_Locale>1033</VerInfo_Locale>
-        <DCC_ExeOutput>D:\MapleStoryAfterwarp\</DCC_ExeOutput>
+        <DCC_ExeOutput>C:\MapleStoryGM\</DCC_ExeOutput>
         <AppDPIAwarenessMode>PerMonitor</AppDPIAwarenessMode>
         <BT_BuildType>Debug</BT_BuildType>
         <Icon_MainIcon>C:\MapleStory Emulator2.6\DelphiMaple_Icon.ico</Icon_MainIcon>

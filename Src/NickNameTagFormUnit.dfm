@@ -22,17 +22,11 @@ object NickNameForm: TNickNameForm
   PixelsPerInch = 120
   TextHeight = 16
   object Label1: TLabel
-    Left = 3
-    Top = 11
-    Width = 44
-    Height = 18
+    Left = 10
+    Top = 13
+    Width = 40
+    Height = 16
     Caption = 'Search'
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -15
-    Font.Name = 'Tahoma'
-    Font.Style = []
-    ParentFont = False
   end
   object NickNameGrid: TAdvStringGrid
     AlignWithMargins = True
@@ -182,12 +176,6 @@ object NickNameForm: TNickNameForm
     Width = 89
     Height = 30
     Caption = 'Remove'
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -15
-    Font.Name = 'Tahoma'
-    Font.Style = []
-    ParentFont = False
     TabOrder = 1
     OnClick = Button1Click
   end

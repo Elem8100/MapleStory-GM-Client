@@ -1,7 +1,7 @@
 object LabelRingForm: TLabelRingForm
   Left = 0
   Top = 0
-  Caption = 'LabelRingForm'
+  Caption = 'LabelRing'
   ClientHeight = 656
   ClientWidth = 342
   Color = clBtnFace
@@ -22,17 +22,11 @@ object LabelRingForm: TLabelRingForm
   PixelsPerInch = 120
   TextHeight = 16
   object Label1: TLabel
-    Left = 16
-    Top = 10
-    Width = 44
-    Height = 18
+    Left = 20
+    Top = 12
+    Width = 40
+    Height = 16
     Caption = 'Search'
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -15
-    Font.Name = 'Tahoma'
-    Font.Style = []
-    ParentFont = False
   end
   object LabelRingGrid: TAdvStringGrid
     AlignWithMargins = True

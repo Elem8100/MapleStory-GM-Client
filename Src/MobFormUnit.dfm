@@ -78,12 +78,6 @@ object AddMobForm: TAddMobForm
     Width = 58
     Height = 30
     Caption = 'Drop'
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -15
-    Font.Name = 'Tahoma'
-    Font.Style = []
-    ParentFont = False
     TabOrder = 2
     OnClick = Button1Click
   end
@@ -93,12 +87,6 @@ object AddMobForm: TAddMobForm
     Width = 69
     Height = 30
     Caption = 'Remove'
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -15
-    Font.Name = 'Tahoma'
-    Font.Style = []
-    ParentFont = False
     TabOrder = 3
     OnClick = Button2Click
   end
@@ -111,29 +99,23 @@ object AddMobForm: TAddMobForm
     Margins.Top = 220
     ActivePage = TabSheet1
     Align = alClient
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -15
-    Font.Name = 'Tahoma'
-    Font.Style = []
-    ParentFont = False
     TabOrder = 4
     OnChange = PageControl1Change
     object TabSheet1: TTabSheet
       Caption = 'Mob'
       object Label4: TLabel
-        Left = 48
+        Left = 40
         Top = 7
-        Width = 30
-        Height = 18
-        Caption = #25628#23563
+        Width = 40
+        Height = 16
+        Caption = 'Search'
       end
       object MobGrid: TAdvStringGrid
         AlignWithMargins = True
         Left = 0
         Top = 30
         Width = 256
-        Height = 519
+        Height = 521
         Cursor = crDefault
         Margins.Left = 0
         Margins.Top = 30
@@ -370,8 +352,7 @@ object AddMobForm: TAddMobForm
         Left = 82
         Top = 3
         Width = 173
-        Height = 26
-        Color = clCream
+        Height = 24
         TabOrder = 1
         OnChange = Edit2Change
       end
@@ -385,7 +366,7 @@ object AddMobForm: TAddMobForm
         Left = 0
         Top = 30
         Width = 256
-        Height = 519
+        Height = 521
         Cursor = crDefault
         Margins.Left = 0
         Margins.Top = 30
@@ -508,7 +489,6 @@ object AddMobForm: TAddMobForm
         ShowDesignHelper = False
         SortSettings.DefaultFormat = ssAutomatic
         Version = '8.4.2.2'
-        ExplicitHeight = 521
         ColWidths = (
           10
           90
@@ -526,7 +506,7 @@ object AddMobForm: TAddMobForm
         Left = 0
         Top = 30
         Width = 256
-        Height = 519
+        Height = 521
         Cursor = crDefault
         Margins.Left = 0
         Margins.Top = 30
@@ -649,7 +629,6 @@ object AddMobForm: TAddMobForm
         ShowDesignHelper = False
         SortSettings.DefaultFormat = ssAutomatic
         Version = '8.4.2.2'
-        ExplicitHeight = 521
         ColWidths = (
           10
           90
@@ -660,19 +639,13 @@ object AddMobForm: TAddMobForm
     end
     object TabSheet2: TTabSheet
       Caption = 'Dye'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -15
-      Font.Name = 'Tahoma'
-      Font.Style = []
       ImageIndex = 3
-      ParentFont = False
       object DyeGrid: TAdvStringGrid
         AlignWithMargins = True
         Left = 0
         Top = 30
         Width = 256
-        Height = 519
+        Height = 521
         Cursor = crDefault
         Margins.Left = 0
         Margins.Top = 30
@@ -796,7 +769,6 @@ object AddMobForm: TAddMobForm
         ShowDesignHelper = False
         SortSettings.DefaultFormat = ssAutomatic
         Version = '8.4.2.2'
-        ExplicitHeight = 521
         RowHeights = (
           0
           180

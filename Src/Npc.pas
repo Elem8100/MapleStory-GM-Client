@@ -102,6 +102,14 @@ begin
     NpcFunc := GetImgEntry('String/Npc.img/' + IDToInt(LocalID)).Get('func', '');
    // FNameWidth := FontsAlt[0].TextWidth(NpcName);
 
+    var FontSettings: TFontSettings;
+    if ISKMS then
+      FontSettings := TFontSettings.Create('Tahoma', FontSize, TFontWeight.Normal)
+    else
+      FontSettings := TFontSettings.Create('Arial', FontSize, TFontWeight.Normal);
+    FontSettings.Effect.BorderType := TFontBorder.None;
+    GameFont.FontSettings := FontSettings;
+
     FNameWidth := Round(GameFont.ExtentByPixels(NpcName).Right);
     //FFuncWidth := FontsAlt[0].TextWidth(NpcFunc);
     FFuncWidth := Round(GameFont.ExtentByPixels(NpcFunc).Right);

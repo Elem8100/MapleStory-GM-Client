@@ -121,7 +121,7 @@ begin
   ComboBox1.ItemIndex := 0;
   ComboBox2.ItemIndex := 0;
   SaveMapForm.Close;
-  MessageDlg('Àx¦s  ' + TMap.SaveMapID + '-' + MapName + '.PNG' + '§¹¦¨', mtinformation, [mbOk], 0);
+  MessageDlg('Save  ' + TMap.SaveMapID + '-' + MapName + '.PNG' + 'Completed', mtinformation, [mbOk], 0);
 end;
 
 procedure TSaveMapForm.FormCreate(Sender: TObject);

@@ -144,7 +144,7 @@ object CashForm: TCashForm
     SelectionColor = clGradientInactiveCaption
     ShowDesignHelper = False
     SortSettings.DefaultFormat = ssAutomatic
-    Version = '8.2.4.1'
+    Version = '8.4.2.2'
     ColWidths = (
       10
       81
@@ -168,12 +168,6 @@ object CashForm: TCashForm
     Width = 177
     Height = 30
     Caption = 'Remove'
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -15
-    Font.Name = 'Tahoma'
-    Font.Style = []
-    ParentFont = False
     TabOrder = 1
     OnClick = Button1Click
   end

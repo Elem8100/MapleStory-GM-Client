@@ -4,24 +4,24 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, scControls,
-  scAdvancedControls, Vcl.Grids, AdvObj, BaseGrid, AdvGrid, AdvUtil;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, AdvObj, BaseGrid, AdvGrid, Vcl.StdCtrls,
+  WZIMGFile, Vcl.Mask, scControls, scAdvancedControls, AdvUtil;
 
 type
   TSkillForm = class(TForm)
     SkillGrid: TAdvStringGrid;
     SelectGrid: TAdvStringGrid;
-    ComBobox1: TscAdvancedComboEdit;
     Label1: TLabel;
+    ComBobox1: TscAdvancedComboEdit;
     Label2: TLabel;
-    procedure FormActivate(Sender: TObject);
-    procedure ComBobox1CloseUp(Sender: TObject);
     procedure SelectGridClickCell(Sender: TObject; ARow, ACol: Integer);
-    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure ComBobox1CloseUp(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormClick(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
   private
-     HasLoaded: Boolean;
+    HasLoaded: Boolean;
     IDs: array of string;
     SelectRow: Integer;
     { Private declarations }
@@ -34,9 +34,9 @@ var
 
 implementation
 
+uses
+  Skill, WzUtils, AsphyreSprite, Global;
 {$R *.dfm}
- uses
-      Skill, WzUtils, AsphyreSprite, Global,WZIMGFile;
 
 function GetJobID(ID: string): string;
 begin
@@ -121,10 +121,9 @@ begin
 
 end;
 
-
 procedure TSkillForm.ComBobox1CloseUp(Sender: TObject);
 begin
-   if ComBobox1.ItemIndex = 32 then
+  if ComBobox1.ItemIndex = 32 then
     Exit;
 
   for var r := SkillGrid.RowCount - 1 downto 1 do
@@ -170,7 +169,7 @@ end;
 
 procedure TSkillForm.FormActivate(Sender: TObject);
 begin
-   if HasLoaded then
+  if HasLoaded then
     Exit;
   HasLoaded := True;
   SelectGrid.Canvas.Font.Size := 18;
@@ -210,7 +209,7 @@ begin
       SelectGrid.Cells[3, RowCount] := GetImgEntry('String.wz/Skill.img/' + ID).Get('name', '');
 
     end;
-      {
+
     if TSkill.Has001Wz then
       if HasImgFile('Skill001.wz/' + GetJobID(ID) + '.img') and HasImgEntry('Skill001.wz/' +
         GetJobID(ID) + '.img/skill/' + ID) then
@@ -224,7 +223,7 @@ begin
         Bmp.Free;
         SelectGrid.Cells[3, RowCount] := GetImgEntry('String.wz/Skill.img/' + ID).Get('name', '');
       end;
-       }
+
   end;
 
   SelectGrid.SortByColumn(1);
@@ -239,12 +238,12 @@ end;
 
 procedure TSkillForm.FormClick(Sender: TObject);
 begin
- ActiveControl := nil;
+   ActiveControl := nil;
 end;
 
 procedure TSkillForm.FormCreate(Sender: TObject);
 begin
-   Left := ((Screen.Width - Width) div 2);
+  Left := ((Screen.Width - Width) div 2);
   Top := (Screen.Height - Height) div 2;
 end;
 
@@ -257,7 +256,7 @@ end;
 
 procedure TSkillForm.SelectGridClickCell(Sender: TObject; ARow, ACol: Integer);
 begin
-   ComBobox1.Visible:=True;
+  ComBobox1.Visible:=True;
   ComBobox1.Left := 312;
   ComBobox1.Top := SelectGrid.CellRect(ACol, ARow).Location.Y + 7;
   ComBobox1.ItemIndex := 32;
@@ -267,3 +266,4 @@ begin
 end;
 
 end.
+

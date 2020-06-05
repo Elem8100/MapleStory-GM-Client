@@ -22,17 +22,11 @@ object MedalTagForm: TMedalTagForm
   PixelsPerInch = 120
   TextHeight = 16
   object Label1: TLabel
-    Left = 9
-    Top = 10
-    Width = 44
-    Height = 18
+    Left = 11
+    Top = 12
+    Width = 40
+    Height = 16
     Caption = 'Search'
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -15
-    Font.Name = 'Tahoma'
-    Font.Style = []
-    ParentFont = False
   end
   object MedalGrid: TAdvStringGrid
     AlignWithMargins = True
@@ -182,12 +176,6 @@ object MedalTagForm: TMedalTagForm
     Width = 97
     Height = 30
     Caption = 'Remove'
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -15
-    Font.Name = 'Tahoma'
-    Font.Style = []
-    ParentFont = False
     TabOrder = 1
     OnClick = Button1Click
   end

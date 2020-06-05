@@ -2533,11 +2533,11 @@ object AvatarForm: TAvatarForm
     Height = 202
   end
   object Label7: TLabel
-    Left = 469
+    Left = 440
     Top = 228
-    Width = 30
+    Width = 61
     Height = 16
-    Caption = #34920#24773
+    Caption = 'Expression'
   end
   object Panel1: TPanel
     Left = 453
@@ -2691,7 +2691,7 @@ object AvatarForm: TAvatarForm
     Top = 220
     Width = 108
     Height = 33
-    Caption = #20786#23384#35282#33394
+    Caption = 'Save Character'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -15
@@ -2732,14 +2732,14 @@ object AvatarForm: TAvatarForm
     TabOrder = 4
     OnChange = PageControl1Change
     object TabSheet1: TTabSheet
-      Caption = #25563#35037
+      Caption = 'Equip'
     end
     object TabSheet2: TTabSheet
-      Caption = #36617#20837#35282#33394
+      Caption = 'Load Character'
       ImageIndex = 1
     end
     object TabSheet3: TTabSheet
-      Caption = #26579#33394
+      Caption = 'Dye'
       ImageIndex = 2
       object ColorGrid: TAdvStringGrid
         Left = 0
@@ -2893,7 +2893,7 @@ object AvatarForm: TAvatarForm
       end
     end
     object TabSheet4: TTabSheet
-      Caption = #25628#23563
+      Caption = 'Search'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -15
@@ -2903,11 +2903,11 @@ object AvatarForm: TAvatarForm
       ParentFont = False
       OnShow = TabSheet4Show
       object Label1: TLabel
-        Left = 215
+        Left = 207
         Top = 63
-        Width = 30
+        Width = 44
         Height = 18
-        Caption = #25628#23563
+        Caption = 'Search'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -15
@@ -3120,11 +3120,11 @@ object AvatarForm: TAvatarForm
       end
     end
     object TabSheet5: TTabSheet
-      Caption = #25918#20154#29289
+      Caption = 'Spawn'
       ImageIndex = 4
     end
     object TabSheet6: TTabSheet
-      Caption = #20786#23384'Png'
+      Caption = 'Export'
       ImageIndex = 5
       object Label2: TLabel
         Left = 310
@@ -3133,18 +3133,18 @@ object AvatarForm: TAvatarForm
         Height = 18
       end
       object Label3: TLabel
-        Left = 310
+        Left = 300
         Top = 50
-        Width = 30
+        Width = 37
         Height = 18
-        Caption = #23532#24230
+        Caption = 'Width'
       end
       object Label4: TLabel
-        Left = 310
+        Left = 300
         Top = 90
-        Width = 30
+        Width = 41
         Height = 18
-        Caption = #39640#24230
+        Caption = 'Height'
       end
       object Label5: TLabel
         Left = 555
@@ -3217,7 +3217,7 @@ object AvatarForm: TAvatarForm
         Top = 85
         Width = 81
         Height = 28
-        Caption = #20786#23384#20840#37096
+        Caption = 'Save All'
         TabOrder = 1
         OnClick = SaveAllButtonClick
       end
@@ -3226,7 +3226,7 @@ object AvatarForm: TAvatarForm
         Top = 42
         Width = 81
         Height = 28
-        Caption = #20786#23384
+        Caption = 'Save'
         Enabled = False
         TabOrder = 2
         OnClick = SaveSingleButtonClick

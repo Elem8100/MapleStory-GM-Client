@@ -2,7 +2,7 @@ object OptionsForm: TOptionsForm
   Left = 0
   Top = 0
   BorderStyle = bsDialog
-  Caption = #36984#38917
+  Caption = 'Options'
   ClientHeight = 277
   ClientWidth = 382
   Color = clBtnFace
@@ -24,7 +24,7 @@ object OptionsForm: TOptionsForm
     Top = 39
     Width = 65
     Height = 25
-    Caption = #38748#38899
+    Caption = 'Mute'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -15

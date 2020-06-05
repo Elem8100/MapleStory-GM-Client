@@ -15,10 +15,10 @@ object MorphForm: TMorphForm
   KeyPreview = True
   OldCreateOrder = False
   Scaled = False
+  OnActivate = FormActivate
   OnClick = FormClick
   OnCreate = FormCreate
   OnKeyDown = FormKeyDown
-  OnShow = FormShow
   PixelsPerInch = 120
   TextHeight = 16
   object MorphGrid: TAdvStringGrid
@@ -144,7 +144,7 @@ object MorphForm: TMorphForm
     SelectionColor = clGradientInactiveCaption
     ShowDesignHelper = False
     SortSettings.DefaultFormat = ssAutomatic
-    Version = '8.2.4.1'
+    Version = '8.4.2.2'
     ExplicitWidth = 452
     ExplicitHeight = 561
     ColWidths = (
@@ -172,12 +172,6 @@ object MorphForm: TMorphForm
     Width = 161
     Height = 33
     Caption = 'Remove'
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -15
-    Font.Name = 'Tahoma'
-    Font.Style = []
-    ParentFont = False
     TabOrder = 1
     OnClick = Button1Click
   end

@@ -156,7 +156,7 @@ procedure TMainForm.FamiliarButtonClick(Sender: TObject);
 begin
   if (not HasImgFile('String.wz/FamiliarSkill.img')) and (not HasImgFile('String.wz/Familiar.img')) then
   begin
-    MessageDlg('舊版wz不支援', mtInformation, [mbOK], 0);
+    MessageDlg('Older versions of .wz are not supported', mtInformation, [mbOK], 0);
     Exit;
   end
   else
@@ -226,7 +226,7 @@ begin
    }
   //UIEngine.Free;
   // DropList
-  ReportMemoryLeaksOnShutdown := True;
+ // ReportMemoryLeaksOnShutdown := True;
 end;
 
 procedure TMainForm.FormKeyDown(Sender: TObject; var KEY: Word; Shift: TShiftState);
@@ -649,7 +649,7 @@ begin
       UIEngine.Render(Canvas.Handle);
       if TSlots.PickUpItem <> nil then
       begin
-        var Mx := Mouse.CursorPos.X - MainForm.Left - 230; // .clMainForm.clientleft.;
+        var Mx := Mouse.CursorPos.X - MainForm.Left - 230;
         var MY := Mouse.CursorPos.Y - MainForm.Top - 120;
         GameCanvas.Draw(UIImages[TSlots.PickUpItem], Mx, MY);
       end;
@@ -867,7 +867,7 @@ begin
   if SpriteEngine.WorldY < TMap.Top then
     SpriteEngine.WorldY := TMap.Top;
   TMap.SaveMapID := TMap.ID;
-  Caption := Variant(GetTickCount - T);
+ // Caption := Variant(GetTickCount - T);
 
   Timer.Enabled := True;
 
@@ -1031,7 +1031,7 @@ begin
     end
     else
     begin
-      ShowMessage('資料夾路徑錯誤,  找不到.wz檔案');
+      ShowMessage('Wrong folder, WZ file could not be found');
     end;
   end;
   ActiveControl := nil;

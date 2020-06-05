@@ -1,7 +1,7 @@
 object CashForm2: TCashForm2
   Left = 0
   Top = 0
-  Caption = #40670#21830'2'
+  Caption = 'Cash'
   ClientHeight = 557
   ClientWidth = 384
   Color = clBtnFace
@@ -31,10 +31,10 @@ object CashForm2: TCashForm2
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
-      Caption = #28040#32791
+      Caption = 'Cash'
     end
     object TabSheet2: TTabSheet
-      Caption = #25628#23563
+      Caption = 'Seach'
       ImageIndex = 1
       OnShow = TabSheet2Show
       object CashGrid: TAdvStringGrid

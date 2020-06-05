@@ -1,7 +1,7 @@
 object ConsumeForm: TConsumeForm
   Left = 0
   Top = 0
-  Caption = #28040#32791
+  Caption = 'Consume'
   ClientHeight = 638
   ClientWidth = 411
   Color = clBtnFace
@@ -31,10 +31,10 @@ object ConsumeForm: TConsumeForm
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
-      Caption = #28040#32791
+      Caption = 'Consume'
     end
     object TabSheet2: TTabSheet
-      Caption = #25628#23563
+      Caption = 'Search'
       ImageIndex = 1
       OnShow = TabSheet2Show
       object ConsumeGrid: TAdvStringGrid

@@ -22,17 +22,11 @@ object AddNpcForm: TAddNpcForm
   PixelsPerInch = 120
   TextHeight = 16
   object Label4: TLabel
-    Left = 16
+    Left = 20
     Top = 228
-    Width = 44
-    Height = 18
+    Width = 40
+    Height = 16
     Caption = 'Search'
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -15
-    Font.Name = 'Tahoma'
-    Font.Style = []
-    ParentFont = False
   end
   object Panel1: TPanel
     Left = 15
@@ -61,12 +55,6 @@ object AddNpcForm: TAddNpcForm
     Width = 92
     Height = 28
     Caption = 'Drop'
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -15
-    Font.Name = 'Tahoma'
-    Font.Style = []
-    ParentFont = False
     TabOrder = 1
     OnClick = Button1Click
   end
@@ -83,13 +71,7 @@ object AddNpcForm: TAddNpcForm
     Top = 185
     Width = 92
     Height = 28
-    Caption = 'Remove'
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -15
-    Font.Name = 'Tahoma'
-    Font.Style = []
-    ParentFont = False
+    Caption = 'Removee'
     TabOrder = 3
     OnClick = Button2Click
   end
@@ -104,7 +86,7 @@ object AddNpcForm: TAddNpcForm
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
-    Font.Height = -15
+    Font.Height = -13
     Font.Name = 'Tahoma'
     Font.Style = []
     ParentFont = False
@@ -116,7 +98,7 @@ object AddNpcForm: TAddNpcForm
         Left = 3
         Top = 3
         Width = 239
-        Height = 453
+        Height = 455
         Cursor = crDefault
         Align = alClient
         ColCount = 3
@@ -353,7 +335,7 @@ object AddNpcForm: TAddNpcForm
         Left = 0
         Top = 5
         Width = 243
-        Height = 454
+        Height = 456
         Cursor = crDefault
         Margins.Left = 0
         Margins.Top = 5

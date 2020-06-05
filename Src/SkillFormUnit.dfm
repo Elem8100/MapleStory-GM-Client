@@ -2,9 +2,10 @@ object SkillForm: TSkillForm
   Left = 0
   Top = 0
   Caption = 'Skill'
-  ClientHeight = 603
+  ClientHeight = 606
   ClientWidth = 920
   Color = clBtnFace
+  Constraints.MaxWidth = 938
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -13
@@ -13,6 +14,7 @@ object SkillForm: TSkillForm
   FormStyle = fsStayOnTop
   KeyPreview = True
   OldCreateOrder = False
+  Position = poDesigned
   Scaled = False
   OnActivate = FormActivate
   OnClick = FormClick
@@ -23,23 +25,35 @@ object SkillForm: TSkillForm
   object Label1: TLabel
     Left = 608
     Top = 20
-    Width = 105
-    Height = 16
-    Caption = 'Hotkey  Settings'
+    Width = 102
+    Height = 18
+    Caption = 'Hotkey Settings'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -15
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
   end
   object Label2: TLabel
-    Left = 168
-    Top = 20
-    Width = 44
-    Height = 16
+    Left = 152
+    Top = 22
+    Width = 51
+    Height = 18
     Caption = 'Use List'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -15
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
   end
   object SkillGrid: TAdvStringGrid
     AlignWithMargins = True
     Left = 20
     Top = 40
     Width = 413
-    Height = 553
+    Height = 556
     Cursor = crDefault
     Margins.Left = 20
     Margins.Top = 40
@@ -156,7 +170,7 @@ object SkillForm: TSkillForm
     SelectionColor = clBtnHighlight
     ShowDesignHelper = False
     SortSettings.DefaultFormat = ssAutomatic
-    Version = '8.2.4.1'
+    Version = '8.4.2.2'
     ColWidths = (
       10
       98
@@ -171,7 +185,7 @@ object SkillForm: TSkillForm
     Left = 463
     Top = 40
     Width = 434
-    Height = 553
+    Height = 556
     Cursor = crDefault
     Margins.Left = 30
     Margins.Top = 40
@@ -287,7 +301,7 @@ object SkillForm: TSkillForm
     SelectionColor = clGradientInactiveCaption
     ShowDesignHelper = False
     SortSettings.DefaultFormat = ssAutomatic
-    Version = '8.2.4.1'
+    Version = '8.4.2.2'
     ColWidths = (
       10
       96

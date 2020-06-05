@@ -2,7 +2,7 @@ object ImageInfoForm: TImageInfoForm
   Left = 0
   Top = 0
   BorderStyle = bsDialog
-  Caption = 'Obj info'
+  Caption = 'Obj Info'
   ClientHeight = 735
   ClientWidth = 589
   Color = clBtnFace
@@ -134,7 +134,7 @@ object ImageInfoForm: TImageInfoForm
     SearchFooter.ResultFormat = '(%d of %d)'
     ShowDesignHelper = False
     SortSettings.DefaultFormat = ssAutomatic
-    Version = '8.2.4.1'
+    Version = '8.4.2.2'
     ColWidths = (
       10
       200

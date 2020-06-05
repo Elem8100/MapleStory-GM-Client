@@ -22,7 +22,7 @@ object TamingMobForm: TTamingMobForm
   PixelsPerInch = 120
   TextHeight = 16
   object Label1: TLabel
-    Left = 42
+    Left = 35
     Top = 38
     Width = 44
     Height = 18
