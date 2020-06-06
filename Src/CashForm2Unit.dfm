@@ -34,7 +34,7 @@ object CashForm2: TCashForm2
       Caption = 'Cash'
     end
     object TabSheet2: TTabSheet
-      Caption = 'Seach'
+      Caption = 'Search'
       ImageIndex = 1
       OnShow = TabSheet2Show
       object CashGrid: TAdvStringGrid

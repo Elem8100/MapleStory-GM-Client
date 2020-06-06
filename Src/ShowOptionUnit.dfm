@@ -231,7 +231,7 @@ object ShowOptionForm: TShowOptionForm
     Width = 124
     Height = 17
     TabStop = False
-    Caption = 'Mob  Lv/Name'
+    Caption = 'Mob Lv/Name'
     DoubleBuffered = True
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -269,7 +269,7 @@ object ShowOptionForm: TShowOptionForm
     Width = 49
     Height = 17
     TabStop = False
-    Caption = #29289#20214
+    Caption = 'Obj'
     Checked = True
     DoubleBuffered = True
     Font.Charset = DEFAULT_CHARSET
@@ -289,7 +289,7 @@ object ShowOptionForm: TShowOptionForm
     Top = 23
     Width = 81
     Height = 17
-    Caption = 'Bgm Name'
+    Caption = 'BGM Name'
     TabOrder = 13
     OnClick = CheckBox1Click
   end

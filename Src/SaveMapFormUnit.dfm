@@ -22,9 +22,9 @@ object SaveMapForm: TSaveMapForm
   object Label1: TLabel
     Left = 60
     Top = 31
-    Width = 99
+    Width = 111
     Height = 18
-    Caption = 'Back Y Position'
+    Caption = 'Return Y Position'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -15
