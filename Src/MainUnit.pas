@@ -31,7 +31,6 @@ type
     Label1: TLabel;
     OpenMSFolder: TButton;
     Label2: TLabel;
-    FolderDialog1: TFolderDialog;
     Image1: TImage;
     Shape2: TShape;
     ComboKey: TComboBox;
@@ -149,7 +148,7 @@ uses
   SkillFormUnit, Skill, OptionsFormUnit, AvatarFormUnit, AndroidFormUnit, Android, MiniMap,
   ACtrlEngine, SetScreenFormUnit, ConsumeFormUnit, CashForm2Unit, EtcFormUnit, PlayActionFormUnit,
   UI.Utils, acontrols, UI.Statusbar3.MainBar, UI.StatusBar3.Chat, UI.UIWindow2.UserInfo,
-  UI.UIWindow2.Item;
+  UI.UIWindow2.Item,SelectFolderFormUnit;
 {$R *.dfm}
 
 procedure TMainForm.FamiliarButtonClick(Sender: TObject);
@@ -640,7 +639,7 @@ begin
   begin
     var FontSettings := TFontSettings.Create('Tahoma', 12, TFontWeight.Normal);
     GameFont.FontSettings := FontSettings;
-    GameFont.Draw(Point2f(10, 50), '音樂: ' + TMap.BgmPath, $FFFF0000);
+    GameFont.Draw(Point2f(10, 50), 'BGM: ' + TMap.BgmPath, $FFFF0000);
   end;
   if UIVersion = 3 then
   begin
@@ -879,7 +878,7 @@ begin
     OpenMSFolder.Enabled := False;
     ComboKey.Enabled := False;
   end;
-  if UIVersion = 3 then
+  if (UIVersion = 3) and (TMAp.ShowUI) then
     RenderForm.Cursor := crNone;
   RenderForm.FormResize(Sender);
   ActiveControl := nil;
@@ -896,144 +895,11 @@ begin
 end;
 
 procedure TMainForm.OpenMSFolderClick(Sender: TObject);
-var
-  ID, MapName, StreetName, Path: string;
-  Iter, Iter2: TWZIMGEntry;
-  Dir: TWZDirectory;
-  Img: TWZFile;
-  RowCount: Integer;
+
 begin
-  if FolderDialog1.Execute then
-  begin
-    if FileExists(FolderDialog1.Directory + '\String.wz') then
-    begin
-      Grid.Clear;
-      Path := FolderDialog1.Directory;
-      if MapWz <> nil then
-        FreeAndNil(MapWz);
-      if Map2Wz <> nil then
-        FreeAndNil(Map2Wz);
+  SelectFolderForm.Show;
 
-      if MobWZ <> nil then
-        FreeAndNil(MobWZ);
-      if Mob2WZ <> nil then
-        FreeAndNil(Mob2WZ);
-      if Mob001WZ <> nil then
-        FreeAndNil(Mob001WZ);
-      if NPCWZ <> nil then
-        FreeAndNil(NPCWZ);
-      if StringWZ <> nil then
-        FreeAndNil(StringWZ);
-      if SoundWZ <> nil then
-        FreeAndNil(SoundWZ);
 
-      with Grid.Canvas do
-      begin
-        Font.Size := 20;
-        Font.Color := clBlack;
-        Brush.Color := clGrayText;
-        TextOut(20, 100, 'Loading...');
-      end;
-      WzPath := Path;
-      StringWZ := TWZArchive.Create(Path + '\String.wz');
-
-      if StringWZ.GetImgFile('Mob.img').Root.Get('100100/name', '') = 'Snail' then
-        TNpc.FontSize := 13 //GMS
-      else
-        TNpc.FontSize := 12; //TMS
-      if StringWZ.GetImgFile('Mob.img').Root.Get('100100/name', '') = '달팽이' then
-        IsKMS := True;
-
-      MapWz := TWZArchive.Create(Path + '\Map.wz');
-      if FileExists(Path + '\Map2.wz') then
-        Map2Wz := TWZArchive.Create(Path + '\Map2.wz');
-      if FileExists(Path + '\Map001.wz') then
-        Map001Wz := TWZArchive.Create(Path + '\Map001.wz');
-
-      MobWZ := TWZArchive.Create(Path + '\Mob.wz');
-      if FileExists(Path + '\Mob2.wz') then
-        Mob2WZ := TWZArchive.Create(Path + '\Mob2.wz');
-      if FileExists(Path + '\Mob001.wz') then
-        Mob001WZ := TWZArchive.Create(Path + '\Mob001.wz');
-      if FileExists(Path + '\Map002.wz') then
-      begin
-        Map002Wz := TWZArchive.Create(Path + '\Map002.wz');
-        TMap.Has002Wz := True;
-      end;
-
-      NPCWZ := TWZArchive.Create(Path + '\Npc.wz');
-      SoundWZ := TWZArchive.Create(Path + '\Sound.wz');
-      if FileExists(Path + '\Sound2.wz') then
-        Sound2Wz := TWZArchive.Create(Path + '\Sound2.wz');
-
-      CharacterWZ := TWZArchive.Create(Path + '\Character.wz');
-      BaseWZ := TWZArchive.Create(Path + '\Base.wz');
-      UIWZ := TWZArchive.Create(Path + '\UI.wz');
-      if HasImgFile('UI.wz/UIWindow4.img') then
-        UIVersion := 3;
-      ReactorWz := TWZArchive.Create(Path + '\Reactor.wz');
-      EffectWz := TWZArchive.Create(Path + '\Effect.wz');
-      SkillWZ := TWZArchive.Create(Path + '\Skill.wz');
-      if FileExists(Path + '\Skill001.wz') then
-      begin
-        Skill001Wz := TWZArchive.Create(Path + '\Skill001.wz');
-        TSkill.Has001Wz := True;
-      end;
-      ItemWZ := TWZArchive.Create(Path + '\Item.wz');
-      MorphWz := TWZArchive.Create(Path + '\Morph.wz');
-      EtcWZ := TWZArchive.Create(Path + '\Etc.wz');
-
-      TSetEffect.LoadList;
-      TItemEffect.LoadList;
-      TTamingMob.LoadSaddleList;
-
-      var MapNameRec: TMapNameRec;
-      for Iter in StringWZ.GetImgFile('Map.img').Root.Children do
-        for Iter2 in Iter.Children do
-        begin
-          ID := Add9(Iter2.Name);
-          MapNameRec.ID := ID;
-          MapNameRec.StreetName := Iter2.Get('streetName', '');
-          MapNameRec.MapName := Iter2.Get('mapName', '');
-          TMap.MapNameList.AddOrSetValue(ID, MapNameRec);
-        end;
-      RowCount := -1;
-      Grid.BeginUpdate;
-
-      var MapDir: TWZDirectory;
-
-      if TMap.Has002Wz then
-        MapDir := TWZDirectory(Map002Wz.Root.Entry['Map'])
-      else
-        MapDir := TWZDirectory(MapWz.Root.Entry['Map']);
-
-      for Dir in MapDir.SubDirs do
-        for Img in Dir.Files do
-        begin
-          ID := LeftStr(Img.Name, 9);
-          if TMap.MapNameList.ContainsKey(ID) then
-          begin
-            Inc(RowCount);
-            Grid.RowCount := RowCount + 1;
-            Grid.Cells[0, RowCount] := ID + '  ' + TMap.MapNameList[ID].MapName;
-          end;
-        end;
-
-      Grid.RemoveDuplicates(0, True);
-      Grid.SortByColumn(0);
-      Grid.RemoveRows(0, 1);
-      Grid.EndUpdate;
-      LoadMapButton.Enabled := True;
-      SearchMapEdit.Enabled := True;
-      PageControl1.Enabled := True;
-      Grid.Enabled := True;
-
-    end
-    else
-    begin
-      ShowMessage('Wrong folder, WZ file could not be found');
-    end;
-  end;
   ActiveControl := nil;
 end;
 

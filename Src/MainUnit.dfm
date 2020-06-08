@@ -3,7 +3,7 @@ object MainForm: TMainForm
   Top = 77
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
-  Caption = 'MapleStoryGM  v3.3'
+  Caption = 'MapleStoryGM  v3.32'
   ClientHeight = 711
   ClientWidth = 2089
   Color = clBtnFace
@@ -3053,6 +3053,10 @@ object MainForm: TMainForm
     object TabSheet2: TTabSheet
       Caption = 'World Map'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object WorldMapGrid: TAdvStringGrid
         Left = 0
         Top = 0
@@ -3178,13 +3182,5 @@ object MainForm: TMainForm
           180)
       end
     end
-  end
-  object FolderDialog1: TFolderDialog
-    Options = []
-    DialogX = 0
-    DialogY = 0
-    Version = '1.1.4.0'
-    Left = 312
-    Top = 144
   end
 end

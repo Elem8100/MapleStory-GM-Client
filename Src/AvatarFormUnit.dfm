@@ -2737,10 +2737,18 @@ object AvatarForm: TAvatarForm
     object TabSheet2: TTabSheet
       Caption = 'Load Character'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
     end
     object TabSheet3: TTabSheet
       Caption = 'Dye'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object ColorGrid: TAdvStringGrid
         Left = 0
         Top = 0
@@ -2902,6 +2910,10 @@ object AvatarForm: TAvatarForm
       ImageIndex = 3
       ParentFont = False
       OnShow = TabSheet4Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label1: TLabel
         Left = 207
         Top = 63
@@ -3122,6 +3134,10 @@ object AvatarForm: TAvatarForm
     object TabSheet5: TTabSheet
       Caption = 'Spawn'
       ImageIndex = 4
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
     end
     object TabSheet6: TTabSheet
       Caption = 'Export'

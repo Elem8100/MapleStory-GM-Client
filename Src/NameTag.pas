@@ -245,10 +245,8 @@ begin
     FixAlphaChannel(EquipImages[EastImage]);
     GameCanvas.Draw(EquipImages[EastImage], WestX + CenterLength + WestWidth - OffX, -EastImage.Get('origin').Vector.Y
       + 38);
-    var FontSetting := TFontSettings.Create('Tahoma', 12);
+    var FontSetting := TFontSettings.Create('Arial', 12,TFontWeight.Normal);
     FontSetting.Effect.BorderType := TFontBorder.None;
-    FontSetting.Effect.BorderOpacity := 1;
-    FontSetting.Weight := TFontWeight.Thin;
     GameFont.FontSettings := FontSetting;
     GameFont.Draw(Point2f(WestX + WestWidth + 2, 36), MedalName, ARGB(255, R, G, B));
 
@@ -260,7 +258,7 @@ begin
   EastWidth := Entry.Get2('e').Canvas.Width;
   WestWidth := Entry.Get2('w').Canvas.Width;
   CenterWidth := Entry.Get2('c').Canvas.Width;
-  var FontSetting := TFontSettings.Create('Tahoma', 12, TFontWeight.Thin);
+  var FontSetting := TFontSettings.Create('Arial', 12, TFontWeight.Normal);
   FontSetting.Effect.BorderType := TFontBorder.None;
   GameFont.FontSettings := FontSetting;
   CenterLength := Round(GameFont.Extent(MedalName).x) + 5;

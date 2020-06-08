@@ -193,6 +193,10 @@
             <Form>PlayActionForm</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="SelectFolderFormUnit.pas">
+            <Form>SelectFolderForm</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

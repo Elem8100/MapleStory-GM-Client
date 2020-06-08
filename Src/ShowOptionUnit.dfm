@@ -319,8 +319,6 @@ object ShowOptionForm: TShowOptionForm
     Width = 46
     Height = 17
     Caption = 'UI'
-    Checked = True
-    State = cbChecked
     TabOrder = 16
     OnClick = CheckBox1Click
   end
@@ -331,8 +329,6 @@ object ShowOptionForm: TShowOptionForm
     Width = 81
     Height = 17
     Caption = 'Mini Map'
-    Checked = True
-    State = cbChecked
     TabOrder = 17
     OnClick = CheckBox1Click
   end

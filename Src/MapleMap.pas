@@ -308,8 +308,8 @@ initialization
   TMap.ShowMob := True;
   TMap.ShowPortal := True;
   TMap.ShowChar := True;
-  TMap.ShowUI := True;
-  TMap.ShowMiniMap := True;
+  TMap.ShowUI := False;
+  TMap.ShowMiniMap := False;
   TMap.ShowNpcName := True;
 
 finalization

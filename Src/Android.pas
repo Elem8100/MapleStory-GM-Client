@@ -3,8 +3,8 @@ unit Android;
 interface
 
 uses
-  Windows, SysUtils, StrUtils, Generics.Collections, Math, AsphyreSprite, Footholds, LadderRopes,
-  ChatBalloon, Classes, Global, Tools, MapleMap, MapleCharacterEx;
+  Windows, SysUtils, StrUtils, Generics.Collections, Math, PXT.Sprites, Footholds, LadderRopes,
+  ChatBalloon, Classes, Global, Tools, MapleMap, MapleCharacterEx,NameTag;
 
 type
   TAndroidPlayer = class(TPlayerEx)
@@ -20,13 +20,25 @@ type
     procedure DoMove(const Movecount: Single); override;
   end;
 
+  TAndroidNameTag = class(TMedalTag)
+  public
+    TagName: string;
+    class var
+      AndroidNameTag: TAndroidNameTag;
+    class procedure ReDraw; override;
+    procedure DoMove(const Movecount: Single); override;
+    procedure DoDraw; override;
+    class procedure Delete; override;
+    class procedure Create(ItemID: string); overload; override;
+  end;
+
 var
   AndroidPlayer: TAndroidPlayer;
 
 implementation
 
 uses
-  MapleChair, WZIMGFile, WzUtils, MapleCharacter;
+  MapleChair, WZIMGFile, WzUtils, MapleCharacter,PXT.Canvas;
 
 procedure TAndroidPlayer.SpawnNew;
 var
@@ -49,6 +61,10 @@ begin
   AndroidPlayer.MoveType := mtJump;
   AndroidPlayer.FollowDistance := 100;
   AndroidPlayer.MoveSpeed := 2.1;
+  TAndroidNameTag.Create('01142111');
+  TAndroidNameTag.AndroidNameTag.MedalName:='Android';
+  TAndroidNameTag.AndroidNameTag.InitData;
+  TAndroidNameTag.ReDraw;
 end;
 
 procedure TAndroidPlayer.Spawn(IDList: string);
@@ -318,6 +334,61 @@ begin
 
   if JumpState <> jsNone then
     Action := 'jump';
+
+end;
+
+class procedure TAndroidNameTag.Delete;
+begin
+  if (AndroidNameTag <> nil)  then
+     AndroidNameTag.Dead;
+end;
+
+procedure TAndroidNameTag.DoMove(const MoveCount: Single);
+begin
+  if IsReDraw then
+  GameCanvas.DrawTarget(TargetTexture,300,100,
+  procedure
+  begin
+    TargetEvent;
+  end);
+  x := AndroidPlayer.X;
+  y := AndroidPlayer.Y;
+  Z := AndroidPlayer.Z;
+end;
+
+class procedure TAndroidNameTag.ReDraw;
+begin
+  if AndroidNameTag <> nil then
+    AndroidNameTag.IsReDraw := True;
+end;
+
+procedure TAndroidNameTag.DoDraw;
+var
+  WX, WY:Integer;
+begin
+  if TMap.ShowChar then
+  begin
+    WX := Round(AndroidPlayer.X) - Round(Engine.WorldX);
+    WY := Round(AndroidPlayer.Y) - Round(Engine.WorldY);
+    GameCanvas.Draw(TargetTexture, WX - 150, WY - 28);
+  end;
+  if IsReDraw then
+    IsReDraw := False;
+end;
+
+class procedure TAndroidNameTag.Create(ItemID: string);
+begin
+  AndroidNameTag := TAndroidNameTag.Create(SpriteEngine);
+
+  with AndroidNameTag do
+  begin
+    TruncMove := True;
+    Tag := 1;
+    var TagNum := GetImgEntry('Character.wz/Accessory/' + ItemID + '.img/info').Get('medalTag', '');
+    Entry := GetImgEntry('UI.wz/NameTag.img/medal/' + string(TagNum));
+    DumpData(Entry, EquipData, EquipImages);
+    InitData;
+  end;
 
 end;
 

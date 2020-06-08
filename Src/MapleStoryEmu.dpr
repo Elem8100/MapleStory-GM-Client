@@ -28,7 +28,8 @@ uses
   ConsumeFormUnit in 'ConsumeFormUnit.pas' {ConsumeForm},
   CashForm2Unit in 'CashForm2Unit.pas' {CashForm2},
   EtcFormUnit in 'EtcFormUnit.pas' {EtcForm},
-  PlayActionFormUnit in 'PlayActionFormUnit.pas' {PlayActionForm};
+  PlayActionFormUnit in 'PlayActionFormUnit.pas' {PlayActionForm},
+  SelectFolderFormUnit in 'SelectFolderFormUnit.pas' {SelectFolderForm};
 
 {$R *.res}
 
@@ -62,5 +63,6 @@ begin
   Application.CreateForm(TCashForm2, CashForm2);
   Application.CreateForm(TEtcForm, EtcForm);
   Application.CreateForm(TPlayActionForm, PlayActionForm);
+  Application.CreateForm(TSelectFolderForm, SelectFolderForm);
   Application.Run;
 end.

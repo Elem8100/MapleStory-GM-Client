@@ -50,9 +50,9 @@ implementation
 procedure TShowOptionForm.Button1Click(Sender: TObject);
 begin
   TLabelRingTag.LabelRingTag.MedalName := Edit1.Text;
-  TStatusBar3MainBar.Instance.ReDraw;
-  if UILabel.ContainsKey('UserInfoName') then
-    UILabel['UserInfoName'].Text:=  Edit1.Text;
+  //TStatusBar3MainBar.Instance.ReDraw;
+ // if UILabel.ContainsKey('UserInfoName') then
+  //  UILabel['UserInfoName'].Text:=  Edit1.Text;
   TLabelRingTag.LabelRingTag.InitData;
   TLabelRingTag.ReDraw;
   Button1.SetFocus;
