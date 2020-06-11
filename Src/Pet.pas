@@ -3,10 +3,9 @@ unit Pet;
 interface
 
 uses
-  Windows, System.Types, SysUtils, StrUtils, PXT.Sprites, Generics.Collections,
-  WZIMGFile, Math, Footholds, LadderRopes, AsphyreTypes, DX9Textures, WZArchive,
-  ChatBalloon, MapPortal, MapleCharacter, DamageNumber, MobDrop, Global, Tools,
-  WzUtils, MapleMap, NameTag,PXT.Graphics;
+  Windows, System.Types, SysUtils, StrUtils, PXT.Sprites, Generics.Collections, WZIMGFile, Math,
+  Footholds, LadderRopes, AsphyreTypes, DX9Textures, WZArchive, ChatBalloon, MapPortal,
+  MapleCharacter, DamageNumber, MobDrop, Global, Tools, WzUtils, MapleMap, NameTag, PXT.Graphics;
 
 type
   TMoveDirection = (mdLeft, mdRight, mdNone);
@@ -37,8 +36,7 @@ type
     Distance: TPoint;
     OnLadder: Boolean;
   public
-
-     FH: TFoothold;
+    FH: TFoothold;
     class var
       Pet: TPet;
     procedure DoMove(const Movecount: Single); override;
@@ -111,7 +109,7 @@ begin
             MaxFallSpeed := 8;
             MoveDirection := mdNone;
             MoveSpeed := 2.5;
-         end;
+          end;
         end;
       end;
 
@@ -183,7 +181,7 @@ begin
           begin
          //  Below := TFootholdTree.This.FindBelow(Point(Round(X), Round(Y - 70)), BelowFH);
           //  if Y - Below.Y <> 0 then
-              DoJump := True;
+            DoJump := True;
           end;
         end;
 
@@ -416,17 +414,18 @@ end;
 
 class procedure TPetNameTag.Delete;
 begin
-  if (PetNameTag <> nil)  then
-     PetNameTag.Dead;
+  if (PetNameTag <> nil) then
+    PetNameTag.Dead;
 end;
 
 procedure TPetNameTag.DoMove(const MoveCount: Single);
 begin
   if IsReDraw then
-   GameCanvas.DrawTarget(TargetTexture,300,100,procedure
-   begin
-     TargetEvent;
-   end);
+    GameCanvas.DrawTarget(TargetTexture, 300, 100,
+      procedure
+      begin
+        TargetEvent;
+      end);
   x := TPet.Pet.X;
   y := TPet.Pet.Y;
   Z := TPet.Pet.Z;
@@ -462,12 +461,14 @@ begin
     Tag := 1;
     var TagNum := GetImgEntry('Item.wz/Pet/' + ItemID + '.img/info').Get('nameTag', '3');
     Entry := GetImgEntry('UI.wz/NameTag.img/pet/' + string(TagNum));
+    if Entry = nil then
+      Entry := GetImgEntry('UI.wz/NameTag.img/pet/38');
 
     if Entry.Get('c/_inlink') <> nil then
     begin
       var Data := Entry.Get('c/_inlink').Data;
       Data := StringReplace(Data, '/c', '', [rfReplaceAll]);
-      Data:=  StringReplace(Data, 'pet/', '', [rfReplaceAll]);
+      Data := StringReplace(Data, 'pet/', '', [rfReplaceAll]);
       Entry := GetImgEntry('UI.wz/NameTag.img/pet/' + string(Data));
     end;
     DumpData(Entry, EquipData, EquipImages);
