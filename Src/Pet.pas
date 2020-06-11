@@ -460,8 +460,16 @@ begin
   begin
     TruncMove := True;
     Tag := 1;
-    var TagNum := GetImgEntry('Character.wz/Accessory/' + ItemID + '.img/info').Get('medalTag', '');
-    Entry := GetImgEntry('UI.wz/NameTag.img/medal/' + string(TagNum));
+    var TagNum := GetImgEntry('Item.wz/Pet/' + ItemID + '.img/info').Get('nameTag', '3');
+    Entry := GetImgEntry('UI.wz/NameTag.img/pet/' + string(TagNum));
+
+    if Entry.Get('c/_inlink') <> nil then
+    begin
+      var Data := Entry.Get('c/_inlink').Data;
+      Data := StringReplace(Data, '/c', '', [rfReplaceAll]);
+      Data:=  StringReplace(Data, 'pet/', '', [rfReplaceAll]);
+      Entry := GetImgEntry('UI.wz/NameTag.img/pet/' + string(Data));
+    end;
     DumpData(Entry, EquipData, EquipImages);
     InitData;
   end;

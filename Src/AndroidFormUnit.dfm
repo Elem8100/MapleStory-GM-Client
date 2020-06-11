@@ -198,6 +198,10 @@ object AndroidForm: TAndroidForm
     object TabSheet2: TTabSheet
       Caption = 'Custom'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
     end
   end
 end

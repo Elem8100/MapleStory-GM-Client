@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, SysUtils, StrUtils, Generics.Collections, Math, PXT.Sprites, Footholds, LadderRopes,
-  ChatBalloon, Classes, Global, Tools, MapleMap, MapleCharacterEx,NameTag;
+  ChatBalloon, Classes, Global, Tools, MapleMap, MapleCharacterEx, NameTag;
 
 type
   TAndroidPlayer = class(TPlayerEx)
@@ -38,7 +38,7 @@ var
 implementation
 
 uses
-  MapleChair, WZIMGFile, WzUtils, MapleCharacter,PXT.Canvas;
+  MapleChair, WZIMGFile, WzUtils, MapleCharacter, PXT.Canvas;
 
 procedure TAndroidPlayer.SpawnNew;
 var
@@ -61,10 +61,6 @@ begin
   AndroidPlayer.MoveType := mtJump;
   AndroidPlayer.FollowDistance := 100;
   AndroidPlayer.MoveSpeed := 2.1;
-  TAndroidNameTag.Create('01142111');
-  TAndroidNameTag.AndroidNameTag.MedalName:='Android';
-  TAndroidNameTag.AndroidNameTag.InitData;
-  TAndroidNameTag.ReDraw;
 end;
 
 procedure TAndroidPlayer.Spawn(IDList: string);
@@ -339,18 +335,18 @@ end;
 
 class procedure TAndroidNameTag.Delete;
 begin
-  if (AndroidNameTag <> nil)  then
-     AndroidNameTag.Dead;
+  if (AndroidNameTag <> nil) then
+    AndroidNameTag.Dead;
 end;
 
 procedure TAndroidNameTag.DoMove(const MoveCount: Single);
 begin
   if IsReDraw then
-  GameCanvas.DrawTarget(TargetTexture,300,100,
-  procedure
-  begin
-    TargetEvent;
-  end);
+    GameCanvas.DrawTarget(TargetTexture, 300, 100,
+      procedure
+      begin
+        TargetEvent;
+      end);
   x := AndroidPlayer.X;
   y := AndroidPlayer.Y;
   Z := AndroidPlayer.Z;
@@ -364,7 +360,7 @@ end;
 
 procedure TAndroidNameTag.DoDraw;
 var
-  WX, WY:Integer;
+  WX, WY: Integer;
 begin
   if TMap.ShowChar then
   begin
@@ -384,8 +380,16 @@ begin
   begin
     TruncMove := True;
     Tag := 1;
-    var TagNum := GetImgEntry('Character.wz/Accessory/' + ItemID + '.img/info').Get('medalTag', '');
-    Entry := GetImgEntry('UI.wz/NameTag.img/medal/' + string(TagNum));
+    var TagNum := GetImgEntry('Etc.wz/Android/' + ItemID + '/info').Get('nameTag', '38');
+    Entry := GetImgEntry('UI.wz/NameTag.img/pet/' + string(TagNum));
+
+    if Entry.Get('c/_inlink') <> nil then
+    begin
+      var Data := Entry.Get('c/_inlink').Data;
+      Data := StringReplace(Data, '/c', '', [rfReplaceAll]);
+      Data:=  StringReplace(Data, 'pet/', '', [rfReplaceAll]);
+      Entry := GetImgEntry('UI.wz/NameTag.img/pet/' + string(Data));
+    end;
     DumpData(Entry, EquipData, EquipImages);
     InitData;
   end;

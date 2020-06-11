@@ -130,7 +130,7 @@ begin
   TPet.Delete;
   TPet.Create(PetID);
 
-  TPetNameTag.Create('01142008');
+  TPetNameTag.Create(PetID);
   TPetNameTag.PetNameTag.MedalName:=PetGrid.Cells[3, ARow];
   TPetNameTag.PetNameTag.InitData;
   TPetNameTag.ReDraw;

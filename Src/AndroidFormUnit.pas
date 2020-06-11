@@ -23,6 +23,7 @@ type
     procedure AvatarViewImageSelect(Sender: TObject; idx: Integer);
     procedure PageControl1Change(Sender: TObject);
   private
+   // Num:string;
     HasLoad: Boolean;
     AvatarView: TImageEnMView;
     { Private declarations }
@@ -110,6 +111,10 @@ begin
     Str := Str + i + '-';
 
   AndroidPlayer.Spawn(Str);
+  TAndroidNameTag.Create(ImgNum);
+  TAndroidNameTag.AndroidNameTag.MedalName:='Android';
+  TAndroidNameTag.AndroidNameTag.InitData;
+  TAndroidNameTag.ReDraw;
 
   IDList.Free;
   ActiveControl := nil;
