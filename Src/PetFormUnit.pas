@@ -4,8 +4,8 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, AdvObj, BaseGrid, AdvGrid,
-  Vcl.StdCtrls, Vcl.ComCtrls;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, AdvObj, BaseGrid, AdvGrid, Vcl.StdCtrls,
+  Vcl.ComCtrls;
 
 type
   TPetForm = class(TForm)
@@ -17,6 +17,8 @@ type
     DyeGrid: TAdvStringGrid;
     Label1: TLabel;
     Edit2: TEdit;
+    PetEquipGrid: TAdvStringGrid;
+    Label2: TLabel;
     procedure FormActivate(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure PetGridClickCell(Sender: TObject; ARow, ACol: Integer);
@@ -27,10 +29,10 @@ type
     procedure DyeGridClickCell(Sender: TObject; ARow, ACol: Integer);
     procedure Edit2Change(Sender: TObject);
   private
-    HasLoad :Boolean;
-    PetID:string;
+    HasLoad: Boolean;
+    PetID: string;
     SelectRow: Integer;
-    PetSelectRow:Integer;
+    PetSelectRow: Integer;
     { Private declarations }
   public
     { Public declarations }
@@ -40,8 +42,9 @@ var
   PetForm: TPetForm;
 
 implementation
- uses
-  Pet,WzUtils, WZIMGFile,  WZDirectory, Global,ColorUtils;
+
+uses
+  Pet, WzUtils, WZIMGFile, WZDirectory, Global, ColorUtils;
 {$R *.dfm}
 
 procedure TPetForm.Button1Click(Sender: TObject);
@@ -53,10 +56,10 @@ end;
 
 procedure TPetForm.DyeGridClickCell(Sender: TObject; ARow, ACol: Integer);
 begin
-   SelectRow := ARow;
-   var Entry := GetImgEntry('Item.wz/Pet/' + PetID + '.img/');
-   if Entry <> nil then
-   TColorFunc.SetSpriteColor<TWZIMGEntry>(Entry, ARow,True);
+  SelectRow := ARow;
+  var Entry := GetImgEntry('Item.wz/Pet/' + PetID + '.img/');
+  if Entry <> nil then
+    TColorFunc.SetSpriteColor<TWZIMGEntry>(Entry, ARow, True);
   ActiveControl := nil;
 end;
 
@@ -100,43 +103,77 @@ end;
 
 procedure TPetForm.FormClick(Sender: TObject);
 begin
-   ActiveControl := nil;
+  ActiveControl := nil;
 end;
 
 procedure TPetForm.FormCreate(Sender: TObject);
 begin
-  Left := ((Screen.Width - Width) div 2)+400;
+  Left := ((Screen.Width - Width) div 2) + 400;
   Top := (Screen.Height - Height) div 2;
 end;
 
-procedure TPetForm.FormKeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
+procedure TPetForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
-   if Key = VK_MENU then
+  if Key = VK_MENU then
     Key := 0;
 end;
 
 procedure TPetForm.PetGridClick(Sender: TObject);
 begin
-    ActiveControl := nil;
+  ActiveControl := nil;
 end;
 
 procedure TPetForm.PetGridClickCell(Sender: TObject; ARow, ACol: Integer);
 begin
   SelectRow := 0;
-  PetSelectRow:=Arow;
+  PetSelectRow := ARow;
   PetID := PetGrid.Cells[1, ARow];
   TPetNameTag.Delete;
   TPet.Delete;
   TPet.Create(PetID);
 
   TPetNameTag.Create(PetID);
-  TPetNameTag.PetNameTag.MedalName:=PetGrid.Cells[3, ARow];
+  TPetNameTag.PetNameTag.MedalName := PetGrid.Cells[3, ARow];
   TPetNameTag.PetNameTag.InitData;
   TPetNameTag.ReDraw;
   TColorFunc.SetGridColor(PetGrid.CellGraphics[2, ARow].CellBitmap, DyeGrid);
+
+  PetEquipGrid.ClearAll;
+  var RowCount := -1;
+  PetEquipGrid.BeginUpdate;
+  for var img in TWZDirectory(CharacterWZ.Root.Entry['PetEquip']).Files do
+  begin
+
+    for var Iter in CharacterWZ.GetImgFile('PetEquip/' + Img.Name).Root.Children do
+    begin
+      if (PEtID <> '') and (Iter.Name = PetID) then
+      begin
+
+        var ID := NoIMG(img.Name);
+        Inc(RowCount);
+        PetEquipGrid.RowCount := RowCount + 1;
+        PetEquipGrid.Cells[1, RowCount] := ID;
+        if HasImgEntry('String.wz/Eqp.img/Eqp/PetEquip/' + IDToInt(ID)) then
+          PetEquipGrid.Cells[3, RowCount] := GetImgEntry('String.wz/Eqp.img/Eqp/PetEquip/' + IDToInt
+            (ID)).Get('name', '');
+
+        var Entry := GetImgEntry('Character.wz/PetEquip/' + img.Name + '/info/icon', True);
+        if Entry <> nil then
+        begin
+          var Bmp := Entry.Canvas.DumpBmp;
+          PetEquipGrid.CreateBitmap(2, RowCount, False, haCenter, vaCenter).Assign(Bmp);
+          Bmp.Free;
+        end;
+      end;
+    end;
+
+  end;
+  PetEquipGrid.SortByColumn(1);
+  PetEquipGrid.EndUpdate;
+
   ActiveControl := nil;
 
 end;
 
 end.
+
