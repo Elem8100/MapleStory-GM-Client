@@ -56,7 +56,18 @@ type
     class procedure Create(ItemID: string); overload; override;
   end;
 
+  TPetEquip = class(TPet)
+    class var
+      PetEquip: TPetEquip;
+    procedure DoMove(const Movecount: Single); override;
+    class procedure Delete;
+    class procedure Create(ID: string); overload;
+  end;
+
 implementation
+
+uses
+  PetFormUnit;
 
 class procedure TPet.Delete;
 begin
@@ -475,6 +486,85 @@ begin
     InitData;
   end;
 
+end;
+
+class procedure TPetEquip.Create(ID: string);
+begin
+  var Entry := GetImgEntry('Character.wz/PetEquip/' + ID + '.img/');
+
+  DumpData(Entry, EquipData, EquipImages);
+
+  PetEquip := TPetEquip.Create(SpriteEngine);
+  with PetEquip do
+  begin
+    ImageLib := EquipImages;
+    TruncMove := True;
+    Tag := 1;
+    State := TPet.Pet.State;
+    Frame := TPet.Pet.Frame;
+    UpPath := Entry.GetPath;
+    ImageEntry := EquipData[UpPath + '/' + PetForm.PetID + '/' + State + '/' + Frame.ToString];
+    X := TPet.Pet.X;
+    Y := TPet.Pet.Y;
+    Z := TPet.Pet.Z + 100;
+
+  end;
+end;
+
+procedure TPetEquip.DoMove(const Movecount: Single);
+begin
+  if HasEntryE(UpPath + '/' + PetForm.PetID + '/' + State + '/' + Frame.ToString) then
+  begin
+    Path := UpPath + '/' + PetForm.PetID + '/' + State + '/' + Frame.ToString;
+    ImageEntry := EquipData[Path];
+  end;
+
+  if HasEntryE(UpPath + '/' + PetForm.PetID + '/' + State + '/' + Frame.ToString + '/delay') then
+    Delay := EquipData[UpPath + '/' + PetForm.PetID + '/' + State + '/' + Frame.ToString + '/delay'].Data
+  else
+    Delay := 100;
+
+  FTime := FTime + 17;
+  if FTime > Delay then
+  begin
+    Frame := Frame + 1;
+    if not HasEntryE(UpPath + '/' + PetForm.PetID + '/' + State + '/' + Frame.ToString) then
+      Frame := 0;
+    FTime := 0;
+  end;
+
+  State := Tpet.Pet.State;
+  Frame := tPet.Pet.Frame;
+  X := TPet.Pet.X;
+  Y := TPet.Pet.Y;
+  Z := TPet.Pet.Z + 100;
+  MirrorX := TPet.Pet.MirrorX;
+  if ImageEntry.Get('origin') <> nil then
+    Origin := ImageEntry.Get('origin').Vector;
+
+  case MirrorX of
+    True:
+      Offset.X := Origin.X - PatternWidth;
+    False:
+      Offset.X := -Origin.X;
+  end;
+  Offset.Y := -Origin.Y;
+
+end;
+
+class procedure TPetEquip.Delete;
+begin
+  if PetEquip <> nil then
+  begin
+    PetEquip.Dead;
+    PetEquip := nil;
+    for var Iter in EquipImages.Keys do
+      if LeftStr(Iter.GetPath, 21) = 'Character.wz/PetEquip' then
+      begin
+        EquipImages.Remove(Iter);
+       // EquipData.Remove(Iter.GetPath);
+      end;
+  end;
 end;
 
 end.

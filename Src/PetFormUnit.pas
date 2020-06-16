@@ -28,13 +28,15 @@ type
     procedure Button1Click(Sender: TObject);
     procedure DyeGridClickCell(Sender: TObject; ARow, ACol: Integer);
     procedure Edit2Change(Sender: TObject);
+    procedure PetEquipGridClickCell(Sender: TObject; ARow, ACol: Integer);
   private
     HasLoad: Boolean;
-    PetID: string;
+
     SelectRow: Integer;
     PetSelectRow: Integer;
     { Private declarations }
   public
+   PetID: string;
     { Public declarations }
   end;
 
@@ -118,6 +120,13 @@ begin
     Key := 0;
 end;
 
+procedure TPetForm.PetEquipGridClickCell(Sender: TObject; ARow, ACol: Integer);
+begin
+ var PetEquipID := PetEquipGrid.Cells[1, ARow];
+ TPetEquip.Delete;
+ TPetEquip.Create(PetEquipID);
+end;
+
 procedure TPetForm.PetGridClick(Sender: TObject);
 begin
   ActiveControl := nil;
@@ -130,6 +139,7 @@ begin
   PetID := PetGrid.Cells[1, ARow];
   TPetNameTag.Delete;
   TPet.Delete;
+  TPetEquip.Delete;
   TPet.Create(PetID);
 
   TPetNameTag.Create(PetID);

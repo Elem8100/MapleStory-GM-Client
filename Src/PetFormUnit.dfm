@@ -40,10 +40,8 @@ object PetForm: TPetForm
     ActivePage = TabSheet1
     Align = alClient
     TabOrder = 1
-    ExplicitWidth = 331
     object TabSheet1: TTabSheet
       Caption = 'Pet'
-      ExplicitWidth = 323
       object Label1: TLabel
         Left = 38
         Top = 5
@@ -248,6 +246,7 @@ object PetForm: TPetForm
         TabOrder = 2
         OnClick = PetGridClick
         HoverRowCells = [hcNormal, hcSelected]
+        OnClickCell = PetEquipGridClickCell
         ActiveCellFont.Charset = DEFAULT_CHARSET
         ActiveCellFont.Color = clWindowText
         ActiveCellFont.Height = -11
