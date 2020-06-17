@@ -67,7 +67,7 @@ end;
 
 procedure TFamiliarForm.Edit1Change(Sender: TObject);
 begin
-   FamiliarGrid.NarrowDown(Trim(Edit1.Text));
+  FamiliarGrid.NarrowDown(Trim(Edit1.Text));
 end;
 
 procedure TFamiliarForm.FamiliarGridClick(Sender: TObject);
@@ -113,17 +113,27 @@ begin
   FamiliarGrid.BeginUpdate;
   for var img in TWZDirectory(CharacterWZ.Root.Entry['Familiar']).Files do
   begin
-
     var ID := NoIMG(img.Name);
-    Inc(RowCount);
-    FamiliarGrid.RowCount := RowCount + 1;
-    FamiliarGrid.Cells[1, RowCount] := ID;
-
     var CardID: string;
     if IsGMS then
-      CardID := GetImgEntry('Etc.wz/FamiliarInfo.img/' + ID + '/consume').Data
+    begin
+      if GetImgEntry('Etc.wz/FamiliarInfo.img/' + ID) <> nil then
+      begin
+        Inc(RowCount);
+        FamiliarGrid.RowCount := RowCount + 1;
+        FamiliarGrid.Cells[1, RowCount] := ID;
+        CardID := GetImgEntry('Etc.wz/FamiliarInfo.img/' + ID + '/consume').Data
+      end
+      else
+        Continue;
+    end
     else
+    begin
+      Inc(RowCount);
+      FamiliarGrid.RowCount := RowCount + 1;
+      FamiliarGrid.Cells[1, RowCount] := ID;
       CardID := GetImgEntry('Character.wz/Familiar/' + img.Name + '/info/monsterCardID').Data;
+    end;
 
     if HasImgEntry('String.wz/Consume.img/' + CardID) then
       FamiliarGrid.Cells[3, RowCount] := GetImgEntry('String.wz/Consume.img/' + CardID).Get('Name', '');
@@ -135,7 +145,6 @@ begin
       FamiliarGrid.CreateBitmap(2, RowCount, False, haCenter, vaCenter).Assign(Bmp);
       Bmp.Free;
     end;
-
   end;
   FamiliarGrid.SortByColumn(1);
   FamiliarGrid.EndUpdate;
