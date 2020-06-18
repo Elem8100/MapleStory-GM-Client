@@ -3,9 +3,10 @@ unit Mob2;
 interface
 
 uses
-  Winapi.Windows, System.Types, System.SysUtils, System.StrUtils, PXT.Sprites, Generics.Collections, WZIMGFile, Math,
-  Footholds, LadderRopes, AsphyreTypes, WZArchive, ChatBalloon, MapPortal, MapleCharacter,
-  DamageNumber, MobDrop, Global, Tools, WzUtils, MapleMap, ColorUtils, PXT.Graphics, PXT.Canvas, PXT.Types;
+  Winapi.Windows, System.Types, System.SysUtils, System.StrUtils, PXT.Sprites, Generics.Collections,
+  WZIMGFile, Math, Footholds, LadderRopes, AsphyreTypes, WZArchive, ChatBalloon, MapPortal,
+  MapleCharacter, DamageNumber, MobDrop, Global, Tools, WzUtils, MapleMap, ColorUtils, PXT.Graphics,
+  PXT.Canvas, PXT.Types;
 
 type
   TMoveDirection = (mdLeft, mdRight, mdNone);
@@ -186,7 +187,7 @@ var
   c: Integer;
   Entry, Iter, Iter2: TWZIMGEntry;
   Pos: TPoint;
-  Path1, PathW: string;
+  Path1, PathW, InfoPath: string;
   WZ: TWZArchive;
   TestID: string;
 begin
@@ -195,18 +196,21 @@ begin
   if MobWZ.GetImgFile(ID + '.img') <> nil then
   begin
     Path1 := 'Mob/';
+    InfoPath := 'Mob/';
     PathW := 'Mob.wz/';
     WZ := MobWZ;
   end
   else if Mob001WZ.GetImgFile(ID + '.img') <> nil then
   begin
     Path1 := 'Mob001/';
+    InfoPath := 'Mob001/';
     PathW := 'Mob001.wz/';
     WZ := Mob001WZ;
   end
   else
   begin
     Path1 := 'Mob2/';
+    InfoPath := 'Mob2/';
     PathW := 'Mob2.wz/';
     WZ := Mob2WZ;
   end;
@@ -216,14 +220,39 @@ begin
   begin
     MobList.Add(ID);
     DumpData(WZ.GetImgFile(ID + '.img').Root, WzData, Images, ColorEffect, Value);
-    if Entry <> nil then
+  end;
+
+  if Entry <> nil then
+  begin
+    var EntryID: string := Entry.Data;
+    if MobWZ.GetImgFile(EntryID + '.img') <> nil then
+    begin
+      Path1 := 'Mob/';
+      PathW := 'Mob.wz/';
+      WZ := MobWZ;
+    end
+    else if Mob001WZ.GetImgFile(EntryID + '.img') <> nil then
+    begin
+      Path1 := 'Mob001/';
+      PathW := 'Mob001.wz/';
+      WZ := Mob001WZ;
+    end
+    else
+    begin
+      Path1 := 'Mob2/';
+      PathW := 'Mob2.wz/';
+      WZ := Mob2WZ;
+    end;
+    if not Wzdata.ContainsKey(PathW + EntryID + '.img') then
       DumpData(WZ.GetImgFile(Entry.Data + '.img').Root, WzData, Images, ColorEffect, Value);
   end;
+
 
   if Entry <> nil then
     TestID := Entry.Data
   else
     TestID := ID;
+
   if (WZ.GetImgFile(TestID + '.img').Root.Get('stand/0') = nil) and (WZ.GetImgFile(TestID + '.img').Root.Get
     ('fly/0') = nil) then
     Exit;
@@ -249,7 +278,7 @@ begin
       Data.AddOrSetValue(FID + Iter.Name + '/FrameCount', c - 1);
     end;
 
-    Entry := GetImgEntry(Path1 + InfoID + '.img/info');
+    Entry := GetImgEntry(InfoPath + InfoID + '.img/info');
     if Entry.Get('speed') <> nil then
       MoveSpeed := (1 + Entry.Get('speed').Data / 100) * 2
     else
@@ -270,11 +299,12 @@ begin
       HP := 2000000;
 
     Level := Entry.Get('level', '1');
+
     FMobName := StringWZ.GetImgFile('Mob.img').Root.Get(IDToInt(InfoID) + '/' + 'name', '');
     // WzData.AddOrSetValue(FID, FMobName);
             //gamefont.
     fNameWidth := Round(GameFont.ExtentByPixels('Lv.' + IntToStr(Level) + '  ' + FMobName).Right);
-    FIDWidth :=  Round(GameFont.ExtentByPixels('ID: ' + InfoID).Right);
+    FIDWidth := Round(GameFont.ExtentByPixels('ID: ' + InfoID).Right);
    // FontsAlt[1].TextWidth('ID: ' + InfoID);
 
     MoveType := mtMove;
@@ -349,7 +379,7 @@ begin
       procedure
       begin
         GameCanvas.FillRect(FloatRect(0, 0, FNameWidth + 4, 15), cRGB1(0, 0, 0, 190));
-        GameFont.Draw(Point2f(2,0),'Lv.' + IntToStr(Level) + '  ' + FMobName,$FFFFFFFF);
+        GameFont.Draw(Point2f(2, 0), 'Lv.' + IntToStr(Level) + '  ' + FMobName, $FFFFFFFF);
       end);
   end;
 
@@ -925,7 +955,7 @@ begin
   if TMap.ShowID then
   begin
     GameCanvas.FillRect(FloatRect(IDPos - 3, WY + 18, FIDWidth + 4, 15), cRGB1(0, 0, 0, 160));
-    GameFont.Draw(Point2f(IDPos - 1, WY + 18),'ID: ' + InfoID,$FFFFFFFF);
+    GameFont.Draw(Point2f(IDPos - 1, WY + 18), 'ID: ' + InfoID, $FFFFFFFF);
     //FontsAlt[1].TextOut('ID: ' + InfoID, IDPos - 1, WY + 18, cRGB1(255, 255, 255));
   end;
   {

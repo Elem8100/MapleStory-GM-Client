@@ -47,9 +47,9 @@ type
     HasLoad: Boolean;
     HasLoadBoss1: Boolean;
     HasLoadBoss2: Boolean;
-    SelectRow:Integer;
+    SelectRow: Integer;
     procedure SelectMob;
-    procedure SetMobColor(Row:Integer);
+    procedure SetMobColor(Row: Integer);
     { Private declarations }
   public
     { Public declarations }
@@ -92,12 +92,21 @@ begin
     Path := 'Mob2/';
     WZ := Mob2WZ;
   end;
+
   if WZ.GetImgFile(MobID + '.img') = nil then
     Exit;
 
   Entry := GetImgEntry(Path + MobID + '.img/info/link');
   if Entry <> nil then
-    SpriteID := Entry.Data
+  begin
+    SpriteID := Entry.Data;
+    if MobWZ.GetImgFile(SpriteID + '.img') <> nil then
+      Path := 'Mob/'
+    else if Mob001WZ.GetImgFile(SpriteID + '.img') <> nil then
+      Path := 'Mob001/'
+    else
+      Path := 'Mob2/';
+  end
   else
     SpriteID := MobID;
 
@@ -125,7 +134,7 @@ end;
 
 procedure TAddMobForm.PageControl1Change(Sender: TObject);
 begin
-   exit;
+  exit;
   case PageControl1.TabIndex of
     1:
       begin
@@ -253,7 +262,7 @@ begin
   Boss2Grid.SaveToCSV(ExtractFilePath(ParamStr(0)) + 'Boss2.txt');
 end;
 
-procedure TAddMobForm.SetMobColor(Row:Integer);
+procedure TAddMobForm.SetMobColor(Row: Integer);
 var
   Entry: TWZIMGEntry;
   Path1, PathW: string;
@@ -281,14 +290,23 @@ begin
   TColorFunc.SetSpriteColor<TWZIMGEntry>(WZ.GetImgFile(MobID + '.img').Root, Row);
   Entry := GetImgEntry(Path1 + MobID + '.img/info/link');
   if Entry <> nil then
+  begin
+    var EntryID: string := Entry.Data;
+    if MobWZ.GetImgFile(EntryID + '.img') <> nil then
+      WZ := MobWZ
+    else if Mob001WZ.GetImgFile(EntryID + '.img') <> nil then
+      WZ := Mob001WZ
+    else
+      WZ := Mob2WZ;
     TColorFunc.SetSpriteColor<TWZIMGEntry>(WZ.GetImgFile(Entry.Data + '.img').Root, Row);
+  end;
 end;
 
 procedure TAddMobForm.DyeGridClickCell(Sender: TObject; ARow, ACol: Integer);
 begin
   SelectRow := ARow;
   SetMobColor(ARow);
-  ActiveControl:= nil;
+  ActiveControl := nil;
 end;
 
 procedure TAddMobForm.Edit2Change(Sender: TObject);
