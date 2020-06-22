@@ -20,6 +20,9 @@ type
     Button1: TButton;
     ConsumeGrid: TAdvStringGrid;
     Edit1: TEdit;
+    TabSheet3: TTabSheet;
+    ConsumeEffectGrid: TAdvStringGrid;
+    Button2: TButton;
     procedure FormActivate(Sender: TObject);
     procedure ConsumeGridClickCell(Sender: TObject; ARow, ACol: Integer);
     procedure TabSheet2Show(Sender: TObject);
@@ -30,9 +33,13 @@ type
     procedure FormClick(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure ConsumeGridClick(Sender: TObject);
+    procedure TabSheet3Show(Sender: TObject);
+    procedure ConsumeEffectGridClickCell(Sender: TObject; ARow, ACol: Integer);
+    procedure Button2Click(Sender: TObject);
   private
     HasLoad: Boolean;
     HasShowImageGrid: Boolean;
+    HasShowEffectGrid: Boolean;
     ImageGrid: TImageEnMView;
     IconList: TObjectList<TBmpEx>;
     Wz: TWZArchive;
@@ -53,7 +60,7 @@ var
 implementation
 
 uses
-  WzUtils, Global, StrUtils, WZDirectory, MobDrop, MapleCharacter;
+  WzUtils, Global, StrUtils, WZDirectory, MobDrop, MapleCharacter, MapleEffect;
 {$R *.dfm}
 
 procedure TConsumeForm.CreateImageGrid(var AImageGrid: TImageEnMView; AOwner: TComponent; AParent: TWinControl);
@@ -100,7 +107,21 @@ procedure TConsumeForm.Button1Click(Sender: TObject);
 begin
   if Trim(IDLabel.Caption) <> '' then
     TMobDrop.Drop(Round(Player.X), Round(Player.Y), 0, Trim(IDLabel.Caption));
-   ActiveControl := nil;
+  ActiveControl := nil;
+end;
+
+procedure TConsumeForm.Button2Click(Sender: TObject);
+begin
+  TItemEffect.Delete(Equip);
+  ActiveControl := nil;
+end;
+
+procedure TConsumeForm.ConsumeEffectGridClickCell(Sender: TObject; ARow, ACol: Integer);
+begin
+  var ID := ConsumeEffectGrid.Cells[1, ARow];
+  TItemEffect.Delete(Equip);
+  TItemEffect.Create(ID, True);
+  ActiveControl := nil;
 end;
 
 procedure TConsumeForm.ConsumeGridClick(Sender: TObject);
@@ -221,16 +242,48 @@ begin
   ConsumeGrid.EndUpdate;
 end;
 
+procedure TConsumeForm.TabSheet3Show(Sender: TObject);
+begin
+  if HasShowEffectGrid then
+    Exit;
+  HasShowEffectGrid := True;
+  ConsumeEffectGrid.Canvas.Font.Size := 18;
+  ConsumeEffectGrid.Canvas.TextOut(60, 0, 'Loading...');
+
+  var RowCount := -1;
+  ConsumeEffectGrid.BeginUpdate;
+  for var Iter in EffectWZ.GetImgFile('ItemEff.img').Root.Children do
+  begin
+    if LeftStr(Iter.Name, 1) = '2' then
+    begin
+      Inc(RowCount);
+      ConsumeEffectGrid.RowCount := RowCount + 1;
+      var ID := '0' + Iter.Name;
+      ConsumeEffectGrid.Cells[1, RowCount] := ID;
+      var Left4 := LeftStr(ID, 4);
+
+      if GetImgEntry('Item.wz/Consume/' + Left4 + '.img/' + ID + '/info/icon') <> nil then
+      begin
+        var Bmp := GetImgEntry('Item.wz/Consume/' + Left4 + '.img/' + ID + '/info/icon', True).Canvas.DumpBmp;
+        ConsumeEffectGrid.CreateBitmap(2, RowCount, False, haCenter, vaCenter).Assign(Bmp);
+        Bmp.Free;
+      end;
+      ConsumeEffectGrid.Cells[3, RowCount] := StringWZ.GetImgFile('Consume.img').Root.Get(IDToInt(ID) + '/name', '');
+    end;
+  end;
+  ConsumeEffectGrid.SortByColumn(1);
+  ConsumeEffectGrid.EndUpdate;
+end;
+
 procedure TConsumeForm.FormDestroy(Sender: TObject);
 begin
   Wz.Free;
   IconList.Free;
 end;
 
-procedure TConsumeForm.FormKeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
+procedure TConsumeForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
- if Key = VK_MENU then
+  if Key = VK_MENU then
     Key := 0;
 end;
 
