@@ -112,14 +112,14 @@ end;
 
 procedure TConsumeForm.Button2Click(Sender: TObject);
 begin
-  TItemEffect.Delete(Equip);
+  TItemEffect.Delete(Consume);
   ActiveControl := nil;
 end;
 
 procedure TConsumeForm.ConsumeEffectGridClickCell(Sender: TObject; ARow, ACol: Integer);
 begin
   var ID := ConsumeEffectGrid.Cells[1, ARow];
-  TItemEffect.Delete(Equip);
+  TItemEffect.Delete(Consume);
   TItemEffect.Create(ID, True);
   ActiveControl := nil;
 end;

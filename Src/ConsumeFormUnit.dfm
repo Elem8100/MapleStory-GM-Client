@@ -27,7 +27,7 @@ object ConsumeForm: TConsumeForm
     Width = 405
     Height = 570
     Margins.Top = 65
-    ActivePage = TabSheet2
+    ActivePage = TabSheet1
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet

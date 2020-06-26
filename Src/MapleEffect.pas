@@ -3,11 +3,11 @@ unit MapleEffect;
 interface
 
 uses
-  Windows, SysUtils, StrUtils, AsphyreSprite, Generics.Collections, WZIMGFile,
+  Windows, SysUtils, StrUtils, PXT.Sprites, Generics.Collections, WZIMGFile,
   Classes, Global, WzUtils;
 
 type
-  TEffectType = (Cash, Chair, Equip);
+  TEffectType = (Cash, Chair, Equip, Consume, Totem);
 
   TSetEffect = class(TSpriteEx)
     Path: string;
@@ -49,7 +49,7 @@ type
 implementation
 
 uses
-  MapleCharacter, Footholds, ChairformUnit,  MapleChair;
+  MapleCharacter, Footholds, ChairformUnit, MapleChair;
 
 class procedure TSetEffect.LoadList;
 begin
@@ -81,7 +81,7 @@ begin
           ImageEntry := EquipData[Iter2.GetPath];
         end;
       end;
-   end;
+  end;
   UseList.AddOrSetValue(ID, SetEffect);
 end;
 
@@ -143,7 +143,7 @@ begin
 
   case MirrorX of
     True:
-      Offset.X := Origin.X - PatternWidth - BrowPos.X + BodyRelMove.X+3;
+      Offset.X := Origin.X - PatternWidth - BrowPos.X + BodyRelMove.X + 3;
     False:
       Offset.X := -Origin.X - BrowPos.X + 12 + BodyRelMove.X;
   end;
@@ -243,14 +243,20 @@ begin
   X := Trunc(Player.X - 10);
   Pos := TWZIMGEntry(ImageEntry.Parent).Get('pos', '-1');
 
-  if Pos = 1 then
-    Y := Trunc(Player.Y) - 50
+  if EffType <> Totem then
+  begin
+    if Pos = 1 then
+      Y := Trunc(Player.Y) - 50
+    else
+      Y := Trunc(Player.Y);
+  end
   else
-    Y := Trunc(Player.Y);
-
+  begin
+     Y := Trunc(Player.Y)-60;
+  end;
   Z := Player.z + TWZIMGEntry(ImageEntry.Parent).Get('z', '0');
   if EffType = Chair then
-    Z := Player.z + TWZIMGEntry(ImageEntry).Get('z', '0')-1;
+    Z := Player.z + TWZIMGEntry(ImageEntry).Get('z', '0') - 1;
   MirrorX := Player.MirrorX;
 
   if ImageEntry.Get('origin') <> nil then
@@ -320,7 +326,7 @@ begin
 
         end;
   end
-  else
+  else if (LeftStr(ID, 3) = '010') or (LeftStr(ID, 3) = '011') or (LeftStr(ID, 4) = '0501') then
   begin
     var ItemEffect := TItemEffect.Create(SpriteEngine);
     with ItemEffect do
@@ -343,6 +349,32 @@ begin
     end;
     if ItemEff then
       UseList.Add(ID, ItemEffect);
+  end
+  else
+  begin
+    var ItemEffect := TItemEffect.Create(SpriteEngine);
+    with ItemEffect do
+    begin
+      if LeftStr(ID, 3) = '012' then
+      begin
+        EffType := Totem;
+        case ID.ToInteger of
+          1202215, 1202216, 1202217, 1202160:
+            Path := Entry.GetPath + '/effect/default';
+        else
+          Path := Entry.GetPath;
+        end;
+
+      end
+      else
+      begin
+        EffType := Consume;
+        Path := Entry.GetPath;
+      end;
+      ImageLib := EquipImages;
+      TruncMove := True;
+      Tag := 1;
+    end;
   end;
 end;
 

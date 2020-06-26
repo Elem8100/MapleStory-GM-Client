@@ -29,7 +29,8 @@ uses
   CashForm2Unit in 'CashForm2Unit.pas' {CashForm2},
   EtcFormUnit in 'EtcFormUnit.pas' {EtcForm},
   PlayActionFormUnit in 'PlayActionFormUnit.pas' {PlayActionForm},
-  SelectFolderFormUnit in 'SelectFolderFormUnit.pas' {SelectFolderForm};
+  SelectFolderFormUnit in 'SelectFolderFormUnit.pas' {SelectFolderForm},
+  TotemEffectFormUnit in 'TotemEffectFormUnit.pas' {TotemEffectForm};
 
 {$R *.res}
 
@@ -64,5 +65,6 @@ begin
   Application.CreateForm(TEtcForm, EtcForm);
   Application.CreateForm(TPlayActionForm, PlayActionForm);
   Application.CreateForm(TSelectFolderForm, SelectFolderForm);
+  Application.CreateForm(TTotemEffectForm, TotemEffectForm);
   Application.Run;
 end.

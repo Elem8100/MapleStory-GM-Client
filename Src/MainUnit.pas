@@ -70,6 +70,7 @@ type
     CashButton2: TSpeedButton;
     EtcButton: TSpeedButton;
     PlayActionButton: TSpeedButton;
+    TotemEffectButton: TSpeedButton;
     procedure LoadMapButtonClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure GridClickCell(Sender: TObject; ARow, ACol: Integer);
@@ -116,6 +117,7 @@ type
     procedure CashButton2Click(Sender: TObject);
     procedure EtcButtonClick(Sender: TObject);
     procedure PlayActionButtonClick(Sender: TObject);
+    procedure TotemEffectButtonClick(Sender: TObject);
   private
     OldX, OldY: Integer;
     MoveOn: Boolean;
@@ -148,7 +150,7 @@ uses
   SkillFormUnit, Skill, OptionsFormUnit, AvatarFormUnit, AndroidFormUnit, Android, MiniMap,
   ACtrlEngine, SetScreenFormUnit, ConsumeFormUnit, CashForm2Unit, EtcFormUnit, PlayActionFormUnit,
   UI.Utils, acontrols, UI.Statusbar3.MainBar, UI.StatusBar3.Chat, UI.UIWindow2.UserInfo,
-  UI.UIWindow2.Item,SelectFolderFormUnit;
+  UI.UIWindow2.Item,SelectFolderFormUnit,TotemEffectFormUnit;
 {$R *.dfm}
 
 procedure TMainForm.FamiliarButtonClick(Sender: TObject);
@@ -599,6 +601,11 @@ begin
       TItemEffect.Delete(Chair);
     end;
 
+end;
+
+procedure TMainForm.TotemEffectButtonClick(Sender: TObject);
+begin
+  TotemEffectForm.Show;
 end;
 
 procedure TMainForm.RenderEvent;
