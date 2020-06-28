@@ -3,7 +3,7 @@ unit MapleCharacterEx;
 interface
 
 uses
-  Windows, SysUtils, StrUtils, Generics.Collections, Math, AsphyreSprite, Footholds, LadderRopes,
+  Windows, SysUtils, StrUtils, Generics.Collections, Math, PXT.Sprites, Footholds, LadderRopes,
   ChatBalloon, Classes, Global, Tools, MapleMap, MapleCharacter;
 
 type
@@ -51,7 +51,7 @@ var
 implementation
 
 uses
-  MapleChair, WZIMGFile, WzUtils;
+  MapleChair, WZIMGFile, WzUtils,PXT.TypesEx;
 
 class procedure TPlayerEx.Spawn(IDList: string);
 var

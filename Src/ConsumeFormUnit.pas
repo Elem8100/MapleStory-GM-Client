@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, CurvyControls, Vcl.Grids, AdvObj,
-  BaseGrid, AdvGrid, Vcl.ComCtrls, hyieutils, iexBitmaps, hyiedefs, iesettings, iexLayers, iexRulers,
+  BaseGrid, AdvGrid, Vcl.ComCtrls,
   ieview, iemview, PNGMapleCanvasEx, Generics.Collections, Generics.Defaults, WZArchive;
 
 type

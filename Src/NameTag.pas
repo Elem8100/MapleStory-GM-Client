@@ -69,7 +69,7 @@ type
 implementation
 
 uses
-  MapleCharacter, ShowOptionUnit, MapleMap, AsphyreTypes, PXT.Types, PXT.Canvas;
+  MapleCharacter, ShowOptionUnit, MapleMap,  PXT.Types,PXT.TypesEx, PXT.Canvas;
 
 procedure TNameTag.DoMove(const MoveCount: Single);
 begin

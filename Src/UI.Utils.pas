@@ -3,10 +3,10 @@ unit UI.Utils;
 interface
 
 uses
-  Windows, System.Types, messages, controls, SysUtils, StrUtils, AsphyreSprite, Generics.Collections,
-  WZIMGFile, Math, AbstractTextures, WZArchive, ACtrlEditBoxes, AsphyreTypes, DX9Textures, AControls,
+  Windows, System.Types, messages, controls, SysUtils, StrUtils,  Generics.Collections,
+  WZIMGFile, Math,  WZArchive, ACtrlEditBoxes,  AControls,
   ACtrlEngine, ACtrlForms, ACtrlButtons, TypInfo, ACtrlImages, ACtrlDropPanels, ACtrlLabels, Tools,
-  WZDirectory, WZReader, KeyHandler, Global, Classes, AsphyreFonts, ACtrlTypes, PXT.Graphics,
+  WZDirectory, WZReader, KeyHandler, Global, Classes,  ACtrlTypes, PXT.Graphics,
   PXT.Canvas, PXT.Types;
 
 type

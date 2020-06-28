@@ -5,7 +5,7 @@ interface
 uses
   Windows, SysUtils, StrUtils, Generics.Collections, System.Types, WZIMGFile, Math, PXT.Sprites,
   Footholds, LadderRopes, ChatBalloon, MapPortal, DirectInput, Classes, AsphyreKeyboard,
-  AsphyreRenderTargets, DamageNumber, Skill, AsphyreTypes, AbstractTextures, Global, Tools, MapleMap,
+  DamageNumber, Skill, PXT.TypesEx, Global, Tools, MapleMap,
   WzUtils, ColorUtils, PXT.Types, PXT.Graphics, PXT.Canvas;
 
 type

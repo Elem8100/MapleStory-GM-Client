@@ -3,9 +3,9 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Controls, Forms, Dialogs, ZGameFonts, Graphics,
-  AbstractTextures, ACtrlImages, StdCtrls, WZIMGFile, WZArchive, StrUtils, Generics.Collections,
-  WzUtils, AsphyreRenderTargets, AControls, ACtrlEngine, ACtrlForms, ACtrlButtons, Global,
+  Windows, Messages, SysUtils, Classes, Controls, Forms, Dialogs,  Graphics,
+  ACtrlImages, StdCtrls, WZIMGFile, WZArchive, StrUtils, Generics.Collections,
+  WzUtils,  AControls, ACtrlEngine, ACtrlForms, ACtrlButtons, Global,
   PXT.Canvas, PXT.Graphics, PXT.Types;
 
 type
@@ -28,8 +28,7 @@ var
 implementation
 
 uses
-  AbstractCanvas, AsphyreFactory, AsphyreTypes, AsphyreDb, AbstractDevices, AsphyreImages,
-  AsphyreTimer, DX9Providers, Vectors2, Vectors2px, MapleMap, MapleCharacter, UI.Utils;
+   MapleMap, MapleCharacter, UI.Utils;
 
 procedure TMiniMap.Paint(DC: HDC);
 var

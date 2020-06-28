@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, WZIMGFile, WZArchive,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, WZIMGFile,
   WzUtils, Vcl.Grids, AdvObj, BaseGrid, AdvGrid, Vcl.ExtCtrls, Vcl.StdCtrls;
 
 type

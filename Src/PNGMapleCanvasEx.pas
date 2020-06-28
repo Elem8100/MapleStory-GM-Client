@@ -3,7 +3,7 @@ unit PNGMapleCanvasEx;
 interface
 
 uses
-  Windows, Classes, SysUtils, WZReader, ZLibEx, Graphics, PNGImage, AsphyreFactory, AsphyreTypes,
+  Windows, Classes, SysUtils, WZReader, ZLibEx, Graphics, PNGImage,
   System.Types, iexBitmaps, iesettings, hyiedefs, hyieutils, Math, ColorUtils, PXT.Types,
   PXT.Graphics;
 
@@ -54,7 +54,7 @@ type
 implementation
 
 uses
-  Global;
+  Global,PXT.TypesEx;
 
 procedure DecompressDDS(RGBA: PByte; Width, Height: Integer; Blocks: PByte; Flags: Integer); stdcall;
   external 'libdds.dll' index 1;

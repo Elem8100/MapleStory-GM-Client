@@ -3,7 +3,7 @@ unit Boss;
 interface
 
 uses
-  Windows, types, SysUtils, StrUtils, AsphyreSprite, Generics.Collections,
+  Windows, types, SysUtils, StrUtils,  Generics.Collections,
   WZIMGFile, Global, Math, Footholds, LadderRopes, Mob2;
 
 procedure DropBoss;

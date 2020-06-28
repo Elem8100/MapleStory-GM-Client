@@ -37,6 +37,10 @@ object ConsumeForm: TConsumeForm
       Caption = 'Search'
       ImageIndex = 1
       OnShow = TabSheet2Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object ConsumeGrid: TAdvStringGrid
         AlignWithMargins = True
         Left = 0
@@ -188,6 +192,10 @@ object ConsumeForm: TConsumeForm
       Caption = 'Consume Effect'
       ImageIndex = 2
       OnShow = TabSheet3Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object ConsumeEffectGrid: TAdvStringGrid
         AlignWithMargins = True
         Left = 4

@@ -3,7 +3,7 @@ unit ColorUtils;
 interface
 
 uses
-  Windows, SysUtils, Classes, Math, Vcl.Graphics, DX9Textures, AsphyreTypes, PXT.Types, PXT.Graphics,
+  Windows, SysUtils, Classes, Math, Vcl.Graphics,PXT.TypesEx, PXT.Types, PXT.Graphics,
   AdvGrid;
 
 type

@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, System.Types, System.SysUtils, System.StrUtils, PXT.Sprites, Generics.Collections,
-  WZIMGFile, Math, Footholds, LadderRopes, AsphyreTypes, WZArchive, ChatBalloon, MapPortal,
+  WZIMGFile, Math, Footholds, LadderRopes, WZArchive, ChatBalloon, MapPortal,
   MapleCharacter, DamageNumber, MobDrop, Global, Tools, WzUtils, MapleMap, ColorUtils, PXT.Graphics,
   PXT.Canvas, PXT.Types;
 
@@ -97,7 +97,7 @@ type
 implementation
 
 uses
-  Skill;
+  Skill,PXT.TypesEx;
 
 type
   TSkillHitEffect = class(TSpriteEx)

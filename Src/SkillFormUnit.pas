@@ -35,7 +35,7 @@ var
 implementation
 
 uses
-  Skill, WzUtils, AsphyreSprite, Global;
+  Skill, WzUtils, Global;
 {$R *.dfm}
 
 function GetJobID(ID: string): string;

@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, iexLayers, iexRulers, ieview, iemview, PNGMapleCanvasEx,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, iemview, PNGMapleCanvasEx,
   Generics.Collections, Generics.Defaults, WZArchive, Vcl.StdCtrls, Vcl.ExtCtrls, CurvyControls,
   Vcl.Grids, AdvObj, BaseGrid, AdvGrid, Vcl.ComCtrls;
 

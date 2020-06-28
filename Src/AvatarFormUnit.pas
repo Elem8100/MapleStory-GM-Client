@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.Buttons, AdvUtil, PNGMapleCanvasEx,
   WZArchive, Vcl.Grids, AdvObj, BaseGrid, AdvGrid, Vcl.StdCtrls, StrUtils, Generics.Collections,
-  Generics.Defaults, hyieutils, iexBitmaps, hyiedefs, iesettings, iexLayers, iexRulers, ieview,
+  Generics.Defaults, ieview,
   pngimage, iemview, Vcl.ComCtrls, ColorUtils, WZIMGFile, CurvyControls;
 
 type
@@ -128,8 +128,8 @@ var
 implementation
 
 uses
-  WZDirectory, MapleEffect, Global, MapleCharacter, LockRenderTarget, AsphyreTypes, WzUtils,
-  AfterImage, MapleCharacterEx, PXT.Types;
+  WZDirectory, MapleEffect, Global, MapleCharacter, PXT.TypesEx, WzUtils,
+  MapleCharacterEx, PXT.Types;
 
 {$R *.dfm}
 
@@ -590,6 +590,7 @@ begin
     ImageGrids[i].Margins.Bottom := 3;
     ImageGrids[i].BorderStyle := bsNone;
     ImageGrids[i].Background := clWhite;
+    ImageGrids[i].ThumbnailsBackground:=clBtnface;
     ImageGrids[i].ThumbWidth := 35;
     ImageGrids[i].ThumbHeight := 35;
     ImageGrids[i].ThumbnailOptionsEx := [ietxShowIconForUnknownFormat, ietxShowIconWhileLoading,

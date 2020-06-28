@@ -3,7 +3,7 @@ unit MobInfo;
 interface
 
 uses
-  Windows, SysUtils, StrUtils, AsphyreSprite, Generics.Collections, WZIMGFile, Global, Tools,
+  Windows, SysUtils, StrUtils,  Generics.Collections, WZIMGFile, Global, Tools,
   WzUtils;
 
 type
@@ -22,7 +22,7 @@ type
 implementation
 
 uses
-  MapleMap, Mob2, AsphyreRenderTargets, WZArchive, AsphyreTypes;
+  MapleMap, Mob2,  WZArchive, PXT.Types,PXT.TypesEx;
 
 function S1(S: string): string;
 begin
@@ -85,12 +85,14 @@ begin
   for I := 0 to TMob.Moblist.Count - 1 do
   begin
     j := 0;
-    GameCanvas.FillRect(70 + I * 160 - 3, 8, 140, 250, cRGB1(0, 0, 0, 200));
+    GameCanvas.FillRect(FloatRect(70 + I * 160 - 3, 8, 140, 250), cRGB1(0, 0, 0, 200));
     GameCanvas.Flush;
     ID := TMob.Moblist[I];
-    FontsAlt[1].TextOut('ID: ' + ID, 70 + I * 160, 10, $FFFFFFFF);
+    //FontsAlt[1].TextOut('ID: ' + ID, 70 + I * 160, 10, $FFFFFFFF);
+    GameFont.Draw(Point2f(70 + I * 160, 10),'ID: ' + ID,$FFFFFFFF);
     Name := StringWZ.GetImgFile('Mob.img').Root.Get(IDToInt(ID) + '/' + 'name', '');
-    FontsAlt[1].TextOut('名稱: ' + Name, 70 + I * 160, 26, $FFFFFFFF);
+    //FontsAlt[1].TextOut('名稱: ' + Name, 70 + I * 160, 26, $FFFFFFFF);
+    GameFont.Draw(Point2f(70 + I * 160, 26),'名稱: ' + Name,$FFFFFFFF);
     if MobWZ.GetImgFile(ID + '.img') <> nil then
       Wz := MobWZ
     else if Mob001wZ.GetImgFile(ID + '.img') <> nil then
@@ -116,7 +118,8 @@ begin
       begin
         Inc(j);
         str := ToName[Iter.Name] + mData + D;
-        FontsAlt[1].TextOut(str, 70 + I * 160, 26 + j * 15, $FFFFFFFF);
+        //FontsAlt[1].TextOut(str, 70 + I * 160, 26 + j * 15, $FFFFFFFF);
+        GameFont.Draw(Point2f(70 + I * 160, 26+j),str,$FFFFFFFF);
       end;
     end;
 
@@ -125,13 +128,13 @@ end;
 
 class procedure TMobInfo.ReDrawTarget;
 begin
-  GameDevice.RenderTo(TargetEvent, 0, True, GameTargetMobInfo[TargetIndex]);
+  //GameDevice.RenderTo(TargetEvent, 0, True, GameTargetMobInfo[TargetIndex]);
 end;
 
 class procedure TMobInfo.Create;
 begin
-  GameTargetMobInfo := TAsphyreRenderTargets.Create();
-  TargetIndex := GameTargetMobInfo.Add(1, 1920, 600, apf_A8R8G8B8, True);
+
+
   ToName := TDictionary<string, string>.Create;
   Category := TDictionary<string, string>.Create;
   Category.Add('1', '動物型');
@@ -171,7 +174,6 @@ initialization
 finalization
   TMobInfo.ToName.Free;
   TMobInfo.Category.Free;
-  FreeAndNil(GameTargetMobInfo);
 
 end.
 

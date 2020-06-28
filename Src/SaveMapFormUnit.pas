@@ -29,7 +29,7 @@ var
 implementation
 
 uses
-  MainUnit, Global, AsphyreTypes, MapBack, PXT.Graphics, PXT.Types;
+  Global,  MapBack, PXT.Graphics, PXT.Types;
 {$R *.dfm}
 
 function StrReplace(const oldChars, newChars: array of Char; const str: string): string;

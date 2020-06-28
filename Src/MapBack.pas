@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, SysUtils, StrUtils, PXT.Sprites, Generics.Collections, WZIMGFile, Global,
-  AbstractCanvas, Tools, MapleCharacter, MapleMap, WzUtils, System.Types,PXT.Types,
+  Tools, MapleCharacter, MapleMap, WzUtils, System.Types,PXT.Types,
   PXT.Graphics;
 
 type

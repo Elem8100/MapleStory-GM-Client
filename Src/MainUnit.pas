@@ -8,16 +8,16 @@ interface
 {$IFEND}
 
 uses
-  PXT.Types, Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
-  Vcl.Graphics, FolderDialog, Vcl.Grids, AdvObj, BaseGrid, AdvGrid, Vcl.ComCtrls, Vcl.StdCtrls,
-  Vcl.Buttons, scControls, scExtControls, Vcl.Controls, AdvGroupBox, Vcl.ExtCtrls, ToolPanels,
-  Vcl.Forms, Vcl.Dialogs, ToolWin, AdvToolBtn, WZArchive, WZDirectory, Generics.Collections,
-  WZIMGFile, KeyHandler, WZReader, StrUtils, PngImage, Jpeg, {, Reactor,}
-  Footholds, bass, BassHandler, MapPortal, AdvUtil, Mob2, Npc, {UI}
-  MapleCharacter, {Boss,} Vectors2px, AbstractTextures, AbstractDevices, AbstractCanvas,
-  AsphyreTimer, PXT.Sprites, AsphyreKeyboard, AsphyreFontsAlt, DirectInput, AsphyreFactory,
-  DX9Providers, AsphyreTypes, Global, AsphyreRenderTargets, LockRenderTarget, MapleMap, WzUtils,
-  System.Types, PXT.Graphics, PXT.Headers;
+  PXT.Types, Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Vcl.Graphics, Vcl.Grids, AdvObj, BaseGrid,
+  AdvGrid, Vcl.ComCtrls, Vcl.StdCtrls, Vcl.Buttons, scControls, scExtControls,
+  Vcl.Controls, AdvGroupBox, Vcl.ExtCtrls, ToolPanels, Vcl.Forms, Vcl.Dialogs,
+  ToolWin, Generics.Collections, WZIMGFile,
+  KeyHandler, WZReader, StrUtils, PngImage, Jpeg, {, Reactor,}
+  Footholds, BassHandler, MapPortal, AdvUtil, Mob2, Npc, {UI}
+  MapleCharacter, {Boss,}
+  AsphyreTimer, PXT.Sprites, AsphyreKeyboard, DirectInput, Global,
+  MapleMap, WzUtils, System.Types, PXT.Graphics, PXT.Headers;
 
 type
   TScreenMode = (smNormal, smScale, smFullScreen);
@@ -143,14 +143,16 @@ var
 implementation
 
 uses
-  MobFormUnit, SaveMapFormUnit, ImageInfoUnit, RenderFormUnit, MapBack, MobInfo, ShowOptionUnit,
-  Tools, NpcFormUnit, ChairformUnit, MorphFormUnit, MedalTagFormUnit, NickNameTagFormUnit,
-  DamageSkinFormUnit, WorldMapFormUnit, CashFormUnit, TamingMobFormUnit, NameTag, MapleEffect,
-  TamingMob, MapleChair, LabelRingFormUnit, PetFormUnit, Pet, FamiliarFormUnit, MonsterFamiliar,
-  SkillFormUnit, Skill, OptionsFormUnit, AvatarFormUnit, AndroidFormUnit, Android, MiniMap,
-  ACtrlEngine, SetScreenFormUnit, ConsumeFormUnit, CashForm2Unit, EtcFormUnit, PlayActionFormUnit,
-  UI.Utils, acontrols, UI.Statusbar3.MainBar, UI.StatusBar3.Chat, UI.UIWindow2.UserInfo,
-  UI.UIWindow2.Item,SelectFolderFormUnit,TotemEffectFormUnit;
+  MobFormUnit, SaveMapFormUnit, ImageInfoUnit, RenderFormUnit, MapBack, MobInfo,
+  ShowOptionUnit, Tools, NpcFormUnit, ChairformUnit, MorphFormUnit,
+  MedalTagFormUnit, NickNameTagFormUnit, DamageSkinFormUnit, WorldMapFormUnit,
+  CashFormUnit, TamingMobFormUnit, MapleEffect, TamingMob, MapleChair,
+  LabelRingFormUnit, PetFormUnit, Pet, FamiliarFormUnit, MonsterFamiliar,
+  SkillFormUnit, Skill, OptionsFormUnit, AvatarFormUnit, AndroidFormUnit,
+  Android, ACtrlEngine, SetScreenFormUnit, ConsumeFormUnit,
+  CashForm2Unit, EtcFormUnit, PlayActionFormUnit, UI.Utils, acontrols,
+  UI.StatusBar3.Chat, UI.UIWindow2.UserInfo,
+  UI.UIWindow2.Item, SelectFolderFormUnit, TotemEffectFormUnit,PXT.TypesEx;
 {$R *.dfm}
 
 procedure TMainForm.FamiliarButtonClick(Sender: TObject);
@@ -314,14 +316,11 @@ begin
   DisplaySize := Point2i(1024, 768);
   GameMode := gmPlay;
 
-  FDevice := DeviceInit(TDeviceBackend.Default, RenderForm.Handle, Point2i(1024, 768), PXT.Types.TPixelFormat.BGRA8,
-    PXT.Types.TPixelFormat.Unknown, 0, DeviceAttributes([TDeviceAttribute.VSync]));
-  GameDevice2 := DeviceInitShared(FDevice, AvatarForm.Panel1.Handle, Point2i(260, 200), PXT.Types.TPixelFormat.BGRA8,
-    PXT.Types.TPixelFormat.Unknown, 0, DeviceAttributes([TDeviceAttribute.VSync]));
+  FDevice := DeviceInit(TDeviceBackend.Default, RenderForm.Handle, Point2i(1024, 768), PXT.Types.TPixelFormat.BGRA8, PXT.Types.TPixelFormat.Unknown, 0, DeviceAttributes([TDeviceAttribute.VSync]));
+  GameDevice2 := DeviceInitShared(FDevice, AvatarForm.Panel1.Handle, Point2i(260, 200), PXT.Types.TPixelFormat.BGRA8, PXT.Types.TPixelFormat.Unknown, 0, DeviceAttributes([TDeviceAttribute.VSync]));
   GameDevice2.Resize(Point2i(260, 200));
 
-  GameDevice3 := DeviceInitShared(FDevice, AvatarForm.Panel2.Handle, Point2i(512, 512), PXT.Types.TPixelFormat.BGRA8,
-    PXT.Types.TPixelFormat.Unknown, 0, DeviceAttributes([TDeviceAttribute.VSync]));
+  GameDevice3 := DeviceInitShared(FDevice, AvatarForm.Panel2.Handle, Point2i(512, 512), PXT.Types.TPixelFormat.BGRA8, PXT.Types.TPixelFormat.Unknown, 0, DeviceAttributes([TDeviceAttribute.VSync]));
   GameDevice3.Resize(Point2i(512, 512));
   if Screen.MonitorCount > 0 then
   begin
@@ -407,10 +406,7 @@ begin
 
   if ComboBox1.Items.Count <= 2 then
   begin
-    var List := ['800X600', '1024X768', '1152X864', '1280X720', '1280X768', '1280X800', '1280X960',
-      '1280X1024', '1360X768', '1366X768', '1600X900', '1600X1024', '1600X1200', '1680X1050',
-      '1920X1080', '1440X900', '1400X1050', '2560X1080', '2560X1440', '3440X1440', '3840X1080',
-      '3840X1600', '3840X2160'];
+    var List := ['800X600', '1024X768', '1152X864', '1280X720', '1280X768', '1280X800', '1280X960', '1280X1024', '1360X768', '1366X768', '1600X900', '1600X1024', '1600X1200', '1680X1050', '1920X1080', '1440X900', '1400X1050', '2560X1080', '2560X1440', '3440X1440', '3840X1080', '3840X1600', '3840X2160'];
     for var I in List do
       ComboBox1.Items.Add(i);
   end;
@@ -660,7 +656,7 @@ begin
         GameCanvas.Draw(UIImages[TSlots.PickUpItem], Mx, MY);
       end;
       GameCursor.Draw;
-     end;
+    end;
   end;
 
 end;
@@ -902,10 +898,8 @@ begin
 end;
 
 procedure TMainForm.OpenMSFolderClick(Sender: TObject);
-
 begin
   SelectFolderForm.Show;
-
 
   ActiveControl := nil;
 end;

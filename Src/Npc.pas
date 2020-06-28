@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, System.Types, SysUtils, StrUtils, PXT.Sprites, Generics.Collections, WZIMGFile, Global,
-  Math, Footholds, LadderRopes, ChatBalloon, MapPortal, MapleTV, AsphyreTypes, Tools, MapleMap,
+  Math, Footholds, LadderRopes, ChatBalloon, MapPortal, MapleTV,  Tools, MapleMap,
   WzUtils, PXT.Graphics, PXT.Types, PXT.Canvas;
 
 type
@@ -47,7 +47,7 @@ type
 implementation
 
 uses
-  System.Character, MainUnit;
+  System.Character,PXT.TypesEx;
 
 class procedure TNpc.Drop(ID: string; PosX, PosY, Flip: Integer);
 var

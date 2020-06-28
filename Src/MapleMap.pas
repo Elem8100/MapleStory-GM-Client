@@ -64,7 +64,7 @@ implementation
 
 uses
   MainUnit, Mob2, MapBack, MapPortal, Npc, MapTile, MapObj, MapleCharacter, Footholds, LadderRopes,
-  AsphyreSprite, AsphyreTypes, AsphyreRenderTargets, MobInfo, NameTag, Boss, Skill, MapleCharacterEx,
+  MobInfo, NameTag, Boss, Skill, MapleCharacterEx,
   Android, minimap, WZUtils, UI.StatusBar3.MainBar, UI.StatusBar3.Chat, UI.Utils, Graphics;
 
 class procedure TMap.LoadMap(ID: string);

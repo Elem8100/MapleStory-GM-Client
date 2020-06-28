@@ -4,8 +4,8 @@ interface
 
 uses
   Windows, SysUtils, StrUtils, PXT.Sprites, WZArchive, Generics.Collections, WZIMGFile,
-  WZDirectory, Classes, Math, AsphyreFontsAlt, AbstractCanvas, LockRenderTarget, BassHandler,
-  DX9Textures, Vectors2px, AbstractDevices, AsphyreKeyboard, AsphyreRenderTargets, Tools,
+  WZDirectory, Classes, Math,  BassHandler,
+  AsphyreKeyboard, Tools,
   System.Types, ACtrlEngine,PXT.Types,
   PXT.Graphics,PXT.Canvas;
 
@@ -31,7 +31,6 @@ var
   GameFont: TTextRenderer;
   GameCanvas: TGameCanvas;
   AvatarPanelTexture: TTexture;
-  GameTargetMobInfo: TAsphyreRenderTargets = nil;
   IsKMS: Boolean;
   UIEngine: TControlEngine = nil;
   SpriteEngine: TSpriteEngine;
@@ -55,11 +54,6 @@ function IsNumber(AStr: string): Boolean;
 
 procedure PlaySounds(Img, Path: string);
 
-function Cos256(I: Integer): Double;
-
-function Sin256(I: Integer): Double;
-
-function GetAngle256(const X1, Y1, X2, Y2: Integer): Integer;
 
 function TrimS(Stemp: string): string;
 
@@ -129,37 +123,6 @@ begin
 
 end;
 
-function Cos256(I: Integer): Double;
-begin
-  Result := CosTable256[I and 255];
-end;
-
-function Sin256(I: Integer): Double;
-begin
-  Result := CosTable256[(I + 192) and 255];
-end;
-
-procedure InitCosTable;
-var
-  I: Integer;
-begin
-  for I := 0 to 255 do
-    CosTable256[I] := Cos((I / 256) * 2 * PI);
-end;
-
-function GetAngle256(const X1, Y1, X2, Y2: Integer): Integer;
-const
-  PiConv256 = -128.0 / PI; // ~ 40.743665431
-begin
-  if (X2 = X1) then
-  begin
-    Result := 128;
-    if (Y1 < Y2) then
-      Result := 0;
-    Exit;
-  end;
-  Result := Round(ArcTan2(X2 - X1, Y2 - Y1) * PiConv256) and $FF;
-end;
 
 function IDToInt(ID: string): string;
 var
@@ -213,7 +176,6 @@ end;
 
 initialization
   TTimers.Create;
-  InitCosTable;
   Sounds := TObjectList<TBassHandler>.Create;
   WzData := TObjectDictionary<string, TWZIMGEntry>.Create;
   EquipData := TObjectDictionary<string, TWZIMGEntry>.Create;

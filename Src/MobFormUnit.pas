@@ -61,7 +61,7 @@ var
 implementation
 
 uses
-  MainUnit, Mob2, MapleCharacter, MobInfo, Global, ColorUtils;
+   Mob2, MapleCharacter, MobInfo, Global, ColorUtils;
 {$R *.dfm}
 
 procedure TAddMobForm.MobGridClick(Sender: TObject);

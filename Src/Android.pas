@@ -38,7 +38,7 @@ var
 implementation
 
 uses
-  MapleChair, WZIMGFile, WzUtils, MapleCharacter, PXT.Canvas;
+  MapleChair, WZIMGFile, WzUtils, MapleCharacter, PXT.Canvas,PXT.TypesEx;
 
 procedure TAndroidPlayer.SpawnNew;
 var

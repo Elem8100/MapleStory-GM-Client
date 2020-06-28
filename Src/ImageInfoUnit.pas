@@ -27,7 +27,7 @@ implementation
 
 {$R *.dfm}
 
-uses Global,WZIMGFile, WZDirectory, WzUtils;
+uses Global,WZIMGFile, WzUtils;
 
 procedure TImageInfoForm.FormCreate(Sender: TObject);
 begin

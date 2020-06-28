@@ -32,7 +32,7 @@ var
 implementation
 
 uses
-  MainUnit, WZArchive, WZDirectory, WZIMGFile, KeyHandler, WZReader, Global, Npc, MapleMap, WzUtils,
+  MainUnit, WZArchive, WZDirectory, WZIMGFile, KeyHandler, Global, Npc, MapleMap, WzUtils,
   UI.Utils, Skill, MapleEffect, TamingMob, StrUtils;
 
 {$R *.dfm}
@@ -120,7 +120,7 @@ begin
     StringWZ := TWZArchive.Create(FolderPath + '\String.wz');
 
     if StringWZ.GetImgFile('Mob.img').Root.Get('100100/name', '') = 'Snail' then
-      TNpc.FontSize := 12 //GMS
+      TNpc.FontSize := 11 //GMS
     else
       TNpc.FontSize := 12; //TMS
     if StringWZ.GetImgFile('Mob.img').Root.Get('100100/name', '') = '달팽이' then

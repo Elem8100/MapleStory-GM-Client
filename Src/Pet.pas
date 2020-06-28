@@ -4,8 +4,8 @@ interface
 
 uses
   Windows, System.Types, SysUtils, StrUtils, PXT.Sprites, Generics.Collections, WZIMGFile, Math,
-  Footholds, LadderRopes, AsphyreTypes, DX9Textures, WZArchive, ChatBalloon, MapPortal,
-  MapleCharacter, DamageNumber, MobDrop, Global, Tools, WzUtils, MapleMap, NameTag, PXT.Graphics;
+  Footholds, LadderRopes,  WZArchive, ChatBalloon, MapPortal,
+  MapleCharacter, DamageNumber, MobDrop,Global,  Tools, WzUtils, MapleMap, NameTag, PXT.Graphics;
 
 type
   TMoveDirection = (mdLeft, mdRight, mdNone);
@@ -67,7 +67,7 @@ type
 implementation
 
 uses
-  PetFormUnit;
+  PetFormUnit,PXT.TypesEx;
 
 class procedure TPet.Delete;
 begin

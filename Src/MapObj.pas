@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, SysUtils, StrUtils, PXT.Sprites, Generics.Collections, WZIMGFile, Global,
-  AbstractCanvas, Tools, Math, WzUtils,PXT.Types;
+  Tools, Math, WzUtils,PXT.Types;
 
 type
   TMapObj = class(TSpriteEx)

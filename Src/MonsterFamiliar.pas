@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, System.Types, SysUtils, StrUtils, PXT.Sprites, Generics.Collections, WZIMGFile, Math,
-  Footholds, LadderRopes, AsphyreTypes, DX9Textures, WZArchive, ChatBalloon, MapPortal,
+  Footholds, LadderRopes,  WZArchive, ChatBalloon, MapPortal,
   MapleCharacter, DamageNumber, MobDrop, Global, Tools, WzUtils, MapleMap, NameTag;
 
 type
@@ -58,7 +58,7 @@ type
   end;
 
 implementation
-      uses PXT.Canvas;
+      uses PXT.Canvas,PXT.TypesEx;
 class procedure TMonsterFamiliar.Delete;
 begin
   if MonsterFamiliar <> nil then

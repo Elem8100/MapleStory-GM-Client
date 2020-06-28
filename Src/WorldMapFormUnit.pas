@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls,
   Generics.collections;
 
 type
@@ -28,7 +28,7 @@ implementation
 
 {$R *.dfm}
 uses
-  MainUnit, WZIMGFile, WZDirectory, WzUtils, Global;
+  MainUnit, WZDirectory, WzUtils, Global;
 
 procedure TWorldMapForm.FormActivate(Sender: TObject);
 begin

@@ -2560,6 +2560,7 @@ object AvatarForm: TAvatarForm
     Margins.Right = 10
     Margins.Bottom = 8
     Align = alRight
+    Color = clWhite
     ColCount = 4
     DefaultRowHeight = 35
     DrawingStyle = gdsClassic
@@ -2567,14 +2568,16 @@ object AvatarForm: TAvatarForm
     RowCount = 8
     FixedRows = 0
     Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
+    Font.Color = clBlack
     Font.Height = -15
     Font.Name = 'Tahoma'
     Font.Style = []
-    Options = [goFixedVertLine, goFixedHorzLine, goHorzLine, goEditing, goRowSelect]
+    Options = [goHorzLine, goEditing, goRowSelect]
     ParentFont = False
     ScrollBars = ssNone
     TabOrder = 1
+    GridLineColor = 15987699
+    GridFixedLineColor = 15987699
     HoverRowCells = [hcNormal, hcSelected]
     OnButtonClick = InventoryButtonClick
     ActiveCellFont.Charset = DEFAULT_CHARSET
@@ -2621,7 +2624,7 @@ object AvatarForm: TAvatarForm
       'Clear')
     FixedRowHeight = 35
     FixedFont.Charset = DEFAULT_CHARSET
-    FixedFont.Color = clWindowText
+    FixedFont.Color = clBlack
     FixedFont.Height = -11
     FixedFont.Name = 'Tahoma'
     FixedFont.Style = [fsBold]
@@ -2653,6 +2656,7 @@ object AvatarForm: TAvatarForm
     PrintSettings.FooterFont.Style = []
     PrintSettings.PageNumSep = '/'
     ScrollWidth = 10
+    SearchFooter.ColorTo = clWhite
     SearchFooter.FindNextCaption = 'Find &next'
     SearchFooter.FindPrevCaption = 'Find &previous'
     SearchFooter.Font.Charset = DEFAULT_CHARSET
@@ -2733,6 +2737,10 @@ object AvatarForm: TAvatarForm
     OnChange = PageControl1Change
     object TabSheet1: TTabSheet
       Caption = 'Equip'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
     end
     object TabSheet2: TTabSheet
       Caption = 'Load Character'
@@ -2756,15 +2764,24 @@ object AvatarForm: TAvatarForm
         Height = 655
         Cursor = crDefault
         Align = alClient
+        Color = clWhite
         ColCount = 19
         DefaultColWidth = 40
         DefaultRowHeight = 40
         DrawingStyle = gdsClassic
         FixedCols = 0
         RowCount = 15
-        Options = [goFixedVertLine, goFixedHorzLine, goHorzLine]
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Height = -15
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        Options = [goHorzLine]
+        ParentFont = False
         ScrollBars = ssBoth
         TabOrder = 0
+        GridLineColor = 15987699
+        GridFixedLineColor = 15987699
         HoverRowCells = [hcNormal, hcSelected]
         OnClickCell = ColorGridClickCell
         ActiveCellFont.Charset = DEFAULT_CHARSET
@@ -2812,7 +2829,7 @@ object AvatarForm: TAvatarForm
         FixedColWidth = 40
         FixedRowHeight = 0
         FixedFont.Charset = DEFAULT_CHARSET
-        FixedFont.Color = clWindowText
+        FixedFont.Color = clBlack
         FixedFont.Height = -13
         FixedFont.Name = 'Tahoma'
         FixedFont.Style = [fsBold]
@@ -2844,6 +2861,7 @@ object AvatarForm: TAvatarForm
         PrintSettings.FooterFont.Style = []
         PrintSettings.PageNumSep = '/'
         ScrollWidth = 21
+        SearchFooter.ColorTo = clWhite
         SearchFooter.FindNextCaption = 'Find &next'
         SearchFooter.FindPrevCaption = 'Find &previous'
         SearchFooter.Font.Charset = DEFAULT_CHARSET
@@ -2939,18 +2957,21 @@ object AvatarForm: TAvatarForm
         Margins.Right = 190
         Margins.Bottom = 15
         Align = alLeft
+        Color = clWhite
         ColCount = 3
         DefaultColWidth = 200
         DrawingStyle = gdsClassic
         Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
+        Font.Color = clBlack
         Font.Height = -13
         Font.Name = 'Tahoma'
         Font.Style = []
-        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRowSelect, goThumbTracking]
+        Options = [goVertLine, goHorzLine, goRowSelect, goThumbTracking]
         ParentFont = False
         ScrollBars = ssVertical
         TabOrder = 0
+        GridLineColor = 15987699
+        GridFixedLineColor = 15987699
         HoverRowCells = [hcNormal, hcSelected]
         OnClickCell = SearchGridClickCell
         ActiveCellFont.Charset = DEFAULT_CHARSET
@@ -2998,7 +3019,7 @@ object AvatarForm: TAvatarForm
         FixedColWidth = 10
         FixedRowHeight = 0
         FixedFont.Charset = DEFAULT_CHARSET
-        FixedFont.Color = clWindowText
+        FixedFont.Color = clBlack
         FixedFont.Height = -13
         FixedFont.Name = 'Tahoma'
         FixedFont.Style = [fsBold]
@@ -3030,6 +3051,7 @@ object AvatarForm: TAvatarForm
         PrintSettings.FooterFont.Style = []
         PrintSettings.PageNumSep = '/'
         ScrollWidth = 21
+        SearchFooter.ColorTo = clWhite
         SearchFooter.FindNextCaption = 'Find &next'
         SearchFooter.FindPrevCaption = 'Find &previous'
         SearchFooter.Font.Charset = DEFAULT_CHARSET
@@ -3142,6 +3164,10 @@ object AvatarForm: TAvatarForm
     object TabSheet6: TTabSheet
       Caption = 'Export'
       ImageIndex = 5
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label2: TLabel
         Left = 310
         Top = 16
