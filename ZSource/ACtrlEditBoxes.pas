@@ -16,15 +16,14 @@ interface
 uses
   PXT.Types, Windows, SysUtils, Classes, Clipbrd, Math, Controls,
   // Aspryre units
-  AbstractCanvas, AsphyreFonts, AsphyreImages, AsphyreTypes, Vectors2, Vectors2px,
-  // Asphyre GUI Engine
+   // Asphyre GUI Engine
   AControls, ACtrlTypes;
 
 type
   { TCustomAEditBox }
   TCustomAEditBox = class(TWControl)
   private
-    FHAlign: THAlign;
+
     FReadOnly: Boolean;
     FAutoSelect: Boolean;
     FMaxLength: Integer;
@@ -234,7 +233,7 @@ begin
   Visible := True;
 
   // Fields
-  FHAlign := hLeft;
+
 
   FSelectColor := TFontColor.Create;
   FSelectColor.SetFontColor($FFFFD040, $FFFF8020);
@@ -669,8 +668,7 @@ procedure TCustomAEditBox.Paint(DC: HDC);
 var
   Index, X, Y, AWidth, AHeight, AVirtualCursor: Integer;
   AMin, AMax: Integer;
-  AFontColor: TColor2;
-  ASelectColor: TColor4;
+
   AChars: TAChars;
 begin
   var FontSetting := TFontSettings.Create('Arial', 12);
@@ -711,7 +709,7 @@ begin
   AMin := Min(FSelection.StartPos, FSelection.EndPos);
   AMax := Max(FSelection.StartPos, FSelection.EndPos);
 
-  ASelectColor := cColor4(FSelectColor.Top, FSelectColor.Top, FSelectColor.Bottom, FSelectColor.Bottom);
+  //ASelectColor := cColor4(FSelectColor.Top, FSelectColor.Top, FSelectColor.Bottom, FSelectColor.Bottom);
    // Draw Text char by char
   Y := Y + AHeight - 20;
 
@@ -720,9 +718,9 @@ begin
        // Draw Selection
     if (AMin < AMax) then
     begin
-      if (Index >= AMin) and (Index < AMax) then
-        AEngine.Canvas.FillRect(FloatRect(X, Y, AChars[Index].Width, AHeight - 5), TColorRect(ASelectColor));
-      AFontColor := cColor2(FSelectFontColor);
+     // if (Index >= AMin) and (Index < AMax) then
+      //  AEngine.Canvas.FillRect(FloatRect(X, Y, AChars[Index].Width, AHeight - 5), TColorRect(ASelectColor));
+      //AFontColor := cColor2(FSelectFontColor);
     end;
       // Set Font Color
      {

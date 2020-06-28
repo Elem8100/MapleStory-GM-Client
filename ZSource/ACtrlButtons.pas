@@ -16,10 +16,8 @@ interface
 uses
   Classes, Controls, SysUtils, System.Types, Windows,
   // Aspryre units
-  AbstractCanvas, AsphyreFonts, AsphyreImages, AsphyreTypes, Vectors2, Vectors2px,
-  // Asphyre GUI Engine
-  ZGameFonts, ZGameFontHelpers,
-  AControls, ACtrlTypes, AbstractTextures,WZIMGFile,PXT.Graphics;
+   // Asphyre GUI Engine
+   AControls, ACtrlTypes, WZIMGFile,PXT.Graphics;
 
 type
   TCustomAButton = class(TAControl)
@@ -27,8 +25,7 @@ type
     FAImageHover: TTexture;
     FAImagePressed: TTexture;
     FAImageDisabled: TTexture;
-    FHAlign: THAlign;
-    FVAlign: TVAlign;
+
     FColorHover: TFillColor;
     FColorPressed: TFillColor;
     FFontColorHover: TFontColor;
@@ -76,8 +73,6 @@ type
     property ImageHover: TWZIMGEntry read FImageHover write SetImageHover;
     property ImagePressed: TWZIMGEntry read FImagePressed write SetImagePressed;
     property ImageDisabled: TWZIMGEntry read FImageDisabled write SetImageDisabled;
-    property TextHorizontalAlign: THAlign read FHAlign write FHAlign;
-    property TextVerticalAlign: TVAlign read FVAlign write FVAlign;
     property Transparent: Boolean read FTransparent write SetTransparent;
 
   end;
@@ -90,8 +85,6 @@ type
     property FontColorPressed;
     property ImageHover;
     property ImagePressed;
-    property TextHorizontalAlign;
-    property TextVerticalAlign;
     property Transparent;
 
     property BorderColor;
@@ -159,8 +152,7 @@ begin
     begin
       // FAImageHover - pointer
       // FAImagePressed - pointer
-      TextHorizontalAlign := Self.TextHorizontalAlign;
-      TextVerticalAlign := Self.TextVerticalAlign;
+
       ColorHover.Assign(Self.ColorHover);
       ColorPressed.Assign(Self.ColorPressed);
       FontColorHover.Assign(Self.FontColorHover);
@@ -201,7 +193,7 @@ begin
   Width := 80;
   Height := 26;
 
-  BorderColor := clWhite1;
+
   BorderWidth := 0;
   //Color.SetFillColor($FFA6CAF0, $FFA6CAF0, $FF4090F0, $FF4090F0);
   Font := 'tahoma10b';
@@ -211,8 +203,7 @@ begin
   Visible := True;
 
   // Fields
-  FHAlign := hCenter;
-  FVAlign := vMiddle;
+ 
   FHover := False;
   FPressed := False;
   FTransparent := False;
@@ -224,7 +215,6 @@ begin
   FColorPressed.SetFillColor($FF4090F0, $FF4090F0, $FFA6CAF0, $FFA6CAF0);
 
   FFontColorHover := TFontColor.Create;
-  FFontColorHover.SetFontColor(clWhite2);
 
   FFontColorPressed := TFontColor.Create;
   FFontColorPressed.SetFontColor($FFFFD040, $FFFFFFFF);
@@ -289,8 +279,7 @@ end;
 procedure TCustomAButton.Paint(DC: HDC);
 var
   X, Y: Integer;
-  AColor: TColor4;
-  AFontColor: TColor2;
+
 
 begin
   // Set initial values
@@ -306,8 +295,8 @@ begin
     end
     else
     begin
-      AEngine.Canvas.FillRect(FloatRect(X + BorderWidth, Y + BorderWidth, X + Width - BorderWidth, Y + Height - BorderWidth),
-        TColorRect(AColor));
+     // AEngine.Canvas.FillRect(FloatRect(X + BorderWidth, Y + BorderWidth, X + Width - BorderWidth, Y + Height - BorderWidth),
+      //  TColorRect(AColor));
     end;
   end;
 

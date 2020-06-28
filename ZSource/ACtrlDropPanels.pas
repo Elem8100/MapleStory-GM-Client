@@ -16,9 +16,8 @@ interface
 uses
   pxt.types,SysUtils, Types, Classes, Controls,Windows,
   // Aspryre units
-  AbstractCanvas, AsphyreFonts, AsphyreImages, AsphyreTypes, Vectors2,
-  // Asphyre GUI Engine
-  AControls, ACtrlTypes, AbstractTextures,WZIMGFile;
+    // Asphyre GUI Engine
+  AControls, ACtrlTypes, WZIMGFile;
 
 type
   PItem = ^TItem;

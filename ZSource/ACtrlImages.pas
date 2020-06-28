@@ -16,8 +16,7 @@ interface
 uses
   Classes, Controls, SysUtils, Windows,
   // Aspryre units
-  AbstractCanvas, AsphyreFonts, AsphyreImages, AsphyreTypes, Vectors2,
-  // Asphyre GUI Engine
+   // Asphyre GUI Engine
   AControls, ACtrlForms;
 
 type

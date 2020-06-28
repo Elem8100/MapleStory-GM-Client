@@ -16,8 +16,7 @@ interface
 uses
   Windows, SysUtils, Classes, Controls,
   // Aspryre units
-  AbstractCanvas, AsphyreFonts, AsphyreImages, AsphyreTypes, Vectors2,
-  // Asphyre GUI Engine
+   // Asphyre GUI Engine
   AControls, ACtrlButtons, ACtrlTypes, WZIMGFile;
 
 type
@@ -659,21 +658,7 @@ begin
                 (FLineHeight * Index)), FStrings[Index],
             cColor2(SelectFontColor), 1.0);
             }
-          if FZFont <> nil then
-          begin
-            FZFont.Color := cColor4(SelectFontColor.Top, SelectFontColor.Top, SelectFontColor.Bottom,
-              SelectFontColor.Bottom);
-            FZFont.TextOut(DC, Point2(X + BorderWidth + Margin + 1, Y + BorderWidth + Margin +
-              VirtualPosition + (FLineHeight * Index)), FStrings[Index]);
-          end; { else
-          if AFont <> nil then
-          begin
-            AFont.TextOut(Point2(X + BorderWidth + Margin + 1,
-              Y + BorderWidth + Margin + VirtualPosition +
-                (FLineHeight * Index)), FStrings[Index],
-            cColor2(SelectFontColor), 1.0);
-          end;
-          }
+
           // draw unselected shader
           if AEngine.ActiveControl <> Self then
           begin
@@ -691,20 +676,7 @@ begin
                 (FLineHeight * Index)), FStrings[Index],
             cColor2(FontColor), 1.0);
           }
-          if FZFont <> nil then
-          begin
-           // FZFont.Color := cColor4(FontColor.Top, FontColor.Top, FontColor.Bottom, FontColor.Bottom);
-            FZFont.TextOut(DC, Point2(X + BorderWidth + Margin + 1, Y + BorderWidth + Margin +
-              VirtualPosition + (FLineHeight * Index)), FStrings[Index]);
-          end; { else
-          if AFont <> nil then
-          begin
-            AFont.TextOut(Point2(X + BorderWidth + Margin + 1,
-                Y + BorderWidth + Margin + VirtualPosition +
-                  (FLineHeight * Index)), FStrings[Index],
-              cColor2(FontColor), 1.0);
-          end;
-               }
+        
         end;
       end;
     end;

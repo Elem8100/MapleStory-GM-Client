@@ -16,8 +16,7 @@ interface
 uses
   PXT.Types,Windows, SysUtils, Classes, Controls,
   // Asphyre units
-  AbstractCanvas, AbstractDevices, AsphyreFonts, AsphyreImages, AsphyreDB,
-  AsphyreTypes, ZGameFonts,  Generics.Collections,WZIMGFile,
+   Generics.Collections,WZIMGFile,
   // Asphyre GUI Engine
   ACtrlTypes,PXT.Graphics,PXT.Canvas;
 
@@ -167,7 +166,6 @@ type
     procedure SetZOrderPosition(Position: Integer);
   protected
     //ZC Edit
-    FZFont: TZGameFont;
 
     procedure SetBorderWidth(Value: Word); virtual;
     procedure SetHeight(Value: Integer); virtual;
@@ -228,10 +226,6 @@ type
       : Integer read FWheelAccumulator write FWheelAccumulator;
   public
 
-    //ZEdit
-
-    property ZFont: TZGameFont read FZFont write FZFont;
-    //ZEdit
 
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;

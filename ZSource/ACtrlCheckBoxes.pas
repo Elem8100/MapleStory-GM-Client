@@ -16,9 +16,8 @@ interface
 uses
   Windows, SysUtils, Classes, Controls,
   // Asphyre units
-  AbstractCanvas, AsphyreFonts, AsphyreImages, AsphyreTypes, Vectors2,
-  // Asphyre GUI engine
-  ZGameFonts, ZGameFontHelpers, AControls, ACtrlTypes, WZIMGFile,PXT.Graphics;
+   // Asphyre GUI engine
+  AControls, ACtrlTypes, WZIMGFile,PXT.Graphics;
 
 type
   TCustomACheckBox = class(TWControl)
@@ -369,26 +368,8 @@ begin
   }
 
   // Draw Text New
-  if FZFont <> nil then
-  begin
-    if Text <> '' then
-    begin
-     // FZFont.Color := cColor4(FontColor.Top, FontColor.Top, FontColor.Bottom, FontColor.Bottom);
-      FZFont.TextOutRect(DC, Point2(X + BorderWidth + Margin + FBoxSize + 4, Y + BorderWidth +
-        Margin + 1), Point2(Width - (BorderWidth * 2) - (Margin * 2), Height - (BorderWidth * 2) - (Margin
-        * 2)), Text, 0, 0, False, zhLeft, zvMiddle);
-    end;
-  end; { else
-  if AFont <> nil then
-  begin
-    if Text <> '' then
-      AFont.TextRectEx(Point2(X + BorderWidth + Margin + FBoxSize + 4,
-          Y + BorderWidth + Margin + 1),
-        Point2(Width - (BorderWidth * 2) - (Margin * 2),
-          Height - (BorderWidth * 2) - (Margin * 2)), Text,
-        cColor2(FontColor), 1.0, hLeft, vMiddle, False);
-  end;
-       }
+
+ 
 end;
 
 procedure TCustomACheckBox.SetBoxBorderColor(Value: Cardinal);

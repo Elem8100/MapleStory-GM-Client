@@ -16,18 +16,17 @@ interface
 uses
   SysUtils, Classes, Controls, Windows,
   // Aspryre units
-  AbstractCanvas, AsphyreFonts, AsphyreImages, AsphyreTypes, Vectors2,
   // Asphyre GUI Engine
-  ZGameFonts, ZGameFontHelpers, AControls, ACtrlTypes;
+   AControls, ACtrlTypes;
 
 type
   TCustomAForm = class(TWControl)
   private
     FCanMove: Boolean;
     FIsMoving: Boolean;
-    FHAlign: THAlign;
+
     FModal: Boolean;
-    FVAlign: TVAlign;
+
     FPLine: Boolean;
     FShadowColor: Cardinal;
     FShadowWidth: Word;
@@ -56,8 +55,6 @@ type
     property ShadowColor: Cardinal read FShadowColor write SetShadowColor;
     property ShadowWidth: Word read FShadowWidth write SetShadowWidth;
     property ShowShadow: Boolean read FShowShadow write SetShowShadow;
-    property TextHorizontalAlign: THAlign read FHAlign write FHAlign;
-    property TextVerticalAlign: TVAlign read FVAlign write FVAlign;
   end;
 
   TAForm = class(TCustomAForm)
@@ -67,8 +64,6 @@ type
     property ShadowColor;
     property ShadowWidth;
     property ShowShadow;
-    property TextHorizontalAlign;
-    property TextVerticalAlign;
     property BorderColor;
     property BorderWidth;
     //property Color;
@@ -169,8 +164,6 @@ begin
     begin
       CanMove := Self.CanMove;
       IsMoving := Self.IsMoving;
-      TextHorizontalAlign := Self.TextHorizontalAlign;
-      TextVerticalAlign := Self.TextVerticalAlign;
       ParagraphLine := Self.ParagraphLine;
       ShadowColor := Self.ShadowColor;
       ShadowWidth := Self.ShadowWidth;
@@ -211,15 +204,13 @@ begin
   FShadowColor := $40000000;
   FShadowWidth := 3;
   FShowShadow := True;
-  FHAlign := hCenter;
-  FVAlign := vMiddle;
 
   // properties
   Left := 0;
   Top := 0;
   Width := 320;
   Height := 240;
-  BorderColor := clBlack1;
+ // BorderColor := clBlack1;
   BorderWidth := 1;
   //Color.SetFillColor($FFA6CAF0, $FFA6CAF0, $FF4090F0, $FF4090F0);
   Font := 'tahoma10b';

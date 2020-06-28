@@ -16,16 +16,13 @@ interface
 uses
  pxt.types, Classes, Controls, SysUtils, Windows,
   // Aspryre units
-  AbstractCanvas, AsphyreFonts, AsphyreImages, AsphyreTypes, Vectors2,
   // Asphyre GUI Engine
-  ZGameFonts, ZGameFontHelpers, AControls, ACtrlForms, ACtrlTypes;
+ AControls, ACtrlForms, ACtrlTypes;
 
 type
   TCustomALabel = class(TAControl)
   private
     FCanMoveHandle: Boolean;
-    FHAlign: THAlign;
-    FVAlign: TVAlign;
     FFocusControl: string;
     FPLine: Boolean;
     FTransparent: Boolean;
@@ -46,8 +43,6 @@ type
     property CanMoveHandle: Boolean read FCanMoveHandle write SetCanMoveHandle;
     property FocusControl: string read FFocusControl write SetFocusControl;
     property ParagraphLine: Boolean read FPLine write FPLine;
-    property TextHorizontalAlign: THAlign read FHAlign write FHAlign;
-    property TextVerticalAlign: TVAlign read FVAlign write FVAlign;
     property Transparent: Boolean read FTransparent write SetTransparent;
     property FontColor:TColorPair read   FFontColor write  FFontColor;
   end;
@@ -57,8 +52,6 @@ type
     property CanMoveHandle;
     property FocusControl;
     property ParagraphLine;
-    property TextHorizontalAlign;
-    property TextVerticalAlign;
     property Transparent;
     property BorderColor;
     property BorderWidth;
@@ -110,8 +103,7 @@ begin
     with TCustomALabel(Dest) do
     begin
       CanMoveHandle := Self.CanMoveHandle;
-      TextHorizontalAlign := Self.TextHorizontalAlign;
-      TextVerticalAlign := Self.TextVerticalAlign;
+
       FocusControl := Self.FocusControl;
       ParagraphLine := Self.ParagraphLine;
       Transparent := Self.Transparent;
@@ -169,8 +161,6 @@ begin
   // Fields
   FCanMoveHandle := True;
   FPLine := False;
-  FHAlign := hCenter;
-  FVAlign := vMiddle;
   FTransparent := True;
 
   ControlState := ControlState - [csCreating];

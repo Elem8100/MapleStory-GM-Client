@@ -16,7 +16,7 @@ interface
 uses
   Windows, SysUtils, Classes, Controls,
   // Aspryre units
-  AbstractCanvas, AsphyreFonts, PXT.Graphics, AsphyreTypes, Vectors2,
+ PXT.Graphics,
   // Asphyre GUI Engine
   AControls, ACtrlForms, ACtrlTypes;
 
@@ -98,7 +98,7 @@ type
 implementation
 
 uses
-  PXT.Types;
+  PXT.Types,PXT.TypesEx;
 
 var
   XPress: Integer;

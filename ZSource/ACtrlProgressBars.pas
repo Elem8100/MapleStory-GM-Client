@@ -16,8 +16,6 @@ interface
 uses
   SysUtils, Classes, Controls,Windows,
   // Aspryre units
-  AbstractCanvas, AsphyreFonts, AsphyreImages, AsphyreTypes, Vectors2,
-  ZGameFonts, ZGameFontHelpers,
   // Asphyre GUI Engine
   AControls, ACtrlForms, ACtrlTypes;
 
@@ -288,30 +286,7 @@ begin
   end;
   }
 
-  // Draw Text New!
-  if FZFont <> nil then
-  begin
-    // Draw Text
-    if FShowPercentage = True then
-    begin
-    //  FZFont.Color   := cColor4(FontColor.Top,FontColor.Top,FontColor.Bottom,FontColor.Bottom);
-      FZFont.TextOutRect(DC,
-                         Point2(X + BorderWidth + Margin,Y + BorderWidth + Margin+1),
-                         Point2(Width-(BorderWidth*2)-(Margin*2),Height-(BorderWidth*2)-(Margin*2)),
-                         AText, 0, 0, False, GetZHAlign(hCenter), GetZVAlign(vMiddle));
-    end;
-  end;{ else
-  if AFont <> nil then
-  begin
-    // Draw Text
-    if FShowPercentage = True then
-      AFont.TextRectEx(Point2(X + BorderWidth + Margin,
-          Y + BorderWidth + Margin+1),
-        Point2(Width - (BorderWidth * 2) - (Margin * 2),
-          Height - (BorderWidth * 2) - (Margin * 2)), AText,
-        cColor2(FontColor), 1.0, hCenter, vMiddle, False);
-  end;
-       }
+  
 end;
 
 procedure TCustomAProgressBar.SetCanMoveHandle(Value: Boolean);

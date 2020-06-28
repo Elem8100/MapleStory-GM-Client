@@ -14,17 +14,21 @@ unit ACtrlTypes;
 interface
 
 uses
-  Classes,controls,
+  Classes, controls,
   // Asphyre units
-  PXT.Graphics, AsphyreTypes, WZIMGFile;
+  PXT.Graphics,  WZIMGFile;
 
 type
   // --------------------------------------------------------------------------
   // TSelection, TAChar and TAChars
   // --------------------------------------------------------------------------
   TANotifyEvent = reference to procedure(Sender: TObject);
+
   TAMouseEvent = reference to procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+
   TAMouseMoveEvent = reference to procedure(Sender: TObject; Shift: TShiftState; X, Y: Integer);
+
+  TAKeyEvent = reference to procedure(Sender: TObject; var Key: Word; Shift: TShiftState);
 
   TSelection = record
     StartPos, EndPos: Integer;
@@ -44,6 +48,7 @@ type
   // --------------------------------------------------------------------------
 
   // TColorType
+
   TColorType = (ctSingle, ctLeftRight, ctTopBottom, ctFull);
 
   // TAlphaColor
@@ -64,7 +69,7 @@ type
   public
     constructor Create;
     procedure SetFontColor(a, b: Cardinal); overload;
-    procedure SetFontColor(c: TColor2); overload;
+   // procedure SetFontColor(c: TColor2); overload;
   published
     property Top: Cardinal read fa write SetA;
     property Bottom: Cardinal read fb write SetB;
@@ -86,7 +91,7 @@ type
   public
     constructor Create;
     procedure SetFillColor(a, b, c, d: Cardinal); overload;
-    procedure SetFillColor(c: TColor4); overload;
+   // procedure SetFillColor(c: TColor4); overload;
   published
     property TopLeft: Cardinal read fa write SetA;
     property TopRight: Cardinal read fb write SetB;
@@ -133,12 +138,9 @@ type
     FAImage: TTExture;
     FAImageHover: TTExture;
     FAImagePressed: TTexture;
-
     constructor Create;
     destructor Destroy; override;
-
     function AImage: TTexture;
-
     property ButtonType: TUpDownType read FType write SetType;
     property IsEnabled: Boolean read FEnabled write FEnabled;
     property IsHover: Boolean read FHover write SetHover;
@@ -156,8 +158,8 @@ type
   end;
 
   // --------------------------------------------------------------------------
-function cColor2(c: TFontColor): TColor2; overload;
-function cColor4(c: TFillColor): TColor4; overload;
+
+
 // ----------------------------------------------------------------------------
 
 implementation
@@ -204,11 +206,7 @@ begin
   fb := b;
 end;
 
-procedure TFontColor.SetFontColor(c: TColor2);
-begin
-  fa := c[0];
-  fb := c[1];
-end;
+
 
 // ----------------------------------------------------------------------------
 { TFillColor }
@@ -270,29 +268,9 @@ begin
   fd := d;
 end;
 
-procedure TFillColor.SetFillColor(c: TColor4);
-begin
-  fa := c[0];
-  fb := c[1];
-  fc := c[2];
-  fd := c[3];
-end;
+
 
 // ----------------------------------------------------------------------------
-
-function cColor2(c: TFontColor): TColor2;
-begin
-  Result[0] := c.fa;
-  Result[1] := c.fb;
-end;
-
-function cColor4(c: TFillColor): TColor4;
-begin
-  Result[0] := c.fa;
-  Result[1] := c.fb;
-  Result[2] := c.fc;
-  Result[3] := c.fd;
-end;
 
 // ----------------------------------------------------------------------------
 
@@ -444,11 +422,10 @@ begin
 end;
 
 initialization
-
-RegisterClasses([TFillColor, TFontColor, TUpDownButton]);
+  RegisterClasses([TFillColor, TFontColor, TUpDownButton]);
 
 finalization
-
-UnRegisterClasses([TFillColor, TFontColor, TUpDownButton]);
+  UnRegisterClasses([TFillColor, TFontColor, TUpDownButton]);
 
 end.
+

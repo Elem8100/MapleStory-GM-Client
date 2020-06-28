@@ -58,7 +58,7 @@ interface
 
 // ---------------------------------------------------------------------------
 uses
-  Types, Classes, {$IFDEF TntUnicode} TntClasses, {$ENDIF} SysUtils, Contnrs,
+  System.Types, Classes, {$IFDEF TntUnicode} TntClasses, {$ENDIF} SysUtils, Contnrs,
   Math, Vectors2px, Vectors2, AsphyreXML, MediaUtils, AsphyreColors,
   AsphyreTypes, AsphyreUtils, AsphyreImages, AbstractCanvas, HelperSets;
 
