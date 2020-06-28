@@ -3,8 +3,8 @@ unit PXT.Sprites;
 interface
 
 uses
-  Windows, System.Types, Classes, SysUtils, Math, AbstractCanvas, Generics.Collections,
-  Vectors2, AsphyreTypes, WZIMGFile,PXT.Types,
+  Windows, System.Types, Classes, SysUtils, Math,  Generics.Collections,
+   WZIMGFile,PXT.Types,PXT.TypesEx,
   PXT.Graphics,PXT.Canvas;
 
 type
@@ -83,7 +83,7 @@ type
     FImageIndex: Integer;
     FMoved: Boolean;
     FTruncMove: Boolean;
-    FCollidePos: TPoint2;
+    FCollidePos: TPoint;
     FCollideRadius: Integer;
     FCollideRect: TRect;
     FTag: Integer;
@@ -145,7 +145,7 @@ type
     property Name: string read FName write SetName;
     property Moved: Boolean read FMoved write FMoved;
     property TruncMove: Boolean read FTruncMove write FTruncMove;
-    property CollidePos: TPoint2 read FCollidePos write FCollidePos;
+    property CollidePos: TPoint read FCollidePos write FCollidePos;
     property CollideRadius: Integer read FCollideRadius write FCollideRadius;
     property CollideRect: TRect read FCollideRect write FCollideRect;
     property CollideQuadrangle: TPoint4 read FCollideQuadrangle write FCollideQuadrangle;
