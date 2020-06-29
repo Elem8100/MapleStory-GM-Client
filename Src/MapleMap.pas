@@ -36,6 +36,7 @@ type
       ShowTile: Boolean;
       ShowObj: Boolean;
       ShowBack: Boolean;
+      ShowFront: Boolean;
       ShowNPC: Boolean;
       ShowMob: Boolean;
       ShowPortal: Boolean;
@@ -304,6 +305,7 @@ initialization
   TMap.ShowTile := True;
   TMap.ShowObj := True;
   TMap.ShowBack := True;
+  TMap.ShowFront := True;
   TMap.ShowNPC := True;
   TMap.ShowMob := True;
   TMap.ShowPortal := True;

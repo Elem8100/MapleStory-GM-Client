@@ -3,8 +3,9 @@ unit SaveMapFormUnit;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Jpeg, PngImage, MapleMap, StrUtils;
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
+  Vcl.StdCtrls, Jpeg, PngImage, MapleMap, StrUtils;
 
 type
   TSaveMapForm = class(TForm)
@@ -29,7 +30,7 @@ var
 implementation
 
 uses
-  Global,  MapBack, PXT.Graphics, PXT.Types;
+  Global, MapBack, PXT.Graphics, PXT.Types;
 {$R *.dfm}
 
 function StrReplace(const oldChars, newChars: array of Char; const str: string): string;
@@ -70,15 +71,17 @@ begin
   Params.Width := MapWidth;
   Params.Height := MapHeight;
   Params.Format := TPixelFormat.RGBA8;
-  Params.Attributes := TextureDrawable or  TexturePremultipliedAlpha;
+  Params.Attributes := TextureDrawable or TexturePremultipliedAlpha;
   SaveTexture := TextureInit(FDevice, Params);
 
   FDevice.BeginScene;
   SaveTexture.BeginScene;
   GameCanvas.BeginScene;
-  BackEngine[0].Draw;
+  if TMap.ShowBack then
+    BackEngine[0].Draw;
   SpriteEngine.Draw;
-  BackEngine[1].Draw;
+//  if TMap.ShowFront then
+ //   BackEngine[1].Draw;
   BackEngine[0].Move(1);
   BackEngine[1].Move(1);
   GameCanvas.EndScene;
@@ -88,9 +91,11 @@ begin
   FDevice.BeginScene;
   SaveTexture.BeginScene;
   GameCanvas.BeginScene;
-  BackEngine[0].Draw;
+  if TMap.ShowBack then
+    BackEngine[0].Draw;
   SpriteEngine.Draw;
-  BackEngine[1].Draw;
+  if TMap.ShowFront then
+    BackEngine[1].Draw;
   BackEngine[0].Move(1);
   BackEngine[1].Move(1);
   GameCanvas.EndScene;

@@ -30,6 +30,7 @@ type
     CheckBox14: TCheckBox;
     CheckBox15: TCheckBox;
     CheckBox16: TCheckBox;
+    CheckBox17: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure CheckBox1Click(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -47,7 +48,7 @@ var
 implementation
 
 uses
-   MapleMap, MobInfo, NameTag, UI.Utils;
+  MapleMap, MobInfo, NameTag, UI.Utils;
 {$R *.dfm}
 
 procedure TShowOptionForm.Button1Click(Sender: TObject);
@@ -102,6 +103,8 @@ begin
       TMap.ShowMiniMap := not TMap.ShowMiniMap;
     16:
       TMap.ShowNpcName := not TMap.ShowNpcName;
+    17:
+      TMap.ShowFront := not TMap.ShowFront;
   end;
   ActiveControl := nil;
 end;

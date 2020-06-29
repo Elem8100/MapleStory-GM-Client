@@ -22,7 +22,7 @@ object ChairForm: TChairForm
   PixelsPerInch = 120
   TextHeight = 16
   object Label1: TLabel
-    Left = 43
+    Left = 40
     Top = 10
     Width = 44
     Height = 18

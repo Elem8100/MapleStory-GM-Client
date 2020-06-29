@@ -53,8 +53,8 @@ object ShowOptionForm: TShowOptionForm
   end
   object CheckBox10: TCheckBox
     Tag = 9
-    Left = 114
-    Top = 60
+    Left = 195
+    Top = 58
     Width = 84
     Height = 17
     TabStop = False
@@ -72,8 +72,8 @@ object ShowOptionForm: TShowOptionForm
   end
   object CheckBox11: TCheckBox
     Tag = 12
-    Left = 334
-    Top = 59
+    Left = 402
+    Top = 58
     Width = 73
     Height = 17
     Caption = 'Foothold'
@@ -108,7 +108,7 @@ object ShowOptionForm: TShowOptionForm
   end
   object CheckBox2: TCheckBox
     Tag = 11
-    Left = 435
+    Left = 494
     Top = 55
     Width = 57
     Height = 22
@@ -126,8 +126,8 @@ object ShowOptionForm: TShowOptionForm
   end
   object CheckBox3: TCheckBox
     Tag = 8
-    Left = 18
-    Top = 60
+    Left = 104
+    Top = 58
     Width = 90
     Height = 17
     Caption = 'Portal Info'
@@ -142,7 +142,7 @@ object ShowOptionForm: TShowOptionForm
   end
   object CheckBox4: TCheckBox
     Tag = 2
-    Left = 145
+    Left = 127
     Top = 23
     Width = 49
     Height = 17
@@ -163,7 +163,7 @@ object ShowOptionForm: TShowOptionForm
   end
   object CheckBox5: TCheckBox
     Tag = 3
-    Left = 200
+    Left = 262
     Top = 23
     Width = 49
     Height = 17
@@ -184,7 +184,7 @@ object ShowOptionForm: TShowOptionForm
   end
   object CheckBox6: TCheckBox
     Tag = 4
-    Left = 255
+    Left = 317
     Top = 23
     Width = 49
     Height = 17
@@ -205,7 +205,7 @@ object ShowOptionForm: TShowOptionForm
   end
   object CheckBox7: TCheckBox
     Tag = 5
-    Left = 315
+    Left = 372
     Top = 23
     Width = 61
     Height = 17
@@ -226,9 +226,9 @@ object ShowOptionForm: TShowOptionForm
   end
   object CheckBox8: TCheckBox
     Tag = 6
-    Left = 204
-    Top = 59
-    Width = 124
+    Left = 284
+    Top = 58
+    Width = 101
     Height = 17
     TabStop = False
     Caption = 'Mob Lv/Name'
@@ -245,7 +245,7 @@ object ShowOptionForm: TShowOptionForm
   end
   object CheckBox9: TCheckBox
     Tag = 7
-    Left = 380
+    Left = 439
     Top = 23
     Width = 49
     Height = 17
@@ -285,7 +285,7 @@ object ShowOptionForm: TShowOptionForm
   end
   object CheckBox13: TCheckBox
     Tag = 13
-    Left = 435
+    Left = 494
     Top = 23
     Width = 81
     Height = 17
@@ -314,7 +314,7 @@ object ShowOptionForm: TShowOptionForm
   end
   object CheckBox14: TCheckBox
     Tag = 14
-    Left = 538
+    Left = 594
     Top = 23
     Width = 46
     Height = 17
@@ -324,8 +324,8 @@ object ShowOptionForm: TShowOptionForm
   end
   object CheckBox15: TCheckBox
     Tag = 15
-    Left = 590
-    Top = 23
+    Left = 17
+    Top = 58
     Width = 81
     Height = 17
     Caption = 'Mini Map'
@@ -334,7 +334,7 @@ object ShowOptionForm: TShowOptionForm
   end
   object CheckBox16: TCheckBox
     Tag = 16
-    Left = 523
+    Left = 572
     Top = 58
     Width = 81
     Height = 17
@@ -342,6 +342,24 @@ object ShowOptionForm: TShowOptionForm
     Checked = True
     State = cbChecked
     TabOrder = 18
+    OnClick = CheckBox1Click
+  end
+  object CheckBox17: TCheckBox
+    Tag = 17
+    Left = 192
+    Top = 24
+    Width = 57
+    Height = 17
+    Caption = 'Front'
+    Checked = True
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -12
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
+    State = cbChecked
+    TabOrder = 19
     OnClick = CheckBox1Click
   end
 end

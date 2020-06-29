@@ -9,15 +9,15 @@ interface
 
 uses
   PXT.Types, Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
-  System.Classes, Vcl.Graphics, Vcl.Grids, AdvObj, BaseGrid,
-  AdvGrid, Vcl.ComCtrls, Vcl.StdCtrls, Vcl.Buttons, scControls, scExtControls,
+  System.Classes, Vcl.Graphics, Vcl.Grids, AdvObj, BaseGrid, AdvGrid,
+  Vcl.ComCtrls, Vcl.StdCtrls, Vcl.Buttons, scControls, scExtControls,
   Vcl.Controls, AdvGroupBox, Vcl.ExtCtrls, ToolPanels, Vcl.Forms, Vcl.Dialogs,
-  ToolWin, Generics.Collections, WZIMGFile,
-  KeyHandler, WZReader, StrUtils, PngImage, Jpeg, {, Reactor,}
+  ToolWin, Generics.Collections, WZIMGFile, KeyHandler, WZReader, StrUtils,
+  PngImage, Jpeg, {, Reactor,}
   Footholds, BassHandler, MapPortal, AdvUtil, Mob2, Npc, {UI}
   MapleCharacter, {Boss,}
-  AsphyreTimer, PXT.Sprites, AsphyreKeyboard, DirectInput, Global,
-  MapleMap, WzUtils, System.Types, PXT.Graphics, PXT.Headers;
+  AsphyreTimer, PXT.Sprites, AsphyreKeyboard, DirectInput, Global, MapleMap,
+  WzUtils, System.Types, PXT.Graphics, PXT.Headers;
 
 type
   TScreenMode = (smNormal, smScale, smFullScreen);
@@ -149,10 +149,10 @@ uses
   CashFormUnit, TamingMobFormUnit, MapleEffect, TamingMob, MapleChair,
   LabelRingFormUnit, PetFormUnit, Pet, FamiliarFormUnit, MonsterFamiliar,
   SkillFormUnit, Skill, OptionsFormUnit, AvatarFormUnit, AndroidFormUnit,
-  Android, ACtrlEngine, SetScreenFormUnit, ConsumeFormUnit,
-  CashForm2Unit, EtcFormUnit, PlayActionFormUnit, UI.Utils, acontrols,
-  UI.StatusBar3.Chat, UI.UIWindow2.UserInfo,
-  UI.UIWindow2.Item, SelectFolderFormUnit, TotemEffectFormUnit,PXT.TypesEx;
+  Android, ACtrlEngine, SetScreenFormUnit, ConsumeFormUnit, CashForm2Unit,
+  EtcFormUnit, PlayActionFormUnit, UI.Utils, acontrols, UI.StatusBar3.Chat,
+  UI.UIWindow2.UserInfo, UI.UIWindow2.Item, SelectFolderFormUnit,
+  TotemEffectFormUnit, PXT.TypesEx;
 {$R *.dfm}
 
 procedure TMainForm.FamiliarButtonClick(Sender: TObject);
@@ -626,9 +626,11 @@ begin
           TMob.CreateMapMobs;
       end);
 
-  BackEngine[0].Draw;
+  if TMap.ShowBack then
+    BackEngine[0].Draw;
   SpriteEngine.Draw;
-  BackEngine[1].Draw;
+  if TMap.ShowFront then
+    BackEngine[1].Draw;
 
  // if TMap.ShowFPS then
   //GameFont.Draw(Point2f(10, 10), 'FPS: ' + IntToStr(Timer.FrameRate), cRGB1(255, 0, 0));

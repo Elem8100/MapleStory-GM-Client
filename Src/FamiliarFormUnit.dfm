@@ -42,11 +42,11 @@ object FamiliarForm: TFamiliarForm
     object TabSheet1: TTabSheet
       Caption = 'Familiar'
       object Label1: TLabel
-        Left = 24
+        Left = 15
         Top = 7
-        Width = 30
+        Width = 40
         Height = 16
-        Caption = #25628#23563
+        Caption = 'Search'
       end
       object FamiliarGrid: TAdvStringGrid
         AlignWithMargins = True
@@ -202,10 +202,6 @@ object FamiliarForm: TFamiliarForm
     object TabSheet2: TTabSheet
       Caption = 'Dye'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object DyeGrid: TAdvStringGrid
         AlignWithMargins = True
         Left = 0

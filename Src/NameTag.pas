@@ -166,7 +166,7 @@ begin
   begin
     WX := Round(Player.X) - Round(Engine.WorldX);
     WY := Round(Player.Y) - Round(Engine.WorldY);
-    GameCanvas.Draw(TargetTexture, WX - 150, WY + 5);
+    GameCanvas.Draw(TargetTexture, WX - 150, WY + -8);
   end;
   if IsReDraw then
     IsReDraw := False;

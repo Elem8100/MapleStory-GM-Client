@@ -21,6 +21,13 @@ object CashForm: TCashForm
   OnKeyDown = FormKeyDown
   PixelsPerInch = 120
   TextHeight = 16
+  object Label1: TLabel
+    Left = 16
+    Top = 12
+    Width = 40
+    Height = 16
+    Caption = 'Search'
+  end
   object CashGrid: TAdvStringGrid
     AlignWithMargins = True
     Left = 4
@@ -36,6 +43,7 @@ object CashForm: TCashForm
     ColCount = 4
     DefaultRowHeight = 35
     DrawingStyle = gdsClassic
+    FixedRows = 0
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -15
@@ -163,12 +171,20 @@ object CashForm: TCashForm
       35)
   end
   object Button1: TButton
-    Left = 72
+    Left = 224
     Top = 6
-    Width = 177
-    Height = 30
+    Width = 90
+    Height = 28
     Caption = 'Remove'
     TabOrder = 1
     OnClick = Button1Click
+  end
+  object Edit1: TEdit
+    Left = 62
+    Top = 8
+    Width = 115
+    Height = 24
+    TabOrder = 2
+    OnChange = Edit1Change
   end
 end

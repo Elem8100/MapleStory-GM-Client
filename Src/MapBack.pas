@@ -35,10 +35,7 @@ type
 implementation
 
 uses
-  SaveMapFormUnit, MainUnit;
-
-var
-  cc: Integer;
+  SaveMapFormUnit;
 
 class procedure TMapBack.Create;
 var
@@ -363,10 +360,9 @@ end;
 
 procedure TMapBack.DoDraw;
 begin
+  inherited;
   if ResetPos then
     ResetPos := False;
-  if TMap.ShowBack then
-    inherited;
 end;
 
 end.

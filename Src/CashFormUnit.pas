@@ -4,12 +4,14 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, AdvObj, BaseGrid, AdvGrid, Vcl.StdCtrls, AdvUtil;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, AdvObj, BaseGrid, AdvGrid, Vcl.StdCtrls;
 
 type
   TCashForm = class(TForm)
     CashGrid: TAdvStringGrid;
     Button1: TButton;
+    Label1: TLabel;
+    Edit1: TEdit;
     procedure CashGridClickCell(Sender: TObject; ARow, ACol: Integer);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure Button1Click(Sender: TObject);
@@ -17,6 +19,7 @@ type
     procedure CashGridClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
+    procedure Edit1Change(Sender: TObject);
   private
     HasLoad: Boolean;
     { Private declarations }
@@ -60,6 +63,11 @@ begin
   ActiveControl := nil;
 end;
 
+procedure TCashForm.Edit1Change(Sender: TObject);
+begin
+ CashGrid.NarrowDown(Trim(Edit1.Text));
+end;
+
 procedure TCashForm.FormActivate(Sender: TObject);
 begin
   if HasLoad then
@@ -95,6 +103,7 @@ begin
     end;
 
   end;
+
 end;
 
 procedure TCashForm.FormClick(Sender: TObject);
