@@ -23,7 +23,6 @@ type
   { TCustomAEditBox }
   TCustomAEditBox = class(TWControl)
   private
-
     FReadOnly: Boolean;
     FAutoSelect: Boolean;
     FMaxLength: Integer;
@@ -668,14 +667,18 @@ procedure TCustomAEditBox.Paint(DC: HDC);
 var
   Index, X, Y, AWidth, AHeight, AVirtualCursor: Integer;
   AMin, AMax: Integer;
-
   AChars: TAChars;
 begin
-  var FontSetting := TFontSettings.Create('Arial', 12);
-  FontSetting.Effect.BorderType := TFontBorder.None;
-  FontSetting.Effect.BorderOpacity := 1;
-  FontSetting.Weight := TFontWeight.Thin;
-  GameFont.FontSettings := FontSetting;
+
+  var FontSettings: TFontSettings;
+  if ISKMS then
+    FontSettings := TFontSettings.Create('Tahoma', 10, TFontWeight.Normal)
+  else
+    FontSettings := TFontSettings.Create('Arial', 11, TFontWeight.Normal);
+  FontSettings.Effect.BorderType := TFontBorder.None;
+  FontSettings.Effect.BorderOpacity := 1;
+  FontSettings.Weight := TFontWeight.Thin;
+  GameFont.FontSettings := FontSettings;
   var ARect := AEngine.Canvas.ClipRect;
   // Set initial values
   X := ClientLeft;

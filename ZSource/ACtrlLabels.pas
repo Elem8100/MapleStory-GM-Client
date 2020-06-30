@@ -14,10 +14,10 @@ unit ACtrlLabels;
 interface
 
 uses
- pxt.types, Classes, Controls, SysUtils, Windows,
+  pxt.types, Classes, Controls, SysUtils, Windows,
   // Aspryre units
   // Asphyre GUI Engine
- AControls, ACtrlForms, ACtrlTypes;
+  AControls, ACtrlForms, ACtrlTypes;
 
 type
   TCustomALabel = class(TAControl)
@@ -26,7 +26,7 @@ type
     FFocusControl: string;
     FPLine: Boolean;
     FTransparent: Boolean;
-    FFontColor:TColorPair;
+    FFontColor: TColorPair;
     procedure SetCanMoveHandle(Value: Boolean); virtual;
     procedure SetFocusControl(Value: string); virtual;
     procedure SetTransparent(Value: Boolean); virtual;
@@ -44,7 +44,7 @@ type
     property FocusControl: string read FFocusControl write SetFocusControl;
     property ParagraphLine: Boolean read FPLine write FPLine;
     property Transparent: Boolean read FTransparent write SetTransparent;
-    property FontColor:TColorPair read   FFontColor write  FFontColor;
+    property FontColor: TColorPair read FFontColor write FFontColor;
   end;
 
   TALabel = class(TCustomALabel)
@@ -164,12 +164,15 @@ begin
   FTransparent := True;
 
   ControlState := ControlState - [csCreating];
+  var FontSettings: TFontSettings;
+  if ISKMS then
+    FontSettings := TFontSettings.Create('Tahoma', 11, TFontWeight.Normal)
+  else
+    FontSettings := TFontSettings.Create('Arial', 11, TFontWeight.Normal);
 
-  var FontSetting: TFontSettings;
-  FontSetting := TFontSettings.Create('Tahoma', 11);
-  FontSetting.Effect.BorderType := TFontBorder.None;
-  FontSetting.Weight := TFontWeight.Light;
-  GameFont.FontSettings := FontSetting;
+  FontSettings.Effect.BorderType := TFontBorder.None;
+  FontSettings.Weight := TFontWeight.Light;
+  GameFont.FontSettings := FontSettings;
 end;
 
 destructor TCustomALabel.Destroy;
@@ -227,12 +230,17 @@ begin
   // Set initial values
   X := ClientLeft;
   Y := ClientTop;
-  var FontSetting := TFontSettings.Create('Arial', 11);
-  FontSetting.Effect.BorderType := TFontBorder.None;
-  FontSetting.Effect.BorderOpacity := 1;
-  FontSetting.Weight := TFontWeight.Thin;
-  GameFont.FontSettings := FontSetting;
-  GameFont.Draw(Point2f(X, Y),Text,FontColor);
+  var FontSettings: TFontSettings;
+  if ISKMS then
+    FontSettings := TFontSettings.Create('Tahoma', 10, TFontWeight.Normal)
+  else
+    FontSettings := TFontSettings.Create('Arial', 11, TFontWeight.Normal);
+
+  FontSettings.Effect.BorderType := TFontBorder.None;
+  FontSettings.Effect.BorderOpacity := 1;
+  FontSettings.Weight := TFontWeight.Thin;
+  GameFont.FontSettings := FontSettings;
+  GameFont.Draw(Point2f(X, Y), Text, FontColor);
 
 end;
 
