@@ -3,9 +3,10 @@
 interface
 
 uses
-  PXT.Types, Windows, Messages, SysUtils, Classes, Controls, Forms, Dialogs, Graphics, ACtrlImages,
-  StdCtrls, WZIMGFile, WZArchive, StrUtils, Generics.Collections, WzUtils, AControls, ACtrlEngine,
-  ACtrlForms, ACtrlButtons, Global, PXT.Canvas, PXT.Graphics;
+  PXT.Types, Windows, Messages, SysUtils, Classes, Controls, Forms, Dialogs,
+  Graphics, ACtrlImages, StdCtrls, WZIMGFile, WZArchive, StrUtils,
+  Generics.Collections, WzUtils, AControls, ACtrlEngine, ACtrlForms,
+  ACtrlButtons, Global, PXT.Canvas, PXT.Graphics;
 
 type
   TChatViewImage = class(TAImage)
@@ -48,9 +49,13 @@ begin
   GameCanvas.DrawTargetStatic(TChatViewImage.TargetTexture, 410, 595,
     procedure
     begin
-      var FontSetting := TFontSettings.Create('Arial', 11, TFontWeight.Normal);
-      FontSetting.Effect.BorderType := TFontBorder.None;
-      GameFont.FontSettings := FontSetting;
+      var FontSettings: TFontSettings;
+      if ISKMS then
+        FontSettings := TFontSettings.Create('Tahoma', 10, TFontWeight.Normal)
+      else
+        FontSettings := TFontSettings.Create('Arial', 11, TFontWeight.Normal);
+      FontSettings.Effect.BorderType := TFontBorder.None;
+      GameFont.FontSettings := FontSettings;
 
       for var i := TChatViewImage.StrList.Count - 1 downto 0 do
         GameFont.Draw(Point2f(20, 480 + (13 * I) - Pos), TChatViewImage.StrList[i], $FFFFFFFF);

@@ -14,8 +14,7 @@ uses
   Vcl.Controls, AdvGroupBox, Vcl.ExtCtrls, ToolPanels, Vcl.Forms, Vcl.Dialogs,
   ToolWin, Generics.Collections, WZIMGFile, KeyHandler, WZReader, StrUtils,
   PngImage, Jpeg, {, Reactor,}
-  Footholds, BassHandler, MapPortal, AdvUtil, Mob2, Npc, {UI}
-  MapleCharacter, {Boss,}
+  Footholds, BassHandler, MapPortal, AdvUtil, Mob2, Npc, MapleCharacter,
   AsphyreTimer, PXT.Sprites, AsphyreKeyboard, DirectInput, Global, MapleMap,
   WzUtils, System.Types, PXT.Graphics, PXT.Headers;
 

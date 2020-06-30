@@ -3,8 +3,8 @@ unit NameTag;
 interface
 
 uses
-  Windows, SysUtils, StrUtils, PXT.Sprites, Generics.Collections, WZIMGFile, Classes, Global,
-  WzUtils, PXT.Graphics;
+  Windows, SysUtils, StrUtils, PXT.Sprites, Generics.Collections, WZIMGFile,
+  Classes, Global, WzUtils, PXT.Graphics;
 
 type
   TNameTag = class(TSpriteEx)
@@ -69,7 +69,7 @@ type
 implementation
 
 uses
-  MapleCharacter, ShowOptionUnit, MapleMap,  PXT.Types,PXT.TypesEx, PXT.Canvas;
+  MapleCharacter, ShowOptionUnit, MapleMap, PXT.Types, PXT.TypesEx, PXT.Canvas;
 
 procedure TNameTag.DoMove(const MoveCount: Single);
 begin
@@ -221,8 +221,7 @@ begin
     var Count := CenterLength div CenterWidth;
     FixAlphaChannel(EquipImages[CenterImage]);
     for var i := 1 to Count do
-      Engine.Canvas.Draw(EquipImages[CenterImage], WestX + ((i - 1) * CenterWidth) + WestWidth, -
-        CenterImage.Get('origin').Vector.Y + 38);
+      Engine.Canvas.Draw(EquipImages[CenterImage], WestX + ((i - 1) * CenterWidth) + WestWidth, -CenterImage.Get('origin').Vector.Y + 38);
 
     var OffX: Integer;
     case CenterWidth of
@@ -243,11 +242,16 @@ begin
 
     var EastImage := EquipData[Entry.GetPath + '/e'];
     FixAlphaChannel(EquipImages[EastImage]);
-    GameCanvas.Draw(EquipImages[EastImage], WestX + CenterLength + WestWidth - OffX, -EastImage.Get('origin').Vector.Y
-      + 38);
-    var FontSetting := TFontSettings.Create('Arial', 12,TFontWeight.Normal);
-    FontSetting.Effect.BorderType := TFontBorder.None;
-    GameFont.FontSettings := FontSetting;
+    GameCanvas.Draw(EquipImages[EastImage], WestX + CenterLength + WestWidth - OffX, -EastImage.Get('origin').Vector.Y + 38);
+
+    var FontSettings: TFontSettings;
+    if ISKMS then
+      FontSettings := TFontSettings.Create('Tahoma', 10, TFontWeight.Normal)
+    else
+      FontSettings := TFontSettings.Create('Arial', 11, TFontWeight.Normal);
+
+    FontSettings.Effect.BorderType := TFontBorder.None;
+    GameFont.FontSettings := FontSettings;
     GameFont.Draw(Point2f(WestX + WestWidth + 2, 36), MedalName, ARGB(255, R, G, B));
 
   end;

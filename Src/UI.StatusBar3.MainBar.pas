@@ -137,7 +137,13 @@ begin
         var Char := MidStr(Level.ToString, I, 1);
         GameCanvas.Draw(UIImages[Entry.Get('lvNumber/' + Char)], 35 + I * 7, 8);
       end;
-      var FontSettings := TFontSettings.Create('Arial', 12, TFontWeight.Normal);
+
+      var FontSettings: TFontSettings;
+      if ISKMS then
+        FontSettings := TFontSettings.Create('Tahoma', 10, TFontWeight.Normal)
+      else
+        FontSettings := TFontSettings.Create('Arial', 11, TFontWeight.Normal);
+
       FontSettings.Effect.BorderType := TFontBorder.None;
       GameFont.FontSettings := FontSettings;
       GameFont.Draw(Point2f(85, 3), ShowOptionForm.Edit1.Text, $FFFFFFFF);
