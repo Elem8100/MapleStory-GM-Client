@@ -111,6 +111,7 @@ begin
     Str := Str + i + '-';
 
   AndroidPlayer.Spawn(Str);
+  TAndroidNameTag.Delete;
   TAndroidNameTag.Create(ImgNum);
   TAndroidNameTag.AndroidNameTag.MedalName:='Android';
   TAndroidNameTag.AndroidNameTag.InitData;

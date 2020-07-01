@@ -336,7 +336,10 @@ end;
 class procedure TAndroidNameTag.Delete;
 begin
   if (AndroidNameTag <> nil) then
+  begin
     AndroidNameTag.Dead;
+    AndroidNameTag:=nil;
+  end;
 end;
 
 procedure TAndroidNameTag.DoMove(const MoveCount: Single);
