@@ -7,7 +7,7 @@ uses
   Classes, Global, WzUtils;
 
 type
-  TEffectType = (Cash, Chair, Equip, Consume, Totem);
+  TEffectType = (Cash, Chair, Equip, Consume, Totem, Soul);
 
   TSetEffect = class(TSpriteEx)
     Path: string;
@@ -43,7 +43,7 @@ type
     class procedure LoadList;
     class procedure Delete(ID: string); overload;
     class procedure Delete(EffectType: TEffectType); overload;
-    class procedure Create(ID: string; ItemEff: Boolean = False); overload;
+    class procedure Create(ID: string; EffectType: TEffectType); overload;
   end;
 
 implementation
@@ -179,7 +179,11 @@ class procedure TItemEffect.Delete(EffectType: TEffectType);
 begin
   for var Iter in SpriteEngine.SpriteList do
     if (Iter is TItemEffect) and (TItemEffect(Iter).EffType = EffectType) then
+    begin
       Iter.Dead;
+      var s:=Iter;
+      s:=nil;
+    end;
 end;
 
 procedure TItemEffect.DoMove(const MoveCount: Single);
@@ -252,7 +256,7 @@ begin
   end
   else
   begin
-     Y := Trunc(Player.Y)-60;
+    Y := Trunc(Player.Y) - 60;
   end;
   Z := Player.z + TWZIMGEntry(ImageEntry.Parent).Get('z', '0');
   if EffType = Chair then
@@ -287,16 +291,25 @@ begin
 
 end;
 
-class procedure TItemEffect.Create(ID: string; ItemEff: Boolean = False);
+class procedure TItemEffect.Create(ID: string; EffectType: TEffectType);
 begin
   if ID = '01048000' then
     Exit;
   if ID = '01049000' then
     Exit;
-  if ItemEff then
-    Entry := GetImgEntry('Effect.wz/ItemEff.img/' + IDToInt(ID))
-  else
-    Entry := GetImgEntry('Item.wz/Cash/0501.img/' + ID);
+ // if ItemEff then
+   // Entry := GetImgEntry('Effect.wz/ItemEff.img/' + IDToInt(ID))
+ // else
+    //Entry := GetImgEntry('Item.wz/Cash/0501.img/' + ID);
+
+  case EffectType of
+    Cash:
+      Entry := GetImgEntry('Item.wz/Cash/0501.img/' + ID);
+    Chair, Equip, Consume, Totem:
+      Entry := GetImgEntry('Effect.wz/ItemEff.img/' + IDToInt(ID));
+    Soul:
+      Entry := GetImgEntry('Effect.wz/BasicEff.img/SoulSkillReadied/Repeat/' + ID);
+  end;
 
   DumpData(Entry, EquipData, EquipImages);
   if LeftStr(ID, 4) = '0301' then
@@ -347,7 +360,7 @@ begin
       TruncMove := True;
       Tag := 1;
     end;
-    if ItemEff then
+    if EffectType = Equip then
       UseList.Add(ID, ItemEffect);
   end
   else
@@ -365,6 +378,11 @@ begin
           Path := Entry.GetPath;
         end;
 
+      end
+      else if LeftStr(ID, 1) = '8' then
+      begin
+        EffType := Soul;
+        Path := Entry.GetPath;
       end
       else
       begin

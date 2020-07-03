@@ -58,7 +58,7 @@ begin
   var ID := CashGrid.Cells[1, ARow];
   TItemEffect.Delete(Cash);
 
-  TItemEffect.Create(ID);
+  TItemEffect.Create(ID,Cash);
 
   ActiveControl := nil;
 end;

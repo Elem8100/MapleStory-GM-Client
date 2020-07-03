@@ -2737,10 +2737,6 @@ object AvatarForm: TAvatarForm
     OnChange = PageControl1Change
     object TabSheet1: TTabSheet
       Caption = 'Equip'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
     end
     object TabSheet2: TTabSheet
       Caption = 'Load Character'

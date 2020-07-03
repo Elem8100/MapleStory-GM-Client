@@ -3,18 +3,17 @@ unit MapleCharacter;
 interface
 
 uses
-  Windows, SysUtils, StrUtils, Generics.Collections, System.Types, WZIMGFile, Math, PXT.Sprites,
-  Footholds, LadderRopes, ChatBalloon, MapPortal, DirectInput, Classes, AsphyreKeyboard,
-  DamageNumber, Skill, PXT.TypesEx, Global, Tools, MapleMap,
-  WzUtils, ColorUtils, PXT.Types, PXT.Graphics, PXT.Canvas;
+  Windows, SysUtils, StrUtils, Generics.Collections, System.Types, WZIMGFile,
+  Math, PXT.Sprites, Footholds, LadderRopes, ChatBalloon, MapPortal, DirectInput,
+  Classes, AsphyreKeyboard, DamageNumber, Skill, PXT.TypesEx, Global, Tools,
+  MapleMap, WzUtils, ColorUtils, PXT.Types, PXT.Graphics, PXT.Canvas;
 
 type
   TDir = (dLeft, dRight, no);
 
   TLadderType = (rtLadder, rtRope);
 
-  TPartName = (Head, Body, Cap, Face, Hair, Glove, FaceAcc, Glass, EarRing, Cape, Coat, Longcoat,
-    Pants, Shield, Shoes, Weapon, CashWeapon, Chairs, SitTamingMob, WalkTamingMob, TamingMob);
+  TPartName = (Head, Body, Cap, Face, Hair, Glove, FaceAcc, Glass, EarRing, Cape, Coat, Longcoat, Pants, Shield, Shoes, Weapon, CashWeapon, Chairs, SitTamingMob, WalkTamingMob, TamingMob);
 
   TAvatarParts = class;
 
@@ -127,8 +126,8 @@ var
 implementation
 
 uses
-  MainUnit, Morph, AfterImage, MapleChair, MapleEffect, TamingMob, Pet, MonsterFamiliar,
-  MapleCharacterEx, Android, AvatarFormUnit, PlayActionFormUnit;
+  MainUnit, Morph, AfterImage, MapleChair, MapleEffect, TamingMob, Pet,
+  MonsterFamiliar, MapleCharacterEx, Android, AvatarFormUnit, PlayActionFormUnit;
 
 procedure TPlayer.SpawnNew;
 var
@@ -139,8 +138,7 @@ var
   BelowFH: TFoothold;
   Below: TPoint;
 const
-  DefaultEqps: array[0..7] of string = ('01302030', '00002000', '01062055', '01072054', '01040005',
-    '00020000', '00030020', '00012000');
+  DefaultEqps: array[0..7] of string = ('01302030', '00002000', '01062055', '01072054', '01040005', '00020000', '00030020', '00012000');
 begin
   GameCanvas.DrawTarget(AvatarTargetTexture, 1024, 1024,
     procedure
@@ -328,8 +326,7 @@ begin
         CharData.AddOrSetValue('face/' + Iter.Name + '/' + Iter2.Name + '/delay', Iter2.Get('delay', 0));
       if (Iter2.Child['action'] <> nil) and (Iter2.Child['frame'] <> nil) then
       begin
-        CharData.AddOrSetValue(Iter.Name + '/' + Iter2.Name, Iter2.Get('action', '') + '/' +
-          IntToStr(Iter2.Get('frame', '')));
+        CharData.AddOrSetValue(Iter.Name + '/' + Iter2.Name, Iter2.Get('action', '') + '/' + IntToStr(Iter2.Get('frame', '')));
       end;
       if Iter2.Name = 'hairShade' then
         Continue;
@@ -1031,6 +1028,7 @@ var
   BlinkNum: Integer;
   ChangeExpressionCounter: Integer;
   PlayActionCounter: Integer;
+
 procedure TAvatarParts.UpdateFrame;
 var
   Path, AfterImagePath: string;
@@ -1052,8 +1050,7 @@ begin
 
   if (not AvatarForm.SaveSingleFrame) and ((Part = Weapon) or (Part = CashWeapon)) and (FTime = 0) then
   begin
-    AfterImagePath := 'Character.wz/Afterimage/' + Owner.AfterImageStr + '.img/0/' + State + '/' +
-      IntToStr(Frame) + '/0';
+    AfterImagePath := 'Character.wz/Afterimage/' + Owner.AfterImageStr + '.img/0/' + State + '/' + IntToStr(Frame) + '/0';
     if HasEntry(AfterImagePath) then
     begin
       PlaySounds('Weapon', 'swordL/Attack');
@@ -1107,8 +1104,7 @@ begin
         ForceDirectories(ExtractFilePath(ParamStr(0)) + 'Export');
         var FileName := ExtractFilePath(ParamStr(0)) + 'Export\' + AvatarForm.AllFrames[AvatarForm.Frame - 1] + '.png';
         AvatarForm.Label2.Caption := 'Save to:  ' + FileName;
-        AvatarPanelTexture.SaveToFile(FileName, nil, 0, IntRectBDS(WX, WY, WX + AvatarForm.TrackBarW.Position,
-          WY + AvatarForm.TrackBarH.Position));
+        AvatarPanelTexture.SaveToFile(FileName, nil, 0, IntRectBDS(WX, WY, WX + AvatarForm.TrackBarW.Position, WY + AvatarForm.TrackBarH.Position));
       end);
     var S := AvatarForm.AllFrames[AvatarForm.Frame].Split(['.']);
     State := S[0];
@@ -1132,7 +1128,7 @@ begin
     Animend := False;
     FTime := 0;
     Frame := 0;
-    State:=  PlayActionForm.ListBox1.Items[PlayActionForm.ListBox1.ItemIndex];
+    State := PlayActionForm.ListBox1.Items[PlayActionForm.ListBox1.ItemIndex];
     Inc(PlayActionCounter);
   end;
 
@@ -1150,8 +1146,7 @@ begin
     Inc(Counter);
   end;
 
-  if not HasEntry(C + GetDir(ID) + ID + '.img/' + WpNum + State + '/' + IntToStr(Frame) + '/' +
-    Image) and (not IsAttack) and (not CharData.ContainsKey(State + '/' + IntToStr(Frame))) then
+  if not HasEntry(C + GetDir(ID) + ID + '.img/' + WpNum + State + '/' + IntToStr(Frame) + '/' + Image) and (not IsAttack) and (not CharData.ContainsKey(State + '/' + IntToStr(Frame))) then
     Frame := 0;
 
   FrameCount := CharData['body/' + State + '/FrameCount'];
@@ -1200,8 +1195,7 @@ begin
 
   if (Image = 'face') or (Part = Glass) or (Part = FaceAcc) then
   begin
-    if (State = 'ladder') or (State = 'rope') or ((State = 'swingOF') and (Frame = 1)) or ((State =
-      'swingTF') and (Frame = 0)) then
+    if (State = 'ladder') or (State = 'rope') or ((State = 'swingOF') and (Frame = 1)) or ((State = 'swingTF') and (Frame = 0)) then
       Alpha := 0
     else
       Alpha := 255;
@@ -1468,8 +1462,7 @@ procedure TAvatarParts.DoMove(const Movecount: Single);
 
   function ArrowKeyDown: Boolean;
   begin
-    if (not Keyboard.Key[DIK_LEFT]) and (not Keyboard.Key[DIK_RIGHT]) and (not Keyboard.Key[DIK_UP])
-      and (not Keyboard.Key[DIK_DOWN]) then
+    if (not Keyboard.Key[DIK_LEFT]) and (not Keyboard.Key[DIK_RIGHT]) and (not Keyboard.Key[DIK_UP]) and (not Keyboard.Key[DIK_DOWN]) then
       Result := False
     else
       Result := True;
@@ -1506,8 +1499,7 @@ begin
 
   if ((Keyboard.Key[DIK_LEFT]) or (Keyboard.Key[DIK_RIGHT])) and (not TTamingMob.IsUse) then
   begin
-    if (LeftStr(State, 4) <> 'walk') and (Owner.JumpState = jsNone) and (not Owner.InLadder) and (not
-      IsAttack) and (TSkill.PlayEnded) then
+    if (LeftStr(State, 4) <> 'walk') and (Owner.JumpState = jsNone) and (not Owner.InLadder) and (not IsAttack) and (TSkill.PlayEnded) then
     begin
       FTime := 0;
       Frame := 0;
@@ -1582,14 +1574,14 @@ begin
     end;
   end;
 
-  if (IsAttack) or (State = 'proneStab') or (IsSkillAttack)  or (PlayActionForm.Playing) then
+  if (IsAttack) or (State = 'proneStab') or (IsSkillAttack) or (PlayActionForm.Playing) then
     AnimRepeat := False
   else
     AnimRepeat := True;
 
   if AnimEnd then
   begin
-    if (IsSkillAttack) or (IsAttack)  or (PlayActionForm.Playing) then
+    if (IsSkillAttack) or (IsAttack) or (PlayActionForm.Playing) then
     begin
       Value := 1;
       FTime := 0;
@@ -1615,8 +1607,7 @@ begin
     AlertCount := 0;
   end;
 
-  if (Keyboard.Key[DIK_LCONTROL]) and (not Keyboard.Key[DIK_DOWN]) and (not IsAttack) and (not Owner.InLadder)
-    and (TSkill.PlayEnded) and (not TTamingMob.IsUse) then
+  if (Keyboard.Key[DIK_LCONTROL]) and (not Keyboard.Key[DIK_DOWN]) and (not IsAttack) and (not Owner.InLadder) and (TSkill.PlayEnded) and (not TTamingMob.IsUse) then
   begin
     TSkill.Attacking := False;
     AnimEnd := False;
@@ -1715,10 +1706,10 @@ begin
 
   Player.MirrorX := MirrorX;
 
-  if (State = 'stand1') or (State = 'stand2') or (State = 'alert') or (State = 'sit') then
-    TMapleChair.CanUse := True
+  if (State = 'ladder') or (State = 'rope') then
+    TMapleChair.CanUse := False
   else
-    TMapleChair.CanUse := False;
+    TMapleChair.CanUse := True;
 
   if TMapleChair.IsUse then
   begin
@@ -1748,8 +1739,8 @@ begin
   begin
     if PlayActionCounter > 2 then
     begin
-     PlayActionCounter := 0;
-     PlayActionForm.DoPlay := False;
+      PlayActionCounter := 0;
+      PlayActionForm.DoPlay := False;
     end;
   end;
 

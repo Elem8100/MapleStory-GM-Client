@@ -97,7 +97,7 @@ procedure TTotemEffectForm.TotemEffectGridClickCell(Sender: TObject; ARow, ACol:
 begin
   var ID := TotemEffectGrid.Cells[1, ARow];
   TItemEffect.Delete(Totem);
-  TItemEffect.Create(ID, True);
+  TItemEffect.Create(ID, Totem);
   ActiveControl := nil;
 end;
 

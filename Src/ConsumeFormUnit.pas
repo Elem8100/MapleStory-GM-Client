@@ -120,7 +120,7 @@ procedure TConsumeForm.ConsumeEffectGridClickCell(Sender: TObject; ARow, ACol: I
 begin
   var ID := ConsumeEffectGrid.Cells[1, ARow];
   TItemEffect.Delete(Consume);
-  TItemEffect.Create(ID, True);
+  TItemEffect.Create(ID, Consume);
   ActiveControl := nil;
 end;
 

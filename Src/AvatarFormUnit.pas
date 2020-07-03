@@ -6,8 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.Buttons, AdvUtil, PNGMapleCanvasEx,
   WZArchive, Vcl.Grids, AdvObj, BaseGrid, AdvGrid, Vcl.StdCtrls, StrUtils, Generics.Collections,
-  Generics.Defaults, ieview,
-  pngimage, iemview, Vcl.ComCtrls, ColorUtils, WZIMGFile, CurvyControls;
+  Generics.Defaults, ieview, pngimage, iemview, Vcl.ComCtrls, ColorUtils, WZIMGFile, CurvyControls;
 
 type
   TAvatarForm = class(TForm)
@@ -128,8 +127,8 @@ var
 implementation
 
 uses
-  WZDirectory, MapleEffect, Global, MapleCharacter, PXT.TypesEx, WzUtils,
-  MapleCharacterEx, PXT.Types;
+  WZDirectory, MapleEffect, Global, MapleCharacter, PXT.TypesEx, WzUtils, MapleCharacterEx,
+  PXT.Types;
 
 {$R *.dfm}
 
@@ -184,7 +183,7 @@ begin
   PlayerEqpList.Add(NewID);
 
   if TItemEffect.AllList.contains(EqpID) then
-    TItemEffect.Create(EqpID, True);
+    TItemEffect.Create(EqpID, Equip);
 
   if TSetEffect.AllList.ContainsKey(EqpID) then
     TSetEffect.Create(EqpID);
@@ -422,7 +421,8 @@ begin
   ForceDirectories(ExtractFilePath(ParamStr(0)) + 'Export');
   var FileName := ExtractFilePath(ParamStr(0)) + 'Export\' + AllFrameListBox.Items[Index] + '.png';
   Label2.Caption := 'Save to:  ' + FileName;
-  AvatarPanelTexture.SaveToFile(FileName, nil, 0, IntRectBDS(WX, WY, WX + TrackBarW.Position, WY + TrackBarH.Position));
+  AvatarPanelTexture.SaveToFile(FileName, nil, 0, IntRectBDS(WX, WY, WX + TrackBarW.Position, WY +
+    TrackBarH.Position));
 end;
 
 procedure TAvatarForm.ResetColorGrid;
@@ -435,7 +435,8 @@ begin
 
       for var Col := 0 to 18 do
       begin
-        ColorGrid.CreateBitmap(Col, Row, False, haLeft, vaCenter).Assign(Inventory.CellGraphics[1, Row - 1].CellBitmap);
+        ColorGrid.CreateBitmap(Col, Row, False, haLeft, vaCenter).Assign(Inventory.CellGraphics[1,
+          Row - 1].CellBitmap);
         case Col of
           0..10:
             TColorFunc.HSVvar(ColorGrid.CellGraphics[Col, Row].CellBitmap, Col * 30, 0, 0);
@@ -444,15 +445,20 @@ begin
           12:
             TColorFunc.HSVvar(ColorGrid.CellGraphics[Col, Row].CellBitmap, 0, -100, 0);
           13:
-            TColorFunc.Contrast3(ColorGrid.CellGraphics[Col, Row].CellBitmap, 50, -90, True, False, False);
+            TColorFunc.Contrast3(ColorGrid.CellGraphics[Col, Row].CellBitmap, 50, -90, True, False,
+              False);
           14:
-            TColorFunc.Contrast3(ColorGrid.CellGraphics[Col, Row].CellBitmap, 50, -90, False, True, False);
+            TColorFunc.Contrast3(ColorGrid.CellGraphics[Col, Row].CellBitmap, 50, -90, False, True,
+              False);
           15:
-            TColorFunc.Contrast3(ColorGrid.CellGraphics[Col, Row].CellBitmap, 50, -90, False, False, True);
+            TColorFunc.Contrast3(ColorGrid.CellGraphics[Col, Row].CellBitmap, 50, -90, False, False,
+              True);
           16:
-            TColorFunc.Contrast3(ColorGrid.CellGraphics[Col, Row].CellBitmap, 50, -90, True, True, False);
+            TColorFunc.Contrast3(ColorGrid.CellGraphics[Col, Row].CellBitmap, 50, -90, True, True,
+              False);
           17:
-            TColorFunc.Contrast3(ColorGrid.CellGraphics[Col, Row].CellBitmap, 50, -90, True, False, True);
+            TColorFunc.Contrast3(ColorGrid.CellGraphics[Col, Row].CellBitmap, 50, -90, True, False,
+              True);
           18:
             TColorFunc.Negative(ColorGrid.CellGraphics[Col, Row].CellBitmap);
         end;
@@ -590,7 +596,7 @@ begin
     ImageGrids[i].Margins.Bottom := 3;
     ImageGrids[i].BorderStyle := bsNone;
     ImageGrids[i].Background := clWhite;
-    ImageGrids[i].ThumbnailsBackground:=clBtnface;
+    ImageGrids[i].ThumbnailsBackground := clBtnface;
     ImageGrids[i].ThumbWidth := 35;
     ImageGrids[i].ThumbHeight := 35;
     ImageGrids[i].ThumbnailOptionsEx := [ietxShowIconForUnknownFormat, ietxShowIconWhileLoading,
@@ -615,7 +621,8 @@ begin
   AvatarView.ThumbHeight := 102;
   AvatarView.BorderStyle := bsNone;
   AvatarView.Background := clWhite;
-  AvatarView.ThumbnailOptionsEx := [ietxShowIconForUnknownFormat, ietxShowIconWhileLoading, ietxEnableInternalIcons];
+  AvatarView.ThumbnailOptionsEx := [ietxShowIconForUnknownFormat, ietxShowIconWhileLoading,
+    ietxEnableInternalIcons];
   AvatarView.DefaultInfoText := iedtNone;
   AvatarView.MultiSelectionOptions := [];
   AvatarView.ShowText := False;
@@ -665,7 +672,8 @@ begin
   if HasShow then
     Exit;
   HasShow := True;
-  var DefaultEqps := ['01302030', '01062055', '01072054', '01040005', '00030020', '00020000', '00002000', '00012000'];
+  var DefaultEqps := ['01302030', '01062055', '01072054', '01040005', '00030020', '00020000',
+    '00002000', '00012000'];
   var TrimID: string;
   var Bmp: TBitmap;
 
@@ -907,7 +915,8 @@ begin
       if Left4 = '0160' then
         Continue;
 
-      Name := StringWZ.GetImgFile('Eqp.img').Root.Get('Eqp/' + CharacterDir + '/' + IDToInt(ID) + '/name', '');
+      Name := StringWZ.GetImgFile('Eqp.img').Root.Get('Eqp/' + CharacterDir + '/' + IDToInt(ID) +
+        '/name', '');
       if PartIndex in [4, 5, 13, 14, 15, 16] then
         Num := ID.ToInteger div 1000;
       case PartIndex of
@@ -1069,7 +1078,8 @@ begin
       <> 'Dragon') and (Entry.Name <> 'Mechanic') and (Entry.Name <> 'PetEquip') and (Entry.Name <>
       'Skillskin') and (Entry.Name <> 'Taming') and (Entry.Name <> 'MonsterBattle') and (LeftStr(Entry.Name,
       3) <> '135') and (LeftStr(Entry.Name, 3) <> '150') and (LeftStr(Entry.Name, 3) <> '151') and (LeftStr
-      (Entry.Name, 3) <> '160') and (LeftStr(Entry.Name, 3) <> '169') then
+      (Entry.Name, 3) <> '160') and (LeftStr(Entry.Name, 3) <> '169') and (LeftStr(Entry.Name, 3) <>
+      '111') and (LeftStr(Entry.Name, 3) <> '114') then
       DumpEqpString(E);
 
 end;

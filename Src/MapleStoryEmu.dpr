@@ -30,7 +30,8 @@ uses
   EtcFormUnit in 'EtcFormUnit.pas' {EtcForm},
   PlayActionFormUnit in 'PlayActionFormUnit.pas' {PlayActionForm},
   SelectFolderFormUnit in 'SelectFolderFormUnit.pas' {SelectFolderForm},
-  TotemEffectFormUnit in 'TotemEffectFormUnit.pas' {TotemEffectForm};
+  TotemEffectFormUnit in 'TotemEffectFormUnit.pas' {TotemEffectForm},
+  SoulEffectFormUnit in 'SoulEffectFormUnit.pas' {SoulEffectForm};
 
 {$R *.res}
 
@@ -66,5 +67,6 @@ begin
   Application.CreateForm(TPlayActionForm, PlayActionForm);
   Application.CreateForm(TSelectFolderForm, SelectFolderForm);
   Application.CreateForm(TTotemEffectForm, TotemEffectForm);
+  Application.CreateForm(TSoulEffectForm, SoulEffectForm);
   Application.Run;
 end.

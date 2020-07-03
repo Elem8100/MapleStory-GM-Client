@@ -67,7 +67,7 @@ begin
   TMapleChair.Create(ChairID);
 
   if TItemEffect.AllList.contains(ChairID) then
-    TItemEffect.Create(ChairID, True);
+    TItemEffect.Create(ChairID, Chair);
   TMapleChair.IsUse := True;
   TColorFunc.SetGridColor(ChairGrid.CellGraphics[2, ARow].CellBitmap, DyeGrid);
   ActiveControl := nil;
@@ -101,7 +101,7 @@ begin
   end;
 
    if TItemEffect.AllList.contains(ChairID) then
-    TItemEffect.Create(ChairID, True);
+    TItemEffect.Create(ChairID, Chair);
   TMapleChair.IsUse := True;
 end;
 

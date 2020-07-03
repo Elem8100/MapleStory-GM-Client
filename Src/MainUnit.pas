@@ -70,6 +70,7 @@ type
     EtcButton: TSpeedButton;
     PlayActionButton: TSpeedButton;
     TotemEffectButton: TSpeedButton;
+    SoulEffectButton: TSpeedButton;
     procedure LoadMapButtonClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure GridClickCell(Sender: TObject; ARow, ACol: Integer);
@@ -117,6 +118,7 @@ type
     procedure EtcButtonClick(Sender: TObject);
     procedure PlayActionButtonClick(Sender: TObject);
     procedure TotemEffectButtonClick(Sender: TObject);
+    procedure SoulEffectButtonClick(Sender: TObject);
   private
     OldX, OldY: Integer;
     MoveOn: Boolean;
@@ -151,7 +153,7 @@ uses
   Android, ACtrlEngine, SetScreenFormUnit, ConsumeFormUnit, CashForm2Unit,
   EtcFormUnit, PlayActionFormUnit, UI.Utils, acontrols, UI.StatusBar3.Chat,
   UI.UIWindow2.UserInfo, UI.UIWindow2.Item, SelectFolderFormUnit,
-  TotemEffectFormUnit, PXT.TypesEx;
+  TotemEffectFormUnit,SoulEffectFormUnit, PXT.TypesEx;
 {$R *.dfm}
 
 procedure TMainForm.FamiliarButtonClick(Sender: TObject);
@@ -1005,6 +1007,11 @@ end;
 procedure TMainForm.SkillButtonClick(Sender: TObject);
 begin
   SkillForm.Show;
+end;
+
+procedure TMainForm.SoulEffectButtonClick(Sender: TObject);
+begin
+  SoulEffectForm.Show;
 end;
 
 procedure TMainForm.EtcButtonClick(Sender: TObject);

@@ -32,6 +32,10 @@ object ConsumeForm: TConsumeForm
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Consume'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
     end
     object TabSheet2: TTabSheet
       Caption = 'Search'

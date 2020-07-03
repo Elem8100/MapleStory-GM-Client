@@ -3,7 +3,7 @@ unit MapleChair;
 interface
 
 uses
-  Windows, SysUtils, StrUtils, AsphyreSprite, Generics.Collections, WZIMGFile,
+  Windows, SysUtils, StrUtils, PXT.Sprites, Generics.Collections, WZIMGFile,
   Classes, Global, WzUtils,ColorUtils;
 
 type
@@ -38,7 +38,11 @@ begin
 
   for var Iter in SpriteEngine.SpriteList do
     if Iter is TMapleChair then
+    begin
       Iter.Dead;
+      var s:=Iter;
+      s:=nil;
+    end;
   for var Iter in EquipImages.Keys do
     if LeftStr(Iter.GetPath, 20) = 'Item.wz/Install/0301' then
     begin
