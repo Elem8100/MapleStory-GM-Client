@@ -3,7 +3,7 @@ unit MapleTV;
 interface
 
 uses
-  Windows, types, SysUtils, StrUtils, AsphyreSprite, Generics.Collections,
+  Windows, types, SysUtils, StrUtils, PXT.Sprites, Generics.Collections,
   WZIMGFile, Global,WzUtils;
 
 type
@@ -78,7 +78,7 @@ begin
   inherited;
   ImagePath := S1 + IntToStr(AD) + '/' + IntToStr(Frame);
   ImageEntry := WzData[ImagePath];
-  Delay := WzData[ImagePath + '/delay'].Data;
+  Delay := WzData[ImagePath].Get('delay',100);
 
   FTime := FTime + 17;
   if FTime > Delay then

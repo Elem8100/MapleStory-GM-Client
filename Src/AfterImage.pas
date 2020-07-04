@@ -3,7 +3,7 @@ unit AfterImage;
 interface
 
 uses
-  Windows, System.Types, SysUtils, StrUtils, AsphyreSprite, Generics.Collections,
+  Windows, System.Types, SysUtils, StrUtils, PXT.Sprites, Generics.Collections,
   WZIMGFile, Global, MapleCharacter, Mob2, {DamageNumber,} Tools, WzUtils;
 
 type

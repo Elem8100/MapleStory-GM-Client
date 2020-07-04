@@ -53,7 +53,7 @@ type
 
 
 implementation
-     uses MapleMap;
+     uses MapleMap,PXT.Types,PXT.Graphics;
 { TFoothold }
 
 constructor TFoothold.Create(const P1, P2: TPoint; AID: Integer);
@@ -254,11 +254,11 @@ begin
   WY := SpriteEngine.WorldY;
   for FH in FFootholds do
   begin
-    GameCanvas.Line(FH.X1 - WX, FH.Y1 - WY, FH.X2 - WX, FH.Y2 - WY, $FFFF0000);
+    GameCanvas.Line(Point2f(FH.X1 - WX, FH.Y1 - WY),Point2f( FH.X2 - WX, FH.Y2 - WY), $FFFF0000);
     if FH.X1 <> FH.X2 then
-      GameCanvas.Line(FH.X1 - WX, FH.Y1 - WY + 1, FH.X2 - WX, FH.Y2 - WY + 1, $FFFF0000)
+      GameCanvas.Line(Point2f(FH.X1 - WX, FH.Y1 - WY + 1),Point2f( FH.X2 - WX, FH.Y2 - WY + 1), $FFFF0000)
     else
-      GameCanvas.Line(FH.X1 - WX + 1, FH.Y1 - WY, FH.X2 - WX + 1, FH.Y2 - WY, $FFFF0000);
+      GameCanvas.Line(Point2f(FH.X1 - WX + 1, FH.Y1 - WY),Point2f( FH.X2 - WX + 1, FH.Y2 - WY), $FFFF0000);
   end;
 end;
 

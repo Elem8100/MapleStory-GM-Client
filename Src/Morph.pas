@@ -3,7 +3,7 @@ unit Morph;
 interface
 
 uses
-  Windows, SysUtils, StrUtils, AsphyreSprite, Generics.Collections, WZIMGFile,
+  Windows, SysUtils, StrUtils, PXT.Sprites, Generics.Collections, WZIMGFile,
   Classes, Global, WzUtils;
 
 type
@@ -29,7 +29,7 @@ type
 implementation
 
 uses
-  MapleCharacter, Footholds,  AvatarUnit,
+  MapleCharacter, Footholds,
   AsphyreKeyboard, DirectInput, WZDirectory;
 
 function IDToInt(ID: string): string;

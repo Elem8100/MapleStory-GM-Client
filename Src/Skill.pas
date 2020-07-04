@@ -3,7 +3,7 @@ unit Skill;
 interface
 
 uses
-  Windows, System.Types, SysUtils, StrUtils, AsphyreSprite, Generics.Collections, WZIMGFile, Global,
+  Windows, System.Types, SysUtils, StrUtils, PXT.Sprites, Generics.Collections, WZIMGFile, Global,
   DamageNumber, Footholds, Tools, WzUtils;
 
 type
@@ -69,7 +69,7 @@ end;
 
 function IsSkillAttack: Boolean;
 begin
-  if (CharData.ContainsKey(TSkill.ID + '/action')) and (FState = CharData[TSkill.ID + '/action']) then
+  if (CharData.ContainsKey(TSkill.ID + '/action')) and (Player.Action = CharData[TSkill.ID + '/action']) then
     Result := True
   else
     Result := False;
@@ -255,7 +255,7 @@ begin
             BallSpeed := 1000 / Integer(Entry.Get('common/bulletSpeed').Data);
 
           Y := Player.Y - 27;
-          if CharFlip then
+          if Player.Flip then
             BallSpeed := BallSpeed
           else
             BallSpeed := -BallSpeed;
@@ -324,7 +324,7 @@ begin
   ImageEntry := EquipData[ParentPath + '/' + Frame.ToString];
   AnimDelay := ImageEntry.Get('delay', 100);
 
-  MirrorX := CharFlip;
+  MirrorX := Player.Flip;
   if (MoveWithPlayer) and (EffectName <> 'ball') then
   begin
     X := Player.X;
@@ -382,18 +382,18 @@ end;
 procedure TSkillCollision.DoMove(const Movecount: Single);
 begin
   inherited;
-  MirrorX := CharFlip;
+  MirrorX := Player.Flip;
 
   if EquipData.ContainsKey(IDEntry.GetPath + '/common/lt') then
   begin
     LT := EquipData[IDEntry.GetPath + '/common/lt'].Vector;
     RB := EquipData[IDEntry.GetPath + '/common/rb'].Vector;
-    case CharFlip of
+    case Player.Flip of
       True:
         begin
           Right := Round(Player.X) - LT.X + 18;
           Left := Round(Player.X) - RB.X;
-          ;
+
         end;
       False:
         begin

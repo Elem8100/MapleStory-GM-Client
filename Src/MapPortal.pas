@@ -3,8 +3,8 @@ unit MapPortal;
 interface
 
 uses
-  Windows, SysUtils, StrUtils, AsphyreSprite, WZArchive, Generics.Collections,
-  WZIMGFile, WZDirectory, Classes, AsphyreTypes, Global,MapleMap,WzUtils,System.types;
+  Windows, SysUtils, StrUtils, WZArchive, Generics.Collections, WZIMGFile, WZDirectory, Classes,
+  PXT.Sprites, PXT.TypesEx, Global, MapleMap, WzUtils, System.Types;
 
 type
   TPortalInfo = record
@@ -12,7 +12,7 @@ type
     X, Y, PortalType: Integer;
   end;
 
-  TMapPortal = class(TSpriteEX)
+  TMapPortal = class(TSpriteEx)
   private
     FTime: Integer;
     FFrame: Integer;
@@ -22,16 +22,21 @@ type
     FToName: string;
     FToMap: Integer;
     Origin: TPoint;
-    class var PortalInfo: TPortalInfo;
+    class var
+      PortalInfo: TPortalInfo;
   public
     procedure DoMove(const Movecount: Single); override;
     procedure DoDraw; override;
-    class var PortalList: TList<TPortalInfo>;
+    class var
+      PortalList: TList<TPortalInfo>;
     class function Find(P: TPoint; var OnPortal: Boolean): TPortalInfo;
     class procedure Create; overload;
   end;
 
 implementation
+
+uses
+  PXT.Types;
 
 class function TMapPortal.Find(P: TPoint; var OnPortal: Boolean): TPortalInfo;
 var
@@ -82,7 +87,8 @@ begin
         InfoPath := GetEntryPath(Entry);
         ImageEntry := WzData[InfoPath + '/0'];
         X := Iter.Get('x', '0');
-        Y := Iter.Get('y', '0');;
+        Y := Iter.Get('y', '0');
+        ;
         Z := 1000000;
         FPortalName := Iter.Get('pn', '');
         FToMap := Iter.Get('tm', '');
@@ -129,16 +135,16 @@ begin
   WY := Round(Y - Engine.WorldY);
   if TMap.ShowPortalInfo then
   begin
-    FontsAlt[1].TextOut('Name:  ' + FPortalName, WX - 50, WY - 120, cRGB1(255, 0, 0));
-    FontsAlt[1].TextOut('ToMap:  ' + IntToStr(FToMap), WX - 50, WY - 105, cRGB1(255, 0, 0));
-    FontsAlt[1].TextOut('ToName:  ' + FToName, WX - 50, WY - 90, cRGB1(255, 0, 0));
+    GameFont.Draw(Point2f(WX - 50, WY - 120), 'Name:  ' + FPortalName, cRGB1(255, 0, 0));
+    GameFont.Draw(Point2f(WX - 50, WY - 105), 'ToMap:  ' + IntToStr(FToMap), cRGB1(255, 0, 0));
+    GameFont.Draw(Point2f(WX - 50, WY - 90), 'ToName:  ' + FToName, cRGB1(255, 0, 0));
   end;
 end;
 
 initialization
 
 finalization
-
-TMapPortal.PortalList.Free;
+  TMapPortal.PortalList.Free;
 
 end.
+

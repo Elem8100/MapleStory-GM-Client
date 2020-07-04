@@ -3,7 +3,7 @@ unit TamingMob;
 interface
 
 uses
-  Windows, SysUtils, StrUtils, AsphyreSprite, Generics.Collections, WZIMGFile,
+  Windows, SysUtils, StrUtils, PXT.Sprites, Generics.Collections, WZIMGFile,
   Classes, Global, WzUtils,ColorUtils;
 
 type

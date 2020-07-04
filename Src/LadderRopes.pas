@@ -17,7 +17,8 @@ type
   end;
 
 implementation
-
+    uses PXT.Types,
+  PXT.Graphics,PXT.Canvas;
 class function TLadderRope.Find(P: TPoint; var OnLadder: Boolean): TLadderRope;
 var
   L: TLadderRope;
@@ -64,8 +65,8 @@ begin
   WY := SpriteEngine.WorldY;
   for LadderRope in LadderRopeList do
   begin
-    GameCanvas.Line(LadderRope.X - WX, LadderRope.Y1 - WY, LadderRope.X  - WX, LadderRope.Y2  - WY, $FF00FF00);
-    GameCanvas.Line(LadderRope.X - WX+1, LadderRope.Y1 - WY, LadderRope.X  - WX+1, LadderRope.Y2  - WY, $FF00FF00);
+    GameCanvas.Line(Point2f(LadderRope.X - WX, LadderRope.Y1 - WY), Point2f(LadderRope.X  - WX, LadderRope.Y2  - WY), $FF00FF00);
+    GameCanvas.Line(Point2f(LadderRope.X - WX+1, LadderRope.Y1 - WY),Point2f( LadderRope.X  - WX+1, LadderRope.Y2  - WY), $FF00FF00);
   end;
 end;
 

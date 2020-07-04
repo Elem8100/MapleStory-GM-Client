@@ -3,7 +3,7 @@ unit DamageNumber;
 interface
 
 uses
-  Windows, SysUtils, StrUtils, AsphyreSprite, Generics.Collections, WZIMGFile, Classes, Global,
+  Windows, SysUtils, StrUtils, PXT.Sprites, Generics.Collections, WZIMGFile, Classes, Global,
   WzUtils;
 
 type
@@ -24,7 +24,7 @@ type
 implementation
 
 uses
-  MapleCharacter, MapleMap;
+  MapleCharacter, MapleMap,PXT.Canvas,PXT.Graphics;
 
 procedure TDamageNumber.DoDraw;
 var
@@ -45,8 +45,8 @@ begin
     end
     else
       ImageEntry := EquipData['Effect.wz/BasicEff.img/' + Style + '/' + Char];
-    GameCanvas.Draw(EquipImages[ImageEntry], X + I * 29 - ImageEntry.Get('origin').Vector.X - Engine.WorldX,
-      Y - ImageEntry.Get('origin').Vector.Y - Engine.WorldY, 1, False, 255, 255, 255, Alpha);
+    GameCanvas.DrawColor1(EquipImages[ImageEntry], X + I * 29 - ImageEntry.Get('origin').Vector.X - Engine.WorldX,
+      Y - ImageEntry.Get('origin').Vector.Y - Engine.WorldY,  False,ARGB(Alpha,255,255,255));
   end;
 end;
 
