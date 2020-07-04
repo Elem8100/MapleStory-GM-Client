@@ -17,7 +17,7 @@ Tools/Options/Language/Delphi/Library/Library Path
 
 Note:
 Some machine have weired problem if you want to show game UI just change this line:
-SelectFolderFormUnit.pas-> line 155
+SelectFolderFormUnit.pas-> line 155->
 UIVersion := 100 change to  UIVersion := 3
 
 ![alt tag](https://i.imgur.com/zr8EXFy.jpg"")
