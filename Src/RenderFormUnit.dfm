@@ -1,11 +1,10 @@
 object RenderForm: TRenderForm
   Left = 217
   Top = 78
-  BorderIcons = []
   BorderStyle = bsNone
   Caption = 'RenderForm'
-  ClientHeight = 600
-  ClientWidth = 800
+  ClientHeight = 768
+  ClientWidth = 1024
   Color = clBackground
   DefaultMonitor = dmMainForm
   Font.Charset = DEFAULT_CHARSET
@@ -17,6 +16,9 @@ object RenderForm: TRenderForm
   OldCreateOrder = False
   Position = poDesigned
   Scaled = False
+  OnMouseDown = FormMouseDown
+  OnMouseUp = FormMouseUp
+  OnResize = FormResize
   PixelsPerInch = 120
   TextHeight = 16
 end
