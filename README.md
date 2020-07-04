@@ -14,7 +14,7 @@ I can't provide register(crack) version here due to copyright infringement but y
 
 Delphi library  path settings example:
 Tools/Options/Language/Delphi/Library/Library Path
-![alt tag](https://i.imgur.com/L5K4MJE.jpg"")
+![alt tag](https://i.imgur.com/L5K4MJE.jpg"")                                   
 Note:
 Some machine have weired problem if you want to show game UI just change this line:
 SelectFolderFormUnit.pas-> line 155
