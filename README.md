@@ -6,12 +6,10 @@ Delphi 10.3 or later
 
 Third party components:                                 
 1.TMS Components Pack 
-https://www.tmssoftware.com/site/tmsvcluipack.asp
-
-2.ImageEn
+https://www.tmssoftware.com/site/tmsvcluipack.asp                                              
+2.ImageEn                                             
 https://www.imageen.com/
-
-3.StyleControl
+3.StyleControl                                                    
 http://www.almdev.com/
 
 I can't provide register(crack) version here due to copyright infringement but you can get everything from this site: http://bbs.2ccc.com/
