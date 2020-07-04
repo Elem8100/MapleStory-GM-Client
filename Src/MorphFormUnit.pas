@@ -5,20 +5,21 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, AdvObj,
-  BaseGrid, AdvGrid, Generics.Collections, Vcl.StdCtrls, AdvUtil;
+  BaseGrid, AdvGrid, Generics.Collections, Vcl.StdCtrls;
 
 type
   TMorphForm = class(TForm)
     MorphGrid: TAdvStringGrid;
     Button1: TButton;
-    procedure FormShow(Sender: TObject);
     procedure FormClick(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure MorphGridClickCell(Sender: TObject; ARow, ACol: Integer);
     procedure Button1Click(Sender: TObject);
     procedure MorphGridClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
   private
+      HasLoad :Boolean;
     { Private declarations }
   public
     { Public declarations }
@@ -57,24 +58,7 @@ begin
   ActiveControl := nil;
 end;
 
-procedure TMorphForm.FormClick(Sender: TObject);
-begin
-  ActiveControl := nil;
-end;
-
-procedure TMorphForm.FormCreate(Sender: TObject);
-begin
-  Left := (Screen.Width - Width) div 2;
-  Top := (Screen.Height - Height) div 2;
-end;
-
-procedure TMorphForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
-begin
-  if Key = VK_MENU then
-    Key := 0;
-end;
-
-procedure TMorphForm.FormShow(Sender: TObject);
+procedure TMorphForm.FormActivate(Sender: TObject);
 type
   TRec = record
     Desc, Name: string;
@@ -89,8 +73,11 @@ var
   Bmp, Bmp2: TBitmap;
   img: TWZFile;
 begin
-  if MorphGrid.Cells[1, 1] <> '' then
+  if HasLoad then
     Exit;
+  HasLoad := True;
+  MorphGrid.Canvas.Font.Size := 18;
+  MorphGrid.Canvas.TextOut(60, 0, 'Loading...');
   Row := -1;
   Dict := TDictionary<string, TRec>.Create;
   imgs := TList<string>.Create;
@@ -142,6 +129,24 @@ begin
   end;
   Dict.Free;
   imgs.Free;
+
+end;
+
+procedure TMorphForm.FormClick(Sender: TObject);
+begin
+  ActiveControl := nil;
+end;
+
+procedure TMorphForm.FormCreate(Sender: TObject);
+begin
+  Left := (Screen.Width - Width) div 2;
+  Top := (Screen.Height - Height) div 2;
+end;
+
+procedure TMorphForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  if Key = VK_MENU then
+    Key := 0;
 end;
 
 procedure TMorphForm.MorphGridClick(Sender: TObject);
