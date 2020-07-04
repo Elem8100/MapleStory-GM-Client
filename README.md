@@ -1,10 +1,10 @@
 # MapleStory-GM-Client
 How to compile:
-
-Compiler:  
+Compiler->  
 Delphi 10.3 or later
 
 Third party components:
+
 1.TMS Components Pack
 https://www.tmssoftware.com/site/tmsvcluipack.asp
 
