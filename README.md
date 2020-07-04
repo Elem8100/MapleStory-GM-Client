@@ -15,7 +15,7 @@ Delphi library  path settings example:
 Tools/Options/Language/Delphi/Library/Library Path
 ![alt tag](https://i.imgur.com/L5K4MJE.jpg"")        
 
-Note:
+Note:                                  
 Some machine have weired problem if you want to show game UI just change this line:
 SelectFolderFormUnit.pas-> line 155->
 UIVersion := 100 change to  UIVersion := 3
