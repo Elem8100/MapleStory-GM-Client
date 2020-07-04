@@ -1,7 +1,6 @@
 # MapleStory-GM-Client
 How to compile:
 Compiler:
-
 Delphi 10.3 or later
 
 Third party components:
