@@ -12,9 +12,9 @@ Install third party components:
 However,above link are demo version, Just google it you'll find register(crack) version or check this site: http://bbs.2ccc.com/
 
 Delphi library  path settings->
-Tools/Options/Language/Delphi/Library/Library Path
-Example:
-<img src="https://i.imgur.com/LRwQPs3.jpg" width="868" height="692">   
+Tools/Options/Language/Delphi/Library/Library Path                                  
+Example:                               
+<img src="https://i.imgur.com/LRwQPs3.jpg" width="700" height="558">   
 
 Note:                                  
 Some machine have weird problem if you want to show game UI  just change this line:                              
