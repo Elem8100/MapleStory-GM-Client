@@ -1,22 +1,23 @@
 # MapleStory-GM-Client
-How to compile:
-Compiler-  
+How to compile:                           
+Compiler:  
 Delphi 10.3 or later
 
-Third party components:                                 
+Install third party components:                                 
 1.TMS Components Pack https://www.tmssoftware.com/site/tmsvcluipack.asp    
 2.ImageEn https://www.imageen.com/                                                                                       
 3.StyleControl   http://www.almdev.com/                                                
 
 
-I can't provide register(crack) version here due to copyright infringement but you can get everything from this site: http://bbs.2ccc.com/
+However,above link are demo version, Just google it you'll find register(crack) version or check this site: http://bbs.2ccc.com/
 
-Delphi library  path settings example:
+Delphi library  path settings->
 Tools/Options/Language/Delphi/Library/Library Path
-![alt tag](https://i.imgur.com/L5K4MJE.jpg"")        
+Example:
+<img src="https://i.imgur.com/LRwQPs3.jpg" width="868" height="692">   
 
 Note:                                  
-Some machine have weird problem if you want to show game UI just change this line:                              
+Some machine have weird problem if you want to show game UI  just change this line:                              
 SelectFolderFormUnit.pas-> line 155->UIVersion := 100 change to  UIVersion := 3
 
 
