@@ -3,7 +3,7 @@ How to compile:
 Compiler:  
 Delphi 10.3 or later
 
-Install third party components:                                 
+Installing third party components:                                 
 1.TMS Components Pack https://www.tmssoftware.com/site/tmsvcluipack.asp    
 2.ImageEn https://www.imageen.com/                                                                                       
 3.StyleControl   http://www.almdev.com/                                                
