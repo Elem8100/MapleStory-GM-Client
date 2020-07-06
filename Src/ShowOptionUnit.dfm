@@ -3,7 +3,7 @@ object ShowOptionForm: TShowOptionForm
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Display'
-  ClientHeight = 142
+  ClientHeight = 167
   ClientWidth = 671
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -21,15 +21,15 @@ object ShowOptionForm: TShowOptionForm
   PixelsPerInch = 120
   TextHeight = 16
   object Bevel1: TBevel
-    Left = 161
-    Top = 94
+    Left = 33
+    Top = 91
     Width = 369
-    Height = 40
+    Height = 35
     Shape = bsFrame
   end
   object Label1: TLabel
-    Left = 167
-    Top = 107
+    Left = 36
+    Top = 100
     Width = 43
     Height = 16
     Caption = 'Char ID'
@@ -88,7 +88,7 @@ object ShowOptionForm: TShowOptionForm
   end
   object CheckBox12: TCheckBox
     Tag = 10
-    Left = 18
+    Left = 572
     Top = 98
     Width = 51
     Height = 17
@@ -294,19 +294,19 @@ object ShowOptionForm: TShowOptionForm
     OnClick = CheckBox1Click
   end
   object Button1: TButton
-    Left = 465
-    Top = 98
+    Left = 333
+    Top = 96
     Width = 60
-    Height = 30
+    Height = 25
     Caption = 'OK'
     TabOrder = 14
     OnClick = Button1Click
   end
   object Edit1: TEdit
-    Left = 215
-    Top = 102
+    Left = 82
+    Top = 98
     Width = 245
-    Height = 24
+    Height = 22
     Alignment = taRightJustify
     MaxLength = 25
     TabOrder = 15
@@ -361,5 +361,24 @@ object ShowOptionForm: TShowOptionForm
     State = cbChecked
     TabOrder = 19
     OnClick = CheckBox1Click
+  end
+  object CheckBox18: TCheckBox
+    Tag = 18
+    Left = 17
+    Top = 136
+    Width = 95
+    Height = 17
+    Caption = 'Scrolling Bar'
+    TabOrder = 20
+    OnClick = CheckBox1Click
+  end
+  object Edit2: TEdit
+    Left = 110
+    Top = 132
+    Width = 503
+    Height = 22
+    TabOrder = 21
+    Text = 'Welcome to MapleStory GM Client'
+    OnChange = Edit2Change
   end
 end

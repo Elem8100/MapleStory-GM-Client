@@ -31,11 +31,14 @@ type
     CheckBox15: TCheckBox;
     CheckBox16: TCheckBox;
     CheckBox17: TCheckBox;
+    CheckBox18: TCheckBox;
+    Edit2: TEdit;
     procedure FormCreate(Sender: TObject);
     procedure CheckBox1Click(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
+    procedure Edit2Change(Sender: TObject);
   private
     { Private declarations }
   public
@@ -105,8 +108,16 @@ begin
       TMap.ShowNpcName := not TMap.ShowNpcName;
     17:
       TMap.ShowFront := not TMap.ShowFront;
+    18:
+      TMap.ShowScrollingBar := not TMap.ShowScrollingBar;
+
   end;
   ActiveControl := nil;
+end;
+
+procedure TShowOptionForm.Edit2Change(Sender: TObject);
+begin
+ TMap.ScrollingMessage:= Edit2.Text;
 end;
 
 procedure TShowOptionForm.FormClick(Sender: TObject);

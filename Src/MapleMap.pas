@@ -51,12 +51,14 @@ type
       ShowUI: Boolean;
       ShowMiniMap: Boolean;
       ShowNpcName: Boolean;
+      ShowScrollingBar: Boolean;
       ActiveBass: TBassHandler;
       WzMobCount: Integer;
       Has002Wz: Boolean;
       HasMiniMap: Boolean;
       MiniMapEntry: TWZIMGEntry;
       MiniMapWidth, MiniMapHeight: Integer;
+      ScrollingMessage: string;
     class procedure PlayMusic; static;
     class procedure LoadMap(ID: string); static;
   end;
@@ -313,7 +315,7 @@ initialization
   TMap.ShowUI := False;
   TMap.ShowMiniMap := False;
   TMap.ShowNpcName := True;
-
+  TMap.ScrollingMessage:='Welcome to MapleStory GM Client';
 finalization
   BassFree;
   TMap.ActiveBass.Free;
