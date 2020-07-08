@@ -31,7 +31,8 @@ uses
   PlayActionFormUnit in 'PlayActionFormUnit.pas' {PlayActionForm},
   SelectFolderFormUnit in 'SelectFolderFormUnit.pas' {SelectFolderForm},
   TotemEffectFormUnit in 'TotemEffectFormUnit.pas' {TotemEffectForm},
-  SoulEffectFormUnit in 'SoulEffectFormUnit.pas' {SoulEffectForm};
+  SoulEffectFormUnit in 'SoulEffectFormUnit.pas' {SoulEffectForm},
+  ReactorFormUnit in 'ReactorFormUnit.pas' {ReactorForm};
 
 {$R *.res}
 
@@ -68,5 +69,6 @@ begin
   Application.CreateForm(TSelectFolderForm, SelectFolderForm);
   Application.CreateForm(TTotemEffectForm, TotemEffectForm);
   Application.CreateForm(TSoulEffectForm, SoulEffectForm);
+  Application.CreateForm(TReactorForm, ReactorForm);
   Application.Run;
 end.

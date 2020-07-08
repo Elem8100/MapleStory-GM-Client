@@ -152,7 +152,7 @@ begin
     BaseWZ := TWZArchive.Create(FolderPath + '\Base.wz');
     UIWZ := TWZArchive.Create(FolderPath + '\UI.wz');
     if HasImgFile('UI.wz/UIWindow4.img') then
-      UIVersion := 100;
+      UIVersion := -1;
     ReactorWz := TWZArchive.Create(FolderPath + '\Reactor.wz');
     EffectWz := TWZArchive.Create(FolderPath + '\Effect.wz');
     SkillWZ := TWZArchive.Create(FolderPath + '\Skill.wz');
