@@ -306,7 +306,7 @@ object ShowOptionForm: TShowOptionForm
     Left = 82
     Top = 98
     Width = 245
-    Height = 22
+    Height = 24
     Alignment = taRightJustify
     MaxLength = 25
     TabOrder = 15
@@ -319,6 +319,8 @@ object ShowOptionForm: TShowOptionForm
     Width = 46
     Height = 17
     Caption = 'UI'
+    Checked = True
+    State = cbChecked
     TabOrder = 16
     OnClick = CheckBox1Click
   end
@@ -329,6 +331,8 @@ object ShowOptionForm: TShowOptionForm
     Width = 81
     Height = 17
     Caption = 'Mini Map'
+    Checked = True
+    State = cbChecked
     TabOrder = 17
     OnClick = CheckBox1Click
   end
@@ -376,7 +380,7 @@ object ShowOptionForm: TShowOptionForm
     Left = 110
     Top = 132
     Width = 503
-    Height = 22
+    Height = 24
     TabOrder = 21
     Text = 'Welcome to MapleStory GM Client'
     OnChange = Edit2Change

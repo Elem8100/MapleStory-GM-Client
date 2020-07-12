@@ -312,8 +312,8 @@ initialization
   TMap.ShowMob := True;
   TMap.ShowPortal := True;
   TMap.ShowChar := True;
-  TMap.ShowUI := False;
-  TMap.ShowMiniMap := False;
+  TMap.ShowUI := True;
+  TMap.ShowMiniMap := True;
   TMap.ShowNpcName := True;
   TMap.ScrollingMessage:='Welcome to MapleStory GM Client';
 finalization

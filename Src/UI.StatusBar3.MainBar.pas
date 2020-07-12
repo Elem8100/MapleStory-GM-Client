@@ -73,7 +73,7 @@ begin
       Engine.Canvas.Draw(UIImages[Entry1.Get('layer:gauge')], 15, 2);
       Engine.Canvas.Draw(UIImages[Entry1.Get('layer:cover')], 97, 1);
 
-      var EXPStr := Exp.ToString + '[' + Percent.ToString + '%' + ']';
+      var EXPStr := Exp.ToString;// + '[' + Percent.ToString + '%' + ']';
       var Middle := (DisplaySize.X div 2) - ((Length(EXPStr) * 7) div 2);
       PosX := 0;
       for var I := 1 to Length(EXPStr) do
