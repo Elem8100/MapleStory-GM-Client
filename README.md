@@ -16,11 +16,6 @@ Tools/Options/Language/Delphi/Library/Library Path
 Example:                               
 <img src="https://i.imgur.com//xpLHqHI.jpg" width="700" height="561">   
 
-Note:                                  
-Some machine have weird problem if you want to show game UI  just change this line:                              
-SelectFolderFormUnit.pas-> line 155->UIVersion := -1 change to  UIVersion := 3
-
-
 ![alt tag](https://i.imgur.com/zr8EXFy.jpg"")
 ![alt tag](https://i.imgur.com/bfg2x8K.jpg"")
 ![alt tag](https://i.imgur.com/6Lkjkfv.jpg"")
