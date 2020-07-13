@@ -3,97 +3,99 @@ unit Reactor;
 interface
 
 uses
-  Windows, SysUtils, StrUtils, AsphyreSprite, WZArchive, Generics.Collections,
-  WZIMGFile, WZDirectory, Classes, Global;
+  Windows, SysUtils, StrUtils, WZArchive, Generics.Collections, WZDirectory, Classes, Global,
+  PXT.Sprites, WZIMGFile, WzUtils, FootHolds;
 
 type
-
   TReactor = class(TSpriteEX)
   private
     ID: string;
+    Entry: TWZIMGEntry;
+    BelowFH: TFoothold;
+    FH: TFoothold;
+    Frame: Integer;
+    Delay: Integer;
+    FTime: Integer;
+    Origin: TPoint;
+    OriginType: Integer;
   public
     procedure DoMove(const Movecount: Single); override;
     procedure DoDraw; override;
+    class procedure Spawn(ID: string);
+    class procedure Remove;
   end;
-
-  procedure CreateReactor;
 
 implementation
 
-procedure CreateReactor;
+uses
+  MapleCharacter;
+
+class procedure TReactor.Spawn(ID: string);
 var
-  I: Integer;
-  ReactorID, ImagePath: string;
-  Iter, Iter2, Iter3, Entry, Child: TWZIMGEntry;
-  HasLoad: TList<string>;
+  LEntry: TWZIMGEntry;
+  Pos: TPoint;
 begin
-  HasLoad := TList<string>.Create;
-  if ImgFile.Child['reactor'] = nil then Exit;
-  for Iter in ImgFile.Child['reactor'].Children do
+  LEntry := GetImgEntry('Reactor.wz/' + ID + '.img/');
+  if LEntry.Get('0') = nil then
+    Exit;
+  if not EquipData.ContainsKey(LEntry.GetPath) then
+    DumpData(LEntry, EquipData, EquipImages);
+  with TReactor.Create(SpriteEngine) do
   begin
-    ReactorID := Iter.Get('id', '');
-    Entry :=ReactorWz.GetImgFile(ReactorID + '.img').Root.Get('info/link');
-    if Entry <> nil then
-      ReactorID := Entry.Data;
-    if not HasLoad.Contains(ReactorID) then
-    begin
-      HasLoad.Add(ReactorID);
-      Entry := ReactorWz.GetImgFile(ReactorID + '.img').Root;
-      for Iter2 in Entry.Children do
-      begin
-        for Iter3 in Iter2.Children do
-        begin
-          if Iter3.DataType = mdtUOL then
-            Child := Iter2.Get(Iter3.Data)
-          else
-            Child := Iter3;
-
-          if Child.DataType = mdtCanvas then
-          begin
-            ImagePath := ReactorID + Child.Parent.Name + '/' + Child.Name;
-            WzData.AddOrSetValue(ReactorID + Iter2.Name + '/' + Iter3.Name, ImagePath);
-          end;
-
-          if (Child.DataType = mdtCanvas) and (not HasLoad.Contains(ImagePath))  then
-          begin
-            HasLoad.Add(ImagePath);
-            DumpCanvas(ImagePath, Child);
-          end;
-        end;
-      end;
-
-    end;
-
-    with TReactor.Create(SpriteEngine) do
-    begin
-      ID := ReactorID;
-      X := Iter.Get('x', '');
-      Y := Iter.Get('y', '');
-      Z := 0;
-      ImageLib := Images;
-      ImageName := WzData[ID + '0/0'];
-      Width := PatternWidth;
-      Height := PatternHeight;
-      Offset.X := -WzData[ImageName + 'origin.x'];
-      Offset.Y := -WzData[ImageName + 'origin.y'];
-    end;
+    ImageLib := EquipImages;
+    Entry := LEntry;
+    ImageEntry := EquipData[Entry.GetPath + '/0/0'];
+    Pos := TFootholdTree.This.FindBelow(Point(Round(Player.X), Round(Player.Y - 50)), BelowFH);
+    X := Pos.X;
+    Y := Pos.Y;
+    Z := BelowFH.Z * 100000 + 6000;
+    Width := ImageWidth;
+    Height := ImageHeight;
+    if Entry.Get('0/1') = nil then
+      OriginType := 0
+    else
+      OriginType := 1;
   end;
-  HasLoad.Free;
 end;
 
 procedure TReactor.DoMove(const Movecount: Single);
 begin
   inherited;
+  ImageEntry := EquipData[Entry.GetPath + '/0/' + Frame.ToString];
+  Delay := ImageEntry.Get('delay', '100');
+  FTime := FTime + 17;
+  if FTime > Delay then
+  begin
+    Frame := Frame + 1;
+    if not HasEntryE(Entry.GetPath + '/0/' + Frame.ToString) then
+      Frame := 0;
+    FTime := 0;
+  end;
+  if ImageEntry.Get('origin') <> nil then
+    Origin := ImageEntry.Get('origin').Vector;
+  Offset.X := -Origin.X;
 
- // Offset.X := -WzData[ImageName + 'origin.x'];
- // Offset.Y := -WzData[ImageName + 'origin.y'];
+  if OriginType = 0 then
+    Offset.Y := -Height
+  else
+    Offset.Y := -Origin.Y;
 end;
 
 procedure TReactor.DoDraw;
 begin
+  inherited;
+end;
 
-    inherited;
-
+class procedure TReactor.Remove;
+begin
+  for var Iter in SpriteEngine.SpriteList do
+    if (Iter is TReactor) then
+    begin
+      Iter.Dead;
+      var s := Iter;
+      s := nil;
+    end;
 end;
 
 end.
+

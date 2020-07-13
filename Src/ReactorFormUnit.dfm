@@ -2,9 +2,10 @@ object ReactorForm: TReactorForm
   Left = 0
   Top = 0
   Caption = 'Reactor'
-  ClientHeight = 626
-  ClientWidth = 268
+  ClientHeight = 645
+  ClientWidth = 265
   Color = clBtnFace
+  Constraints.MaxWidth = 283
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -13
@@ -14,11 +15,14 @@ object ReactorForm: TReactorForm
   OldCreateOrder = False
   Scaled = False
   OnActivate = FormActivate
+  OnClick = FormClick
+  OnCreate = FormCreate
+  OnKeyDown = FormKeyDown
   PixelsPerInch = 120
   TextHeight = 16
   object Panel1: TPanel
     Left = 15
-    Top = 13
+    Top = 10
     Width = 240
     Height = 160
     BevelInner = bvLowered
@@ -41,8 +45,8 @@ object ReactorForm: TReactorForm
     AlignWithMargins = True
     Left = 5
     Top = 202
-    Width = 258
-    Height = 419
+    Width = 255
+    Height = 438
     Cursor = crDefault
     Margins.Left = 5
     Margins.Top = 202
@@ -273,5 +277,23 @@ object ReactorForm: TReactorForm
       18
       18
       18)
+  end
+  object Button1: TButton
+    Left = 20
+    Top = 175
+    Width = 89
+    Height = 25
+    Caption = 'Spawn'
+    TabOrder = 2
+    OnClick = Button1Click
+  end
+  object Button2: TButton
+    Left = 152
+    Top = 175
+    Width = 81
+    Height = 25
+    Caption = 'Remove'
+    TabOrder = 3
+    OnClick = Button2Click
   end
 end
