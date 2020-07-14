@@ -3,7 +3,7 @@ object MainForm: TMainForm
   Top = 77
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
-  Caption = 'MapleStoryGM  v3.33'
+  Caption = 'MapleStoryGM  v3.34'
   ClientHeight = 711
   ClientWidth = 2274
   Color = clBtnFace
@@ -158,7 +158,6 @@ object MainForm: TMainForm
     Style = esCustom
     Version = '1.6.0.2'
     OnClick = AdvToolPanel1Click
-    ExplicitWidth = 2209
   end
   object AdvGroupBox2: TAdvGroupBox
     Left = 215
@@ -3397,6 +3396,10 @@ object MainForm: TMainForm
     object TabSheet2: TTabSheet
       Caption = 'World Map'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object WorldMapGrid: TAdvStringGrid
         Left = 0
         Top = 0

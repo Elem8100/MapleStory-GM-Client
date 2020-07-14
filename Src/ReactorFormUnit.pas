@@ -63,10 +63,18 @@ begin
   ReactorGrid.BeginUpdate;
   for var img in ReactorWZ.Root.Files do
   begin
+
+    var Entry := ReactorWZ.GetImgFile(img.Name).Root;
+
+    if (Entry.Get('0') = nil) or (Entry.Get('0/0') = nil) then
+      Continue;
+    if (Entry.Get('0/0') <> nil) and (Entry.Get('0/0/_inlink') = nil) and (Entry.Get('0/0').Canvas.Width
+      <= 4) then
+      Continue;
     Inc(RowCount);
     ReactorGrid.RowCount := RowCount + 1;
     ReactorGrid.Cells[1, RowCount] := NoIMG(img.Name);
-    var Entry := ReactorWZ.GetImgFile(img.Name).Root;
+
     var ReactorName: string;
 
     if Entry.Get('info/info') <> nil then
