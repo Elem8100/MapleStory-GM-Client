@@ -318,9 +318,10 @@ begin
       HideForms(['character', 'setting', 'event', 'community']);
       UIForm[Path].Visible := not UIForm[Path].Visible;
     end;
-  CreateEmptyForm('UI.wz/StatusBar3.img/mainBar/quickSlot/backgrnd', 562, 73, 200, 120);
-  CreateImage('UI.wz/StatusBar3.img/mainBar/quickSlot/backgrnd');
-  CreateImage('UI.wz/StatusBar3.img/mainBar/quickSlot/layer:cover');
+  CreateEmptyForm('UI.wz/StatusBar3.img/mainBar/quickSlot/backgrnd', 577, 73, 800, 120);
+  UIForm['UI.wz/StatusBar3.img/mainBar/quickSlot/backgrnd'].CanMove := False;
+  CreateImage('UI.wz/StatusBar3.img/mainBar/quickSlot/backgrnd',1,1,15,0);
+  CreateImage('UI.wz/StatusBar3.img/mainBar/quickSlot/layer:cover',1,1,15,0);
   const KeyPath = 'UI.wz/StatusBar3.img/Keyconfig/key/';
   var key1 := ['42', '82', '71', '73', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '37',
     '38'];
@@ -328,10 +329,10 @@ begin
     '49', '50'];
   for var i := 0 to 15 do
   begin
-    CreateImage(KeyPath + key1[i], 1, 1, 14 + i * 35, 6);
-    CreateImage(KeyPath + key2[i], 1, 1, 14 + i * 35, 42);
+    CreateImage(KeyPath + key1[i], 1, 1, 29 + i * 35, 6);
+    CreateImage(KeyPath + key2[i], 1, 1, 29 + i * 35, 42);
   end;
-
+  CreateButton('UI.wz/StatusBar3.img/mainBar/quickSlot/button:Fold',15);
 
 end;
 
