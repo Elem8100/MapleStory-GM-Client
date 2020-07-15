@@ -3346,6 +3346,7 @@ object MainForm: TMainForm
         HoverButtons.Position = hbLeftFromColumnLeft
         HTMLSettings.ImageFolder = 'images'
         HTMLSettings.ImageBaseName = 'img'
+        MouseActions.WheelAction = waScroll
         PrintSettings.DateFormat = 'dd/mm/yyyy'
         PrintSettings.Font.Charset = DEFAULT_CHARSET
         PrintSettings.Font.Color = clWindowText
@@ -3396,10 +3397,6 @@ object MainForm: TMainForm
     object TabSheet2: TTabSheet
       Caption = 'World Map'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object WorldMapGrid: TAdvStringGrid
         Left = 0
         Top = 0

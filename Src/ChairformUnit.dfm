@@ -52,10 +52,6 @@ object ChairForm: TChairForm
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Chair'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object ChairGrid: TAdvStringGrid
         AlignWithMargins = True
         Left = 4
@@ -138,6 +134,7 @@ object ChairForm: TChairForm
         HoverButtons.Position = hbLeftFromColumnLeft
         HTMLSettings.ImageFolder = 'images'
         HTMLSettings.ImageBaseName = 'img'
+        MouseActions.WheelAction = waScroll
         PrintSettings.DateFormat = 'dd/mm/yyyy'
         PrintSettings.Font.Charset = DEFAULT_CHARSET
         PrintSettings.Font.Color = clWindowText
@@ -202,10 +199,6 @@ object ChairForm: TChairForm
     object TabSheet2: TTabSheet
       Caption = 'Dye'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object DyeGrid: TAdvStringGrid
         AlignWithMargins = True
         Left = 0

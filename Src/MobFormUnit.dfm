@@ -197,6 +197,7 @@ object AddMobForm: TAddMobForm
         HoverButtons.Position = hbLeftFromColumnLeft
         HTMLSettings.ImageFolder = 'images'
         HTMLSettings.ImageBaseName = 'img'
+        MouseActions.WheelAction = waScroll
         PrintSettings.DateFormat = 'dd/mm/yyyy'
         PrintSettings.Font.Charset = DEFAULT_CHARSET
         PrintSettings.Font.Color = clWindowText
@@ -361,10 +362,6 @@ object AddMobForm: TAddMobForm
       Caption = #23567'Boss'
       ImageIndex = 1
       TabVisible = False
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Boss1Grid: TAdvStringGrid
         AlignWithMargins = True
         Left = 0
@@ -505,10 +502,6 @@ object AddMobForm: TAddMobForm
       Caption = #22823'Boss'
       ImageIndex = 2
       TabVisible = False
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Boss2Grid: TAdvStringGrid
         AlignWithMargins = True
         Left = 0
@@ -648,10 +641,6 @@ object AddMobForm: TAddMobForm
     object TabSheet2: TTabSheet
       Caption = 'Dye'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object DyeGrid: TAdvStringGrid
         AlignWithMargins = True
         Left = 0

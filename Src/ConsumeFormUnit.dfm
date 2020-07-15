@@ -32,19 +32,11 @@ object ConsumeForm: TConsumeForm
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Consume'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
     end
     object TabSheet2: TTabSheet
       Caption = 'Search'
       ImageIndex = 1
       OnShow = TabSheet2Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object ConsumeGrid: TAdvStringGrid
         AlignWithMargins = True
         Left = 0
@@ -132,6 +124,7 @@ object ConsumeForm: TConsumeForm
         HoverButtons.Position = hbLeftFromColumnLeft
         HTMLSettings.ImageFolder = 'images'
         HTMLSettings.ImageBaseName = 'img'
+        MouseActions.WheelAction = waScroll
         PrintSettings.DateFormat = 'dd/mm/yyyy'
         PrintSettings.Font.Charset = DEFAULT_CHARSET
         PrintSettings.Font.Color = clWindowText
@@ -196,10 +189,6 @@ object ConsumeForm: TConsumeForm
       Caption = 'Consume Effect'
       ImageIndex = 2
       OnShow = TabSheet3Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object ConsumeEffectGrid: TAdvStringGrid
         AlignWithMargins = True
         Left = 4

@@ -37,10 +37,6 @@ object CashForm2: TCashForm2
       Caption = 'Search'
       ImageIndex = 1
       OnShow = TabSheet2Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object CashGrid: TAdvStringGrid
         AlignWithMargins = True
         Left = 0
@@ -128,6 +124,7 @@ object CashForm2: TCashForm2
         HoverButtons.Position = hbLeftFromColumnLeft
         HTMLSettings.ImageFolder = 'images'
         HTMLSettings.ImageBaseName = 'img'
+        MouseActions.WheelAction = waScroll
         PrintSettings.DateFormat = 'dd/mm/yyyy'
         PrintSettings.Font.Charset = DEFAULT_CHARSET
         PrintSettings.Font.Color = clWindowText
