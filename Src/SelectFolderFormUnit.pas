@@ -32,16 +32,16 @@ var
 implementation
 
 uses
-  MainUnit, WZArchive, WZDirectory, WZIMGFile, KeyHandler, Global, Npc, MapleMap, WzUtils,
-  UI.Utils, Skill, MapleEffect, TamingMob, StrUtils;
+  MainUnit, WZArchive, WZDirectory, WZIMGFile, KeyHandler, Global, Npc, MapleMap, WzUtils, UI.Utils,
+  Skill, MapleEffect, TamingMob, StrUtils;
 
 {$R *.dfm}
 
 procedure TSelectFolderForm.FormCreate(Sender: TObject);
 begin
   DirList := TList<string>.Create;
-  Left := (Screen.Width - Width) div 2-150;
-  Top := (Screen.Height - Height) div 2-100;
+  Left := (Screen.Width - Width) div 2 - 150;
+  Top := (Screen.Height - Height) div 2 - 100;
 end;
 
 procedure TSelectFolderForm.FormDestroy(Sender: TObject);
@@ -193,14 +193,13 @@ begin
       for Img in Dir.Files do
       begin
         ID := LeftStr(Img.Name, 9);
+        Inc(RowCount);
+        MainForm.Grid.RowCount := RowCount + 1;
         if TMap.MapNameList.ContainsKey(ID) then
-        begin
-          Inc(RowCount);
-          MainForm.Grid.RowCount := RowCount + 1;
-          MainForm.Grid.Cells[0, RowCount] := ID + '  ' + TMap.MapNameList[ID].MapName;
-        end;
+          MainForm.Grid.Cells[0, RowCount] := ID + '  ' + TMap.MapNameList[ID].MapName
+        else
+          MainForm.Grid.Cells[0, RowCount] := ID;
       end;
-
     MainForm.Grid.RemoveDuplicates(0, True);
     MainForm.Grid.SortByColumn(0);
     MainForm.Grid.RemoveRows(0, 1);

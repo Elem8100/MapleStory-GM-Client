@@ -3,10 +3,9 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Controls, Forms, Dialogs,  Graphics,
-  ACtrlImages, StdCtrls, WZIMGFile, WZArchive, StrUtils, Generics.Collections,
-  WzUtils,  AControls, ACtrlEngine, ACtrlForms, ACtrlButtons, Global,
-  PXT.Canvas, PXT.Graphics, PXT.Types;
+  Windows, Messages, SysUtils, Classes, Controls, Forms, Dialogs, Graphics, ACtrlImages, StdCtrls,
+  WZIMGFile, WZArchive, StrUtils, Generics.Collections, WzUtils, AControls, ACtrlEngine, ACtrlForms,
+  ACtrlButtons, Global, PXT.Canvas, PXT.Graphics, PXT.Types;
 
 type
   TMiniMap = class(TAForm)
@@ -28,7 +27,7 @@ var
 implementation
 
 uses
-   MapleMap, MapleCharacter, UI.Utils;
+  MapleMap, MapleCharacter, UI.Utils;
 
 procedure TMiniMap.Paint(DC: HDC);
 var
@@ -137,8 +136,11 @@ begin
   FontSetting.Effect.BorderOpacity := 1;
   FontSetting.Weight := TFontWeight.SemiBold;
   GameFont.FontSettings := FontSetting;
-  GameFont.Draw(Point2f(50, 17), TMap.MapNameList[TMap.ID].StreetName, $FFFFFFFF);
-  GameFont.Draw(Point2f(50, 37), TMap.MapNameList[TMap.ID].MapName, $FFFFFFFF);
+  if TMap.MapNameList.ContainsKey(TMap.ID) then
+  begin
+    GameFont.Draw(Point2f(50, 17), TMap.MapNameList[TMap.ID].StreetName, $FFFFFFFF);
+    GameFont.Draw(Point2f(50, 37), TMap.MapNameList[TMap.ID].MapName, $FFFFFFFF);
+  end;
 end;
 
 constructor TMiniMap.Create(AOwner: TComponent);
@@ -171,7 +173,6 @@ begin
     Width := TMap.MiniMapWidth + 45;
   Height := TMap.MiniMapHeight + 40;
 end;
-
 
 end.
 
