@@ -3,8 +3,8 @@ unit NameTag;
 interface
 
 uses
-  Windows, SysUtils, StrUtils, PXT.Sprites, Generics.Collections, WZIMGFile,
-  Classes, Global, WzUtils, PXT.Graphics;
+  Windows, SysUtils, StrUtils, PXT.Sprites, Generics.Collections, WZIMGFile, Classes, Global,
+  WzUtils, PXT.Graphics;
 
 type
   TNameTag = class(TSpriteEx)
@@ -69,7 +69,7 @@ type
 implementation
 
 uses
-  MapleCharacter, ShowOptionUnit, MapleMap, PXT.Types, PXT.TypesEx, PXT.Canvas;
+  MapleCharacter, MapleChair, ShowOptionUnit, MapleMap, PXT.Types, PXT.TypesEx, PXT.Canvas;
 
 procedure TNameTag.DoMove(const MoveCount: Single);
 begin
@@ -221,7 +221,8 @@ begin
     var Count := CenterLength div CenterWidth;
     FixAlphaChannel(EquipImages[CenterImage]);
     for var i := 1 to Count do
-      Engine.Canvas.Draw(EquipImages[CenterImage], WestX + ((i - 1) * CenterWidth) + WestWidth, -CenterImage.Get('origin').Vector.Y + 38);
+      Engine.Canvas.Draw(EquipImages[CenterImage], WestX + ((i - 1) * CenterWidth) + WestWidth, -
+        CenterImage.Get('origin').Vector.Y + 38);
 
     var OffX: Integer;
     case CenterWidth of
@@ -242,7 +243,8 @@ begin
 
     var EastImage := EquipData[Entry.GetPath + '/e'];
     FixAlphaChannel(EquipImages[EastImage]);
-    GameCanvas.Draw(EquipImages[EastImage], WestX + CenterLength + WestWidth - OffX, -EastImage.Get('origin').Vector.Y + 38);
+    GameCanvas.Draw(EquipImages[EastImage], WestX + CenterLength + WestWidth - OffX, -EastImage.Get('origin').Vector.Y
+      + 38);
 
     var FontSettings: TFontSettings;
     if ISKMS then
@@ -295,7 +297,8 @@ begin
     var TagNum := GetImgEntry('Character.wz/Accessory/' + ItemID + '.img/info').Get('medalTag', '');
     Entry := GetImgEntry('UI.wz/NameTag.img/medal/' + string(TagNum));
     DumpData(Entry, EquipData, EquipImages);
-    MedalName := GetImgEntry('String.wz/Eqp.img/Eqp/Accessory/' + RightStr(ItemID, 7)).Get('name', '');
+    MedalName := GetImgEntry('String.wz/Eqp.img/Eqp/Accessory/' + RightStr(ItemID, 7)).Get('name',
+      '');
     InitData;
   end;
 
@@ -319,7 +322,8 @@ begin
   begin
     WX := Round(Player.X) - Round(Engine.WorldX);
     WY := Round(Player.Y) - Round(Engine.WorldY);
-    GameCanvas.Draw(TargetTexture, WX - 150, WY - 150);
+    GameCanvas.Draw(TargetTexture, WX - 150 - Player.BrowPos.X + TMapleChair.BodyRelMove.X, WY - 110
+      - Player.BrowPos.Y + TMapleChair.BodyRelMove.Y);
   end;
   if IsReDraw then
     IsReDraw := False;
