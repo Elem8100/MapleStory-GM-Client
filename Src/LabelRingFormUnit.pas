@@ -12,6 +12,7 @@ type
     LabelRingGrid: TAdvStringGrid;
     Label1: TLabel;
     Edit1: TEdit;
+    Button1: TButton;
     procedure FormActivate(Sender: TObject);
     procedure LabelRingGridClickCell(Sender: TObject; ARow, ACol: Integer);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -19,6 +20,7 @@ type
     procedure LabelRingGridClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Edit1Change(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
   private
     HasShow: Boolean;
     { Private declarations }
@@ -35,6 +37,13 @@ implementation
 
 uses
   NameTag, WZIMGFile, WZDirectory, WzUtils, Global, StrUtils;
+
+procedure TLabelRingForm.Button1Click(Sender: TObject);
+begin
+  TNameTag.IsUse := True;
+  TLabelRingTag.Delete;
+  ActiveControl := nil;
+end;
 
 procedure TLabelRingForm.Edit1Change(Sender: TObject);
 begin
@@ -108,6 +117,7 @@ end;
 procedure TLabelRingForm.LabelRingGridClickCell(Sender: TObject; ARow,
   ACol: Integer);
 begin
+  TNameTag.IsUse := False;
   TLabelRingTag.Delete;
   TLabelRingTag.Create(LabelRingGrid.Cells[1, ARow]);
   ActiveControl := nil;

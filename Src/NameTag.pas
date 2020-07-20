@@ -15,6 +15,7 @@ type
       PlayerName: string;
       NameWidth: Integer;
       TargetTexture: TTexture;
+      IsUse: Boolean;
     procedure DoMove(const Movecount: Single); override;
     procedure DoDraw; override;
     class procedure Create(Name: string); overload;
@@ -75,17 +76,28 @@ procedure TNameTag.DoMove(const MoveCount: Single);
 begin
   inherited;
   if ReDraw then
-    GameCanvas.DrawTarget(TargetTexture, NameWidth, 15,
+  begin
+    NameWidth := Round(GameFont.ExtentByPixels(PlayerName).Right);
+    GameCanvas.DrawTarget(TargetTexture, NameWidth + 10, 25,
       procedure
       begin
+        var FontSettings: TFontSettings;
+        if ISKMS then
+          FontSettings := TFontSettings.Create('Tahoma', 10, TFontWeight.Normal)
+        else
+          FontSettings := TFontSettings.Create('Arial', 11, TFontWeight.Normal);
+
+        FontSettings.Effect.BorderType := TFontBorder.None;
+        GameFont.FontSettings := FontSettings;
+
         var NamePos := NameWidth div 2;
         if TMap.ShowChar then
         begin
-          GameCanvas.FillRect(FloatRect(0, 2, NameWidth + 4, 15), cRGB1(0, 0, 0, 160));
-          GameFont.Draw(Point2f(3, 1), PlayerName, $FFFFFFFF);
+          GameCanvas.FillRoundRect(FloatRect(0, 2, NameWidth + 8, 15), cRGB1(0, 0, 0, 150), 3, 6);
+          GameFont.Draw(Point2f(3, 2), PlayerName, $FFFFFFFF);
         end;
       end);
-
+  end;
   X := Player.X;
   Y := Player.Y;
   Z := Player.Z;
@@ -95,12 +107,14 @@ procedure TNameTag.DoDraw;
 var
   WX, WY, NamePos: Integer;
 begin
+  if not TNameTag.IsUse then
+    Exit;
   if TMap.ShowChar then
   begin
     WX := Round(Player.X) - Round(Engine.WorldX);
     WY := Round(Player.Y) - Round(Engine.WorldY);
     NamePos := NameWidth div 2;
-    GameCanvas.Draw(TargetTexture, WX - NamePos, WY);
+    GameCanvas.Draw(TargetTexture, WX - NamePos - 8, WY);
   end;
   if ReDraw then
     ReDraw := False;
@@ -110,21 +124,27 @@ class procedure TNameTag.Create(Name: string);
 begin
   PlayerName := Name;
   NameWidth := Round(GameFont.ExtentByPixels(PlayerName).Right);
-  GameCanvas.DrawTarget(TargetTexture, NameWidth, 15,
+  GameCanvas.DrawTarget(TargetTexture, NameWidth + 10, 25,
     procedure
     begin
       var NamePos := NameWidth div 2;
       if TMap.ShowChar then
       begin
-        GameCanvas.FillRect(FloatRect(0, 2, NameWidth + 4, 15), cRGB1(0, 0, 0, 160));
-        GameCanvas.Flush;
-
-        GameFont.Draw(Point2f(3, 1), PlayerName, $FFFFFFFF);
+        GameCanvas.FillRoundRect(FloatRect(0, 2, NameWidth + 8, 15), cRGB1(0, 0, 0, 150), 3, 6);
+        var FontSettings: TFontSettings;
+        if ISKMS then
+          FontSettings := TFontSettings.Create('Tahoma', 10, TFontWeight.Normal)
+        else
+          FontSettings := TFontSettings.Create('Arial', 11, TFontWeight.Normal);
+        FontSettings.Effect.BorderType := TFontBorder.None;
+        GameFont.FontSettings := FontSettings;
+        GameFont.Draw(Point2f(3, 2), PlayerName, $FFFFFFFF);
       end;
     end);
 
   with TNameTag.Create(SpriteEngine) do
   begin
+    Tag := 1;
     TruncMove := True;
   end;
 end;
@@ -397,6 +417,9 @@ begin
   end;
 
 end;
+
+initialization
+  TNameTag.IsUse := True;
 
 end.
 

@@ -3,9 +3,8 @@ unit ShowOptionUnit;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
-  System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
-  Vcl.StdCtrls, Vcl.ExtCtrls;
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls;
 
 type
   TShowOptionForm = class(TForm)
@@ -51,17 +50,23 @@ var
 implementation
 
 uses
-  MapleMap, MobInfo, NameTag, UI.Utils,UI.StatusBar3.MainBar;
+  MapleMap, MobInfo, NameTag, UI.Utils, UI.StatusBar3.MainBar;
 {$R *.dfm}
 
 procedure TShowOptionForm.Button1Click(Sender: TObject);
 begin
-  TLabelRingTag.LabelRingTag.MedalName := Edit1.Text;
+  if TLabelRingTag.LabelRingTag <> nil then
+  begin
+    TLabelRingTag.LabelRingTag.MedalName := Edit1.Text;
+    TLabelRingTag.LabelRingTag.InitData;
+    TLabelRingTag.ReDraw;
+  end;
+  TNameTag.PlayerName := Edit1.Text;
+  TNameTag.ReDraw:=True;
   TStatusBar3MainBar.Instance.ReDraw;
   if UILabel.ContainsKey('UserInfoName') then
-    UILabel['UserInfoName'].Text:=  Edit1.Text;
-  TLabelRingTag.LabelRingTag.InitData;
-  TLabelRingTag.ReDraw;
+    UILabel['UserInfoName'].Text := Edit1.Text;
+
   Button1.SetFocus;
   ActiveControl := nil;
 end;
@@ -117,7 +122,7 @@ end;
 
 procedure TShowOptionForm.Edit2Change(Sender: TObject);
 begin
- TMap.ScrollingMessage:= Edit2.Text;
+  TMap.ScrollingMessage := Edit2.Text;
 end;
 
 procedure TShowOptionForm.FormClick(Sender: TObject);

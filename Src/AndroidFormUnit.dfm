@@ -20,10 +20,23 @@ object AndroidForm: TAndroidForm
   OnKeyDown = FormKeyDown
   PixelsPerInch = 120
   TextHeight = 16
+  object Label1: TLabel
+    Left = 6
+    Top = 7
+    Width = 44
+    Height = 18
+    Caption = 'Search'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -15
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
+  end
   object Button1: TButton
-    Left = 88
-    Top = 8
-    Width = 153
+    Left = 232
+    Top = 4
+    Width = 73
     Height = 28
     Caption = 'Remove'
     Font.Charset = DEFAULT_CHARSET
@@ -198,10 +211,14 @@ object AndroidForm: TAndroidForm
     object TabSheet2: TTabSheet
       Caption = 'Custom'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
     end
+  end
+  object Edit1: TEdit
+    Left = 52
+    Top = 5
+    Width = 130
+    Height = 24
+    TabOrder = 2
+    OnChange = Edit1Change
   end
 end

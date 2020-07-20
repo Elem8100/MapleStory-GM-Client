@@ -14,6 +14,8 @@ type
     TabSheet1: TTabSheet;
     TabSheet2: TTabSheet;
     AndroidGrid: TAdvStringGrid;
+    Edit1: TEdit;
+    Label1: TLabel;
     procedure FormActivate(Sender: TObject);
     procedure AndroidGridClickCell(Sender: TObject; ARow, ACol: Integer);
     procedure Button1Click(Sender: TObject);
@@ -22,6 +24,7 @@ type
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure AvatarViewImageSelect(Sender: TObject; idx: Integer);
     procedure PageControl1Change(Sender: TObject);
+    procedure Edit1Change(Sender: TObject);
   private
    // Num:string;
     HasLoad: Boolean;
@@ -130,8 +133,12 @@ begin
     AndroidPlayer.Dead;
     AndroidPlayer := nil;
   end;
-
   ActiveControl := nil;
+end;
+
+procedure TAndroidForm.Edit1Change(Sender: TObject);
+begin
+  AndroidGrid.NarrowDown(Trim(Edit1.Text));
 end;
 
 procedure TAndroidForm.AvatarViewImageSelect(Sender: TObject; idx: Integer);
@@ -208,7 +215,6 @@ end;
 
 procedure TAndroidForm.FormCreate(Sender: TObject);
 begin
-
   Left := (Screen.Width - Width) div 2;
   Top := (Screen.Height - Height) div 2;
 end;

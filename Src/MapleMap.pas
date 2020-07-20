@@ -156,7 +156,8 @@ begin
     TMobInfo.Create;
     Player.SpawnNew;
     FDevice.BeginScene;
-    TLabelRingTag.Create('01112101');
+   // TLabelRingTag.Create('01112101');
+    TNameTag.Create('SuperGM');
     FDevice.EndScene;
     if UIVersion = 3 then
     begin
