@@ -14,11 +14,11 @@ type
     TargetIndex: Integer;
     PicWidth, PicHeight: Integer;
     OffX, OffY, cx, cy: Integer;
+    LWidth: integer;
     PlayerMark: TWZIMGEntry;
     procedure TargetEvent;
     procedure Paint(DC: HDC); override;
     procedure ReDraw;
-    constructor Create(AOwner: TComponent); override;
   end;
 
 var
@@ -27,7 +27,7 @@ var
 implementation
 
 uses
-  MapleMap, MapleCharacter, UI.Utils;
+  MapleMap, MapleCharacter, UI.Utils, Math;
 
 procedure TMiniMap.Paint(DC: HDC);
 var
@@ -37,18 +37,25 @@ begin
     Exit;
   x := ClientLeft;
   y := ClientTop;
-  Engine.Canvas.Draw(TargetTexture, x, y);
-  px := Round(Player.X + cx) div 16;
-  py := Round(Player.Y + cy) div 16;
-  AEngine.Canvas.Draw(UIImages[PlayerMark], x + px + OffX + 2, y + py + OffY + 50);
+
+  if TMap.HasMiniMap then
+  begin
+    Engine.Canvas.Draw(TargetTexture, x, y);
+    px := Round(Player.X + cx) div 16;
+    py := Round(Player.Y + cy) div 16;
+    AEngine.Canvas.Draw(UIImages[PlayerMark], x + px + OffX + 2, y + py + OffY + 50);
+  end
+  else
+    TargetTexture.Clear;
 end;
 
 procedure TMiniMap.TargetEvent;
 begin
+
   var Entry := GetImgEntry('UI.wz/UIWindow2.img/MiniMap/MaxMap');
   DumpData(Entry, UIData, UIImages);
   var MiniMap: TWZIMGEntry;
-///  var cx, cy: Integer;
+
   if TMap.HasMiniMap then
   begin
     cx := TMap.ImgFile.Get('miniMap/centerX').Data;
@@ -56,24 +63,8 @@ begin
     MiniMap := TMap.MiniMapEntry.Get('canvas');
     DumpData(MiniMap, UIData, UIImages);
     PicHeight := MiniMap.Canvas.Height;
-    if MiniMap.Canvas.Width < 200 then
-    begin
-      if MiniMap.Canvas.Width > 100 then
-      begin
-        PicWidth := 200;
-        OffX := (200 - MiniMap.Canvas.Width) div 2;
-      end
-      else
-      begin
-        PicWidth := 150;
-        OffX := (150 - MiniMap.Canvas.Width) div 2;
-      end;
-    end
-    else
-    begin
-      PicWidth := MiniMap.Canvas.Width;
-      OffX := 0;
-    end;
+    PicWidth := lwidth;
+    OffX := (picwidth - MiniMap.Canvas.Width) div 2;
     Engine.Canvas.FillRect(FloatRect(9, 62, PicWidth, PicHeight), ARGB(180, 0, 0, 0));
     Engine.Canvas.Draw(UIImages[MiniMap], 9 + OffX, 62);
   end
@@ -143,28 +134,29 @@ begin
   end;
 end;
 
-constructor TMiniMap.Create(AOwner: TComponent);
-var
-  Num: Integer;
-begin
-  ControlState := ControlState + [csCreating];
-  inherited Create(AOwner);
-  if (AOwner <> nil) and (AOwner <> Self) and (AOwner is TWControl) then
-  begin
-    Num := 1;
-    while AOwner.FindComponent('Form' + IntToStr(Num)) <> nil do
-      Inc(Num);
-    Name := 'Form' + IntToStr(Num);
-  end;
-  ControlState := ControlState - [csCreating];
-  ReDraw;
-end;
-
 procedure TMiniMap.ReDraw;
+var
+  Length1, Length2, Length: Single;
 begin
-  GameCanvas.DrawTarget(TargetTexture, TMap.MiniMapWidth + 145, TMap.MiniMapHeight + 80,
+
+  var FontSetting: TFontSettings;
+  if ISKMS then
+    FontSetting := TFontSettings.Create('Tahoma', 12, TFontWeight.Normal)
+  else
+    FontSetting := TFontSettings.Create('Arial', 12, TFontWeight.Normal);
+  FontSetting.Weight := TFontWeight.SemiBold;
+  GameFont.FontSettings := FontSetting;
+  if TMap.MapNameList.ContainsKey(TMap.ID) then
+  begin
+    Length1 := GameFont.ExtentByPixels(TMap.MapNameList[TMap.ID].StreetName).Right;
+    Length2 := GameFont.ExtentByPixels(TMap.MapNameList[TMap.ID].MapName).Right;
+  end;
+  Length := Max(Length1, Length2);
+  LWidth := Round(Max(Length, TMap.MiniMapWidth)) + 40;
+  GameCanvas.DrawTarget(TargetTexture, LWidth + 50, TMap.MiniMapHeight + 80,
     procedure
     begin
+
       TargetEvent;
     end);
   if TMap.MiniMapWidth < 200 then
