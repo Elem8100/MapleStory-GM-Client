@@ -16,6 +16,7 @@ type
     OffX, OffY, cx, cy: Integer;
     LWidth: integer;
     PlayerMark: TWZIMGEntry;
+    HasMiniMap: Boolean;
     procedure TargetEvent;
     procedure Paint(DC: HDC); override;
     procedure ReDraw;
@@ -38,15 +39,15 @@ begin
   x := ClientLeft;
   y := ClientTop;
 
-  if TMap.HasMiniMap then
+  if HasMiniMap then
   begin
     Engine.Canvas.Draw(TargetTexture, x, y);
     px := Round(Player.X + cx) div 16;
     py := Round(Player.Y + cy) div 16;
     AEngine.Canvas.Draw(UIImages[PlayerMark], x + px + OffX + 2, y + py + OffY + 50);
-  end
-  else
-    TargetTexture.Clear;
+  end;
+  inherited;
+
 end;
 
 procedure TMiniMap.TargetEvent;
@@ -129,7 +130,7 @@ begin
   GameFont.FontSettings := FontSetting;
   if TMap.MapNameList.ContainsKey(TMap.ID) then
   begin
-    GameFont.Draw(Point2f(50, 17), TMap.MapNameList[TMap.ID].StreetName, $FFFFFFFF);
+    GameFont.Draw(Point2f(50, 20), TMap.MapNameList[TMap.ID].StreetName, $FFFFFFFF);
     GameFont.Draw(Point2f(50, 37), TMap.MapNameList[TMap.ID].MapName, $FFFFFFFF);
   end;
 end;
@@ -138,7 +139,7 @@ procedure TMiniMap.ReDraw;
 var
   Length1, Length2, Length: Single;
 begin
-
+  HasMiniMap := TMap.HasMiniMap;
   var FontSetting: TFontSettings;
   if ISKMS then
     FontSetting := TFontSettings.Create('Tahoma', 12, TFontWeight.Normal)
@@ -156,14 +157,39 @@ begin
   GameCanvas.DrawTarget(TargetTexture, LWidth + 50, TMap.MiniMapHeight + 80,
     procedure
     begin
-
       TargetEvent;
     end);
-  if TMap.MiniMapWidth < 200 then
-    Width := TMap.MiniMapWidth + 90
-  else
-    Width := TMap.MiniMapWidth + 45;
+  Width := LWidth + 20;
   Height := TMap.MiniMapHeight + 40;
+
+  UIOwner := 'Form10';
+  const Path = 'UI.wz/UIWindow2.img/MiniMap/';
+  CreateButton(Path + 'BtNpc', 0, 5);
+  UIButton[Path + 'BtNpc'].Left := Lwidth - 30;
+  //
+  CreateButton(Path + 'BtMap', 0, 5);
+  UIButton[Path + 'BtMap'].Left := Lwidth - 70;
+  //
+  CreateButton(Path + 'BtBig', 0, 5);
+  UIButton[Path + 'BtBig'].Left := Lwidth - 85;
+  UIButton[Path + 'BtBig'].Enabled := False;
+  //
+  CreateButton(Path + 'BtMax', 0, 5);
+  UIButton[Path + 'BtMax'].Left := Lwidth - 100;
+  UIButton[Path + 'BtMax'].Enabled := False;
+   //
+  CreateButton(Path + 'BtMin', 0, 5);
+  UIButton[Path + 'BtMin'].Left := Lwidth - 115;
+  //
+  const Bt =['BtNpc', 'BtMap', 'BtBig', 'BtMax', 'BtMin'];
+  for var i := 0 to 4 do
+  begin
+    if HasMiniMap then
+      UIButton[Path + Bt[i]].Visible := True
+    else
+      UIButton[Path + Bt[i]].Visible := False;
+  end;
+
 end;
 
 end.
