@@ -203,6 +203,10 @@ object FamiliarForm: TFamiliarForm
     object TabSheet2: TTabSheet
       Caption = 'Dye'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object DyeGrid: TAdvStringGrid
         AlignWithMargins = True
         Left = 0

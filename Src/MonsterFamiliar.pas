@@ -90,7 +90,7 @@ begin
     for var Iter2 in EquipData[Iter.GetPath].Children do
       if IsNumber(Iter2.Name) then
       begin
-        if (Iter.Name = 'stand') and (Iter2.Name = '0') then
+        if ((Iter.Name = 'stand') or (Iter.Name = 'fly')) and (Iter2.Name = '0') then
         begin
           MonsterFamiliar := TMonsterFamiliar.Create(SpriteEngine);
           with MonsterFamiliar do

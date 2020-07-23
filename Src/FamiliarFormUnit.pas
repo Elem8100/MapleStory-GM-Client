@@ -89,9 +89,11 @@ begin
 
   TFamiliarNameTag.Delete;
   TFamiliarNameTag.Create('01112146');
-  TFamiliarNameTag.FamiliarNameTag.MedalName := StringWZ.GetImgFile('Mob.img').Root.Get(FamiliarID + '/name', '');
+  TFamiliarNameTag.FamiliarNameTag.MedalName := StringWZ.GetImgFile('Mob.img').Root.Get(FamiliarID +
+    '/name', '');
   TFamiliarNameTag.FamiliarNameTag.InitData;
   TFamiliarNameTag.ReDraw;
+  if  FamiliarGrid.CellTypes[2, ARow] = ctBitmap   then
   TColorFunc.SetGridColor(FamiliarGrid.CellGraphics[2, ARow].CellBitmap, DyeGrid);
   ActiveControl := nil;
 end;
@@ -132,15 +134,24 @@ begin
       Inc(RowCount);
       FamiliarGrid.RowCount := RowCount + 1;
       FamiliarGrid.Cells[1, RowCount] := ID;
-      CardID := GetImgEntry('Character.wz/Familiar/' + img.Name + '/info/monsterCardID').Data;
+      if GetImgEntry('Character.wz/Familiar/' + img.Name + '/info/monsterCardID') <> nil then
+        CardID := GetImgEntry('Character.wz/Familiar/' + img.Name + '/info/monsterCardID').Data;
     end;
 
     if HasImgEntry('String.wz/Consume.img/' + CardID) then
-      FamiliarGrid.Cells[3, RowCount] := GetImgEntry('String.wz/Consume.img/' + CardID).Get('Name', '');
+      FamiliarGrid.Cells[3, RowCount] := GetImgEntry('String.wz/Consume.img/' + CardID).Get('Name',
+        '');
 
-    var Entry := GetImgEntry('Item.wz/Consume/0287.img/' + '0' + CardID + '/info/icon', True);
-    if Entry <> nil then
+    if GetImgEntry('Item.wz/Consume/0287.img/' + '0' + CardID + '/info/icon') <> nil then
     begin
+      var Entry := GetImgEntry('Item.wz/Consume/0287.img/' + '0' + CardID + '/info/icon', True);
+      var Bmp := Entry.Canvas.DumpBmp;
+      FamiliarGrid.CreateBitmap(2, RowCount, False, haCenter, vaCenter).Assign(Bmp);
+      Bmp.Free;
+    end
+    else if GetImgEntry('Item.wz/Consume/0238.img/' + '0' + CardID + '/info/iconRaw') <> nil then
+    begin
+      var Entry := GetImgEntry('Item.wz/Consume/0238.img/' + '0' + CardID + '/info/iconRaw', True);
       var Bmp := Entry.Canvas.DumpBmp;
       FamiliarGrid.CreateBitmap(2, RowCount, False, haCenter, vaCenter).Assign(Bmp);
       Bmp.Free;
