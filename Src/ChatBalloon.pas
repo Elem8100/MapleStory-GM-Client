@@ -3,8 +3,8 @@ unit ChatBalloon;
 interface
 
 uses
-  Windows, SysUtils, StrUtils, PXT.Sprites, Generics.Collections, Classes, WZIMGFile, Global,
-  WzUtils, PXT.Graphics;
+  Windows, SysUtils, StrUtils, PXT.Sprites, Generics.Collections, Classes, WZIMGFile, Global, WzUtils,
+  PXT.Graphics;
 
 type
   TBalloonInfo = record
@@ -25,7 +25,9 @@ type
     FMsg: string;
     Counter: Integer;
     TargetTexture: TTexture;
-    procedure TextOut(X, Y, MaxWidth, FontHeight: Integer);
+    FontColor: Cardinal;
+    R, G, B: Byte;
+    procedure TextOut(X, Y, MaxWidth, FontHeight: Integer); virtual;
     function GetData(TileName: string): TBalloonInfo;
     class function GetS(var Remaining: string; const Width: Integer): string;
   public
@@ -36,6 +38,13 @@ type
     procedure DoMove(const Movecount: Single); override;
     procedure TargetEvent;
     destructor Destroy;
+  end;
+
+  TChatRingBalloon = class(TChatBalloon)
+  private
+    procedure TextOut(X, Y, MaxWidth, FontHeight: Integer); override;
+  public
+    procedure DoMove(const Movecount: Single); override;
   end;
 
 implementation
@@ -66,11 +75,11 @@ begin
     begin
       NextWord := Copy(Remaining, 1, Index - 1);
       if PixelCount + Round(GameFont.ExtentByPixels(' ' + NextWord).Right)
-        {FontsAlt[3].TextWidth(' ' + NextWord)}    < Width then
+        {FontsAlt[3].TextWidth(' ' + NextWord)}        < Width then
       begin
         Result := Result + ' ' + NextWord;
         Inc(PixelCount, Round(GameFont.ExtentByPixels(' ' + NextWord).Right)
-          {FontsAlt[3].TextWidth(' ' + NextWord)}    - 5);
+          {FontsAlt[3].TextWidth(' ' + NextWord)}        - 5);
         Delete(Remaining, 1, Index)
       end
       else
@@ -85,14 +94,15 @@ begin
           {FontsAlt[0].TextWidth(Remaining[1]}) < Width) do
         begin
           Result := Result + Remaining[1];
-          Inc(PixelCount, Round(GameFont.ExtentByPixels(Remaining[1]).Right){FontsAlt[3].TextWidth(Remaining[1])});
+          Inc(PixelCount, Round(GameFont.ExtentByPixels(Remaining[1]).Right)
+            {FontsAlt[3].TextWidth(Remaining[1])});
           Delete(Remaining, 1, 1)
         end
       end
       else
       begin
         if PixelCount + Round(GameFont.ExtentByPixels(' ' + Remaining).Right)
-          {FontsAlt[3].TextWidth(' ' + Remaining)}    < Width then
+          {FontsAlt[3].TextWidth(' ' + Remaining)}        < Width then
         begin
           Result := Result + ' ' + Remaining;
           Remaining := ' '
@@ -148,6 +158,14 @@ begin
 
     end);
 
+  if Entry.Get('clr') <> nil then
+    FontColor := 16777216 + Integer(Entry.Get('clr').Data)
+  else
+    FontColor := 16777215;
+  R := GetR(FontColor);
+  G := GetG(FontColor);
+  B := GetB(FontColor);
+
   Arrow := GetData('arrow');
   C := GetData('c');
   E := GetData('e');
@@ -189,7 +207,7 @@ begin
 
   FontSettings.Effect.BorderType := TFontBorder.None;
   GameFont.FontSettings := FontSettings;
-  for var I := 0 to Round(GameFont.ExtentByPixels(FMsg).Right){FontsAlt[3].TextWidth(FMsg)}    div 80 + 1 do
+  for var I := 0 to Round(GameFont.ExtentByPixels(FMsg).Right) div 80 + 1 do
     GameFont.Draw(Point2f(X - 5, Y + I * 13), GetS(FMsg, 80), ARGB(255, 125, 0, 0));
 end;
 
@@ -198,7 +216,8 @@ begin
   if Entry.Parent.Name = 'ChatBalloon.img' then
     Result.ImageEntry := GetImgEntry('UI/ChatBalloon.img/' + IntToStr(FStyle) + '/' + TileName)
   else
-    Result.ImageEntry := GetImgEntry('UI/ChatBalloon.img/' + Directory + '/' + IntToStr(FStyle) + '/' + TileName);
+    Result.ImageEntry := GetImgEntry('UI/ChatBalloon.img/' + Directory + '/' + IntToStr(FStyle) + '/' +
+      TileName);
   Result.Width := Entry.Get(TileName).Canvas.Width;
   Result.Height := Entry.Get(TileName).Canvas.Height;
   Result.Origin.X := Entry.Get(TileName).Get('origin').Vector.X;
@@ -209,7 +228,7 @@ procedure TChatBalloon.TargetEvent;
 var
   I, J, Cx1, Cx2, Cx3, Mid: Integer;
 begin
-  Row := Round(GameFont.ExtentByPixels(FMsg).Right) {FontsAlt[3].TextWidth(FMsg)}    div 80 + 1;
+  Row := Round(GameFont.ExtentByPixels(FMsg).Right) {FontsAlt[3].TextWidth(FMsg)}        div 80 + 1;
   OffH := Row * C.Height + C.Origin.Y + S.Height;
   Cx1 := 0;
   Cx2 := 0;
@@ -221,11 +240,11 @@ begin
     GameCanvas.Draw(Images[Part1[I].ImageEntry], Cx1 - NW.Origin.X - Mid + 70, -Part1[I].Origin.Y - OffH + 500);
     Cx2 := Cx2 + Part2[I - 1].Width;
     for J := 0 to Row - 1 do
-      GameCanvas.Draw(Images[Part2[I].ImageEntry], Cx2 - W.Origin.X - Mid + 70, -Part2[I].Origin.Y +
-        (J * C.Height) - OffH + 500);
+      GameCanvas.Draw(Images[Part2[I].ImageEntry], Cx2 - W.Origin.X - Mid + 70, -Part2[I].Origin.Y + (J * C.Height)
+        - OffH + 500);
     Cx3 := Cx3 + Part3[I - 1].Width;
-    GameCanvas.Draw(Images[Part3[I].ImageEntry], Cx3 - SW.Origin.X - Mid + 70, -Part3[I].Origin.Y +
-      (J * C.Height) - OffH + 500);
+    GameCanvas.Draw(Images[Part3[I].ImageEntry], Cx3 - SW.Origin.X - Mid + 70, -Part3[I].Origin.Y + (J * C.Height)
+      - OffH + 500);
   end;
   GameCanvas.Draw(Images[Arrow.ImageEntry], 70, Arrow.Origin.Y + (J * C.Height) - OffH + 500);
   {
@@ -241,6 +260,35 @@ begin
     end;
   }
   TextOut(-Mid + 12 + 77, -OffH + 500 - 4, 80, 14);
+end;
+
+procedure TChatRingBalloon.TextOut(X, Y, MaxWidth, FontHeight: Integer);
+begin
+  var FontSettings: TFontSettings;
+  if ISKMS then
+    FontSettings := TFontSettings.Create('Tahoma', 10, TFontWeight.Normal)
+  else
+    FontSettings := TFontSettings.Create('Arial', 11, TFontWeight.Normal);
+
+  FontSettings.Effect.BorderType := TFontBorder.None;
+  GameFont.FontSettings := FontSettings;
+  for var I := 0 to Round(GameFont.ExtentByPixels(FMsg).Right) div 80 + 1 do
+    GameFont.Draw(Point2f(X - 5, Y + I * 13), GetS(FMsg, 80), ARGB(255, R, G, B));
+end;
+
+procedure TChatRingBalloon.DoMove;
+begin
+  Inc(Counter);
+  if FMsg <> '' then
+    GameCanvas.DrawTarget(TargetTexture, 150, 512,
+      procedure
+      begin
+        TargetTexture.Clear;
+        TargetEvent;
+      end);
+  if Counter > 5000 then
+    Dead;
+
 end;
 
 end.

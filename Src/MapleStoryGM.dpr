@@ -32,7 +32,8 @@ uses
   SelectFolderFormUnit in 'SelectFolderFormUnit.pas' {SelectFolderForm},
   TotemEffectFormUnit in 'TotemEffectFormUnit.pas' {TotemEffectForm},
   SoulEffectFormUnit in 'SoulEffectFormUnit.pas' {SoulEffectForm},
-  ReactorFormUnit in 'ReactorFormUnit.pas' {ReactorForm};
+  ReactorFormUnit in 'ReactorFormUnit.pas' {ReactorForm},
+  ChatRingFormUnit in 'ChatRingFormUnit.pas' {ChatRingForm};
 
 {$R *.res}
 
@@ -70,5 +71,6 @@ begin
   Application.CreateForm(TTotemEffectForm, TotemEffectForm);
   Application.CreateForm(TSoulEffectForm, SoulEffectForm);
   Application.CreateForm(TReactorForm, ReactorForm);
+  Application.CreateForm(TChatRingForm, ChatRingForm);
   Application.Run;
 end.
