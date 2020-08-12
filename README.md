@@ -15,7 +15,7 @@ Delphi library  path settings->
 Tools/Options/Language/Delphi/Library/Library Path                                  
 Example:                               
 <img src="https://i.imgur.com//xpLHqHI.jpg" width="700" height="561">   
-
+Screenshots:
 ![alt tag](https://i.imgur.com/zr8EXFy.jpg"")
 ![alt tag](https://i.imgur.com/bfg2x8K.jpg"")
 ![alt tag](https://i.imgur.com/6Lkjkfv.jpg"")
