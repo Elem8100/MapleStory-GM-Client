@@ -11,20 +11,56 @@ object ChatRingForm: TChatRingForm
   Font.Height = -13
   Font.Name = 'Tahoma'
   Font.Style = []
+  KeyPreview = True
   OldCreateOrder = False
   Scaled = False
   OnActivate = FormActivate
+  OnClick = FormClick
+  OnCreate = FormCreate
+  OnKeyDown = FormKeyDown
   PixelsPerInch = 120
   TextHeight = 16
+  object Label1: TLabel
+    Left = 14
+    Top = 43
+    Width = 40
+    Height = 16
+    Caption = 'Search'
+  end
+  object Label2: TLabel
+    Left = 24
+    Top = 8
+    Width = 40
+    Height = 18
+    Caption = 'Using:'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -15
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
+  end
+  object Label3: TLabel
+    Left = 70
+    Top = 8
+    Width = 5
+    Height = 18
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -15
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
+  end
   object ChatRingGrid: TAdvStringGrid
     AlignWithMargins = True
     Left = 4
-    Top = 36
+    Top = 66
     Width = 328
-    Height = 535
+    Height = 505
     Cursor = crDefault
     Margins.Left = 4
-    Margins.Top = 36
+    Margins.Top = 66
     Margins.Right = 10
     Margins.Bottom = 8
     Align = alClient
@@ -42,6 +78,7 @@ object ChatRingForm: TChatRingForm
     ScrollBars = ssVertical
     TabOrder = 0
     HoverRowCells = [hcNormal, hcSelected]
+    OnClickCell = ChatRingGridClickCell
     ActiveCellFont.Charset = DEFAULT_CHARSET
     ActiveCellFont.Color = clWindowText
     ActiveCellFont.Height = -11
@@ -156,5 +193,22 @@ object ChatRingForm: TChatRingForm
       35
       35
       35)
+  end
+  object Edit1: TEdit
+    Left = 60
+    Top = 40
+    Width = 101
+    Height = 24
+    TabOrder = 1
+    OnChange = Edit1Change
+  end
+  object Button1: TButton
+    Left = 240
+    Top = 38
+    Width = 73
+    Height = 25
+    Caption = 'Remove'
+    TabOrder = 2
+    OnClick = Button1Click
   end
 end

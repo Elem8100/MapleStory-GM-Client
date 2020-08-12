@@ -156,7 +156,8 @@ uses
   Skill, OptionsFormUnit, AvatarFormUnit, AndroidFormUnit, Android, ACtrlEngine, SetScreenFormUnit,
   ConsumeFormUnit, CashForm2Unit, EtcFormUnit, PlayActionFormUnit, UI.Utils, acontrols,
   UI.StatusBar3.Chat, UI.UIWindow2.UserInfo, UI.UIWindow2.Item, SelectFolderFormUnit,
-  TotemEffectFormUnit, SoulEffectFormUnit,ReactorFormUnit,ChatRingFormUnit, PXT.TypesEx;
+  TotemEffectFormUnit, SoulEffectFormUnit, ReactorFormUnit, ChatRingFormUnit, ChatBalloon,
+  PXT.TypesEx;
 {$R *.dfm}
 
 procedure TMainForm.FamiliarButtonClick(Sender: TObject);
@@ -276,7 +277,20 @@ begin
       if Trims(UIEdit['StatusBar3/Chat'].Text) = '' then
         UIForm['Input/ChatEnter'].Visible := False
       else
+      begin
+        TChatRingBalloon.Remove;
+        with TChatringBalloon.Create(SpriteEngine) do
+        begin
+          Msg := UIEdit['StatusBar3/Chat'].Text;
+          if ISUse then
+            SetStyle(TagNum.ToInteger)
+          else
+            SetStyle(0);
+          ReDraw;
+        end;
         TChatViewImage.Redraw;
+
+      end;
     end;
   end;
 end;

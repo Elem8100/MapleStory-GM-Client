@@ -3,8 +3,8 @@ unit ChatBalloon;
 interface
 
 uses
-  Windows, SysUtils, StrUtils, PXT.Sprites, Generics.Collections, Classes, WZIMGFile, Global, WzUtils,
-  PXT.Graphics;
+  Windows, SysUtils, StrUtils, PXT.Sprites, Generics.Collections, Classes, WZIMGFile, Global,
+  WzUtils, PXT.Graphics;
 
 type
   TBalloonInfo = record
@@ -45,12 +45,18 @@ type
     procedure TextOut(X, Y, MaxWidth, FontHeight: Integer); override;
   public
     procedure DoMove(const Movecount: Single); override;
+    procedure DoDraw; override;
+    procedure ReDraw;
+    class procedure Remove;
+    class var
+      TagNum: string;
+      IsUse: Boolean;
   end;
 
 implementation
 
 uses
-  PXT.Types, PXT.Canvas;
+  PXT.Types, PXT.Canvas, MapleCharacter;
 
 class function TChatBalloon.GetS(var Remaining: string; const Width: Integer): string;
 var
@@ -75,11 +81,11 @@ begin
     begin
       NextWord := Copy(Remaining, 1, Index - 1);
       if PixelCount + Round(GameFont.ExtentByPixels(' ' + NextWord).Right)
-        {FontsAlt[3].TextWidth(' ' + NextWord)}        < Width then
+        {FontsAlt[3].TextWidth(' ' + NextWord)}             < Width then
       begin
         Result := Result + ' ' + NextWord;
         Inc(PixelCount, Round(GameFont.ExtentByPixels(' ' + NextWord).Right)
-          {FontsAlt[3].TextWidth(' ' + NextWord)}        - 5);
+          {FontsAlt[3].TextWidth(' ' + NextWord)}             - 5);
         Delete(Remaining, 1, Index)
       end
       else
@@ -102,7 +108,7 @@ begin
       else
       begin
         if PixelCount + Round(GameFont.ExtentByPixels(' ' + Remaining).Right)
-          {FontsAlt[3].TextWidth(' ' + Remaining)}        < Width then
+          {FontsAlt[3].TextWidth(' ' + Remaining)}             < Width then
         begin
           Result := Result + ' ' + Remaining;
           Remaining := ' '
@@ -165,8 +171,8 @@ begin
   R := GetR(FontColor);
   G := GetG(FontColor);
   B := GetB(FontColor);
-
-  Arrow := GetData('arrow');
+  if Entry.Get('arrow') <> nil then
+    Arrow := GetData('arrow');
   C := GetData('c');
   E := GetData('e');
   N := GetData('n');
@@ -216,10 +222,10 @@ begin
   if Entry.Parent.Name = 'ChatBalloon.img' then
     Result.ImageEntry := GetImgEntry('UI/ChatBalloon.img/' + IntToStr(FStyle) + '/' + TileName)
   else
-    Result.ImageEntry := GetImgEntry('UI/ChatBalloon.img/' + Directory + '/' + IntToStr(FStyle) + '/' +
-      TileName);
-  Result.Width := Entry.Get(TileName).Canvas.Width;
-  Result.Height := Entry.Get(TileName).Canvas.Height;
+    Result.ImageEntry := GetImgEntry('UI/ChatBalloon.img/' + Directory + '/' + IntToStr(FStyle) +
+      '/' + TileName);
+  Result.Width := Entry.Get2(TileName).Canvas.Width;
+  Result.Height := Entry.Get2(TileName).Canvas.Height;
   Result.Origin.X := Entry.Get(TileName).Get('origin').Vector.X;
   Result.Origin.Y := Entry.Get(TileName).Get('origin').Vector.Y;
 end;
@@ -228,7 +234,7 @@ procedure TChatBalloon.TargetEvent;
 var
   I, J, Cx1, Cx2, Cx3, Mid: Integer;
 begin
-  Row := Round(GameFont.ExtentByPixels(FMsg).Right) {FontsAlt[3].TextWidth(FMsg)}        div 80 + 1;
+  Row := Round(GameFont.ExtentByPixels(FMsg).Right) {FontsAlt[3].TextWidth(FMsg)}    div 80 + 1;
   OffH := Row * C.Height + C.Origin.Y + S.Height;
   Cx1 := 0;
   Cx2 := 0;
@@ -237,16 +243,18 @@ begin
   for I := 1 to Col + 1 do
   begin
     Cx1 := Cx1 + Part1[I - 1].Width;
-    GameCanvas.Draw(Images[Part1[I].ImageEntry], Cx1 - NW.Origin.X - Mid + 70, -Part1[I].Origin.Y - OffH + 500);
+    GameCanvas.Draw(Images[Part1[I].ImageEntry], Cx1 - NW.Origin.X - Mid + 70, -Part1[I].Origin.Y -
+      OffH + 500);
     Cx2 := Cx2 + Part2[I - 1].Width;
     for J := 0 to Row - 1 do
-      GameCanvas.Draw(Images[Part2[I].ImageEntry], Cx2 - W.Origin.X - Mid + 70, -Part2[I].Origin.Y + (J * C.Height)
-        - OffH + 500);
+      GameCanvas.Draw(Images[Part2[I].ImageEntry], Cx2 - W.Origin.X - Mid + 70, -Part2[I].Origin.Y +
+        (J * C.Height) - OffH + 500);
     Cx3 := Cx3 + Part3[I - 1].Width;
-    GameCanvas.Draw(Images[Part3[I].ImageEntry], Cx3 - SW.Origin.X - Mid + 70, -Part3[I].Origin.Y + (J * C.Height)
-      - OffH + 500);
+    GameCanvas.Draw(Images[Part3[I].ImageEntry], Cx3 - SW.Origin.X - Mid + 70, -Part3[I].Origin.Y +
+      (J * C.Height) - OffH + 500);
   end;
-  GameCanvas.Draw(Images[Arrow.ImageEntry], 70, Arrow.Origin.Y + (J * C.Height) - OffH + 500);
+  if Entry.Get('arrow') <> nil then
+    GameCanvas.Draw(Images[Arrow.ImageEntry], 70, Arrow.Origin.Y + (J * C.Height) - OffH + 500);
   {
     I2 :=0;
     for I := 0 to Length(FMsg) div MaxChars+1  do
@@ -276,19 +284,39 @@ begin
     GameFont.Draw(Point2f(X - 5, Y + I * 13), GetS(FMsg, 80), ARGB(255, R, G, B));
 end;
 
+procedure TChatRingBalloon.ReDraw;
+begin
+  GameCanvas.DrawTarget(TargetTexture, 150, 512,
+    procedure
+    begin
+      TargetEvent;
+    end);
+end;
+
+procedure TChatRingBalloon.DoDraw;
+begin
+  GameCanvas.Draw(TargetTexture, Round(X - 70 - Engine.WorldX), Round(Y - 500 - Engine.WorldY));
+end;
+
 procedure TChatRingBalloon.DoMove;
 begin
   Inc(Counter);
-  if FMsg <> '' then
-    GameCanvas.DrawTarget(TargetTexture, 150, 512,
-      procedure
-      begin
-        TargetTexture.Clear;
-        TargetEvent;
-      end);
-  if Counter > 5000 then
+  if Counter > 1000 then
     Dead;
+  X := Round(Player.X);
+  Y := Round(Player.Y - 80);
+  Z := Player.Z + 1;
+end;
 
+class procedure TChatRingBalloon.Remove;
+begin
+  for var Iter in SpriteEngine.SpriteList do
+    if Iter is TChatRingBalloon then
+    begin
+      Iter.Dead;
+      var s := Iter;
+      s := nil;
+    end;
 end;
 
 end.
