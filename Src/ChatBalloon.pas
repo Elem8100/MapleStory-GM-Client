@@ -56,7 +56,7 @@ type
 implementation
 
 uses
-  PXT.Types, PXT.Canvas, MapleCharacter;
+  PXT.Types, PXT.Canvas, MapleCharacter, MapleChair;
 
 class function TChatBalloon.GetS(var Remaining: string; const Width: Integer): string;
 var
@@ -81,11 +81,11 @@ begin
     begin
       NextWord := Copy(Remaining, 1, Index - 1);
       if PixelCount + Round(GameFont.ExtentByPixels(' ' + NextWord).Right)
-        {FontsAlt[3].TextWidth(' ' + NextWord)}             < Width then
+        {FontsAlt[3].TextWidth(' ' + NextWord)}              < Width then
       begin
         Result := Result + ' ' + NextWord;
         Inc(PixelCount, Round(GameFont.ExtentByPixels(' ' + NextWord).Right)
-          {FontsAlt[3].TextWidth(' ' + NextWord)}             - 5);
+          {FontsAlt[3].TextWidth(' ' + NextWord)}              - 5);
         Delete(Remaining, 1, Index)
       end
       else
@@ -108,7 +108,7 @@ begin
       else
       begin
         if PixelCount + Round(GameFont.ExtentByPixels(' ' + Remaining).Right)
-          {FontsAlt[3].TextWidth(' ' + Remaining)}             < Width then
+          {FontsAlt[3].TextWidth(' ' + Remaining)}              < Width then
         begin
           Result := Result + ' ' + Remaining;
           Remaining := ' '
@@ -234,7 +234,7 @@ procedure TChatBalloon.TargetEvent;
 var
   I, J, Cx1, Cx2, Cx3, Mid: Integer;
 begin
-  Row := Round(GameFont.ExtentByPixels(FMsg).Right) {FontsAlt[3].TextWidth(FMsg)}    div 80 + 1;
+  Row := Round(GameFont.ExtentByPixels(FMsg).Right) {FontsAlt[3].TextWidth(FMsg)}     div 80 + 1;
   OffH := Row * C.Height + C.Origin.Y + S.Height;
   Cx1 := 0;
   Cx2 := 0;
@@ -295,7 +295,8 @@ end;
 
 procedure TChatRingBalloon.DoDraw;
 begin
-  GameCanvas.Draw(TargetTexture, Round(X - 70 - Engine.WorldX), Round(Y - 500 - Engine.WorldY));
+  GameCanvas.Draw(TargetTexture, Round(X - 70 - Engine.WorldX - Player.BrowPos.X + TMapleChair.BodyRelMove.X),
+    Round(Y - 500 - Engine.WorldY - Player.BrowPos.Y + TMapleChair.BodyRelMove.Y));
 end;
 
 procedure TChatRingBalloon.DoMove;
@@ -303,9 +304,9 @@ begin
   Inc(Counter);
   if Counter > 1000 then
     Dead;
-  X := Round(Player.X);
-  Y := Round(Player.Y - 80);
-  Z := Player.Z + 1;
+  X := Round(Player.X - 10);
+  Y := Round(Player.Y - 60);
+  Z := Player.Z + 100;
 end;
 
 class procedure TChatRingBalloon.Remove;
