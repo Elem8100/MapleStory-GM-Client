@@ -32,6 +32,7 @@ type
     CheckBox17: TCheckBox;
     CheckBox18: TCheckBox;
     Edit2: TEdit;
+    CheckBox19: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure CheckBox1Click(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -115,6 +116,8 @@ begin
       TMap.ShowFront := not TMap.ShowFront;
     18:
       TMap.ShowScrollingBar := not TMap.ShowScrollingBar;
+    19:
+      TMap.ShowNpcChat := not TMap.ShowNpcChat;
 
   end;
   ActiveControl := nil;

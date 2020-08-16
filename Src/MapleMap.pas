@@ -51,6 +51,7 @@ type
       ShowUI: Boolean;
       ShowMiniMap: Boolean;
       ShowNpcName: Boolean;
+      ShowNpcChat: Boolean;
       ShowScrollingBar: Boolean;
       ActiveBass: TBassHandler;
       WzMobCount: Integer;
@@ -316,6 +317,7 @@ initialization
   TMap.ShowUI := True;
   TMap.ShowMiniMap := True;
   TMap.ShowNpcName := True;
+  TMap.ShowNpcChat := True;
   TMap.ScrollingMessage:='Welcome to MapleStory GM Client';
 finalization
   BassFree;

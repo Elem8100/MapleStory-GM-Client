@@ -72,7 +72,8 @@ begin
   ChatRingGrid.BeginUpdate;
   for var img in TWZDirectory(CharacterWZ.Root.Entry['Ring']).Files do
   begin
-    if (LeftStr(img.Name, 6) <> '011122') and (LeftStr(img.Name, 6) <> '011150') then
+    if (LeftStr(img.Name, 6) <> '011122') and (LeftStr(img.Name, 6) <> '011150') and (LeftStr(img.Name,
+      6) <> '011152') then
       Continue;
     if GetImgEntry('Character.WZ/Ring/' + img.Name + '/info/chatBalloon') = nil then
       Continue;

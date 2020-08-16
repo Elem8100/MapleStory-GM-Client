@@ -4,8 +4,8 @@ interface
 
 uses
   Windows, System.Types, SysUtils, StrUtils, PXT.Sprites, Generics.Collections, WZIMGFile, Global,
-  Math, Footholds, LadderRopes, ChatBalloon, MapPortal, MapleTV,  Tools, MapleMap,
-  WzUtils, PXT.Graphics, PXT.Types, PXT.Canvas;
+  Math, Footholds, LadderRopes, ChatBalloon, MapPortal, MapleTV, Tools, MapleMap, WzUtils,
+  PXT.Graphics, PXT.Types, PXT.Canvas;
 
 type
   TNpc = class(TSpriteEx)
@@ -47,7 +47,7 @@ type
 implementation
 
 uses
-  System.Character,PXT.TypesEx;
+  System.Character, PXT.TypesEx;
 
 class procedure TNpc.Drop(ID: string; PosX, PosY, Flip: Integer);
 var
@@ -89,7 +89,8 @@ begin
     Actions := TList<string>.Create;
 
     for Iter2 in NPCWZ.GetImgFile(SpriteID + '.img').Root.Children do
-      if (Iter2.Name <> 'info') and (LeftStr(Iter2.Name, 9) <> 'condition') and (Iter2.Get('0', '-1') <> '-1') then
+      if (Iter2.Name <> 'info') and (LeftStr(Iter2.Name, 9) <> 'condition') and (Iter2.Get('0', '-1')
+        <> '-1') then
         Actions.Add(Iter2.Name);
 
     if Actions.Count = 0 then
@@ -257,19 +258,22 @@ begin
     inherited;
     if TMap.ShowNpcName then
       GameCanvas.Draw(TargetTexture, NamePos - 3, WY + 2);
-    Inc(Counter);
-    if Counter > 700 then
+    if TMap.ShowNpcChat then
     begin
-      Counter := 0;
-      RandMsg := Random(Msgs.Count);
-    end;
-    if Msgs.Count > 0 then
-    begin
-      if (Counter > 350) and (Counter < 700) then
-        Balloon.Msg := Msgs[RandMsg]
-      else
+      Inc(Counter);
+      if Counter > 700 then
       begin
-        Balloon.Msg := '';
+        Counter := 0;
+        RandMsg := Random(Msgs.Count);
+      end;
+      if Msgs.Count > 0 then
+      begin
+        if (Counter > 350) and (Counter < 700) then
+          Balloon.Msg := Msgs[RandMsg]
+        else
+        begin
+          Balloon.Msg := '';
+        end;
       end;
     end;
   end;

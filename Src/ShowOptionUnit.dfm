@@ -88,8 +88,8 @@ object ShowOptionForm: TShowOptionForm
   end
   object CheckBox12: TCheckBox
     Tag = 10
-    Left = 572
-    Top = 98
+    Left = 460
+    Top = 100
     Width = 51
     Height = 17
     TabStop = False
@@ -384,5 +384,17 @@ object ShowOptionForm: TShowOptionForm
     TabOrder = 21
     Text = 'Welcome to MapleStory GM Client'
     OnChange = Edit2Change
+  end
+  object CheckBox19: TCheckBox
+    Tag = 19
+    Left = 572
+    Top = 81
+    Width = 81
+    Height = 25
+    Caption = 'Npc Chat'
+    Checked = True
+    State = cbChecked
+    TabOrder = 22
+    OnClick = CheckBox1Click
   end
 end

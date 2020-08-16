@@ -3,9 +3,8 @@ unit LabelRingFormUnit;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, AdvObj,
-  BaseGrid, AdvGrid, Vcl.StdCtrls;
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, AdvObj, BaseGrid, AdvGrid, Vcl.StdCtrls;
 
 type
   TLabelRingForm = class(TForm)
@@ -47,7 +46,7 @@ end;
 
 procedure TLabelRingForm.Edit1Change(Sender: TObject);
 begin
-    LabelRingGrid.NarrowDown(Trim(Edit1.Text));
+  LabelRingGrid.NarrowDown(Trim(Edit1.Text));
 end;
 
 procedure TLabelRingForm.FormActivate(Sender: TObject);
@@ -62,7 +61,8 @@ begin
   LabelRingGrid.BeginUpdate;
   for var img in TWZDirectory(CharacterWZ.Root.Entry['Ring']).Files do
   begin
-    if (LeftStr(img.Name, 6) <> '011121') and (LeftStr(img.Name, 6) <> '011151') then
+    if (LeftStr(img.Name, 6) <> '011121') and (LeftStr(img.Name, 6) <> '011151') and (LeftStr(img.Name,
+      6) <> '011153') then
       Continue;
     if GetImgEntry('Character.WZ/Ring/' + img.Name + '/info/nameTag') = nil then
       Continue;
@@ -75,7 +75,8 @@ begin
     LabelRingGrid.RowCount := RowCount + 1;
     LabelRingGrid.Cells[1, RowCount] := ID;
     if HasImgEntry('String.wz/Eqp.img/Eqp/Ring/' + IDToInt(ID)) then
-      LabelRingGrid.Cells[3, RowCount] := GetImgEntry('String.wz/Eqp.img/Eqp/Ring/' + IDToInt(ID)).Get('Name', '');
+      LabelRingGrid.Cells[3, RowCount] := GetImgEntry('String.wz/Eqp.img/Eqp/Ring/' + IDToInt(ID)).Get
+        ('Name', '');
 
     var Entry := GetImgEntry('Character.WZ/Ring/' + img.Name + '/info/icon', True);
     if Entry <> nil then
@@ -98,12 +99,11 @@ end;
 
 procedure TLabelRingForm.FormCreate(Sender: TObject);
 begin
-  Left := ((Screen.Width - Width) div 2)+400;
+  Left := ((Screen.Width - Width) div 2) + 400;
   Top := (Screen.Height - Height) div 2;
 end;
 
-procedure TLabelRingForm.FormKeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
+procedure TLabelRingForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   if Key = VK_MENU then
     Key := 0;
@@ -114,8 +114,7 @@ begin
   ActiveControl := nil;
 end;
 
-procedure TLabelRingForm.LabelRingGridClickCell(Sender: TObject; ARow,
-  ACol: Integer);
+procedure TLabelRingForm.LabelRingGridClickCell(Sender: TObject; ARow, ACol: Integer);
 begin
   TNameTag.IsUse := False;
   TLabelRingTag.Delete;
