@@ -161,6 +161,7 @@ end;
 procedure TMedalTag.DoMove(const MoveCount: Single);
 begin
   inherited;
+
   if IsReDraw then
     GameCanvas.DrawTarget(TargetTexture, 300, 100,
       procedure
@@ -231,6 +232,15 @@ procedure TMedalTag.TargetEvent;
 begin
   if TMap.ShowChar then
   begin
+    var FontSettings: TFontSettings;
+    if ISKMS then
+      FontSettings := TFontSettings.Create('Tahoma', 10, TFontWeight.Normal)
+    else
+      FontSettings := TFontSettings.Create('Arial', 11, TFontWeight.Normal);
+    FontSettings.Effect.BorderType := TFontBorder.None;
+    GameFont.FontSettings := FontSettings;
+    CenterLength := Round(GameFont.ExtentByPixels(MedalName).Right) + 10;
+
     var WestImage := EquipData[Entry.GetPath + '/w'];
     var WestX := 150 - (CenterLength + EastWidth + WestWidth) div 2;
 
@@ -266,14 +276,6 @@ begin
     GameCanvas.Draw(EquipImages[EastImage], WestX + CenterLength + WestWidth - OffX, -EastImage.Get('origin').Vector.Y
       + 38);
 
-    var FontSettings: TFontSettings;
-    if ISKMS then
-      FontSettings := TFontSettings.Create('Tahoma', 10, TFontWeight.Normal)
-    else
-      FontSettings := TFontSettings.Create('Arial', 11, TFontWeight.Normal);
-
-    FontSettings.Effect.BorderType := TFontBorder.None;
-    GameFont.FontSettings := FontSettings;
     GameFont.Draw(Point2f(WestX + WestWidth + 2, 36), MedalName, ARGB(255, R, G, B));
 
   end;
@@ -284,10 +286,7 @@ begin
   EastWidth := Entry.Get2('e').Canvas.Width;
   WestWidth := Entry.Get2('w').Canvas.Width;
   CenterWidth := Entry.Get2('c').Canvas.Width;
-  var FontSetting := TFontSettings.Create('Arial', 12, TFontWeight.Normal);
-  FontSetting.Effect.BorderType := TFontBorder.None;
-  GameFont.FontSettings := FontSetting;
-  CenterLength := Round(GameFont.Extent(MedalName).x) + 5;
+
   TagWidth := CenterLength + EastWidth + WestWidth + 30;
 
   var TagHeight := Entry.Get('w').Canvas.Height + 30;
