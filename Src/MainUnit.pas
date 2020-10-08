@@ -71,6 +71,7 @@ type
     SoulEffectButton: TSpeedButton;
     ReactorButton: TSpeedButton;
     ChatRingButton: TSpeedButton;
+    EffectRingButton: TSpeedButton;
     procedure LoadMapButtonClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure GridClickCell(Sender: TObject; ARow, ACol: Integer);
@@ -121,6 +122,7 @@ type
     procedure SoulEffectButtonClick(Sender: TObject);
     procedure ReactorButtonClick(Sender: TObject);
     procedure ChatRingButtonClick(Sender: TObject);
+    procedure EffectRingButtonClick(Sender: TObject);
   private
     OldX, OldY: Integer;
     MoveOn: Boolean;
@@ -156,7 +158,7 @@ uses
   Skill, OptionsFormUnit, AvatarFormUnit, AndroidFormUnit, Android, ACtrlEngine, SetScreenFormUnit,
   ConsumeFormUnit, CashForm2Unit, EtcFormUnit, PlayActionFormUnit, UI.Utils, acontrols,
   UI.StatusBar3.Chat, UI.UIWindow2.UserInfo, UI.UIWindow2.Item, SelectFolderFormUnit,
-  TotemEffectFormUnit, SoulEffectFormUnit, ReactorFormUnit, ChatRingFormUnit, ChatBalloon,
+  TotemEffectFormUnit, SoulEffectFormUnit, ReactorFormUnit, ChatRingFormUnit,EffectRingFormUnit, ChatBalloon,
   PXT.TypesEx;
 {$R *.dfm}
 
@@ -1060,6 +1062,11 @@ end;
 procedure TMainForm.SoulEffectButtonClick(Sender: TObject);
 begin
   SoulEffectForm.Show;
+end;
+
+procedure TMainForm.EffectRingButtonClick(Sender: TObject);
+begin
+  EffectRingForm.Show;
 end;
 
 procedure TMainForm.EtcButtonClick(Sender: TObject);

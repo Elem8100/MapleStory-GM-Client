@@ -33,7 +33,8 @@ uses
   TotemEffectFormUnit in 'TotemEffectFormUnit.pas' {TotemEffectForm},
   SoulEffectFormUnit in 'SoulEffectFormUnit.pas' {SoulEffectForm},
   ReactorFormUnit in 'ReactorFormUnit.pas' {ReactorForm},
-  ChatRingFormUnit in 'ChatRingFormUnit.pas' {ChatRingForm};
+  ChatRingFormUnit in 'ChatRingFormUnit.pas' {ChatRingForm},
+  EffectRingFormUnit in 'EffectRingFormUnit.pas' {EffectRingForm};
 
 {$R *.res}
 
@@ -72,5 +73,6 @@ begin
   Application.CreateForm(TSoulEffectForm, SoulEffectForm);
   Application.CreateForm(TReactorForm, ReactorForm);
   Application.CreateForm(TChatRingForm, ChatRingForm);
+  Application.CreateForm(TEffectRingForm, EffectRingForm);
   Application.Run;
 end.
