@@ -4,12 +4,20 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, AdvObj, BaseGrid, AdvGrid;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, AdvObj, BaseGrid, AdvGrid,
+  Vcl.StdCtrls;
 
 type
   TEffectRingForm = class(TForm)
     EffectRingGrid: TAdvStringGrid;
+    Button1: TButton;
     procedure FormActivate(Sender: TObject);
+    procedure EffectRingGridClickCell(Sender: TObject; ARow, ACol: Integer);
+    procedure Button1Click(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure FormClick(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure EffectRingGridClick(Sender: TObject);
   private
     HasShow: Boolean;
     { Private declarations }
@@ -24,7 +32,35 @@ implementation
 
 {$R *.dfm}
 uses
-  WZIMGFile, WZDirectory, WzUtils, Global, StrUtils;
+  WZIMGFile, WZDirectory, WzUtils, Global, StrUtils, MapleEffect;
+
+procedure TEffectRingForm.Button1Click(Sender: TObject);
+begin
+  for var i in TSetEffect.UseList do
+    TSetEffect.Delete(i.Key);
+  TItemEffect.Delete(Ring);
+  ActiveControl := nil;
+end;
+
+procedure TEffectRingForm.EffectRingGridClick(Sender: TObject);
+begin
+  ActiveControl := nil;
+end;
+
+procedure TEffectRingForm.EffectRingGridClickCell(Sender: TObject; ARow, ACol: Integer);
+begin
+  var ID := EffectRingGrid.Cells[1, ARow];
+  if (ID = '01112127') or (ID = '01112804') or (ID = '01113021') or (ID = '01113228') then
+    Exit;
+  for var i in TSetEffect.UseList do
+    TSetEffect.Delete(i.Key);
+  TItemEffect.Delete(Ring);
+  if TItemEffect.AllList.contains(ID) then
+    TItemEffect.Create(ID, Equip);
+  if TSetEffect.AllList.ContainsKey(ID) then
+    TSetEffect.Create(ID);
+  ActiveControl := nil;
+end;
 
 procedure TEffectRingForm.FormActivate(Sender: TObject);
 begin
@@ -41,6 +77,7 @@ begin
   begin
     if LeftStr(Iter.Name, 3) <> '111' then
       Continue;
+
     var ID := '0' + Iter.Name;
     if not HasImgFile('Character.WZ/Ring/' + ID + '.img') then
       Continue;
@@ -59,7 +96,6 @@ begin
       EffectRingGrid.CreateBitmap(2, RowCount, False, haCenter, vaCenter).Assign(Bmp);
       Bmp.Free;
     end;
-
   end;
 
   for var Iter in EffectWz.GetImgFile('SetEff.img').Root.Children do
@@ -87,11 +123,29 @@ begin
                 EffectRingGrid.CreateBitmap(2, RowCount, False, haCenter, vaCenter).Assign(Bmp);
                 Bmp.Free;
               end;
-
             end;
+
   EffectRingGrid.SortByColumn(1);
   EffectRingGrid.EndUpdate;
 
+end;
+
+procedure TEffectRingForm.FormClick(Sender: TObject);
+begin
+  ActiveControl := nil;
+end;
+
+procedure TEffectRingForm.FormCreate(Sender: TObject);
+begin
+  Left := (Screen.Width - Width) div 2;
+  Top := (Screen.Height - Height) div 2;
+end;
+
+procedure TEffectRingForm.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if Key = VK_MENU then
+    Key := 0;
 end;
 
 end.

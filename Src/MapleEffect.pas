@@ -3,11 +3,11 @@ unit MapleEffect;
 interface
 
 uses
-  Windows, SysUtils, StrUtils, PXT.Sprites, Generics.Collections, WZIMGFile,
-  Classes, Global, WzUtils;
+  Windows, SysUtils, StrUtils, PXT.Sprites, Generics.Collections, WZIMGFile, Classes, Global,
+  WzUtils;
 
 type
-  TEffectType = (Cash, Chair, Equip, Consume, Totem, Soul);
+  TEffectType = (Cash, Chair, Equip, Consume, Totem, Soul, Ring);
 
   TSetEffect = class(TSpriteEx)
     Path: string;
@@ -181,8 +181,8 @@ begin
     if (Iter is TItemEffect) and (TItemEffect(Iter).EffType = EffectType) then
     begin
       Iter.Dead;
-      var s:=Iter;
-      s:=nil;
+      var s := Iter;
+      s := nil;
     end;
 end;
 
@@ -305,23 +305,44 @@ begin
   case EffectType of
     Cash:
       Entry := GetImgEntry('Item.wz/Cash/0501.img/' + ID);
-    Chair, Equip, Consume, Totem:
+    Chair, Equip, Consume, Totem,Ring:
       Entry := GetImgEntry('Effect.wz/ItemEff.img/' + IDToInt(ID));
     Soul:
       Entry := GetImgEntry('Effect.wz/BasicEff.img/SoulSkillReadied/Repeat/' + ID);
   end;
 
   DumpData(Entry, EquipData, EquipImages);
-  if LeftStr(ID, 4) = '0301' then
+  if (LeftStr(ID, 4) = '0111') or (LeftStr(ID, 4) = '0301') then
   begin
+    if (LeftStr(ID, 6) = '011129') or (LeftStr(ID, 6) = '011132')then
+      with TItemEffect.Create(SpriteEngine) do
+      begin
+        EffType := Ring;
+        ImageLib := EquipImages;
+        TruncMove := True;
+        Tag := 1;
+        Path := Entry.GetPath + '/effect';
+        for var Iter in Entry.Get('effect').Children do
+          if Iter.Get('effect/0') <> nil then
+          begin
+            ImageEntry := EquipData[Iter.GetPath + '/0'];
+            Break;
+          end;
+      end;
+
     for var Iter in Entry.Children do
       if Iter.Name[1] in ['0'..'9'] then
         with TItemEffect.Create(SpriteEngine) do
         begin
-          EffType := Chair;
+          if (LeftStr(ID, 4) = '0111') then
+            EffType := Ring
+          else
+            EffType := Chair;
+
           ImageLib := EquipImages;
           TruncMove := True;
           Tag := 1;
+
           for var Iter2 in Iter.Children do
           begin
             if Iter2.DataType = mdtCanvas then
@@ -339,7 +360,7 @@ begin
 
         end;
   end
-  else if (LeftStr(ID, 3) = '010') or (LeftStr(ID, 3) = '011') or (LeftStr(ID, 4) = '0501') then
+  else if (LeftStr(ID, 3) = '010') or (LeftStr(ID, 4) = '0110') or (LeftStr(ID, 4) = '0501') then
   begin
     var ItemEffect := TItemEffect.Create(SpriteEngine);
     with ItemEffect do

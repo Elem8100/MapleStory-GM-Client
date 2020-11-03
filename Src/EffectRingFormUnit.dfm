@@ -15,17 +15,20 @@ object EffectRingForm: TEffectRingForm
   OldCreateOrder = False
   Scaled = False
   OnActivate = FormActivate
+  OnClick = FormClick
+  OnCreate = FormCreate
+  OnKeyDown = FormKeyDown
   PixelsPerInch = 120
   TextHeight = 16
   object EffectRingGrid: TAdvStringGrid
     AlignWithMargins = True
     Left = 4
-    Top = 66
+    Top = 35
     Width = 328
-    Height = 537
+    Height = 568
     Cursor = crDefault
     Margins.Left = 4
-    Margins.Top = 66
+    Margins.Top = 35
     Margins.Right = 10
     Margins.Bottom = 8
     Align = alClient
@@ -42,7 +45,9 @@ object EffectRingForm: TEffectRingForm
     ParentFont = False
     ScrollBars = ssVertical
     TabOrder = 0
+    OnClick = EffectRingGridClick
     HoverRowCells = [hcNormal, hcSelected]
+    OnClickCell = EffectRingGridClickCell
     ActiveCellFont.Charset = DEFAULT_CHARSET
     ActiveCellFont.Color = clWindowText
     ActiveCellFont.Height = -11
@@ -157,5 +162,14 @@ object EffectRingForm: TEffectRingForm
       35
       35
       35)
+  end
+  object Button1: TButton
+    Left = 104
+    Top = 8
+    Width = 113
+    Height = 25
+    Caption = 'Remove'
+    TabOrder = 1
+    OnClick = Button1Click
   end
 end
