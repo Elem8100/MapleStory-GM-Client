@@ -27,6 +27,8 @@ type
     Boss2Grid: TAdvStringGrid;
     TabSheet2: TTabSheet;
     DyeGrid: TAdvStringGrid;
+    TabSheet3: TTabSheet;
+    Memo1: TMemo;
     procedure FormCreate(Sender: TObject);
     procedure MobGridClickCell(Sender: TObject; ARow, ACol: Integer);
     procedure Button1Click(Sender: TObject);
@@ -41,6 +43,7 @@ type
     procedure Boss1GridClickCell(Sender: TObject; ARow, ACol: Integer);
     procedure Boss2GridClickCell(Sender: TObject; ARow, ACol: Integer);
     procedure DyeGridClickCell(Sender: TObject; ARow, ACol: Integer);
+    procedure FormDestroy(Sender: TObject);
   private
     MobID: string;
     WZ: TWZArchive;
@@ -48,6 +51,12 @@ type
     HasLoadBoss1: Boolean;
     HasLoadBoss2: Boolean;
     SelectRow: Integer;
+    Path:string;
+    SpriteID:string;
+    MobName:string;
+    RowList: TStringList;
+    function GetPath(Entry: TWZIMGEntry): string;
+    procedure Dump2(Entry: TWZIMGEntry);
     procedure SelectMob;
     procedure SetMobColor(Row: Integer);
     { Private declarations }
@@ -61,8 +70,43 @@ var
 implementation
 
 uses
-   Mob2, MapleCharacter, MobInfo, Global, ColorUtils;
+  Mob2, MapleCharacter, MobInfo, Global, ColorUtils, WZDirectory;
 {$R *.dfm}
+
+function TAddMobForm.GetPath(Entry: TWZIMGEntry): string;
+var
+  Path: string;
+  E: TWZEntry;
+begin
+  Path := Entry.Name;
+  E := Entry.Parent;
+  while E <> nil do
+  begin
+    Path := E.Name + '.' + Path;
+    E := E.Parent;
+  end;
+  Result := Path;
+end;
+
+procedure TAddMobForm.Dump2(Entry: TWZIMGEntry);
+var
+  E: TWZIMGEntry;
+  Data: string;
+begin
+  case Entry.DataType of
+    mdtInt, mdtVector, mdtShort, mdtString, mdtFloat, mdtDouble, mdtInt64:
+      begin
+        if Entry.DataType = mdtVector then
+          Data := 'x:' + IntToStr(Entry.Vector.X) + '  ' + 'y:' + IntToStr(Entry.Vector.Y)
+        else
+          Data := Entry.Data;
+        RowList.Add(GetPath(Entry) + '=' + Data);
+      end;
+  end;
+  for E in Entry.Children do
+    if Entry.DataType <> mdtCanvas then
+      Dump2(E);
+end;
 
 procedure TAddMobForm.MobGridClick(Sender: TObject);
 begin
@@ -73,7 +117,7 @@ procedure TAddMobForm.SelectMob;
 var
   Bmp: TBitmap;
   Entry: TWZIMGEntry;
-  Path, SpriteID: string;
+
 begin
   Image1.Picture := nil;
 
@@ -119,6 +163,7 @@ begin
 
   Image1.Picture.Assign(Bmp);
   Bmp.Free;
+
   ActiveControl := nil;
 end;
 
@@ -127,6 +172,7 @@ begin
   SelectRow := 0;
   //NpcSelectRow:=Arow;
   MobID := MobGrid.Cells[1, ARow];
+  MobName:=  MobGrid.Cells[2, ARow];
   SelectMob;
   TColorFunc.SetGridColor(Image1.Picture.Bitmap, DyeGrid);
 
@@ -134,7 +180,23 @@ end;
 
 procedure TAddMobForm.PageControl1Change(Sender: TObject);
 begin
-  exit;
+
+  if PageControl1.TabIndex = 2 then
+  begin
+    Memo1.Clear;
+    RowList.Clear;
+    RowList.Add('ID='+SpriteID);
+    RowList.Add('Name='+MobName);
+    Dump2(GetImgEntry(Path + SpriteID + '.img/'));
+    var S := GetPath(GetImgEntry(Path + SpriteID + '.img/')) + '.';
+    for var i := 0 to Rowlist.Count - 1 do
+    begin
+      Rowlist[i] := StringReplace(RowList[i], S, '', [rfReplaceAll]);
+      Memo1.Lines.Add(Rowlist.Strings[i]);
+    end;
+  end;
+
+  Exit;
   case PageControl1.TabIndex of
     1:
       begin
@@ -232,7 +294,8 @@ begin
               Row := AddMobForm.boss2grid.RowCount - 1;
               ID := NoIMG(Iter.Parent.parent.Name);
               AddMobForm.Boss2grid.Cells[1, Row] := ID;
-              AddMobForm.Boss2grid.Cells[2, Row] := StringWZ.GetImgFile('Mob.img').Root.Get(IDToInt(ID) + '/name', '');
+              AddMobForm.Boss2grid.Cells[2, Row] := StringWZ.GetImgFile('Mob.img').Root.Get(IDToInt(ID)
+                + '/name', '');
             end
             else if (Iter2.Name = 'maxHP') and (Length(Iter2.data) <= 9) then
             begin
@@ -240,7 +303,8 @@ begin
               Row := AddMobForm.boss1grid.RowCount - 1;
               ID := NoIMG(Iter.Parent.parent.Name);
               AddMobForm.Boss1Grid.Cells[1, Row] := ID;
-              AddMobForm.Boss1Grid.Cells[2, Row] := StringWZ.GetImgFile('Mob.img').Root.Get(IDToInt(ID) + '/name', '');
+              AddMobForm.Boss1Grid.Cells[2, Row] := StringWZ.GetImgFile('Mob.img').Root.Get(IDToInt(ID)
+                + '/name', '');
             end;
           end;
 
@@ -318,7 +382,7 @@ procedure TAddMobForm.FormActivate(Sender: TObject);
 begin
   ActiveControl := nil;
   Edit2.Clear;
-
+  RowList := TStringList.Create;
   if HasLoad then
     Exit;
   HasLoad := True;
@@ -347,6 +411,11 @@ procedure TAddMobForm.FormCreate(Sender: TObject);
 begin
   Left := (Screen.Width - Width) div 2;
   Top := (Screen.Height - Height) div 2;
+end;
+
+procedure TAddMobForm.FormDestroy(Sender: TObject);
+begin
+  RowList.Free;
 end;
 
 procedure TAddMobForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
