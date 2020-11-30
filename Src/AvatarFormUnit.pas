@@ -71,6 +71,8 @@ type
     LabelY: TLabel;
     ExpressionListBox: TComboBox;
     Label7: TLabel;
+    TabSheet7: TTabSheet;
+    InfoGrid: TAdvStringGrid;
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure SpeedButton9Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -106,6 +108,12 @@ type
     DeleteID: string;
     DeleteFileName: string;
     DumpRowCount: Integer;
+    ColList2: TStringList;
+    RowList2: TDictionary<Integer, string>;
+    Row1, Row2: Integer;
+    HasSound2WZ: Boolean;
+    procedure DumpData2(Entry: TWZIMGEntry);
+    procedure Dump2(Entry: TWZIMGEntry);
     procedure ImageGridSelect(Sender: TObject; idx: Integer);
     procedure AddInventory(ID: string; Icon: TBitmap; Name: string; ARow: Integer);
     procedure ResetColorGrid;
@@ -131,6 +139,52 @@ uses
   PXT.Types;
 
 {$R *.dfm}
+
+procedure TAvatarForm.Dump2(Entry: TWZIMGEntry);
+var
+  E: TWZIMGEntry;
+  Data: string;
+begin
+
+  case Entry.DataType of
+    mdtInt, mdtVector, mdtShort, mdtString, mdtFloat, mdtDouble, mdtInt64:
+      begin
+        if Entry.DataType = mdtVector then
+          Data := 'x:' + IntToStr(Entry.Vector.X) + '  ' + 'y:' + IntToStr(Entry.Vector.Y)
+        else
+          Data := Entry.Data;
+
+        ColList2.Add((Entry).GetPathD + '=' + Data + ',  ');
+      end;
+  end;
+
+  for E in Entry.Children do
+    if Entry.DataType <> mdtCanvas then
+      Dump2(E);
+
+end;
+
+procedure TAvatarForm.DumpData2(Entry: TWZIMGEntry);
+var
+  i: Integer;
+  S, FinalStr: string;
+begin
+
+  ColList2.BeginUpdate;
+  Inc(Row2);
+  Dump2(Entry);
+
+  S := Entry.GetPathD + '.';
+  for i := 0 to ColList2.Count - 1 do
+  begin
+    ColList2[i] := StringReplace(ColList2[i], S, '', [rfReplaceAll]);
+    FinalStr := FinalStr + ColList2[i];
+  end;
+  ColList2.EndUpdate;
+  Delete(FinalStr, Length(FinalStr) - 2, 1);
+  RowList2.Add(Row2, FinalStr);
+  ColList2.Clear;
+end;
 
 procedure TAvatarForm.AddInventory(ID: string; Icon: TBitmap; Name: string; ARow: Integer);
 begin
@@ -345,6 +399,32 @@ begin
       end;
     5:
       Label2.Caption := '';
+    6:
+      begin
+        Row2:=-1;
+        InfoGrid.AssignCells(Inventory);
+        for var Row := 0 to Inventory.RowCount do
+        begin
+          if Inventory.CellTypes[1, Row - 1] = ctPicture then
+            InfoGrid.CreateBitmap(1, Row - 1, False, haCenter, vaCenter).Assign(Inventory.CellGraphics
+              [1, Row - 1].CellBitmap);
+        end;
+        InfoGrid.ColWidths[0] := 72;
+        InfoGrid.ColWidths[1] := 60;
+        InfoGrid.ColWidths[2] := 120;
+        InfoGrid.ColWidths[3] := 520;
+
+        InfoGrid.RemoveRows(0, 2);
+        for var i := 0 to InfoGrid.RowCount - 1 do
+        begin
+          var ID := InfoGrid.Cells[0, i];
+          DumpData2(CharacterWZ.GetImgFile(GetDir(ID) + ID+'.img').Root.Child['info']);
+        end;
+        for var i in RowList2.Keys do
+          InfoGrid.Cells[3, i] := RowList2[i];
+        RowList2.Clear;
+
+      end;
 
   end;
 end;
@@ -582,6 +662,8 @@ begin
   Left := (Screen.Width - Width) div 2;
   Top := (Screen.Height - Height) div 2;
   HasLoaded := TList<Integer>.Create;
+  RowList2 := TDictionary<Integer, string>.Create;
+  ColList2 := TStringList.Create;
 
   for var i := 1 to 20 do
   begin
@@ -658,6 +740,8 @@ begin
   IconList.Free;
   if Wz <> nil then
     Wz.Free;
+  RowList2.Free;
+  ColList2.Free;
   HasLoaded.Free;
 end;
 
