@@ -32,7 +32,7 @@ type
     function Get(const Path: string; Default: Variant): Variant; overload;
     function Get2(const Path: string): TWZIMGEntry;
     function GetPath: string;
-    function GetPath: string;
+    function GetPathD: string;
     property DataType: TMapleDataType read FType write FType;
     property Data: Variant read FData write FData;
     property Canvas: TPNGMapleCanvas read FCanvas write FCanvas;
