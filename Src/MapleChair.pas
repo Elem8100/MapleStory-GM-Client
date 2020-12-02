@@ -3,8 +3,8 @@ unit MapleChair;
 interface
 
 uses
-  Windows, SysUtils, StrUtils, PXT.Sprites, Generics.Collections, WZIMGFile,
-  Classes, Global, WzUtils,ColorUtils;
+  Windows, SysUtils, StrUtils, PXT.Sprites, Generics.Collections, WZIMGFile, Classes, Global,
+  WzUtils, ColorUtils;
 
 type
   TMapleChair = class(TSpriteEx)
@@ -21,16 +21,16 @@ type
       UseTamingNavel: Boolean;
       BodyRelMove: TPoint;
       CharacterAction: string;
-
     procedure DoMove(const Movecount: Single); override;
     class procedure Delete;
-    class procedure Create(ID: string;ColorEffect:TColorEffect=ceNone;Value:Integer=0); overload;
+    class procedure Create(ID: string; ColorEffect: TColorEffect = ceNone; Value: Integer = 0);
+      overload;
   end;
 
 implementation
 
 uses
-  MapleCharacter,TamingMob, Footholds, ChairformUnit;
+  MapleCharacter, TamingMob, Footholds, ChairformUnit;
 
 class procedure TMapleChair.Delete;
 begin
@@ -40,8 +40,8 @@ begin
     if Iter is TMapleChair then
     begin
       Iter.Dead;
-      var s:=Iter;
-      s:=nil;
+      var s := Iter;
+      s := nil;
     end;
   for var Iter in EquipImages.Keys do
     if LeftStr(Iter.GetPath, 20) = 'Item.wz/Install/0301' then
@@ -51,10 +51,10 @@ begin
     end;
 
   for var Iter in EquipImages.Keys do
-    if LeftStr(Iter.GetPath, 27) = 'Character.wz/TamingMob/0198'  then
+    if LeftStr(Iter.GetPath, 27) = 'Character.wz/TamingMob/0198' then
     begin
-       EquipImages.Remove(Iter);
-       EquipData.Remove(Iter.GetPath);
+      EquipImages.Remove(Iter);
+      EquipData.Remove(Iter.GetPath);
     end;
   BodyRelMove.X := 0;
   BodyRelMove.Y := 0;
@@ -83,11 +83,11 @@ begin
   begin
     case MirrorX of
       True:
-        Offset.X := Origin.X - PatternWidth-TTamingMob.Navel.X;
+        Offset.X := Origin.X - PatternWidth - TTamingMob.Navel.X;
       False:
-        Offset.X := -Origin.X-TTamingMob.Navel.X;
+        Offset.X := -Origin.X - TTamingMob.Navel.X;
     end;
-    Offset.Y := -Origin.Y-TTamingMob.Navel.Y;
+    Offset.Y := -Origin.Y - TTamingMob.Navel.Y;
   end
   else
 
@@ -103,7 +103,8 @@ begin
 
 end;
 
-class procedure TMapleChair.Create(ID: string;ColorEffect:TColorEffect=ceNone;Value:Integer=0);
+class procedure TMapleChair.Create(ID: string; ColorEffect: TColorEffect = ceNone; Value: Integer =
+  0);
 var
   Below: TPoint;
   BelowFH: TFoothold;
@@ -118,58 +119,64 @@ begin
     Entry := GetImgEntry('Item.wz/Install/0301.img/')
   else
   begin
-    case ID[5] of
-      '0', '1', '2', '3', '4', '6', '7', '8':
-        Entry := GetImgEntry('Item.wz/Install/0301' + ID[5] + '.img/');
+    if LeftStr(ID, 4) = '0302' then
+      Entry := GetImgEntry('Item.wz/Install/0302.img/')
+    else
+      case ID[5] of
+        '0', '1', '2', '3', '4', '6', '7', '8':
+          Entry := GetImgEntry('Item.wz/Install/0301' + ID[5] + '.img/');
 
-      '5':
-        begin
-          case ID[6] of
-            '0'..'9':
-              Entry := GetImgEntry('Item.wz/Install/03015' + ID[6] + '.img/');
+        '5':
+          begin
+            case ID[6] of
+              '0'..'9':
+                Entry := GetImgEntry('Item.wz/Install/03015' + ID[6] + '.img/');
+            end;
           end;
-        end;
 
-    end;
+      end;
   end;
 
   CharacterAction := 'sit';
   if (Entry.Get(ID + '/info/tamingMob') <> nil) then
   begin
     var TamingMobID: string;
-    if Entry.Get(ID + '/info/tamingMob/0')<> nil then
+    if Entry.Get(ID + '/info/tamingMob/0') <> nil then
       TamingMobID := Entry.Get(ID + '/info/tamingMob/0').Data
     else
       TamingMobID := Entry.Get(ID + '/info/tamingMob').Data;
     if HasImgEntry('Character.wz/TamingMob/' + '0' + TamingMobID + '.img/sit/0') then
     begin
       if HasImgEntry('Character.wz/TamingMob/' + '0' + TamingMobID + '.img/sit/0/0') then
-        if GetImgEntry('Character.wz/TamingMob/' + '0' + TamingMobID + '.img/sit/0/0').Canvas.Width = 4 then
+        if GetImgEntry('Character.wz/TamingMob/' + '0' + TamingMobID + '.img/sit/0/0').Canvas.Width
+          = 4 then
           UseTamingNavel := True;
 
       TTamingMob.IsChairTaming := True;
-      TTamingMob.Create('0' + TamingMobID,ColorEffect,Value);
-      if HasImgEntry('Character.wz/TamingMob/' + '0' + TamingMobID + '.img/characterAction/sit') then
+      TTamingMob.Create('0' + TamingMobID, ColorEffect, Value);
+      if HasImgEntry('Character.wz/TamingMob/' + '0' + TamingMobID + '.img/characterAction/sit')
+        then
       begin
         HasSitAction := True;
-        CharacterAction := GetImgEntry('Character.wz/TamingMob/' + '0' + TamingMobID + '.img/characterAction/sit').Data
+        CharacterAction := GetImgEntry('Character.wz/TamingMob/' + '0' + TamingMobID +
+          '.img/characterAction/sit').Data
       end
       else
         CharacterAction := 'sit';
     end;
   end;
 
-
-  if (Entry.Get(ID + '/effect') = nil)  and (Entry.Get(ID + '/effect2') = nil) then
+  if (Entry.Get(ID + '/effect') = nil) and (Entry.Get(ID + '/effect2') = nil) then
     Exit;
 
-   if (Entry.Get(ID + '/effect/0') <> nil)   then
-  if Entry.Get(ID + '/info/customChair/randomChairInfo/0') = nil then
-    if (Entry.Get(ID + '/effect/0').Canvas.Width = 1) and (Entry.Get(ID + '/effect/0/_inlink') = nil) and (Entry.Get(ID + '/effect/0/_outlink') = nil) then
-      if (Entry.Get(ID + '/effect/1') = nil) and (Entry.Get(ID + '/effect2') = nil) then
-        Exit;
+  if (Entry.Get(ID + '/effect/0') <> nil) then
+    if Entry.Get(ID + '/info/customChair/randomChairInfo/0') = nil then
+      if (Entry.Get(ID + '/effect/0').Canvas.Width = 1) and (Entry.Get(ID + '/effect/0/_inlink') =
+        nil) and (Entry.Get(ID + '/effect/0/_outlink') = nil) then
+        if (Entry.Get(ID + '/effect/1') = nil) and (Entry.Get(ID + '/effect2') = nil) then
+          Exit;
 
-  DumpData(Entry.Get(ID), EquipData, EquipImages,ColorEffect,Value);
+  DumpData(Entry.Get(ID), EquipData, EquipImages, ColorEffect, Value);
 
   if Entry.Get(ID + '/info/bodyRelMove') <> nil then
     BodyRelMove := Entry.Get(ID + '/info/bodyRelMove').Vector;
@@ -293,7 +300,6 @@ begin
   end;
 
 end;
-
 
 end.
 

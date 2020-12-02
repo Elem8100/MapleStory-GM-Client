@@ -127,7 +127,7 @@ begin
   var Dict := TDictionary<string, TRec>.Create;
 
   for var Iter in StringWZ.GetImgFile('Ins.img').Root.Children do
-    if LeftStr(Iter.Name, 3) = '301' then
+    if (LeftStr(Iter.Name, 3) = '301')or (LeftStr(Iter.Name, 3) = '302')then
     begin
 
       Rec.Desc := Iter.Get('desc', '');
@@ -142,7 +142,7 @@ begin
 
   for var img in TWZDirectory(ItemWZ.Root.Entry['Install']).Files do
   begin
-    if LeftStr(img.Name, 4) <> '0301' then
+    if (LeftStr(img.Name, 4) <> '0301') and (LeftStr(img.Name, 4) <> '0302') then
       Continue;
 
     for var Iter in ItemWZ.GetImgFile('Install/' + img.Name).Root.Children do
