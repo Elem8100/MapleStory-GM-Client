@@ -998,6 +998,9 @@ begin
         Continue;
       if Left4 = '0160' then
         Continue;
+      //skip format 257 Hair
+      if ID.ToInteger div 10 =4773 then
+        Continue;
 
       Name := StringWZ.GetImgFile('Eqp.img').Root.Get('Eqp/' + CharacterDir + '/' + IDToInt(ID) +
         '/name', '');
@@ -1026,13 +1029,13 @@ begin
           if not InRange(30, 36) then
             Continue;
         14: // Hair2
-          if not InRange(37, 48) then
+          if not InRange(37, 61) then
             Continue;
         15: // Face1
           if not InRange(20, 23) then
             Continue;
         16: // Face2
-          if not InRange(24, 50) then
+          if not InRange(24, 51) then
             Continue;
         17:
           if Left4 <> '0101' then
