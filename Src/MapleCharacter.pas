@@ -442,7 +442,7 @@ begin
       Result := '';
     2, 5:
       Result := 'Face/';
-    3, 4:
+    3, 4,6:
       Result := 'Hair/';
     101, 102, 103:
       Result := 'Accessory/';
@@ -478,7 +478,7 @@ begin
       Result := Head;
     2, 5:
       Result := Face;
-    3, 4:
+    3, 4,6:
       Result := Hair;
     101:
       Result := FaceAcc;
