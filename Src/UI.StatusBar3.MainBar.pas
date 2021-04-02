@@ -112,7 +112,7 @@ begin
   for var I := 1 to Length(NumberStr) do
   begin
     Char := MidStr(NumberStr, I, 1);
-    W := GraphicNumber.Get(Char).Canvas.Width;
+    W := GraphicNumber.Get2(Char).Canvas.Width;
     PosX := PosX + W;
     GameCanvas.Draw(UIImages[GraphicNumber.Get(Char)], X + PosX - W - Middle, Y);
   end;
@@ -332,7 +332,7 @@ begin
     CreateImage(KeyPath + key1[i], 1, 1, 29 + i * 35, 6);
     CreateImage(KeyPath + key2[i], 1, 1, 29 + i * 35, 42);
   end;
-  CreateButton('UI.wz/StatusBar3.img/mainBar/quickSlot/button:Fold',15);
+  CreateButton('UI.wz/StatusBar3.img/mainBar/quickSlot/button:Extend',15);
 
 end;
 
