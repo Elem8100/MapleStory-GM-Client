@@ -170,7 +170,7 @@ begin
   Decompressed := Decompress;
   try
     case FFormat of
-      1:
+      1,257:
         Texture := Parse1(Decompressed);
       2:
         Texture := Parse2(Decompressed);
