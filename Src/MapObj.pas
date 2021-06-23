@@ -14,6 +14,8 @@ type
     FTime: Integer;
     Origin: TPoint;
     InfoPath: string;
+    AX,AY:Single;
+    MoveP,MoveW,MoveH:Integer;
   public
     procedure DoMove(const Movecount: Single); override;
     procedure DoDraw; override;
@@ -80,6 +82,8 @@ begin
           ImageEntry := WzData[InfoPath + '/0'];
           X := Iter.Get('x', '0');
           Y := Iter.Get('y', '0');
+          AX:=X;
+          AY:=Y;
           Z := Layer * 100000 + Iter.Get('z', '0');
           MirrorX := Boolean(Iter.Get('f', '0'));
           Width := PatternWidth;
@@ -91,6 +95,14 @@ begin
 
           if ImageEntry.Get('moveType', '0') then
             Moved := True;
+
+          if ImageEntry.Get('moveP', '0') then
+            MoveP:= ImageEntry.Get('moveP').Data;
+          if ImageEntry.Get('moveW', '0') then
+            MoveW:= ImageEntry.Get('moveW').Data;
+          if ImageEntry.Get('moveH', '0') then
+            MoveH:= ImageEntry.Get('moveH').Data;
+
 
           if ImageEntry.Get('moveR', '0') then
           begin
@@ -154,7 +166,7 @@ end;
 
 procedure TMapObj.DoMove(const Movecount: Single);
 var
-  Delay, a0, a1, MoveType, MoveP, MoveH, MoveW, MoveR, Flow: Integer;
+  Delay, a0, a1, MoveType, MoveR, Flow: Integer;
   AniAlpha: Single;
 begin
   // if FHasAnim = False  then Exit;
@@ -184,28 +196,25 @@ begin
     Alpha := Trunc(AniAlpha);
 
   MoveType := ImageEntry.Get('moveType', '0');
-  MoveP := ImageEntry.Get('moveP', '0');
-  MoveH := ImageEntry.Get('moveH', '0');
-  MoveW := ImageEntry.Get('moveW', '0');
-  MoveR := ImageEntry.Get('moveR', '0');
+
   if Boolean(MoveType) then
   begin
-    // FDelta := FDelta + TimeDelta;
+
     FDelta := FDelta + 0.017;
     case MoveType of
       1:
         begin
           if Boolean(MoveP) then
-            X := X + -MoveW * Cos(FDelta * 1000 * 2 * Pi / MoveP) / 60
+            X := AX + MoveW * Cos(FDelta * 1000 * 2 * Pi /MoveP)
           else
-            X := X + -MoveW * Cos(FDelta) / 60;
+            X := AX + MoveW * Cos(FDelta);
         end;
       2:
         begin
           if Boolean(MoveP) then
-            Y := Y + -MoveH * Cos(FDelta * 2 * Pi * 1000 / MoveP) / 60
+            Y := AY + MoveH * Cos(FDelta * 2 * Pi * 1000 / MoveP)
           else
-            Y := Y + -MoveH * Cos(FDelta) / 60;
+            Y := AY + MoveH * Cos(FDelta);
         end;
       3:
         begin

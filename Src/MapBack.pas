@@ -21,9 +21,10 @@ type
     FDelta: Real;
     Front: Integer;
     MoveR: Integer;
-    MoveH: Integer;
     MoveType: Integer;
     Origin: TPoint;
+    AX, AY:Single;
+    MoveP, MoveW, MoveH:Integer;
   public
     procedure DoMove(const Movecount: Single); override;
     procedure DoDraw; override;
@@ -135,10 +136,16 @@ begin
       begin
         InfoPath := AniEntry.GetPath;
         ImageEntry := WzData[InfoPath + '/0'];
-        MoveType := ImageEntry.Get('moveType', '0');
-        MoveR := ImageEntry.Get('moveR', '0');
-        MoveH := ImageEntry.Get('moveH', '0');
       end;
+
+     MoveType := ImageEntry.Get('moveType', '0');
+      MoveR := ImageEntry.Get('moveR', '0');
+     if ImageEntry.Get('moveP', '0') then
+         MoveP:= ImageEntry.Get('moveP').Data;
+     if ImageEntry.Get('moveW', '0') then
+        MoveW:= ImageEntry.Get('moveW').Data;
+     if ImageEntry.Get('moveH', '0') then
+        MoveH:= ImageEntry.Get('moveH').Data;
 
       Width := PatternWidth;
       Height := PatternHeight;
@@ -166,6 +173,9 @@ begin
       X := -PosX - (100 + RX) / 100 * (WX + DisplaySize.X / 2) + WX;
       Y := -PosY - (100 + RY) / 100 * (WY + DisplaySize.Y / 2) + WY;
       Z := ZLayer;
+
+      AX:=X;
+      AY:=Y;
 
       case BackType of
         // no tile
@@ -227,7 +237,7 @@ end;
 
 procedure TMapBack.DoMove(const Movecount: Single);
 var
-  a0, a1, Delay, MoveW, MoveP, OffSetY: Integer;
+  a0, a1, Delay,  OffSetY: Integer;
   AniAlpha: Single;
 begin
 
@@ -286,6 +296,35 @@ begin
     end;
   end;
 
+  if Boolean(MoveType) then
+  begin
+    FDelta := FDelta + 0.017;
+    case MoveType of
+      1:
+        begin
+          if Boolean(MoveP) then
+            X := AX + MoveW * Cos(FDelta * 1000 * 2 * Pi /MoveP)/60
+          else
+            X := AX + MoveW * Cos(FDelta)/60;
+        end;
+      2:
+        begin
+          if Boolean(MoveP) then
+            Y := Y + MoveH * Cos(FDelta * 2 * Pi * 1000 / MoveP)/60
+          else
+            Y := Y + MoveH * Cos(FDelta)/60;
+        end;
+      3:
+        begin
+            DrawMode := 1;
+            Angle := Angle + (17 / MoveR) * Pi * 2;
+            Offset.X := 0;
+            Offset.Y := 0;
+        end;
+    end;
+  end;
+
+
   if FHasAnim then
   begin
     ImageEntry := WzData[InfoPath + '/' + FFrame.ToString];
@@ -309,39 +348,9 @@ begin
     if FTime > 0 then
       Alpha := Trunc(AniAlpha);
 
-    MoveP := ImageEntry.Get('moveP', '0');
-    // MoveH := WzData[ImagePath].Get('moveH', '0');
-    MoveW := ImageEntry.Get('moveW', '0');
 
-    if Boolean(MoveType) then
-    begin
-      // FDelta := FDelta + TimeDelta;
-      FDelta := FDelta + 0.017;
-      case MoveType of
-        1:
-          begin
-            if Boolean(MoveP) then
-              X := X + -MoveW * Cos(FDelta * 1000 * 2 * Pi / MoveP) / 60
-            else
-              X := X + -MoveW * Cos(FDelta) / 60;
-          end;
-        2:
-          begin
-            if Boolean(MoveP) then
-              Y := Y + -MoveH * Cos(FDelta * 2 * Pi * 1000 / MoveP) / 60
-            else
-              Y := Y + -MoveH * Cos(FDelta) / 60;
-          end;
-        3:
-          begin
-            DrawMode := 1;
-            Angle := Angle + (17 / MoveR) * Pi * 2;
-            Offset.X := 0;
-            Offset.Y := 0;
-          end;
-      end;
 
-    end;
+
 
     if ImageEntry.Get('origin') <> nil then
       Origin := ImageEntry.Get('origin').Vector;
