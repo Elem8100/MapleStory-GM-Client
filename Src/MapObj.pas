@@ -234,7 +234,7 @@ begin
       Offset.X := -Origin.X;
   end;
   Offset.Y := -Origin.Y;
-
+  MoveR := ImageEntry.Get('moveR', '0');
   if Boolean(MoveR) then
   begin
     Angle := Angle + (17 / MoveR) * Pi * 2;
