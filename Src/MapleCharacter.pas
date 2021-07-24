@@ -561,7 +561,8 @@ begin
     56:
       Result := 'swordZB';
     57:
-      Result := 'swordZL'
+      Result := 'swordZL';
+    59: Result:='ancientBow';
   end;
 end;
 
