@@ -246,7 +246,10 @@ begin
 
   X := Trunc(Player.X - 10);
   Pos := TWZIMGEntry(ImageEntry.Parent).Get('pos', '-1');
-
+  if (Pos=0) or (Pos=1) then
+    X:= Trunc(Player.X -10)
+  else
+    X:= Trunc(Player.X);
   if EffType <> Totem then
   begin
     if Pos = 1 then
