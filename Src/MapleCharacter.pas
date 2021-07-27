@@ -562,7 +562,8 @@ begin
       Result := 'swordZB';
     57:
       Result := 'swordZL';
-    59: Result:='ancientBow';
+    59:
+     Result:='ancientBow';
   end;
 end;
 
@@ -1339,7 +1340,7 @@ begin
     end;
   end;
 
-  if (Part = Weapon) and (LeftStr(ID, 4) = '0121') then
+  if (Part = Weapon) and (LeftStr(ID, 5) = '01212') then
   begin
     if (Image = 'weapon') or (Image = 'weapon1') or (Image = 'weapon2') then
       Visible := False;
