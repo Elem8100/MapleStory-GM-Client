@@ -16,6 +16,7 @@ type
     Delay: Integer;
     Origin: TPoint;
     Default: Integer;
+    DoWalk:Boolean;
     class var
       AllList: TDictionary<string, string>;
       UseList: TDictionary<string, TSetEffect>;
@@ -75,10 +76,20 @@ begin
     for var Iter in Entry.Children do
       for var Iter2 in Iter.Children do
       begin
+        if (Iter2.Name='walk1')  then
+           DoWalk:=True;
         if (Iter2.Name[1] in ['0'..'9']) and (Iter2.DataType = mdtCanvas) then
         begin
           Path := TWZIMGEntry(Iter2.Parent).GetPath;
           ImageEntry := EquipData[Iter2.GetPath];
+        end;
+        for var Iter3 in Iter2.Children do
+        begin
+          if (Iter3.Name[1] in ['0'..'9']) and (Iter3.DataType = mdtCanvas) then
+          begin
+            Path := TWZIMGEntry(Iter3.Parent).GetPath;
+            ImageEntry := EquipData[Iter3.GetPath];
+          end;
         end;
       end;
   end;
@@ -105,6 +116,14 @@ begin
   end
   else
     Visible := False;
+
+  if DoWalk then
+  begin
+   if (Player.Action='walk1') or (Player.Action='walk2') then
+      Visible:=True
+   else
+      Visible:=False;
+  end;
   Delay := ImageEntry.Get('delay', '100');
   FTime := FTime + 17;
   if FTime > Delay then
