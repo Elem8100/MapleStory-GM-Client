@@ -300,6 +300,29 @@ begin
               Result := GetImgEntry(Result.Child['_outlink'].Data, True);
 
           end
+          else if LeftStr(GetEntryPath(Result), 6) = 'Mob002' then
+          begin
+
+            if HasImgFile('Mob.wz/' + S[1]) then
+            begin
+              OutLink := StringReplace(OutLink, 'Mob', 'Mob', [rfReplaceAll]);
+              Result := GetImgEntry(OutLink, True);
+            end
+            else if HasImgFile('Mob002.wz/' + S[1]) then
+            begin
+              OutLink := StringReplace(OutLink, 'Mob', 'Mob002', [rfReplaceAll]);
+              Result := GetImgEntry(OutLink, True);
+            end
+            else if HasImgFile('Mob001.wz/' + S[1]) then
+            begin
+              OutLink := StringReplace(OutLink, 'Mob', 'Mob001', [rfReplaceAll]);
+              Result := GetImgEntry(OutLink, True);
+            end
+            else
+              Result := GetImgEntry(Result.Child['_outlink'].Data, True);
+
+          end
+
           else if (LeftStr(GetEntryPath(Result), 8) = 'Skill001') and (not HasImgFile(S[0] + '/' + S[1])) then
           begin
             OutLink := StringReplace(OutLink, 'Skill', 'Skill001', [rfReplaceAll]);
