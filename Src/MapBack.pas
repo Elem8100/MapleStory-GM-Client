@@ -150,12 +150,24 @@ begin
       Width := PatternWidth;
       Height := PatternHeight;
 
-      Offset.X := ImageEntry.Get('origin').Vector.X;
-      Offset.Y := ImageEntry.Get('origin').Vector.Y;
-      if Offset.X < 0 then
-        Offset.X := 0;
-      if Offset.X > Width then
-        Offset.X := Width;
+      //Offset.X := ImageEntry.Get('origin').Vector.X;
+      //Offset.Y := ImageEntry.Get('origin').Vector.Y;
+    if ImageEntry.Get('origin') <> nil then
+       Origin := ImageEntry.Get('origin').Vector;
+
+    case MirrorX of
+      True:
+        Offset.X := -Origin.X + PatternWidth;
+      False:
+        Offset.X := Origin.X;
+    end;
+    Offset.Y := Origin.Y;
+
+
+   // if Offset.X < 0 then
+   //   Offset.X := 0;
+   //  if Offset.X > Width then
+   //  Offset.X := Width;
 
       if CX = 0 then
         Width := PatternWidth

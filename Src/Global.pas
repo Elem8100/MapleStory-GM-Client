@@ -37,7 +37,7 @@ var
   BackEngine: array[0..1] of TSpriteEngine;
  // FontsAlt: TAsphyreFontsAlt;
   Keyboard: TAsphyreKeyboard;
-  MobWZ, Mob2WZ, Mob001WZ, NPCWZ, MapWz, Map2Wz, Map001Wz,Map002Wz, MorphWz, StringWZ, SoundWZ, Sound2Wz,
+  MobWZ, Mob2WZ, Mob001WZ,Mob002Wz, NPCWZ, MapWz, Map2Wz, Map001Wz,Map002Wz, MorphWz, StringWZ, SoundWZ, Sound2Wz, Sound002Wz,
     CharacterWZ, BaseWZ, UIWZ, ReactorWz, EffectWz, SkillWZ, Skill001Wz, ItemWZ, EtcWZ: TWZArchive;
   GameMode: TGameMode;
   Sounds: TObjectList<TBassHandler>;

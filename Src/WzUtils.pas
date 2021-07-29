@@ -55,16 +55,28 @@ begin
         Result := MapWz;
 
     'o':
+     begin
+      if LeftStr(Path,3)='Mob' then
+         Result:=Mobwz;
+      if LeftStr(Path,6)='Mob001' then
+       Result:=Mob001Wz;
+      if LeftStr(Path,6)='Mob002' then
+         Result:=Mob002Wz;
+      if LeftStr(Path,4)='Mob2' then
+        Result:=Mob2Wz;
+
       if Path[1] = 'S' then
         Result := SoundWZ
       else if Path[3] = 'r' then
-        Result := MorphWz
-      else if Path[4] = '2' then
-        Result := Mob2WZ
-      else if Path[4] = '0' then
-        Result := Mob001WZ
-      else
-        Result := MobWZ;
+        Result := MorphWz;
+     // else if Path[4] = '2' then
+       // Result := Mob2WZ
+    //  else if Path[4] = '0' then
+      //  Result := Mob001WZ
+    //  else
+       // Result := MobWZ;
+     end;
+
     'p':
       Result := NPCWZ;
     'h':

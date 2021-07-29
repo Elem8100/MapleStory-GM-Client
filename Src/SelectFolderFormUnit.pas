@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, FolderDialog, Vcl.Grids, AdvObj, BaseGrid, AdvGrid,
-  Vcl.StdCtrls, Generics.Collections;
+  Vcl.StdCtrls, Generics.Collections, AdvUtil;
 
 type
   TSelectFolderForm = class(TForm)
@@ -137,6 +137,8 @@ begin
       Mob2WZ := TWZArchive.Create(FolderPath + '\Mob2.wz');
     if FileExists(FolderPath + '\Mob001.wz') then
       Mob001WZ := TWZArchive.Create(FolderPath + '\Mob001.wz');
+    if FileExists(FolderPath + '\Mob002.wz') then
+      Mob002WZ := TWZArchive.Create(FolderPath + '\Mob002.wz');
     if FileExists(FolderPath + '\Map002.wz') then
     begin
       Map002Wz := TWZArchive.Create(FolderPath + '\Map002.wz');
@@ -147,12 +149,15 @@ begin
     SoundWZ := TWZArchive.Create(FolderPath + '\Sound.wz');
     if FileExists(FolderPath + '\Sound2.wz') then
       Sound2Wz := TWZArchive.Create(FolderPath + '\Sound2.wz');
-
+    if FileExists(FolderPath + '\Sound002.wz') then
+      Sound2Wz := TWZArchive.Create(FolderPath + '\Sound002.wz');
     CharacterWZ := TWZArchive.Create(FolderPath + '\Character.wz');
     BaseWZ := TWZArchive.Create(FolderPath + '\Base.wz');
     UIWZ := TWZArchive.Create(FolderPath + '\UI.wz');
     if HasImgFile('UI.wz/UIWindow4.img') then
-      UIVersion := 3;
+      UIVersion := 3
+    else
+      UIVersion:=1;
     ReactorWz := TWZArchive.Create(FolderPath + '\Reactor.wz');
     EffectWz := TWZArchive.Create(FolderPath + '\Effect.wz');
     SkillWZ := TWZArchive.Create(FolderPath + '\Skill.wz');

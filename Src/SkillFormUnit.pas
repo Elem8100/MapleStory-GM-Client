@@ -141,7 +141,7 @@ begin
     Entry := GetImgEntry('Skill.wz/' + GetJobID(ID) + '.img/skill/' + ID)
   else
     Entry := GetImgEntry('Skill001.wz/' + GetJobID(ID) + '.img/skill/' + ID);
-  var Bmp := Entry.Get2('icon').Canvas.DumpBmp;
+  var Bmp := Entry.Get('icon').Canvas.DumpBmp;
   var RowCount := SkillGrid.RowCount;
   SkillGrid.CreateBitmap(2, RowCount, False, haCenter, vaCenter).Assign(Bmp);
   SkillGrid.Cells[3, RowCount] := SelectGrid.Cells[3, SelectRow];
@@ -201,7 +201,7 @@ begin
       SelectGrid.RowCount := RowCount + 1;
       SelectGrid.Cells[1, RowCount] := ID;
       var Entry := GetImgEntry('Skill.wz/' + GetJobID(ID) + '.img/skill/' + ID);
-      var Bmp := Entry.Get2('icon').Canvas.DumpBmp;
+      var Bmp := Entry.Get('icon').Canvas.DumpBmp;
       SelectGrid.CreateBitmap(2, RowCount, False, haCenter, vaCenter).Assign(Bmp);
       Bmp.Free;
       if HasImgEntry('String.wz/Skill.img/' + ID) then
@@ -218,7 +218,7 @@ begin
         SelectGrid.RowCount := RowCount + 1;
         SelectGrid.Cells[1, RowCount] := ID;
         var Entry := GetImgEntry('Skill01.wz/' + GetJobID(ID) + '.img/skill/' + ID);
-        var Bmp := Entry.Get2('icon').Canvas.DumpBmp;
+        var Bmp := Entry.Get('icon').Canvas.DumpBmp;
         SelectGrid.CreateBitmap(2, RowCount, False, haCenter, vaCenter).Assign(Bmp);
         Bmp.Free;
         SelectGrid.Cells[3, RowCount] := GetImgEntry('String.wz/Skill.img/' + ID).Get('name', '');

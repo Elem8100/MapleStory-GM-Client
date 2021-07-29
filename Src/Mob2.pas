@@ -207,13 +207,24 @@ begin
     PathW := 'Mob001.wz/';
     WZ := Mob001WZ;
   end
-  else
+  else  if Mob2Wz<> nil then
   begin
-    Path1 := 'Mob2/';
-    InfoPath := 'Mob2/';
-    PathW := 'Mob2.wz/';
-    WZ := Mob2WZ;
+    if  Mob2WZ.GetImgFile(ID + '.img') <> nil then
+    begin
+     Path1 := 'Mob2/';
+     InfoPath := 'Mob2/';
+     PathW := 'Mob2.wz/';
+     WZ := Mob2WZ;
+    end
+  end
+  else  if Mob002WZ.GetImgFile(ID + '.img') <> nil then
+  begin
+    Path1 := 'Mob002/';
+    InfoPath := 'Mob002/';
+    PathW := 'Mob002.wz/';
+    WZ := Mob002WZ;
   end;
+
 
   Entry := GetImgEntry(Path1 + ID + '.img/info/link');
   if not MobList.contains(ID) then
@@ -237,12 +248,22 @@ begin
       PathW := 'Mob001.wz/';
       WZ := Mob001WZ;
     end
-    else
+    else if Mob2Wz <> nil then
     begin
+      if Mob2WZ.GetImgFile(EntryID + '.img') <> nil then
+      begin
       Path1 := 'Mob2/';
       PathW := 'Mob2.wz/';
       WZ := Mob2WZ;
+      end;
+    end
+    else  if Mob002WZ.GetImgFile(ID + '.img') <> nil then
+    begin
+      Path1 := 'Mob002/';
+      PathW := 'Mob002.wz/';
+      WZ := Mob002WZ;
     end;
+
     if not Wzdata.ContainsKey(PathW + EntryID + '.img') then
       DumpData(WZ.GetImgFile(Entry.Data + '.img').Root, WzData, Images, ColorEffect, Value);
   end;
