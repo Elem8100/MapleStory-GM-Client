@@ -680,11 +680,12 @@ begin
     GameFont.FontSettings := FontSettings;
     GameFont.Draw(Point2f(10, 50), 'BGM: ' + TMap.BgmPath, $FFFF0000);
   end;
-  if UIVersion = 3 then
+
+  if TMap.ShowUI then
   begin
-    if TMap.ShowUI then
+    UIEngine.Render(Canvas.Handle);
+    if UIVersion = 3 then
     begin
-      UIEngine.Render(Canvas.Handle);
       if TSlots.PickUpItem <> nil then
       begin
         var Mx := Mouse.CursorPos.X - MainForm.Left - 230;
@@ -692,6 +693,10 @@ begin
         GameCanvas.Draw(UIImages[TSlots.PickUpItem], Mx, MY);
       end;
       GameCursor.Draw;
+    end
+    else
+    begin
+       GameCursor.Draw;
     end;
   end;
 
@@ -934,7 +939,7 @@ begin
     OpenMSFolder.Enabled := False;
     ComboKey.Enabled := False;
   end;
-  if (UIVersion = 3) and (TMAp.ShowUI) then
+  if (TMAp.ShowUI) then
     RenderForm.Cursor := crNone;
   RenderForm.FormResize(Sender);
   ActiveControl := nil;

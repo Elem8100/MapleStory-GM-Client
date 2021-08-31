@@ -31,7 +31,8 @@ procedure TRenderForm.FormMouseDown(Sender: TObject; Button: TMouseButton; Shift
 begin
   if UIData.Count = 0 then
     Exit;
-  UIForm['StatusBar3Chat'].SendToBack;
+  if UIVersion = 3 then
+     UIForm['StatusBar3Chat'].SendToBack;
   GameCursor.Change('12');
 end;
 

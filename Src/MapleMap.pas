@@ -177,6 +177,20 @@ begin
       DumpData(GetImgEntry('UI.wz/Basic.img/Cursor/12'), UIData, UIImages);
       DumpData(GetImgEntry('UI.wz/Basic.img/Cursor/67'), UIData, UIImages);
     end;
+    if UIVersion = 1 then
+    begin
+       AMiniMap := TMiniMap.Create(UIEngine.Root);
+      with AMiniMap do
+      begin
+        Width := TMap.MiniMapWidth + 125;
+        Height := TMap.MiniMapHeight + 40;
+        Left := 150 + 1000;
+        Top := 150 + 1000;
+      end;
+       DumpData(GetImgEntry('UI.wz/Basic.img/Cursor/0'), UIData, UIImages);
+      DumpData(GetImgEntry('UI.wz/Basic.img/Cursor/12'), UIData, UIImages);
+    end;
+
     SpriteEngine.Move(1);
   end;
   if ReLoad then
@@ -241,7 +255,7 @@ begin
       Bmp.Free;
     end;
   end;
-  if UIVersion = 3 then
+  //if UIVersion = 3 then
     AMiniMap.ReDraw;
   //TNameTag.Create('SuperGM');
 
@@ -289,6 +303,12 @@ begin
     Entry := Sound2Wz.GetImgFile(BgmIMG).Root.Child[BgmName];
     WZ := Sound2Wz;
   end
+   else if Sound002Wz.GetImgFile(BgmIMG) <> nil then
+  begin
+    Entry := Sound002Wz.GetImgFile(BgmIMG).Root.Child[BgmName];
+    WZ := Sound002Wz;
+  end
+
   else
     Exit;
 
