@@ -279,9 +279,18 @@ begin
   Width := LWidth + 20;
   Height := TMap.MiniMapHeight + 40;
 
-  UIOwner := 'Form10';
+  if UIVersion = 1 then
+  begin
+    const Path = 'UI.wz/UIWindow.img/MiniMap/';
+    CreateImage(Path + 'title', 1, 1, 9, 9);
+    //TMS
+    if UIImage[Path + 'title'].Height = 14 then
+      UIImage[Path + 'title'].Top := 5;
+  end;
+
   if UIVersion = 3 then
   begin
+    UIOwner := 'Form10';
     const Path = 'UI.wz/UIWindow2.img/MiniMap/';
     CreateButton(Path + 'BtNpc', 0, 5);
     UIButton[Path + 'BtNpc'].Left := Lwidth - 30;
