@@ -286,6 +286,16 @@ begin
     //TMS
     if UIImage[Path + 'title'].Height = 14 then
       UIImage[Path + 'title'].Top := 5;
+
+    CreateButton(Path + 'BtMap', 0, 6);
+    UIButton[Path + 'BtMap'].Left := Lwidth-18;
+
+    CreateButton('UI.wz/Basic.img/BtMax', 0, 6);
+    UIButton['UI.wz/Basic.img/BtMax'].Left := Lwidth-32;
+
+    CreateButton('UI.wz/Basic.img/BtMin', 0, 6);
+    UIButton['UI.wz/Basic.img/BtMin'].Left := Lwidth-45;
+
   end;
 
   if UIVersion = 3 then
