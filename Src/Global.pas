@@ -23,6 +23,8 @@ type
   end;
 
 var
+  WzList:TList<TWZArchive>;
+  Is64Bit: Boolean;
   WzPath: string;
   FDevice: TDevice;
   GameDevice2: TDevice;

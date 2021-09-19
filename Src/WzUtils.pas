@@ -4,18 +4,21 @@ interface
 
 uses
   Windows, SysUtils, StrUtils, Generics.Collections, WZIMGFile, Global, Tools,
-   WZArchive, WZDirectory, ColorUtils,PXT.Types,
-  PXT.Graphics;
+  WZArchive, WZDirectory, ColorUtils, PXT.Types, PXT.Graphics;
 
 function NoIMG(const Name: string): string; inline;
 
 function GetImgEntry(Path: string; UseGet2: Boolean = False): TWZIMGEntry;
+
+function GetImgEntry64(Path: string; UseGet2: Boolean = False): TWZIMGEntry;
 
 function HasImgEntry(Path: string): Boolean;
 
 function GetEntryPath(Entry: TWZIMGEntry): string;
 
 function GetImgFile(Path: string): TWZIMGFile;
+
+function GetImgFile64(Path: string): TWZIMGFile;
 
 function HasImgFile(Path: string): Boolean;
 
@@ -25,10 +28,10 @@ function HasEntryE(Path: string): Boolean;
 
 function GetUOL(Entry: TWZIMGEntry): TWZIMGEntry;
 
-procedure DumpData(Entry: TWZIMGEntry; ToData: TDictionary<string, TWZIMGEntry>; ToImageLib:
-  TDictionary<TWZIMGEntry, TTexture>; ColorEffect: TColorEffect = ceNone; Value: Integer = 0);
+procedure DumpData(Entry: TWZIMGEntry; ToData: TDictionary<string, TWZIMGEntry>; ToImageLib: TDictionary<TWZIMGEntry, TTexture>; ColorEffect: TColorEffect = ceNone; Value: Integer = 0);
 
 implementation
+
 
 type
   TNodeInfo = record
@@ -55,27 +58,27 @@ begin
         Result := MapWz;
 
     'o':
-     begin
-      if LeftStr(Path,3)='Mob' then
-         Result:=Mobwz;
-      if LeftStr(Path,6)='Mob001' then
-       Result:=Mob001Wz;
-      if LeftStr(Path,6)='Mob002' then
-         Result:=Mob002Wz;
-      if LeftStr(Path,4)='Mob2' then
-        Result:=Mob2Wz;
+      begin
+        if LeftStr(Path, 3) = 'Mob' then
+          Result := Mobwz;
+        if LeftStr(Path, 6) = 'Mob001' then
+          Result := Mob001Wz;
+        if LeftStr(Path, 6) = 'Mob002' then
+          Result := Mob002Wz;
+        if LeftStr(Path, 4) = 'Mob2' then
+          Result := Mob2Wz;
 
-      if Path[1] = 'S' then
-        Result := SoundWZ
-      else if Path[3] = 'r' then
-        Result := MorphWz;
+        if Path[1] = 'S' then
+          Result := SoundWZ
+        else if Path[3] = 'r' then
+          Result := MorphWz;
      // else if Path[4] = '2' then
        // Result := Mob2WZ
     //  else if Path[4] = '0' then
       //  Result := Mob001WZ
     //  else
        // Result := MobWZ;
-     end;
+      end;
 
     'p':
       Result := NPCWZ;
@@ -130,6 +133,17 @@ begin
     Result := WZ.GetImgFile(ImgName).Root.Get(S[1]);
 end;
 
+function GetImgEntry64(Path: string; UseGet2: Boolean = False): TWZIMGEntry;
+var
+  S: TStringArray;
+begin
+  S := Explode('.img/', Path);
+  if UseGet2 then
+    Result := GetImgFile64(S[0] + '.img').Root.Get2_64(S[1])
+  else
+    Result := GetImgFile64(S[0] + '.img').Root.Get(S[1]);
+end;
+
 function GetImgFile(Path: string): TWZIMGFile;
 var
   S: TStringArray;
@@ -142,6 +156,34 @@ begin
   Len := Pos('/', S[0]) + 1;
   ImgName := MidStr(S[0], Len, 100) + '.img';
   Result := WZ.GetImgFile(ImgName);
+end;
+
+function GetImgFile64(Path: string): TWZIMGFile;
+begin
+  var Split := Explode('/', Path);
+
+  var imgName: string;
+  for var iter in Split do
+  begin
+    if RightStr(iter, 4) = '.img' then
+      imgName := iter;
+  end;
+
+  var Str := '';
+  for var I := 0 to High(Split) - 1 do
+    Str := Str + Split[i] + '/';
+  Delete(Str, Length(Str), 1);
+  var Len := Length(Str);
+
+  for var I in WzList do
+  begin
+    if Leftstr(I.path, Len) = LeftStr(Path, Len) then
+    begin
+      if i.GetImgFile(imgName) <> nil then
+        Exit(I.GetImgFile(imgName));
+
+    end;
+  end;
 end;
 
 function HasImgEntry(Path: string): Boolean;
@@ -179,8 +221,7 @@ begin
   Result := Path;
 end;
 
-procedure Scan1(IE: TWZIMGEntry; ToData: TDictionary<string, TWZIMGEntry>; ToImageLib:
-  TDictionary<TWZIMGEntry, TTexture>; ColorEffect: TColorEffect; Value: Integer);
+procedure Scan1(IE: TWZIMGEntry; ToData: TDictionary<string, TWZIMGEntry>; ToImageLib: TDictionary<TWZIMGEntry, TTexture>; ColorEffect: TColorEffect; Value: Integer);
 var
   C, Child, Entry: TWZIMGEntry;
   NodeInfo: TNodeInfo;
@@ -217,9 +258,7 @@ begin
     Scan1(C, ToData, ToImageLib, ColorEffect, Value);
 end;
 
-procedure Scan2(OriNode, UOLNode: string; IE: TWZIMGEntry; ToData: TDictionary<string,
-  TWZIMGEntry>; ToImageLib: TDictionary<TWZIMGEntry, TTexture>; ColorEffect:
-  TColorEffect; Value: Integer);
+procedure Scan2(OriNode, UOLNode: string; IE: TWZIMGEntry; ToData: TDictionary<string, TWZIMGEntry>; ToImageLib: TDictionary<TWZIMGEntry, TTexture>; ColorEffect: TColorEffect; Value: Integer);
 var
   C: TWZIMGEntry;
   Child, Entry: TWZIMGEntry;
@@ -276,8 +315,7 @@ begin
     Scan3(OriNode, UOLNode, C, ToData);
 end;
 
-procedure DumpData(Entry: TWZIMGEntry; ToData: TDictionary<string, TWZIMGEntry>; ToImageLib:
-  TDictionary<TWZIMGEntry, TTexture>; ColorEffect: TColorEffect = ceNone; Value: Integer = 0);
+procedure DumpData(Entry: TWZIMGEntry; ToData: TDictionary<string, TWZIMGEntry>; ToImageLib: TDictionary<TWZIMGEntry, TTexture>; ColorEffect: TColorEffect = ceNone; Value: Integer = 0);
 var
   P: TNodeInfo;
 begin
@@ -293,6 +331,7 @@ end;
 initialization
   NodeList1 := TList<TNodeInfo>.Create;
   NodeList2 := TList<TNodeInfo>.Create;
+
 
 finalization
   NodeList1.Free;
