@@ -3,16 +3,13 @@ unit WZIMGFile;
 interface
 
 uses
-  Windows, Classes, SysUtils, Variants, Generics.Collections, Tools, Dialogs, WZReader, WZDirectory,
-  PNGMapleCanvasEx, MP3MapleSound, StrUtils;
+  Windows, Classes, SysUtils, Variants, Generics.Collections, Tools, Dialogs,
+  WZReader, WZDirectory, PNGMapleCanvasEx, MP3MapleSound, StrUtils;
 
 type
-  tagVARENUM = (VT_EMPTY, VT_NULL, VT_I2, VT_I4, VT_R4, VT_R8, VT_CY, VT_DATE, VT_BSTR, VT_DISPATCH,
-    VT_ERROR, VT_BOOL, VT_VARIANT, VT_UNKNOWN, VT_DECIMAL, VT_UNDEFINED0xF, VT_I1, VT_UI1, VT_UI2,
-    VT_UI4, VT_I8, VT_UI8);
+  tagVARENUM = (VT_EMPTY, VT_NULL, VT_I2, VT_I4, VT_R4, VT_R8, VT_CY, VT_DATE, VT_BSTR, VT_DISPATCH, VT_ERROR, VT_BOOL, VT_VARIANT, VT_UNKNOWN, VT_DECIMAL, VT_UNDEFINED0xF, VT_I1, VT_UI1, VT_UI2, VT_UI4, VT_I8, VT_UI8);
 
-  TMapleDataType = (mdtNone, mdtIMG_0x00, mdtShort, mdtInt, mdtFloat, mdtDouble, mdtString,
-    mdtExtended, mdtProperty, mdtCanvas, mdtVector, mdtConvex, mdtSound, mdtUOL, mdtInt64);
+  TMapleDataType = (mdtNone, mdtIMG_0x00, mdtShort, mdtInt, mdtFloat, mdtDouble, mdtString, mdtExtended, mdtProperty, mdtCanvas, mdtVector, mdtConvex, mdtSound, mdtUOL, mdtInt64);
 
   TWZIMGEntry = class(TWZEntry)
   private
@@ -31,6 +28,7 @@ type
     function Get(const Path: string): TWZIMGEntry; overload;
     function Get(const Path: string; Default: Variant): Variant; overload;
     function Get2(const Path: string): TWZIMGEntry;
+    function Get2_64(const Path: string): TWZIMGEntry;
     function GetPath: string;
     function GetPathD: string;
     property DataType: TMapleDataType read FType write FType;
@@ -322,7 +320,6 @@ begin
               Result := GetImgEntry(Result.Child['_outlink'].Data, True);
 
           end
-
           else if (LeftStr(GetEntryPath(Result), 8) = 'Skill001') and (not HasImgFile(S[0] + '/' + S[1])) then
           begin
             OutLink := StringReplace(OutLink, 'Skill', 'Skill001', [rfReplaceAll]);
@@ -346,6 +343,99 @@ begin
   Split := nil;
 end;
 
+function TWZIMGEntry.Get2_64(const Path: string): TWZIMGEntry;
+var
+  Split, split2: TStringArray;
+  i: Integer;
+  Child, Entry: TWZIMGEntry;
+  s1, s2, Err, OutLink: string;
+begin
+  Split := Explode('/', Path);
+
+  Result := Self;
+
+  for i := 0 to High(Split) do
+  begin
+
+    if Split[i] = '..' then
+      Result := TWZIMGEntry(Result.Parent)
+    else
+      Result := Result.Child[Split[i]];
+
+    if not Assigned(Result) then
+      Exit(GetImgEntry64('Character/00002000.img/alert/0/arm'));
+
+  end;
+
+  case Result.DataType of
+    mdtUOL:
+      begin
+        Entry := TWZIMGEntry(Result.Parent);
+        Child := Entry.Get(Result.Data);
+
+        if (Child = nil) then
+        begin
+          Err := GetEntryPath(Result);
+          if LeftStr(Err, 6) <> 'Npc.wz' then
+          begin
+            s1 := StringReplace(GetEntryPath(Result), '.wz', '', [rfReplaceAll]);
+            s2 := StringReplace(Result.Data, '../', '', [rfReplaceAll]);
+            split2 := Explode('/', s2);
+            s2 := '';
+            for i := 1 to High(split2) do
+              s2 := s2 + split2[i] + '/';
+            s2 := split2[0] + '.img/' + s2;
+            Delete(s2, Length(s2), 1);
+            Child := GetImgEntry(StringReplace(s1, RightStr(s1, Length(s2)), s2, [rfReplaceAll]));
+            if Child = nil then
+              Exit(GetImgEntry64('Character/00002000.img/alert/0/arm'));
+
+          end
+          else
+            Child := GetImgEntry64('Character/00002000.img/alert/0/arm');
+        end;
+
+        if Child <> nil then
+          case Child.DataType of
+            // UOL link to UOL
+            mdtUOL:
+              begin
+                Child := TWZIMGEntry(Child.Parent).Get(Child.Data);
+              end;
+            // UOL link to Canvas
+            mdtCanvas:
+              begin
+                if Child.Child['_inlink'] <> nil then
+                  Child := GetTopEntry(Child).Get(Child.Child['_inlink'].Data)
+                else if Child.Child['_outlink'] <> nil then
+                  Child := GetImgEntry64(Child.Child['_outlink'].Data, True);
+              end;
+          end;
+
+        Result := Child;
+      end;
+
+    mdtCanvas:
+      begin
+        if Result.Child['_outlink'] <> nil then
+        begin
+          OutLink := Result.Child['_outlink'].Data;
+          Result := GetImgEntry64(OutLink, True);
+        end
+        else if Result.Child['_inlink'] <> nil then
+        begin
+          Result := GetTopEntry(Result).Get(Result.Child['_inlink'].Data);
+          if Result = nil then
+            Exit(GetImgEntry64('Character/00002000.img/alert/0/arm'));
+        end
+        else if Result.Child['source'] <> nil then
+          Result := GetImgEntry64(Result.Child['source'].Data, True);
+      end;
+  end;
+
+  Split := nil;
+end;
+
 function TWZIMGEntry.Get(const Path: string; Default: Variant): Variant;
 var
   i: Integer;
@@ -363,8 +453,7 @@ begin
       else
         Exit(Default)
     else
-      ShowMessage(VarTypeAsText(VarType(E.Data)) + '  --->  ' + IntToStr(Byte(E.DataType)) +
-        '  ||  ' + VarTypeAsText(VarType(Default)));
+      ShowMessage(VarTypeAsText(VarType(E.Data)) + '  --->  ' + IntToStr(Byte(E.DataType)) + '  ||  ' + VarTypeAsText(VarType(Default)));
 
     Exit(Default);
   end;

@@ -11,7 +11,7 @@ type
     FReader: TWZReader;
     FRoot: TWZDirectory;
     FFileSize, FHeaderSize, FVersion: Integer;
-    FName, FPKG, FCopyright: string;
+    FName, FPKG, FCopyright,FPath: string;
 
     procedure Load;
     procedure GetOffsets(Dir: TWZDirectory; var StartOffset: Int64);
@@ -23,7 +23,7 @@ type
     destructor Destroy; override;
 
     function GetImgFile(const Path: string): TWZIMGFile;
-
+    function ResolveFullPath(P: string): TWZIMGEntry;
     function ParseFile(F: TWZFile): TWZIMGFile;
 
     property Reader: TWZReader read FReader;
@@ -33,6 +33,7 @@ type
     property FileSize: Integer read FFileSize;
     property HeaderSize: Integer read FHeaderSize;
     property Name: string read FName;
+    property Path: string read FPath write FPath;
     property PKG: string read FPKG;
     property Version: Integer read FVersion;
   end;
@@ -41,7 +42,20 @@ var
   VerStart: Integer = 100;  // Their fucking hash algorithm has collisions every 10 versions...
 
 implementation
- // uses unit1;
+
+function TWZArchive.ResolveFullPath(P: string): TWZIMGEntry;
+var
+  Split: TArray<string>;
+begin
+  while P[1] <> '/' do
+    Delete(P, 1, 1);
+  Delete(P, 1, 1);
+
+  Split := Explode('.img/', P);
+  Result := GetImgFile(Split[0] + '.img').Root.Get(Split[1]);
+end;
+
+
 constructor TWZArchive.Create(Filename: string; LoadToMem: Boolean = False);
 begin
   FReader := TWZReader.Create(Filename, LoadToMem);
