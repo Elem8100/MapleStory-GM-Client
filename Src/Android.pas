@@ -383,7 +383,7 @@ begin
   begin
     TruncMove := True;
     Tag := 1;
-    var TagNum := GetImgEntry('Etc.wz/Android/' + ItemID + '/info').Get('nameTag', '38');
+    var TagNum := GetImgEntry('Etc/Android/' + ItemID + '/info').Get('nameTag', '38');
     Entry := GetImgEntry('UI.wz/NameTag.img/pet/' + string(TagNum));
     if Entry = nil then
       Entry := GetImgEntry('UI.wz/NameTag.img/pet/38');

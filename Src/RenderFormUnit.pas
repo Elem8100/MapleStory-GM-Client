@@ -49,7 +49,7 @@ begin
   if FDevice.Initialized then
     FDevice.Resize(Point2i(ClientWidth, ClientHeight));
 
-  var Path := 'UI.wz/StatusBar3.img/mainBar/menu';
+  var Path := 'UI/StatusBar3.img/mainBar/menu';
   if UIForm.ContainsKey(Path) then
   begin
     case DisplaySize.X of
@@ -75,7 +75,7 @@ begin
         UIForm['Input/ChatEnter'].Visible := True;
       end;
     end;
-    var Path2 := 'UI.wz/StatusBar3.img/mainBar/submenu/title/';
+    var Path2 := 'UI/StatusBar3.img/mainBar/submenu/title/';
     UIForm[Path2 + 'event'].Left := UIForm[Path].Left - 10;
     UIForm[Path2 + 'event'].Top := UIForm[Path].Top - 90;
     UIForm[Path2 + 'character'].Left := UIForm[Path].Left + 20;
@@ -90,7 +90,7 @@ begin
       UIForm['StatusBar3Chat'].Top := UIForm[Path].Top - 540;
     TEXPBar.Instance.ReDraw;
 
-    const quickSlot='UI.wz/StatusBar3.img/mainBar/quickSlot/backgrnd';
+    const quickSlot='UI/StatusBar3.img/mainBar/quickSlot/backgrnd';
     UIForm[quickSlot].Left := UIForm[Path].Left + 200;
     UIForm[quickSlot].Top := UIForm[Path].Top-37;
 

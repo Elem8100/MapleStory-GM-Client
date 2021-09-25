@@ -3,9 +3,9 @@ unit DamageSkinFormUnit;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, WZIMGFile,
-  WzUtils, Vcl.Grids, AdvObj, BaseGrid, AdvGrid, Vcl.ExtCtrls, Vcl.StdCtrls;
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, WZIMGFile, WzUtils, Vcl.Grids, AdvObj, BaseGrid, AdvGrid,
+  Vcl.ExtCtrls, Vcl.StdCtrls, AdvUtil;
 
 type
   TDamageSkinForm = class(TForm)
@@ -20,7 +20,7 @@ type
     procedure FormClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
   private
-    HasLoad :Boolean;
+    HasLoad: Boolean;
     { Private declarations }
   public
     { Public declarations }
@@ -30,26 +30,27 @@ var
   DamageSkinForm: TDamageSkinForm;
 
 implementation
-   uses DamageNumber,MapleMap;
+
+uses
+  DamageNumber, MapleMap;
 {$R *.dfm}
 
 procedure TDamageSkinForm.DamageGridClick(Sender: TObject);
 begin
-   ActiveControl:= nil;
+  ActiveControl := nil;
 end;
 
-procedure TDamageSkinForm.DamageGridClickCell(Sender: TObject; ARow,
-  ACol: Integer);
+procedure TDamageSkinForm.DamageGridClickCell(Sender: TObject; ARow, ACol: Integer);
 begin
-  TDamageNumber.UseNewDamage:=True;
-  var DamageStyle:=DamageGrid.Cells[1, ARow];
+  TDamageNumber.UseNewDamage := True;
+  var DamageStyle := DamageGrid.Cells[1, ARow];
 
   //style=1/Red1
-  TDamageNumber.Style:=DamageStyle;
+  TDamageNumber.Style := DamageStyle;
   TDamageNumber.Load(DamageStyle);
-  Label1.Caption:=DamageStyle;
-  Image1.Picture.Assign(DamageGrid.CellGraphics[2,ARow].CellBitmap);
-  ActiveControl:= nil;
+  Label1.Caption := DamageStyle;
+  Image1.Picture.Assign(DamageGrid.CellGraphics[2, ARow].CellBitmap);
+  ActiveControl := nil;
 end;
 
 procedure TDamageSkinForm.FormActivate(Sender: TObject);
@@ -59,17 +60,16 @@ begin
   HasLoad := True;
   DamageGrid.Canvas.Font.Size := 18;
   DamageGrid.Canvas.TextOut(60, 0, 'Loading...');
-  var Entry:TWZIMGEntry;
-  if TMap.Has002Wz then
-    Entry := GetImgEntry('Effect.wz/DamageSkin')
-  else
+  var Entry: TWZIMGEntry;
+  if HasImgFile('Effect/DamageSkin.img') then
+    Entry := GetImgEntry('Effect/DamageSkin.img/')
+  else if GetImgEntry('Effect/BasicEff.img/damageSkin') <> nil then
     Entry := GetImgEntry('Effect.wz/BasicEff.img/damageSkin');
-  if Entry=nil then
+  if Entry = nil then
   begin
     MessageDlg('Older versions of .wz are not supported', mtinformation, [mbOk], 0);
     Exit;
   end;
-
 
   var Rowcount := -1;
 
@@ -81,10 +81,10 @@ begin
         DamageGrid.RowCount := Rowcount + 1;
         DamageGrid.Cells[1, Rowcount] := Iter.Name + '/' + Iter2.Name;
 
-        if Iter2.Child['5']<> nil then
+        if Iter2.Child['5'] <> nil then
         begin
-          var Bmp:=Iter2.Get2('5').Canvas.DumpBmp;
-          DamageGrid.CreateBitmap(2, RowCount, False, haCenter, vaCenter).Assign(Bmp);
+          var Bmp := Iter2.Get2('5').Canvas.DumpBmp;
+          DamageGrid.CreateBitmap(2, Rowcount, False, haCenter, vaCenter).Assign(Bmp);
           Bmp.Free;
         end;
       end;
@@ -93,7 +93,7 @@ end;
 
 procedure TDamageSkinForm.FormClick(Sender: TObject);
 begin
- ActiveControl := nil;
+  ActiveControl := nil;
 end;
 
 procedure TDamageSkinForm.FormCreate(Sender: TObject);
@@ -102,10 +102,9 @@ begin
   Top := (Screen.Height - Height) div 2;
 end;
 
-procedure TDamageSkinForm.FormKeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
+procedure TDamageSkinForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
-   if Key = VK_MENU then
+  if Key = VK_MENU then
     Key := 0;
 end;
 

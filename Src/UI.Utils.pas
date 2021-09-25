@@ -119,13 +119,13 @@ end;
 
 procedure TGameCursor.Draw;
 begin
-  var ImageEntry := UIData['UI.wz/Basic.img/Cursor/' + CursorNumber + '/' + Frame.ToString];
+  var ImageEntry := UIData['UI/Basic.img/Cursor/' + CursorNumber + '/' + Frame.ToString];
   var Delay := ImageEntry.Get('delay', '100');
   FTime := FTime + 17;
   if FTime > Delay then
   begin
     Frame := Frame + 1;
-    if not UIData.ContainsKey('UI.wz/Basic.img/Cursor/' + CursorNumber + '/' + Frame.ToString) then
+    if not UIData.ContainsKey('UI/Basic.img/Cursor/' + CursorNumber + '/' + Frame.ToString) then
       Frame := 0;
     FTime := 0;
   end;
@@ -503,7 +503,7 @@ begin
 
   for I := 1000000 to 1000010 do
   begin
-    Entry := CharacterWZ.GetImgFile('Cap/' + '0' + IntToStr(I) + '.img').Root.Get('info/icon');
+    Entry := GetImgFile('Character/Cap/' + '0' + IntToStr(I) + '.img').Root.Get('info/icon');
     UIImages.Add(Entry, Entry.Canvas.Dump(ceNone, 0));
 
   end;

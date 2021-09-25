@@ -54,7 +54,7 @@ var
   Delay, a1: Integer;
   AniAlpha: Single;
 const
-  c = 'Character.wz/Afterimage/';
+  c = 'Character/Afterimage/';
 begin
   inherited;
   Visible := True;
@@ -131,12 +131,12 @@ begin
           Hit := True;
           Damage := 500000 + Random(700000);
           HP := HP - Damage;
-          if HasImgEntry('Sound.wz/Mob.img/' + SelfID + '/Damage') then
+          if HasImgEntry('Sound/Mob.img/' + SelfID + '/Damage') then
             PlaySounds('Mob', SelfID + '/Damage')
-          else if HasImgEntry('Sound.wz/Mob.img/' + SelfID + '/Hit1') then
+          else if HasImgEntry('Sound/Mob.img/' + SelfID + '/Hit1') then
             PlaySounds('Mob', SelfID + '/Hit1');
                // if can pushed
-          if WzData.ContainsKey('Mob.wz/' + SelfID + '.img/hit1') or WzData.ContainsKey('Mob2.wz/' + SelfID + '.img/hit1') then
+          if WzData.ContainsKey('Mob/' + SelfID + '.img/hit1') or WzData.ContainsKey('Mob/' + SelfID + '.img/hit1') then
             GetHit1 := True;
 
         end;

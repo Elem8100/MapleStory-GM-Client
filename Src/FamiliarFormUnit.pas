@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, AdvObj, BaseGrid, AdvGrid, Vcl.StdCtrls,
-  Vcl.ComCtrls;
+  Vcl.ComCtrls, AdvUtil;
 
 type
   TFamiliarForm = class(TForm)
@@ -55,12 +55,8 @@ procedure TFamiliarForm.DyeGridClickCell(Sender: TObject; ARow, ACol: Integer);
 begin
   var Entry: TWZIMGEntry;
 
-  if HasImgFile('Mob.wz/' + FamiliarID + '.img') then
-    Entry := GetImgEntry('Mob.wz/' + FamiliarID + '.img/')
-  else if HasImgFile('Mob001.wz/' + FamiliarID + '.img') then
-    Entry := GetImgEntry('Mob001.wz/' + FamiliarID + '.img/')
-  else
-    Entry := GetImgEntry('Mob2.wz/' + FamiliarID + '.img/');
+  if HasImgFile('Mob/' + FamiliarID + '.img') then
+    Entry := GetImgEntry('Mob/' + FamiliarID + '.img/');
   if Entry <> nil then
     TColorFunc.SetSpriteColor<TWZIMGEntry>(Entry, ARow, True);
 end;
@@ -80,16 +76,16 @@ begin
   var ID := FamiliarGrid.Cells[1, ARow];
 
   if IsGMS then
-    FamiliarID := GetImgEntry('Etc.wz/FamiliarInfo.img/' + ID + '/mob').Data
+    FamiliarID := GetImgEntry('Etc/FamiliarInfo.img/' + ID + '/mob').Data
   else
-    FamiliarID := GetImgEntry('Character.wz/Familiar/' + ID + '.img/' + 'info/MobID').Data;
+    FamiliarID := GetImgEntry('Character/Familiar/' + ID + '.img/' + 'info/MobID').Data;
   TMonsterFamiliar.Delete;
   FamiliarID := Add7(FamiliarID);
   TMonsterFamiliar.Create(FamiliarID);
 
   TFamiliarNameTag.Delete;
   TFamiliarNameTag.Create('01112146');
-  TFamiliarNameTag.FamiliarNameTag.MedalName := StringWZ.GetImgFile('Mob.img').Root.Get(FamiliarID +
+  TFamiliarNameTag.FamiliarNameTag.MedalName := GetImgFile('String/Mob.img').Root.Get(FamiliarID +
     '/name', '');
   TFamiliarNameTag.FamiliarNameTag.InitData;
   TFamiliarNameTag.ReDraw;
@@ -106,25 +102,27 @@ begin
   FamiliarGrid.Canvas.Font.Size := 18;
   FamiliarGrid.Canvas.TextOut(60, 0, 'Loading...');
 
-  if HasImgFile('Etc.wz/FamiliarInfo.img') then
+  if HasImgFile('Etc/FamiliarInfo.img') then
     IsGMS := True
   else
     IsGMS := False;
 
   var RowCount := -1;
   FamiliarGrid.BeginUpdate;
-  for var img in TWZDirectory(CharacterWZ.Root.Entry['Familiar']).Files do
+  var ImgList:=GetImgList('Character/Familiar');
+
+  for var img in ImgList do
   begin
     var ID := NoIMG(img.Name);
     var CardID: string;
     if IsGMS then
     begin
-      if GetImgEntry('Etc.wz/FamiliarInfo.img/' + ID) <> nil then
+      if GetImgEntry('Etc/FamiliarInfo.img/' + ID) <> nil then
       begin
         Inc(RowCount);
         FamiliarGrid.RowCount := RowCount + 1;
         FamiliarGrid.Cells[1, RowCount] := ID;
-        CardID := GetImgEntry('Etc.wz/FamiliarInfo.img/' + ID + '/consume').Data
+        CardID := GetImgEntry('Etc/FamiliarInfo.img/' + ID + '/consume').Data
       end
       else
         Continue;
@@ -134,29 +132,30 @@ begin
       Inc(RowCount);
       FamiliarGrid.RowCount := RowCount + 1;
       FamiliarGrid.Cells[1, RowCount] := ID;
-      if GetImgEntry('Character.wz/Familiar/' + img.Name + '/info/monsterCardID') <> nil then
-        CardID := GetImgEntry('Character.wz/Familiar/' + img.Name + '/info/monsterCardID').Data;
+      if GetImgEntry('Character/Familiar/' + img.Name + '/info/monsterCardID') <> nil then
+        CardID := GetImgEntry('Character/Familiar/' + img.Name + '/info/monsterCardID').Data;
     end;
 
-    if HasImgEntry('String.wz/Consume.img/' + CardID) then
-      FamiliarGrid.Cells[3, RowCount] := GetImgEntry('String.wz/Consume.img/' + CardID).Get('Name',
+    if HasImgEntry('String/Consume.img/' + CardID) then
+      FamiliarGrid.Cells[3, RowCount] := GetImgEntry('String/Consume.img/' + CardID).Get('Name',
         '');
 
-    if GetImgEntry('Item.wz/Consume/0287.img/' + '0' + CardID + '/info/icon') <> nil then
+    if GetImgEntry('Item/Consume/0287.img/' + '0' + CardID + '/info/icon') <> nil then
     begin
-      var Entry := GetImgEntry('Item.wz/Consume/0287.img/' + '0' + CardID + '/info/icon', True);
+      var Entry := GetImgEntry('Item/Consume/0287.img/' + '0' + CardID + '/info/icon', True);
       var Bmp := Entry.Canvas.DumpBmp;
       FamiliarGrid.CreateBitmap(2, RowCount, False, haCenter, vaCenter).Assign(Bmp);
       Bmp.Free;
     end
-    else if GetImgEntry('Item.wz/Consume/0238.img/' + '0' + CardID + '/info/iconRaw') <> nil then
+    else if GetImgEntry('Item/Consume/0238.img/' + '0' + CardID + '/info/iconRaw') <> nil then
     begin
-      var Entry := GetImgEntry('Item.wz/Consume/0238.img/' + '0' + CardID + '/info/iconRaw', True);
+      var Entry := GetImgEntry('Item/Consume/0238.img/' + '0' + CardID + '/info/iconRaw', True);
       var Bmp := Entry.Canvas.DumpBmp;
       FamiliarGrid.CreateBitmap(2, RowCount, False, haCenter, vaCenter).Assign(Bmp);
       Bmp.Free;
     end;
   end;
+  ImgList.Free;
   FamiliarGrid.SortByColumn(1);
   FamiliarGrid.EndUpdate;
 end;

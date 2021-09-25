@@ -3,9 +3,10 @@ unit TamingMobFormUnit;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, AdvObj, BaseGrid, AdvGrid, StrUtils, Vcl.StdCtrls,
-  Vcl.ComCtrls, ColorUtils;
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids,
+  AdvObj, BaseGrid, AdvGrid, StrUtils, Vcl.StdCtrls, Vcl.ComCtrls, ColorUtils,
+  AdvUtil;
 
 type
   TTamingMobForm = class(TForm)
@@ -41,8 +42,8 @@ implementation
 
 {$R *.dfm}
 uses
-  TamingMob, MapleChair, Morph, MapleEffect, Global, MapleCharacter, WZIMGFile, WZDirectory, WzUtils,
-  Generics.Collections, Skill;
+  TamingMob, MapleChair, Morph, MapleEffect, Global, MapleCharacter, WZIMGFile,
+  WZDirectory, WzUtils, Generics.Collections, Skill;
 
 function NoIMG(const Name: string): string; inline;
 begin
@@ -56,7 +57,7 @@ begin
   TMapleChair.Delete;
 
   Player.ResetAction := True;
-  Player.NewAction :=Player.StandType;
+  Player.NewAction := Player.StandType;
   ActiveControl := nil;
 end;
 
@@ -111,7 +112,8 @@ begin
 
   var RowCount := -1;
   TamingMobGrid.BeginUpdate;
-  for var img in TWZDirectory(CharacterWZ.Root.Entry['TamingMob']).Files do
+  var ImgList := GetImgList('Character/TamingMob');
+  for var Img in ImgList do
   begin
     if LeftStr(img.Name, 4) = '0191' then
       Continue;
@@ -122,46 +124,43 @@ begin
     Inc(RowCount);
     TamingMobGrid.RowCount := RowCount + 1;
     TamingMobGrid.Cells[1, RowCount] := ID;
-    if HasImgEntry('String.wz/Eqp.img/Eqp/Taming/' + IDToInt(ID)) then
-      TamingMobGrid.Cells[3, RowCount] := GetImgEntry('String.wz/Eqp.img/Eqp/Taming/' + IDToInt(ID)).Get('Name', '');
+    if HasImgEntry('String/Eqp.img/Eqp/Taming/' + IDToInt(ID)) then
+      TamingMobGrid.Cells[3, RowCount] := GetImgEntry('String/Eqp.img/Eqp/Taming/' + IDToInt(ID)).Get('Name', '');
 
-    var Entry := GetImgEntry('Character.WZ/TamingMob/' + img.Name + '/info/icon', True);
+    var Entry := GetImgEntry('Character/TamingMob/' + img.Name + '/info/icon', True);
     if Entry <> nil then
     begin
       var Bmp := Entry.Canvas.DumpBmp;
       TamingMobGrid.CreateBitmap(2, RowCount, False, haCenter, vaCenter).Assign(Bmp);
       Bmp.Free;
     end;
-
   end;
+  ImgList.Free;
 
-  if TSkill.Has001Wz then
-  begin
-    var Dict := TDictionary<string, string>.Create;
-    for var i := 11 to 26 do
-      if HasImgFile('Skill001.wz/' + '8000' + i.ToString + '.img') then
-      begin
-        for var Iter in Skill001Wz.GetImgFile('8000' + i.ToString + '.img').Root.Child['skill'].Children do
-          if Iter.Child['vehicleID'] <> nil then
-            Dict.AddOrSetValue('0' + string(Iter.Child['vehicleID'].Data), Iter.Name);
-      end;
-
-    for var i := 0 to 9 do
-      if HasImgFile('Skill001.wz/' + '80011' + i.ToString + '.img') then
-      begin
-        for var Iter in Skill001Wz.GetImgFile('80011' + i.ToString + '.img').Root.Child['skill'].Children do
-          if Iter.Child['vehicleID'] <> nil then
-            Dict.AddOrSetValue('0' + string(Iter.Child['vehicleID'].Data), Iter.Name);
-      end;
-
-    for var i := 0 to TamingMobGrid.RowCount - 1 do
+  var Dict := TDictionary<string, string>.Create;
+  for var i := 11 to 31 do
+    if HasImgFile('Skill/' + '8000' + i.ToString + '.img') then
     begin
-      var TamingID := (TamingMobGrid.Cells[1, i]);
-      if (TamingMobGrid.Cells[3, i] = '') and (Dict.ContainsKey(TamingID)) then
-        TamingMobGrid.Cells[3, i] := StringWZ.GetImgFile('Skill.img').Root.Get(Dict[TamingID] + '/name', '');
+      for var Iter in GetImgFile('Skill/8000' + i.ToString + '.img').Root.Child['skill'].Children do
+        if Iter.Child['vehicleID'] <> nil then
+          Dict.AddOrSetValue('0' + string(Iter.Child['vehicleID'].Data), Iter.Name);
     end;
-    Dict.Free;
+
+  for var i := 0 to 9 do
+    if HasImgFile('Skill.wz/' + '80011' + i.ToString + '.img') then
+    begin
+      for var Iter in GetImgFile('Skill/80011' + i.ToString + '.img').Root.Child['skill'].Children do
+        if Iter.Child['vehicleID'] <> nil then
+          Dict.AddOrSetValue('0' + string(Iter.Child['vehicleID'].Data), Iter.Name);
+    end;
+
+  for var i := 0 to TamingMobGrid.RowCount - 1 do
+  begin
+    var TamingID := (TamingMobGrid.Cells[1, i]);
+    if (TamingMobGrid.Cells[3, i] = '') and (Dict.ContainsKey(TamingID)) then
+      TamingMobGrid.Cells[3, i] := GetImgFile('String/Skill.img').Root.Get(Dict[TamingID] + '/name', '');
   end;
+  Dict.Free;
 
   TamingMobGrid.SortByColumn(1);
   TamingMobGrid.EndUpdate;

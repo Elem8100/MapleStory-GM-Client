@@ -4,7 +4,8 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, AdvObj, BaseGrid, AdvGrid, Vcl.StdCtrls;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, AdvObj, BaseGrid, AdvGrid, Vcl.StdCtrls,
+  AdvUtil;
 
 type
   TLabelRingForm = class(TForm)
@@ -59,26 +60,28 @@ begin
 
   var RowCount := -1;
   LabelRingGrid.BeginUpdate;
-  for var img in TWZDirectory(CharacterWZ.Root.Entry['Ring']).Files do
+  var ImgList:=GetImgList('Character/Ring');
+
+  for var img in ImgList do
   begin
     if (LeftStr(img.Name, 6) <> '011121') and (LeftStr(img.Name, 6) <> '011151') and (LeftStr(img.Name,
       6) <> '011153') then
       Continue;
-    if GetImgEntry('Character.WZ/Ring/' + img.Name + '/info/nameTag') = nil then
+    if GetImgEntry('Character/Ring/' + img.Name + '/info/nameTag') = nil then
       Continue;
-    var TagNum := GetImgEntry('Character.WZ/Ring/' + img.Name + '/info/nameTag').Data;
-    if GetImgEntry('UI.wz/NameTag.img/' + string(TagNum)) = nil then
+    var TagNum := GetImgEntry('Character/Ring/' + img.Name + '/info/nameTag').Data;
+    if GetImgEntry('UI/NameTag.img/' + string(TagNum)) = nil then
       Continue;
 
     var ID := NoIMG(img.Name);
     Inc(RowCount);
     LabelRingGrid.RowCount := RowCount + 1;
     LabelRingGrid.Cells[1, RowCount] := ID;
-    if HasImgEntry('String.wz/Eqp.img/Eqp/Ring/' + IDToInt(ID)) then
-      LabelRingGrid.Cells[3, RowCount] := GetImgEntry('String.wz/Eqp.img/Eqp/Ring/' + IDToInt(ID)).Get
+    if HasImgEntry('String/Eqp.img/Eqp/Ring/' + IDToInt(ID)) then
+      LabelRingGrid.Cells[3, RowCount] := GetImgEntry('String/Eqp.img/Eqp/Ring/' + IDToInt(ID)).Get
         ('Name', '');
 
-    var Entry := GetImgEntry('Character.WZ/Ring/' + img.Name + '/info/icon', True);
+    var Entry := GetImgEntry('Character/Ring/' + img.Name + '/info/icon', True);
     if Entry <> nil then
     begin
       var Bmp := Entry.Canvas.DumpBmp;
@@ -87,6 +90,7 @@ begin
     end;
 
   end;
+  ImgList.Free;
   LabelRingGrid.SortByColumn(1);
   LabelRingGrid.EndUpdate;
 

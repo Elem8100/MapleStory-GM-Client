@@ -64,31 +64,21 @@ begin
   SelectRow := 0;
   NpcSelectRow:=Arow;
   NpcID := NpcGrid.Cells[1, ARow];
-
   Image1.Picture := nil;
-  if NPCWZ.GetImgFile(NpcID + '.img') <> nil then
-  begin
-    Path := 'Npc/';
-    WZ := NPCWZ;
-  end
-  else
-  begin
-    Path := 'Npc2/';
-    //WZ := Npc2Wz;
-  end;
-  if WZ.GetImgFile(NpcID + '.img') = nil then
+
+  if GetImgFile('Npc/'+NpcID + '.img') = nil then
     Exit;
 
-  Entry := GetImgEntry(Path + NpcID + '.img/info/link');
+  Entry := GetImgEntry('Npc/' + NpcID + '.img/info/link');
   if Entry <> nil then
     SpriteID := Entry.Data
   else
     SpriteID := NpcID;
 
-  if GetImgEntry(Path + SpriteID + '.img/stand/0') <> nil then
-    Bmp := GetImgEntry(Path + SpriteID + '.img/stand/0', True).Canvas.DumpBmp
-  else if GetImgEntry(Path + SpriteID + '.img/fly/0') <> nil then
-    Bmp := GetImgEntry(Path + SpriteID + '.img/fly/0', True).Canvas.DumpBmp
+  if GetImgEntry('Npc/' + SpriteID + '.img/stand/0') <> nil then
+    Bmp := GetImgEntry('Npc/' + SpriteID + '.img/stand/0', True).Canvas.DumpBmp
+  else if GetImgEntry('Npc/' + SpriteID + '.img/fly/0') <> nil then
+    Bmp := GetImgEntry('Npc/' + SpriteID + '.img/fly/0', True).Canvas.DumpBmp
   else
     Exit;
 
@@ -111,7 +101,7 @@ begin
 
   Randomize;
   RandomFlip := Random(2);
-  if WZ.GetImgFile(NpcID + '.img') = nil then
+  if GetImgFile('Npc/'+NpcID + '.img') = nil then
     Exit;
   Range := RandomRange(Round(Player.X - 100), Round(Player.X + 100));
   if (Range > TMap.Left) and (Range < TMap.Right) then
@@ -121,9 +111,9 @@ begin
   end;
   TNpc.ReDrawTarget := True;
 
-  var NpcEntry := GetImgEntry('Npc.wz/' + NpcID + '.img/');
+  var NpcEntry := GetImgEntry('Npc/' + NpcID + '.img/');
   TColorFunc.SetSpriteColor<TWZIMGEntry>(NpcEntry, SelectRow);
-  var Entry := GetImgEntry('Npc.wz/' + NpcID + '.img/info/link');
+  var Entry := GetImgEntry('Npc/' + NpcID + '.img/info/link');
   if Entry <> nil then
     TColorFunc.SetSpriteColor<TWZIMGEntry>(Entry, SelectRow);
   ActiveControl := nil;
@@ -151,9 +141,9 @@ procedure TAddNpcForm.DyeGridClickCell(Sender: TObject; ARow, ACol: Integer);
 begin
 
   SelectRow := ARow;
-  var NpcEntry := GetImgEntry('Npc.wz/' + NpcID + '.img/');
+  var NpcEntry := GetImgEntry('Npc/' + NpcID + '.img/');
   TColorFunc.SetSpriteColor(NpcEntry, ARow);
-  var Entry := GetImgEntry('Npc.wz/' + NpcID + '.img/info/link');
+  var Entry := GetImgEntry('Npc/' + NpcID + '.img/info/link');
   if Entry <> nil then
     TColorFunc.SetSpriteColor<TWZIMGEntry>(Entry, ARow);
   ActiveControl := nil;
@@ -177,7 +167,7 @@ begin
 
   var RowCount := -1;
   NpcGrid.BeginUpdate;
-  for var Iter in StringWZ.GetImgFile('Npc.img').Root.Children do
+  for var Iter in GetImgFile('String/Npc.img').Root.Children do
   begin
     Inc(RowCount);
     NpcGrid.RowCount := RowCount + 1;

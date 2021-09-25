@@ -53,12 +53,14 @@ end;
 
 class procedure TTamingMob.LoadSaddleList;
 begin
-  for var Img in TWZDirectory(CharacterWZ.Root.Entry['TamingMob']).Files do
+   var ImgList:=GetImgList('Character/TamingMob');
+
+  for var Img in ImgList do
     if LeftStr(Img.Name, 4) = '0191' then
-      for var Iter in GetImgEntry('Character.wz/TamingMob/' + Img.Name + '/').Children do
+      for var Iter in GetImgEntry('Character/TamingMob/' + Img.Name + '/').Children do
         if Iter.Name[1] in ['0'..'9'] then
           SaddleList.AddOrSetValue('0' + Iter.Name, LeftStr(Img.Name, 8));
-
+   ImgList.Free;
 end;
 
 class procedure TTamingMob.Delete;
@@ -70,7 +72,7 @@ begin
       Iter.Dead;
 
   for var Iter in EquipImages.Keys do
-    if LeftStr(Iter.GetPath, 26)= 'Character.wz/TamingMob/019'  then
+    if LeftStr(Iter.GetPath, 26)= 'Character/TamingMob/019'  then
     begin
        EquipImages.Remove(Iter);
        EquipData.Remove(Iter.GetPath);
@@ -137,11 +139,11 @@ class procedure TTamingMob.CreateSaddle(ID: string;ColorEffect:TColorEffect=ceNo
 begin
   Data.Clear;
   if SaddleList.ContainsKey(ID) then
-    Entry := GetImgEntry('Character.wz/TamingMob/' + SaddleList[ID] + '.img/' + IDToInt(ID))
+    Entry := GetImgEntry('Character/TamingMob/' + SaddleList[ID] + '.img/' + IDToInt(ID))
   else
     Exit;
     //add saddle delay
-  for var Iter in GetImgEntry('Character.wz/TamingMob/' + ID + '.img/').Children do
+  for var Iter in GetImgEntry('Character/TamingMob/' + ID + '.img/').Children do
     if Iter.Name <> 'info' then
       for var Iter2 in Iter.Children do
         Data.AddOrSetValue(Entry.GetPath + '/' + Iter.Name + '/' + Iter2.Name, Iter2.Get2('delay'));
@@ -151,7 +153,7 @@ end;
 
 class procedure TTamingMob.CreateTaming(ID: string;ColorEffect:TColorEffect=ceNone;Value:Integer=0);
 begin
-  Entry := GetImgEntry('Character.wz/TamingMob/' + ID + '.img/');
+  Entry := GetImgEntry('Character/TamingMob/' + ID + '.img/');
   CreateSprites(ColorEffect,Value);
 end;
 

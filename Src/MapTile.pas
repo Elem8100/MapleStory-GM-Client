@@ -33,7 +33,7 @@ begin
       u := Iter.Get('u', '');
       no := Iter.Get('no', '');
      // Entry := MapWZ.GetImgFile('Tile/' + tS + '.img').Root.Child[u].Child[no];
-      Entry := GetImgEntry('Map.wz/Tile/' + tS + '.img/' + u + '/' + no);
+      Entry := GetImgEntry('Map/Tile/' + tS + '.img/' + u + '/' + no);
       if not WzData.ContainsKey(Entry.GetPath) then
         DumpData(Entry, WzData, Images);
 

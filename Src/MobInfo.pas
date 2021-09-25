@@ -90,17 +90,13 @@ begin
     ID := TMob.Moblist[I];
     //FontsAlt[1].TextOut('ID: ' + ID, 70 + I * 160, 10, $FFFFFFFF);
     GameFont.Draw(Point2f(70 + I * 160, 10),'ID: ' + ID,$FFFFFFFF);
-    Name := StringWZ.GetImgFile('Mob.img').Root.Get(IDToInt(ID) + '/' + 'name', '');
+    Name := GetImgFile('String/Mob.img').Root.Get(IDToInt(ID) + '/' + 'name', '');
     //FontsAlt[1].TextOut('¦WºÙ: ' + Name, 70 + I * 160, 26, $FFFFFFFF);
     GameFont.Draw(Point2f(70 + I * 160, 26),'¦WºÙ: ' + Name,$FFFFFFFF);
-    if MobWZ.GetImgFile(ID + '.img') <> nil then
-      Wz := MobWZ
-    else if Mob001wZ.GetImgFile(ID + '.img') <> nil then
-      Wz := Mob001wz
-    else
-      Wz := Mob2WZ;
 
-    for Iter in Wz.GetImgFile(TMob.Moblist[I] + '.img').Root.Get('info').Children do
+  
+
+    for Iter in Wz.GetImgFile('Mob/'+TMob.Moblist[I] + '.img').Root.Get('info').Children do
     begin
       if (Iter.Name = 'category') and (Category.ContainsKey(Iter.Data)) then
         mData := Category[Iter.Data]

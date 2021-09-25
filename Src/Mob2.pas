@@ -192,7 +192,7 @@ var
   TestID: string;
 begin
   Randomize;
-
+    {
   if MobWZ.GetImgFile(ID + '.img') <> nil then
   begin
     Path1 := 'Mob/';
@@ -224,18 +224,19 @@ begin
     PathW := 'Mob002.wz/';
     WZ := Mob002WZ;
   end;
+   }
 
-
-  Entry := GetImgEntry(Path1 + ID + '.img/info/link');
+  Entry := GetImgEntry('Mob/' + ID + '.img/info/link');
   if not MobList.contains(ID) then
   begin
     MobList.Add(ID);
-    DumpData(WZ.GetImgFile(ID + '.img').Root, WzData, Images, ColorEffect, Value);
+    DumpData(GetImgFile('Mob/'+ID + '.img').Root, WzData, Images, ColorEffect, Value);
   end;
 
   if Entry <> nil then
   begin
     var EntryID: string := Entry.Data;
+    {
     if MobWZ.GetImgFile(EntryID + '.img') <> nil then
     begin
       Path1 := 'Mob/';
@@ -263,9 +264,9 @@ begin
       PathW := 'Mob002.wz/';
       WZ := Mob002WZ;
     end;
-
-    if not Wzdata.ContainsKey(PathW + EntryID + '.img') then
-      DumpData(WZ.GetImgFile(Entry.Data + '.img').Root, WzData, Images, ColorEffect, Value);
+    }
+    if not WzData.ContainsKey('Mob/' + EntryID + '.img') then
+      DumpData(GetImgFile('Mob/'+Entry.Data + '.img').Root, WzData, Images, ColorEffect, Value);
   end;
 
 
@@ -274,7 +275,7 @@ begin
   else
     TestID := ID;
 
-  if (WZ.GetImgFile(TestID + '.img').Root.Get('stand/0') = nil) and (WZ.GetImgFile(TestID + '.img').Root.Get
+  if (GetImgFile('Mob/'+TestID + '.img').Root.Get('stand/0') = nil) and (GetImgFile('Mob/'+TestID + '.img').Root.Get
     ('fly/0') = nil) then
     Exit;
 
@@ -290,7 +291,7 @@ begin
 
     Value := 1;
 
-    for Iter in WZ.GetImgFile(FID + '.img').Root.Children do
+    for Iter in GetImgFile('Mob/'+FID + '.img').Root.Children do
     begin
       c := 0;
       for Iter2 in Iter.Children do
@@ -299,7 +300,7 @@ begin
       Data.AddOrSetValue(FID + Iter.Name + '/FrameCount', c - 1);
     end;
 
-    Entry := GetImgEntry(InfoPath + InfoID + '.img/info');
+    Entry := GetImgEntry('Mob/' + InfoID + '.img/info');
     if Entry.Get('speed') <> nil then
       MoveSpeed := (1 + Entry.Get('speed').Data / 100) * 2
     else
@@ -321,7 +322,7 @@ begin
 
     Level := Entry.Get('level', '1');
 
-    FMobName := StringWZ.GetImgFile('Mob.img').Root.Get(IDToInt(InfoID) + '/' + 'name', '');
+    FMobName := GetImgFile('String/Mob.img').Root.Get(IDToInt(InfoID) + '/' + 'name', '');
     // WzData.AddOrSetValue(FID, FMobName);
             //gamefont.
     fNameWidth := Round(GameFont.ExtentByPixels('Lv.' + IntToStr(Level) + '  ' + FMobName).Right);
@@ -331,7 +332,7 @@ begin
     MoveType := mtMove;
     Action := 'stand';
 
-    Entry := WZ.GetImgFile(FID + '.img').Root;
+    Entry := GetImgFile('Mob/'+FID + '.img').Root;
 
     if Entry.Child['move'] = nil then
     begin
@@ -355,7 +356,7 @@ begin
       DieActionName := 'die';
 
     ImageLib := Images;
-    ImageEntry := WzData[FPathW + FID + '.img/' + Action + '/0'];
+    ImageEntry := WzData['Mob/' + FID + '.img/' + Action + '/0'];
 
     Pos := TFootholdTree.This.FindBelow(Point(Round(PosX), Round(PosY - 3)), BelowFH);
     // X := PosX;
@@ -466,7 +467,7 @@ begin
   if Data.ContainsKey(FID + Action + '/FrameCount') then
     FrameCount := Data[FID + Action + '/FrameCount'];
 
-  ImageEntry := WzData[FPathW + FID + '.img/' + Action + '/' + IntToStr(Frame)];
+  ImageEntry := WzData['Mob/' + FID + '.img/' + Action + '/' + IntToStr(Frame)];
   AnimDelay := ImageEntry.Get('delay', '100');
   a1 := ImageEntry.Get('a1', '255');
 
@@ -520,7 +521,7 @@ begin
   else
     AnimRepeat := True;
 
-  if WzData.ContainsKey(FPathW + FID + '.img/' + Action + '/zigzag') then
+  if WzData.ContainsKey('Mob/' + FID + '.img/' + Action + '/zigzag') then
     AnimZigzag := True
   else
     AnimZigzag := False;
@@ -644,7 +645,7 @@ begin
 
   if (GetHit1) and (not Die) then
   begin
-    if WzData[FPathW + FID + '.img/hit1'].Get('0') = nil then
+    if WzData['Mob/' + FID + '.img/hit1'].Get('0') = nil then
       GetHit1 := False;
     if Action <> 'hit1' then
     begin
@@ -691,16 +692,16 @@ begin
     begin
       AnimEnd := False;
       Frame := 0;
-      if WzData[FPathW + FID + '.img/' + DieActionName].Get('0') = nil then
+      if WzData['Mob/' + FID + '.img/' + DieActionName].Get('0') = nil then
         Frame := 1;
 
-      if (FrameCount > 3) and (WzData[FPathW + FID + '.img/' + DieActionName].Get('3') = nil) then
+      if (FrameCount > 3) and (WzData['Mob/' + FID + '.img/' + DieActionName].Get('3') = nil) then
         Frame := 4;
       FTime := 0;
       NewAction := DieActionName;
 
     end;
-    if not WzData.ContainsKey(FPathW + FID + '.img/' + DieActionName + '/' + Frame.ToString) then
+    if not WzData.ContainsKey('Mob/' + FID + '.img/' + DieActionName + '/' + Frame.ToString) then
       Dead;
   end;
 
@@ -718,7 +719,7 @@ begin
     Dead;
   end;
 
-  if WzData.ContainsKey(FPathW + FID + '.img/' + NewAction + '/' + IntToStr(Frame)) then
+  if WzData.ContainsKey('Mob/' + FID + '.img/' + NewAction + '/' + IntToStr(Frame)) then
     Action := NewAction
  // else if not GetHit1 then
   else
@@ -1036,12 +1037,12 @@ begin
         Hit := True;
         Damage := 500000 + Random(70000);
         HP := HP - Damage;
-        if HasImgEntry('Sound.wz/Mob.img/' + SelfID + '/Damage') then
+        if HasImgEntry('Sound/Mob.img/' + SelfID + '/Damage') then
           PlaySounds('Mob', SelfID + '/Damage')
-        else if HasImgEntry('Sound.wz/Mob.img/' + SelfID + '/Hit1') then
+        else if HasImgEntry('Sound/Mob.img/' + SelfID + '/Hit1') then
           PlaySounds('Mob', SelfID + '/Hit1');
                // if can pushed
-        if WzData.ContainsKey('Mob.wz/' + SelfID + '.img/hit1') or WzData.ContainsKey('Mob2.wz/' +
+        if WzData.ContainsKey('Mob/' + SelfID + '.img/hit1') or WzData.ContainsKey('Mob/' +
           SelfID + '.img/hit1') then
           GetHit1 := True;
 

@@ -93,14 +93,14 @@ begin
         AddItem(DropList[Rand]);
       ID := DropList[Rand];
       Dir := GetItemDir(ID);
-      IconPath := 'Item.wz/' + Dir + '/' + LeftStr(ID, 4) + '.img/' + ID + '/info/iconRaw';
+      IconPath := 'Item/' + Dir + '/' + LeftStr(ID, 4) + '.img/' + ID + '/info/iconRaw';
       if LeftStr(ID, 4) <> '0900' then
         ImageEntry := EquipData[IconPath];
       DrawMode := 1;
       Angle := Random(100);
       if LeftStr(ID, 4) = '0900' then
       begin
-        ParentPath := 'Item.wz/Special/0900.img/' + ID + '/iconRaw';
+        ParentPath := 'Item/Special/0900.img/' + ID + '/iconRaw';
         IconPath := ParentPath + '/0';
         ImageEntry := EquipData[IconPath];
         DrawMode := 0;
@@ -133,14 +133,14 @@ begin
       if not Data.ContainsKey(AID + '/drop') then
         AddItem(AID);
       Dir := GetItemDir(AID);
-      IconPath := 'Item.wz/' + Dir + '/' + LeftStr(AID, 4) + '.img/' + AID + '/info/iconRaw';
+      IconPath := 'Item/' + Dir + '/' + LeftStr(AID, 4) + '.img/' + AID + '/info/iconRaw';
       if LeftStr(ID, 4) <> '0900' then
         ImageEntry := EquipData[IconPath];
       DrawMode := 1;
       Angle := Random(100);
       if LeftStr(ID, 4) = '0900' then
       begin
-        ParentPath := 'Item.wz/Special/0900.img/' + AID + '/iconRaw';
+        ParentPath := 'Item/Special/0900.img/' + AID + '/iconRaw';
         IconPath := ParentPath + '/0';
         ImageEntry := EquipData[IconPath];
         DrawMode := 0;

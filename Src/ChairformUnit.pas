@@ -126,7 +126,7 @@ begin
 
   var Dict := TDictionary<string, TRec>.Create;
 
-  for var Iter in StringWZ.GetImgFile('Ins.img').Root.Children do
+  for var Iter in GetImgFile('String/Ins.img').Root.Children do
     if (LeftStr(Iter.Name, 3) = '301')or (LeftStr(Iter.Name, 3) = '302')then
     begin
 

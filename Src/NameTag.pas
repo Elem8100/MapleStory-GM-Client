@@ -313,10 +313,10 @@ begin
   begin
     TruncMove := True;
     Tag := 1;
-    var TagNum := GetImgEntry('Character.wz/Accessory/' + ItemID + '.img/info').Get('medalTag', '');
-    Entry := GetImgEntry('UI.wz/NameTag.img/medal/' + string(TagNum));
+    var TagNum := GetImgEntry('Character/Accessory/' + ItemID + '.img/info').Get('medalTag', '');
+    Entry := GetImgEntry('UI/NameTag.img/medal/' + string(TagNum));
     DumpData(Entry, EquipData, EquipImages);
-    MedalName := GetImgEntry('String.wz/Eqp.img/Eqp/Accessory/' + RightStr(ItemID, 7)).Get('name',
+    MedalName := GetImgEntry('String/Eqp.img/Eqp/Accessory/' + RightStr(ItemID, 7)).Get('name',
       '');
     InitData;
   end;
@@ -362,10 +362,10 @@ begin
   begin
     TruncMove := True;
     Tag := 1;
-    var TagNum := GetImgEntry('Item.wz/Install/0370.img/' + ItemID + '/info').Get('nickTag', '');
-    Entry := GetImgEntry('UI.wz/NameTag.img/nick/' + string(TagNum));
+    var TagNum := GetImgEntry('Item/Install/0370.img/' + ItemID + '/info').Get('nickTag', '');
+    Entry := GetImgEntry('UI/NameTag.img/nick/' + string(TagNum));
     DumpData(Entry, EquipData, EquipImages);
-    MedalName := GetImgEntry('String.wz/Ins.img/' + RightStr(ItemID, 7)).Get('name', '');
+    MedalName := GetImgEntry('String/Ins.img/' + RightStr(ItemID, 7)).Get('name', '');
     InitData;
   end;
 
@@ -408,8 +408,8 @@ begin
   begin
     TruncMove := True;
     Tag := 1;
-    var TagNum := GetImgEntry('Character.WZ/Ring/' + ItemID + '.img/info').Get('nameTag', '');
-    Entry := GetImgEntry('UI.wz/NameTag.img/' + string(TagNum));
+    var TagNum := GetImgEntry('Character/Ring/' + ItemID + '.img/info').Get('nameTag', '');
+    Entry := GetImgEntry('UI/NameTag.img/' + string(TagNum));
     DumpData(Entry, EquipData, EquipImages);
     MedalName := ShowOptionForm.Edit1.Text;
     InitData;

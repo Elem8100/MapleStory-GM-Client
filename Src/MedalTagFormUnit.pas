@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Grids,
-  AdvObj, BaseGrid, AdvGrid;
+  AdvObj, BaseGrid, AdvGrid, AdvUtil;
 
 type
   TMedalTagForm = class(TForm)
@@ -58,24 +58,26 @@ begin
 
   var RowCount := -1;
   MedalGrid.BeginUpdate;
-  for var img in TWZDirectory(CharacterWZ.Root.Entry['Accessory']).Files do
+  var ImgList:=GetImgList('Character/Accessory');
+
+  for var img in ImgList do
   begin
     if LeftStr(img.Name, 4) <> '0114' then
       Continue;
-    if GetImgEntry('Character.WZ/Accessory/' + img.Name + '/info/medalTag') = nil then
+    if GetImgEntry('Character/Accessory/' + img.Name + '/info/medalTag') = nil then
       Continue;
-    var TagNum := GetImgEntry('Character.WZ/Accessory/' + img.Name + '/info/medalTag').Data;
-    if GetImgEntry('UI.wz/NameTag.img/medal/' + string(TagNum)) = nil then
+    var TagNum := GetImgEntry('Character/Accessory/' + img.Name + '/info/medalTag').Data;
+    if GetImgEntry('UI/NameTag.img/medal/' + string(TagNum)) = nil then
       Continue;
 
     var ID := NoIMG(img.Name);
     Inc(RowCount);
     MedalGrid.RowCount := RowCount + 1;
     MedalGrid.Cells[1, RowCount] := ID;
-    if HasImgEntry('String.wz/Eqp.img/Eqp/Accessory/' + IDToInt(ID)) then
-      MedalGrid.Cells[3, RowCount] := GetImgEntry('String.wz/Eqp.img/Eqp/Accessory/' + IDToInt(ID)).Get('Name', '');
+    if HasImgEntry('String/Eqp.img/Eqp/Accessory/' + IDToInt(ID)) then
+      MedalGrid.Cells[3, RowCount] := GetImgEntry('String/Eqp.img/Eqp/Accessory/' + IDToInt(ID)).Get('Name', '');
 
-    var Entry := GetImgEntry('Character.WZ/Accessory/' + img.Name + '/info/icon', True);
+    var Entry := GetImgEntry('Character/Accessory/' + img.Name + '/info/icon', True);
     if Entry <> nil then
     begin
       var Bmp := Entry.Canvas.DumpBmp;
@@ -84,6 +86,7 @@ begin
     end;
 
   end;
+  ImgList.Free;
   MedalGrid.SortByColumn(1);
   MedalGrid.EndUpdate;
 

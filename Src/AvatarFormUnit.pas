@@ -3,10 +3,12 @@ unit AvatarFormUnit;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.Buttons, AdvUtil, PNGMapleCanvasEx,
-  WZArchive, Vcl.Grids, AdvObj, BaseGrid, AdvGrid, Vcl.StdCtrls, StrUtils, Generics.Collections,
-  Generics.Defaults, ieview, pngimage, iemview, Vcl.ComCtrls, ColorUtils, WZIMGFile, CurvyControls;
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
+  Vcl.ExtCtrls, Vcl.Buttons, AdvUtil, PNGMapleCanvasEx, WZArchive, Vcl.Grids,
+  AdvObj, BaseGrid, AdvGrid, Vcl.StdCtrls, StrUtils, Generics.Collections,
+  Generics.Defaults, ieview, pngimage, iemview, Vcl.ComCtrls, ColorUtils,
+  WZIMGFile, CurvyControls;
 
 type
   TAvatarForm = class(TForm)
@@ -135,8 +137,8 @@ var
 implementation
 
 uses
-  WZDirectory, MapleEffect, Global, MapleCharacter, PXT.TypesEx, WzUtils, MapleCharacterEx,
-  PXT.Types;
+  WZDirectory, MapleEffect, Global, MapleCharacter, PXT.TypesEx, WzUtils,
+  MapleCharacterEx, PXT.Types;
 
 {$R *.dfm}
 
@@ -245,7 +247,7 @@ begin
   if Part = SitTamingMob then
     Exit;
 
-  var Path := 'Character.wz/Weapon/';
+  var Path := 'Character/Weapon/';
 
   var TrimID: string;
   if LeftStr(EqpID, 3) = '000' then
@@ -254,8 +256,8 @@ begin
     TrimID := RightStr(EqpID, 7);
 
   var Dir := GetDir(EqpID);
-  var Name := StringWZ.GetImgFile('Eqp.img').Root.Get('Eqp/' + Dir + TrimID + '/name', '');
-  var Entry := CharacterWZ.GetImgFile(Dir + EqpID + '.img').Root;
+  var Name := GetImgFile('String/Eqp.img').Root.Get('Eqp/' + Dir + TrimID + '/name', '');
+  var Entry := GetImgFile('Character/' + Dir + EqpID + '.img').Root;
 
   var Bmp: TBitmap;
   case Part of
@@ -382,7 +384,7 @@ begin
         AvatarView.FillFromDirectory(ExtractFilePath(ParamStr(0)) + 'Images\');
         AvatarForm.SaveSingleFrame := False;
       end;
-    2:
+    2:  //
       begin
         SaveButton.Enabled := True;
         AvatarForm.SaveSingleFrame := False;
@@ -399,15 +401,14 @@ begin
       end;
     5:
       Label2.Caption := '';
-    6:
+    6:   //
       begin
-        Row2:=-1;
+        Row2 := -1;
         InfoGrid.AssignCells(Inventory);
         for var Row := 0 to Inventory.RowCount do
         begin
           if Inventory.CellTypes[1, Row - 1] = ctPicture then
-            InfoGrid.CreateBitmap(1, Row - 1, False, haCenter, vaCenter).Assign(Inventory.CellGraphics
-              [1, Row - 1].CellBitmap);
+            InfoGrid.CreateBitmap(1, Row - 1, False, haCenter, vaCenter).Assign(Inventory.CellGraphics[1, Row - 1].CellBitmap);
         end;
         InfoGrid.ColWidths[0] := 72;
         InfoGrid.ColWidths[1] := 60;
@@ -418,7 +419,7 @@ begin
         for var i := 0 to InfoGrid.RowCount - 1 do
         begin
           var ID := InfoGrid.Cells[0, i];
-          DumpData2(CharacterWZ.GetImgFile(GetDir(ID) + ID+'.img').Root.Child['info']);
+          DumpData2(GetImgFile('Character/' + GetDir(ID) + ID + '.img').Root.Child['info']);
         end;
         for var i in RowList2.Keys do
           InfoGrid.Cells[3, i] := RowList2[i];
@@ -501,8 +502,7 @@ begin
   ForceDirectories(ExtractFilePath(ParamStr(0)) + 'Export');
   var FileName := ExtractFilePath(ParamStr(0)) + 'Export\' + AllFrameListBox.Items[Index] + '.png';
   Label2.Caption := 'Save to:  ' + FileName;
-  AvatarPanelTexture.SaveToFile(FileName, nil, 0, IntRectBDS(WX, WY, WX + TrackBarW.Position, WY +
-    TrackBarH.Position));
+  AvatarPanelTexture.SaveToFile(FileName, nil, 0, IntRectBDS(WX, WY, WX + TrackBarW.Position, WY + TrackBarH.Position));
 end;
 
 procedure TAvatarForm.ResetColorGrid;
@@ -515,8 +515,7 @@ begin
 
       for var Col := 0 to 18 do
       begin
-        ColorGrid.CreateBitmap(Col, Row, False, haLeft, vaCenter).Assign(Inventory.CellGraphics[1,
-          Row - 1].CellBitmap);
+        ColorGrid.CreateBitmap(Col, Row, False, haLeft, vaCenter).Assign(Inventory.CellGraphics[1, Row - 1].CellBitmap);
         case Col of
           0..10:
             TColorFunc.HSVvar(ColorGrid.CellGraphics[Col, Row].CellBitmap, Col * 30, 0, 0);
@@ -525,20 +524,15 @@ begin
           12:
             TColorFunc.HSVvar(ColorGrid.CellGraphics[Col, Row].CellBitmap, 0, -100, 0);
           13:
-            TColorFunc.Contrast3(ColorGrid.CellGraphics[Col, Row].CellBitmap, 50, -90, True, False,
-              False);
+            TColorFunc.Contrast3(ColorGrid.CellGraphics[Col, Row].CellBitmap, 50, -90, True, False, False);
           14:
-            TColorFunc.Contrast3(ColorGrid.CellGraphics[Col, Row].CellBitmap, 50, -90, False, True,
-              False);
+            TColorFunc.Contrast3(ColorGrid.CellGraphics[Col, Row].CellBitmap, 50, -90, False, True, False);
           15:
-            TColorFunc.Contrast3(ColorGrid.CellGraphics[Col, Row].CellBitmap, 50, -90, False, False,
-              True);
+            TColorFunc.Contrast3(ColorGrid.CellGraphics[Col, Row].CellBitmap, 50, -90, False, False, True);
           16:
-            TColorFunc.Contrast3(ColorGrid.CellGraphics[Col, Row].CellBitmap, 50, -90, True, True,
-              False);
+            TColorFunc.Contrast3(ColorGrid.CellGraphics[Col, Row].CellBitmap, 50, -90, True, True, False);
           17:
-            TColorFunc.Contrast3(ColorGrid.CellGraphics[Col, Row].CellBitmap, 50, -90, True, False,
-              True);
+            TColorFunc.Contrast3(ColorGrid.CellGraphics[Col, Row].CellBitmap, 50, -90, True, False, True);
           18:
             TColorFunc.Negative(ColorGrid.CellGraphics[Col, Row].CellBitmap);
         end;
@@ -558,7 +552,7 @@ begin
   if Length(ID) > 2 then
   begin
     var Dir := GetDir(ID);
-    var Entry := CharacterWZ.GetImgFile(Dir + ID + '.img').Root;
+    var Entry := GetImgFile('Character/' + Dir + ID + '.img').Root;
 
     case ACol of
       0:
@@ -624,7 +618,7 @@ begin
   NameLabel.Caption := SearchGrid.Cells[2, ARow];
   var Dir := GetDir(EqpID);
   var Part := GetPart(EqpID);
-  var Entry := CharacterWZ.GetImgFile(Dir + EqpID + '.img').Root;
+  var Entry:=GetImgEntry('Character/'+Dir+ EqpID + '.img/');
   var Bmp: TBitmap;
   case Part of
     Face:
@@ -681,8 +675,7 @@ begin
     ImageGrids[i].ThumbnailsBackground := clBtnface;
     ImageGrids[i].ThumbWidth := 35;
     ImageGrids[i].ThumbHeight := 35;
-    ImageGrids[i].ThumbnailOptionsEx := [ietxShowIconForUnknownFormat, ietxShowIconWhileLoading,
-      ietxEnableInternalIcons];
+    ImageGrids[i].ThumbnailOptionsEx := [ietxShowIconForUnknownFormat, ietxShowIconWhileLoading, ietxEnableInternalIcons];
     ImageGrids[i].DefaultInfoText := iedtNone;
     ImageGrids[i].MultiSelectionOptions := [];
     ImageGrids[i].ShowText := False;
@@ -703,8 +696,7 @@ begin
   AvatarView.ThumbHeight := 102;
   AvatarView.BorderStyle := bsNone;
   AvatarView.Background := clWhite;
-  AvatarView.ThumbnailOptionsEx := [ietxShowIconForUnknownFormat, ietxShowIconWhileLoading,
-    ietxEnableInternalIcons];
+  AvatarView.ThumbnailOptionsEx := [ietxShowIconForUnknownFormat, ietxShowIconWhileLoading, ietxEnableInternalIcons];
   AvatarView.DefaultInfoText := iedtNone;
   AvatarView.MultiSelectionOptions := [];
   AvatarView.ShowText := False;
@@ -756,8 +748,7 @@ begin
   if HasShow then
     Exit;
   HasShow := True;
-  var DefaultEqps := ['01302030', '01062055', '01072054', '01040005', '00030020', '00020000',
-    '00002000', '00012000'];
+  var DefaultEqps := ['01302030', '01062055', '01072054', '01040005', '00030020', '00020000', '00002000', '00012000'];
   var TrimID: string;
   var Bmp: TBitmap;
 
@@ -769,9 +760,9 @@ begin
       TrimID := RightStr(DefaultEqps[i], 7);
 
     var Dir := GetDir(DefaultEqps[i]);
-    var Name := StringWZ.GetImgFile('Eqp.img').Root.Get('Eqp/' + Dir + TrimID + '/name', '');
+    var Name := GetImgFile('String/Eqp.img').Root.Get('Eqp/' + Dir + TrimID + '/name', '');
 
-    var Entry := CharacterWZ.GetImgFile(Dir + DefaultEqps[i] + '.img').Root;
+    var Entry := GetImgFile('Character/' + Dir + DefaultEqps[i] + '.img').Root;
 
     if Dir = '' then
     begin
@@ -794,19 +785,8 @@ begin
   end;
   Inventory.SortByColumn(0);
   ResetColorGrid;
-  AllFrames := ['walk1.0', 'walk1.0', 'walk1.1', 'walk1.2', 'walk1.3', 'walk2.0', 'walk2.1',
-    'walk2.2', 'walk2.3', 'stand1.0', 'stand1.1', 'stand1.2', 'stand2.0', 'stand2.1', 'stand2.2',
-    'alert.0', 'alert.1', 'alert.2', 'swingO1.0', 'swingO1.1', 'swingO1.2', 'swingO2.0', 'swingO2.1',
-    'swingO2.2', 'swingO3.0', 'swingO3.1', 'swingO3.2', 'swingOF.0', 'swingOF.1', 'swingOF.2',
-    'swingOF.3', 'swingT1.0', 'swingT1.1', 'swingT1.2', 'swingT2.0', 'swingT2.1', 'swingT2.2',
-    'swingT3.0', 'swingT3.1', 'swingT3.2', 'swingTF.0', 'swingTF.1', 'swingTF.2', 'swingTF.3',
-    'swingP1.0', 'swingP1.1', 'swingP1.2', 'swingP2.0', 'swingP2.1', 'swingP2.2', 'swingPF.0',
-    'swingPF.1', 'swingPF.2', 'swingPF.3', 'stabO1.0', 'stabO1.1', 'stabO2.0', 'stabO2.1',
-    'stabOF.0', 'stabOF.1', 'stabOF.2', 'stabT1.0', 'stabT1.1', 'stabT1.2', 'stabT2.0', 'stabT2.1',
-    'stabT2.2', 'stabTF.0', 'stabTF.1', 'stabTF.2', 'stabTF.3', 'shoot1.0', 'shoot1.1', 'shoot1.2',
-    'shoot2.0', 'shoot2.1', 'shoot2.2', 'shoot2.3', 'shoot2.4', 'shootF.0', 'shootF.1', 'shootF.2',
-    'proneStab.0', 'proneStab.1', 'prone.0', 'heal.0', 'heal.1', 'heal.2', 'fly.0', 'fly.1',
-    'jump.0', 'sit.0', 'ladder.0', 'ladder.1', 'rope.0', 'rope.1', 'rope.1'];
+  AllFrames := ['walk1.0', 'walk1.0', 'walk1.1', 'walk1.2', 'walk1.3', 'walk2.0', 'walk2.1', 'walk2.2', 'walk2.3', 'stand1.0', 'stand1.1', 'stand1.2', 'stand2.0', 'stand2.1', 'stand2.2', 'alert.0', 'alert.1', 'alert.2', 'swingO1.0', 'swingO1.1', 'swingO1.2', 'swingO2.0', 'swingO2.1', 'swingO2.2', 'swingO3.0', 'swingO3.1', 'swingO3.2', 'swingOF.0', 'swingOF.1', 'swingOF.2', 'swingOF.3', 'swingT1.0', 'swingT1.1', 'swingT1.2', 'swingT2.0', 'swingT2.1', 'swingT2.2', 'swingT3.0', 'swingT3.1', 'swingT3.2',
+    'swingTF.0', 'swingTF.1', 'swingTF.2', 'swingTF.3', 'swingP1.0', 'swingP1.1', 'swingP1.2', 'swingP2.0', 'swingP2.1', 'swingP2.2', 'swingPF.0', 'swingPF.1', 'swingPF.2', 'swingPF.3', 'stabO1.0', 'stabO1.1', 'stabO2.0', 'stabO2.1', 'stabOF.0', 'stabOF.1', 'stabOF.2', 'stabT1.0', 'stabT1.1', 'stabT1.2', 'stabT2.0', 'stabT2.1', 'stabT2.2', 'stabTF.0', 'stabTF.1', 'stabTF.2', 'stabTF.3', 'shoot1.0', 'shoot1.1', 'shoot1.2', 'shoot2.0', 'shoot2.1', 'shoot2.2', 'shoot2.3', 'shoot2.4', 'shootF.0', 'shootF.1', 'shootF.2', 'proneStab.0', 'proneStab.1', 'prone.0', 'heal.0', 'heal.1', 'heal.2', 'fly.0', 'fly.1', 'jump.0', 'sit.0', 'ladder.0', 'ladder.1', 'rope.0', 'rope.1', 'rope.1'];
   for var i in AllFrames do
     AllFrameListBox.Items.Add(i);
   AllFrameListBox.Items.Delete(0);
@@ -968,124 +948,241 @@ begin
     ImageGrids[PartIndex].ThumbHeight := 35;
   end;
 
-  if not IconList.ContainsKey(Part) then
-  begin
-    if Wz <> nil then
-      Wz.Free;
-    Wz := TWZArchive.Create(WzPath + '\Character.wz');
-    var List := TObjectList<TBmpEx>.Create;
+  if is64Bit then
+    if not IconList.ContainsKey(Part) then
+    begin
+      if Wz <> nil then
+        Wz.Free;
+      var List := TObjectList<TBmpEx>.Create;
+      for var Files in WzList2 do
+      begin
+        if Files.Value = 'Character/' + CharacterDir then
+        begin
+          Wz := TWzArchive.Create(Files.Key);
+          for img in WZ.Root.Files do
+          begin
+            if not IsNumber(img.Name[1]) then
+              Continue;
+            ID := Trim(NoIMG(img.Name));
+            if (ID = '01702653') or (ID = '01702700') or (ID = '01702220') then
+              Continue;
+            if Left4 = '0135' then
+              Continue;
+            if Left4 = '0169' then
+              Continue;
+            if Left4 = '0150' then
+              Continue;
+            if Left4 = '0151' then
+              Continue;
+            if Left4 = '0160' then
+              Continue;
+      //skip format 257 Hair
+            if ID.ToInteger div 10 = 4773 then
+              Continue;
+
+            Name := GetImgFile('String/Eqp.img').Root.Get('Eqp/' + CharacterDir + '/' + IDToInt(ID) + '/name', '');
+            if PartIndex in [4, 5, 13, 14, 15, 16] then
+              Num := ID.ToInteger div 1000;
+            case PartIndex of
+              20:
+                if Left4 <> '0001' then
+                  Continue;
+              1:
+                if Left4 <> '0000' then
+                  Continue;
+              2: // weapon
+                if Left4 = '0170' then
+                  Continue;
+              3: // cash weapon
+                if Left4 <> '0170' then
+                  Continue;
+              4: // Cap1
+                if not InRange(1000, 1003) then
+                  Continue;
+              5: // cap2
+                if not InRange(1004, 1006) then
+                  Continue;
+              13: // Hair1
+                if not InRange(30, 36) then
+                  Continue;
+              14: // Hair2
+                if not InRange(37, 61) then
+                  Continue;
+              15: // Face1
+                if not InRange(20, 23) then
+                  Continue;
+              16: // Face2
+                if not InRange(24, 51) then
+                  Continue;
+              17:
+                if Left4 <> '0101' then
+                  Continue;
+              18:
+                if Left4 <> '0102' then
+                  Continue;
+              19:
+                if Left4 <> '0103' then
+                  Continue;
+            end;
+
+            with Wz.ParseFile(img) do
+            begin
+              for var Iter in Root.Children do
+              begin
+                if (Iter.Name = 'front') and (PartIndex = 20) then
+                begin
+                  Bmp := Iter.Get2('head').Canvas.DumpBmpEx;
+                  Bmp.ID := ID;
+                  Bmp.Name := Name;
+                  List.Add(Bmp);
+                end;
+                if (Iter.Name = 'stand1') and (PartIndex = 1) then
+                begin
+                  Bmp := Iter.Get2('0/body').Canvas.DumpBmpEx;
+                  Bmp.ID := ID;
+                  Bmp.Name := Name;
+                  List.Add(Bmp);
+                end;
+
+                for var i := 0 to 2 do
+                begin
+                  if Iter.Child[Icons[i]] <> nil then
+                  begin
+                    Bmp := Iter.Get2(Icons[i]).Canvas.DumpBmpEx;
+                    Bmp.ID := ID;
+                    Bmp.Name := Name;
+                    List.Add(Bmp);
+                  end;
+                end;
+              end;
+              Free;
+            end;
+
+          end;
+           // listbox1.Items.Add(img.Name);
+        end;
+      end;
+      IconList.Add(Part, List);
+    end;
+
+  if not IS64Bit then
+    if not IconList.ContainsKey(Part) then
+    begin
+      if Wz <> nil then
+        Wz.Free;
+      Wz := TWZArchive.Create(WzPath + '\Character.wz');
+      var List := TObjectList<TBmpEx>.Create;
    // Dir := TWZDirectory(Wz.Root.Entry[CharacterDir]);
 
-    if CharacterDir = '' then
-      Dir := TWZDirectory(Wz.Root)
-    else
-      Dir := TWZDirectory(Wz.Root.Entry[CharacterDir]);
-    for img in Dir.Files do
-    begin
-
-      if not IsNumber(img.Name[1]) then
-        Continue;
-      ID := Trim(NoIMG(img.Name));
-      if (ID = '01702653') or (ID = '01702700') or (ID = '01702220') then
-        Continue;
-      if Left4 = '0135' then
-        Continue;
-      if Left4 = '0169' then
-        Continue;
-      if Left4 = '0150' then
-        Continue;
-      if Left4 = '0151' then
-        Continue;
-      if Left4 = '0160' then
-        Continue;
-      //skip format 257 Hair
-      if ID.ToInteger div 10 =4773 then
-        Continue;
-
-      Name := StringWZ.GetImgFile('Eqp.img').Root.Get('Eqp/' + CharacterDir + '/' + IDToInt(ID) +
-        '/name', '');
-      if PartIndex in [4, 5, 13, 14, 15, 16] then
-        Num := ID.ToInteger div 1000;
-      case PartIndex of
-        20:
-          if Left4 <> '0001' then
-            Continue;
-        1:
-          if Left4 <> '0000' then
-            Continue;
-        2: // weapon
-          if Left4 = '0170' then
-            Continue;
-        3: // cash weapon
-          if Left4 <> '0170' then
-            Continue;
-        4: // Cap1
-          if not InRange(1000, 1003) then
-            Continue;
-        5: // cap2
-          if not InRange(1004, 1006) then
-            Continue;
-        13: // Hair1
-          if not InRange(30, 36) then
-            Continue;
-        14: // Hair2
-          if not InRange(37, 61) then
-            Continue;
-        15: // Face1
-          if not InRange(20, 23) then
-            Continue;
-        16: // Face2
-          if not InRange(24, 51) then
-            Continue;
-        17:
-          if Left4 <> '0101' then
-            Continue;
-        18:
-          if Left4 <> '0102' then
-            Continue;
-        19:
-          if Left4 <> '0103' then
-            Continue;
-      end;
-
-      with Wz.ParseFile(img) do
+      if CharacterDir = '' then
+        Dir := TWZDirectory(Wz.Root)
+      else
+        Dir := TWZDirectory(Wz.Root.Entry[CharacterDir]);
+      for img in Dir.Files do
       begin
-        for var Iter in Root.Children do
-        begin
-          if (Iter.Name = 'front') and (PartIndex = 20) then
-          begin
-            Bmp := Iter.Get2('head').Canvas.DumpBmpEx;
-            Bmp.ID := ID;
-            Bmp.Name := Name;
-            List.Add(Bmp);
-          end;
-          if (Iter.Name = 'stand1') and (PartIndex = 1) then
-          begin
-            Bmp := Iter.Get2('0/body').Canvas.DumpBmpEx;
-            Bmp.ID := ID;
-            Bmp.Name := Name;
-            List.Add(Bmp);
-          end;
 
-          for var i := 0 to 2 do
+        if not IsNumber(img.Name[1]) then
+          Continue;
+        ID := Trim(NoIMG(img.Name));
+        if (ID = '01702653') or (ID = '01702700') or (ID = '01702220') then
+          Continue;
+        if Left4 = '0135' then
+          Continue;
+        if Left4 = '0169' then
+          Continue;
+        if Left4 = '0150' then
+          Continue;
+        if Left4 = '0151' then
+          Continue;
+        if Left4 = '0160' then
+          Continue;
+      //skip format 257 Hair
+        if ID.ToInteger div 10 = 4773 then
+          Continue;
+
+        Name := GetImgFile('String/Eqp.img').Root.Get('Eqp/' + CharacterDir + '/' + IDToInt(ID) + '/name', '');
+        if PartIndex in [4, 5, 13, 14, 15, 16] then
+          Num := ID.ToInteger div 1000;
+        case PartIndex of
+          20:
+            if Left4 <> '0001' then
+              Continue;
+          1:
+            if Left4 <> '0000' then
+              Continue;
+          2: // weapon
+            if Left4 = '0170' then
+              Continue;
+          3: // cash weapon
+            if Left4 <> '0170' then
+              Continue;
+          4: // Cap1
+            if not InRange(1000, 1003) then
+              Continue;
+          5: // cap2
+            if not InRange(1004, 1006) then
+              Continue;
+          13: // Hair1
+            if not InRange(30, 36) then
+              Continue;
+          14: // Hair2
+            if not InRange(37, 61) then
+              Continue;
+          15: // Face1
+            if not InRange(20, 23) then
+              Continue;
+          16: // Face2
+            if not InRange(24, 51) then
+              Continue;
+          17:
+            if Left4 <> '0101' then
+              Continue;
+          18:
+            if Left4 <> '0102' then
+              Continue;
+          19:
+            if Left4 <> '0103' then
+              Continue;
+        end;
+
+        with Wz.ParseFile(img) do
+        begin
+          for var Iter in Root.Children do
           begin
-            if Iter.Child[Icons[i]] <> nil then
+            if (Iter.Name = 'front') and (PartIndex = 20) then
             begin
-              Bmp := Iter.Get2(Icons[i]).Canvas.DumpBmpEx;
+              Bmp := Iter.Get2('head').Canvas.DumpBmpEx;
               Bmp.ID := ID;
               Bmp.Name := Name;
               List.Add(Bmp);
             end;
+            if (Iter.Name = 'stand1') and (PartIndex = 1) then
+            begin
+              Bmp := Iter.Get2('0/body').Canvas.DumpBmpEx;
+              Bmp.ID := ID;
+              Bmp.Name := Name;
+              List.Add(Bmp);
+            end;
+
+            for var i := 0 to 2 do
+            begin
+              if Iter.Child[Icons[i]] <> nil then
+              begin
+                Bmp := Iter.Get2(Icons[i]).Canvas.DumpBmpEx;
+                Bmp.ID := ID;
+                Bmp.Name := Name;
+                List.Add(Bmp);
+              end;
+            end;
           end;
+          Free;
         end;
-        Free;
+
       end;
 
+      IconList.Add(Part, List);
+
     end;
-
-    IconList.Add(Part, List);
-
-  end;
 
   IconList[Part].Sort(TComparer<TBmpEx>.Construct(
     function(const Left, Right: TBmpEx): Integer
@@ -1122,7 +1219,7 @@ begin
   SearchGrid.Canvas.Font.Size := 18;
   SearchGrid.Canvas.TextOut(60, 160, 'Loading...');
   AvatarForm.searchGrid.BeginUpdate;
-  DumpEqpString(StringWZ.GetImgFile('Eqp.img').Root.Child['Eqp']);
+  DumpEqpString(GetImgFile('String/Eqp.img').Root.Child['Eqp']);
   AvatarForm.searchGrid.EndUpdate;
 end;
 
@@ -1161,12 +1258,7 @@ begin
   end;
 
   for E in Entry.Children do
-    if (Entry.Name <> 'Android') and (Entry.Name <> 'ArcaneForce') and (Entry.Name <> 'Bits') and (Entry.Name
-      <> 'Dragon') and (Entry.Name <> 'Mechanic') and (Entry.Name <> 'PetEquip') and (Entry.Name <>
-      'Skillskin') and (Entry.Name <> 'Taming') and (Entry.Name <> 'MonsterBattle') and (LeftStr(Entry.Name,
-      3) <> '135') and (LeftStr(Entry.Name, 3) <> '150') and (LeftStr(Entry.Name, 3) <> '151') and (LeftStr
-      (Entry.Name, 3) <> '160') and (LeftStr(Entry.Name, 3) <> '169') and (LeftStr(Entry.Name, 3) <>
-      '111') and (LeftStr(Entry.Name, 3) <> '114') then
+    if (Entry.Name <> 'Android') and (Entry.Name <> 'ArcaneForce') and (Entry.Name <> 'Bits') and (Entry.Name <> 'Dragon') and (Entry.Name <> 'Mechanic') and (Entry.Name <> 'PetEquip') and (Entry.Name <> 'Skillskin') and (Entry.Name <> 'Taming') and (Entry.Name <> 'MonsterBattle') and (LeftStr(Entry.Name, 3) <> '135') and (LeftStr(Entry.Name, 3) <> '150') and (LeftStr(Entry.Name, 3) <> '151') and (LeftStr(Entry.Name, 3) <> '160') and (LeftStr(Entry.Name, 3) <> '169') and (LeftStr(Entry.Name, 3) <> '111') and (LeftStr(Entry.Name, 3) <> '114') then
       DumpEqpString(E);
 
 end;

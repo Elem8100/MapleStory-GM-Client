@@ -54,7 +54,7 @@ uses
 
 class procedure TSetEffect.LoadList;
 begin
-  for var Iter in EffectWz.GetImgFile('SetEff.img').Root.Children do
+  for var Iter in GetImgFile('Effect/SetEff.img').Root.Children do
     for var Iter2 in Iter.Children do
       if Iter2.Name = 'info' then
         for var Iter3 in Iter2.Children do
@@ -64,7 +64,7 @@ end;
 
 class procedure TSetEffect.Create(ID: string);
 begin
-  var Entry := GetImgEntry('Effect.wz/SetEff.img/' + IDToInt(AllList[ID]));
+  var Entry := GetImgEntry('Effect/SetEff.img/' + IDToInt(AllList[ID]));
   DumpData(Entry, EquipData, EquipImages);
 
   var SetEffect := TSetEffect.Create(SpriteEngine);
@@ -181,7 +181,7 @@ end;
 
 class procedure TItemEffect.LoadList;
 begin
-  for var Iter in EffectWz.GetImgFile('ItemEff.img').Root.Children do
+  for var Iter in GetImgFile('Effect/ItemEff.img').Root.Children do
     TItemEffect.AllList.Add('0' + Iter.Name);
 end;
 
@@ -262,13 +262,19 @@ begin
 
     FTime := 0;
   end;
+  MirrorX := Player.MirrorX;
 
   X := Trunc(Player.X - 10);
   Pos := TWZIMGEntry(ImageEntry.Parent).Get('pos', '-1');
   if (Pos=0) or (Pos=1) then
     X:= Trunc(Player.X -10)
   else
-    X:= Trunc(Player.X);
+  begin
+    if MirrorX then
+      X:= Trunc(Player.X)-19
+    else
+      X:= Trunc(Player.X);
+  end;
   if EffType <> Totem then
   begin
     if Pos = 1 then
@@ -283,7 +289,6 @@ begin
   Z := Player.z + TWZIMGEntry(ImageEntry.Parent).Get('z', '0');
   if EffType = Chair then
     Z := Player.z + TWZIMGEntry(ImageEntry).Get('z', '0') - 1;
-  MirrorX := Player.MirrorX;
 
   if ImageEntry.Get('origin') <> nil then
     Origin := ImageEntry.Get('origin').Vector;
@@ -326,11 +331,11 @@ begin
 
   case EffectType of
     Cash:
-      Entry := GetImgEntry('Item.wz/Cash/0501.img/' + ID);
+      Entry := GetImgEntry('Item/Cash/0501.img/' + ID);
     Chair, Equip, Consume, Totem,Ring:
-      Entry := GetImgEntry('Effect.wz/ItemEff.img/' + IDToInt(ID));
+      Entry := GetImgEntry('Effect/ItemEff.img/' + IDToInt(ID));
     Soul:
-      Entry := GetImgEntry('Effect.wz/BasicEff.img/SoulSkillReadied/Repeat/' + ID);
+      Entry := GetImgEntry('Effect/BasicEff.img/SoulSkillReadied/Repeat/' + ID);
   end;
 
   DumpData(Entry, EquipData, EquipImages);

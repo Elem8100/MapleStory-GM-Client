@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, AdvObj, BaseGrid, AdvGrid, Vcl.StdCtrls,
-  Vcl.ComCtrls;
+  Vcl.ComCtrls, AdvUtil;
 
 type
   TPetForm = class(TForm)
@@ -31,12 +31,11 @@ type
     procedure PetEquipGridClickCell(Sender: TObject; ARow, ACol: Integer);
   private
     HasLoad: Boolean;
-
     SelectRow: Integer;
     PetSelectRow: Integer;
     { Private declarations }
   public
-   PetID: string;
+    PetID: string;
     { Public declarations }
   end;
 
@@ -59,7 +58,7 @@ end;
 procedure TPetForm.DyeGridClickCell(Sender: TObject; ARow, ACol: Integer);
 begin
   SelectRow := ARow;
-  var Entry := GetImgEntry('Item.wz/Pet/' + PetID + '.img/');
+  var Entry := GetImgEntry('Item/Pet/' + PetID + '.img/');
   if Entry <> nil then
     TColorFunc.SetSpriteColor<TWZIMGEntry>(Entry, ARow, True);
   ActiveControl := nil;
@@ -80,17 +79,17 @@ begin
 
   var RowCount := -1;
   PetGrid.BeginUpdate;
-  for var img in TWZDirectory(ItemWZ.Root.Entry['Pet']).Files do
+  var ImgList := GetImgList('Item/Pet');
+  for var img in ImgList do
   begin
-
     var ID := NoIMG(img.Name);
     Inc(RowCount);
     PetGrid.RowCount := RowCount + 1;
     PetGrid.Cells[1, RowCount] := ID;
-    if HasImgEntry('String.wz/Pet.img/' + ID) then
-      PetGrid.Cells[3, RowCount] := GetImgEntry('String.wz/Pet.img/' + ID).Get('Name', '');
+    if HasImgEntry('String/Pet.img/' + ID) then
+      PetGrid.Cells[3, RowCount] := GetImgEntry('String/Pet.img/' + ID).Get('Name', '');
 
-    var Entry := GetImgEntry('Item.wz/Pet/' + img.Name + '/info/iconD', True);
+    var Entry := GetImgEntry('Item/Pet/' + img.Name + '/info/iconD', True);
     if Entry <> nil then
     begin
       var Bmp := Entry.Canvas.DumpBmp;
@@ -99,6 +98,7 @@ begin
     end;
 
   end;
+  ImgList.Free;
   PetGrid.SortByColumn(1);
   PetGrid.EndUpdate;
 end;
@@ -122,9 +122,9 @@ end;
 
 procedure TPetForm.PetEquipGridClickCell(Sender: TObject; ARow, ACol: Integer);
 begin
- var PetEquipID := PetEquipGrid.Cells[1, ARow];
- TPetEquip.Delete;
- TPetEquip.Create(PetEquipID);
+  var PetEquipID := PetEquipGrid.Cells[1, ARow];
+  TPetEquip.Delete;
+  TPetEquip.Create(PetEquipID);
 end;
 
 procedure TPetForm.PetGridClick(Sender: TObject);
@@ -151,23 +151,23 @@ begin
   PetEquipGrid.ClearAll;
   var RowCount := -1;
   PetEquipGrid.BeginUpdate;
-  for var img in TWZDirectory(CharacterWZ.Root.Entry['PetEquip']).Files do
+  var ImgList := GetImgList('Character/PetEquip');
+  for var Img in ImgList do
   begin
-
-    for var Iter in CharacterWZ.GetImgFile('PetEquip/' + Img.Name).Root.Children do
+    for var Iter in GetImgFile('Character/PetEquip/' + Img.Name).Root.Children do
     begin
       if (PEtID <> '') and (Iter.Name = PetID) then
       begin
-
         var ID := NoIMG(img.Name);
         Inc(RowCount);
         PetEquipGrid.RowCount := RowCount + 1;
         PetEquipGrid.Cells[1, RowCount] := ID;
-        if HasImgEntry('String.wz/Eqp.img/Eqp/PetEquip/' + IDToInt(ID)) then
-          PetEquipGrid.Cells[3, RowCount] := GetImgEntry('String.wz/Eqp.img/Eqp/PetEquip/' + IDToInt
+
+        if HasImgEntry('String/Eqp.img/Eqp/PetEquip/' + IDToInt(ID)) then
+          PetEquipGrid.Cells[3, RowCount] := GetImgEntry('String/Eqp.img/Eqp/PetEquip/' + IDToInt
             (ID)).Get('name', '');
 
-        var Entry := GetImgEntry('Character.wz/PetEquip/' + img.Name + '/info/icon', True);
+        var Entry := GetImgEntry('Character/PetEquip/' + img.Name + '/info/icon', True);
         if Entry <> nil then
         begin
           var Bmp := Entry.Canvas.DumpBmp;
@@ -178,11 +178,11 @@ begin
     end;
 
   end;
+  ImgList.Free;
+
   PetEquipGrid.SortByColumn(1);
   PetEquipGrid.EndUpdate;
-
   ActiveControl := nil;
-
 end;
 
 end.

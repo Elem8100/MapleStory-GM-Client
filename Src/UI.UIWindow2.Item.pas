@@ -223,7 +223,7 @@ begin
     2, 3, 4, 5, 9:
       begin
         Dir := GetItemDir(ID);
-        IconPath := 'Item.wz/' + Dir + '/' + LeftStr(ID, 4) + '.img/' + ID + '/info/icon';
+        IconPath := 'Item/' + Dir + '/' + LeftStr(ID, 4) + '.img/' + ID + '/info/icon';
         Entry := GetImgEntry(IconPath);
       end
   else
@@ -283,7 +283,7 @@ var
 
 procedure SelectTab(Index: Integer);
 begin
-  const Path = 'UI.wz/UIWindow2.img/Item/Tab/enabled/';
+  const Path = 'UI/UIWindow2.img/Item/Tab/enabled/';
   for var i := 0 to 4 do
     UIImage[Path + i.ToString].Visible := False;
 
@@ -333,14 +333,14 @@ end;
 
 procedure CreateItemForm;
 begin
-  const Path = 'UI.wz/UIWindow2.img/Item/';
+  const Path = 'UI/UIWindow2.img/Item/';
   CreateForm(Path + 'backgrnd', 417, 200);
 
-  CreateButton('ItemFormClose', 'UI.wz/Basic.img/BtClose3', 150, 5);
+  CreateButton('ItemFormClose', 'UI/Basic.img/BtClose3', 150, 5);
   UIButton['ItemFormClose'].OnMouseDown :=
     procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
     begin
-      UIForm['UI.wz/UIWindow2.img/Item/backgrnd'].Visible := False;
+      UIForm['UI/UIWindow2.img/Item/backgrnd'].Visible := False;
     end;
   CreateImage(Path + 'backgrnd2');
   CreateImage(Path + 'backgrnd3');
@@ -385,10 +385,10 @@ begin
   CreateButton(Path + 'BtAppraise3');
   CreateButton(Path + 'BtPot3');
 
-  CreateImage('ItemSlotVScr', 'UI.wz/Basic.img/VScr9/enabled/base', 1, 17.7, 153, 47);
-  CreateImage('ItemSlotVScr/prev0', 'UI.wz/Basic.img/VScr9/enabled/prev0', 1, 1, 153, 47);
-  CreateImage('ItemSlotVScr/next0', 'UI.wz/Basic.img/VScr9/enabled/next0', 1, 1, 153, 247);
-  CreateImage('ItemSlotVScr/thumb0', 'UI.wz/Basic.img/VScr9/enabled/thumb0', 1, 1, 153, 58);
+  CreateImage('ItemSlotVScr', 'UI/Basic.img/VScr9/enabled/base', 1, 17.7, 153, 47);
+  CreateImage('ItemSlotVScr/prev0', 'UI/Basic.img/VScr9/enabled/prev0', 1, 1, 153, 47);
+  CreateImage('ItemSlotVScr/next0', 'UI/Basic.img/VScr9/enabled/next0', 1, 1, 153, 247);
+  CreateImage('ItemSlotVScr/thumb0', 'UI/Basic.img/VScr9/enabled/thumb0', 1, 1, 153, 58);
   UIImage['ItemSlotVScr/thumb0'].Width := 11;
   UIImage['ItemSlotVScr/thumb0'].Height := 26;
   var OnDrag: Boolean;

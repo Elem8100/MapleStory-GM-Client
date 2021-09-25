@@ -66,7 +66,7 @@ begin
     MonsterFamiliar.Dead;
     MonsterFamiliar := nil;
     for var Iter in EquipImages.Keys do
-      if (LeftStr(Iter.GetPath, 7) = 'Mob.wz/') or (LeftStr(Iter.GetPath, 8) = 'Mob2.wz/') then
+      if (LeftStr(Iter.GetPath, 3) = 'Mob') then
       begin
         EquipImages.Remove(Iter);
       //  EquipData.Remove(Iter.GetPath);
@@ -77,12 +77,9 @@ end;
 class procedure TMonsterFamiliar.Create(ID: string);
 begin
   var Entry: TWZIMGEntry;
-  if HasImgFile('Mob.wz/' + ID + '.img') then
-    Entry := GetImgEntry('Mob.wz/' + ID + '.img/')
-  else if HasImgFile('Mob001.wz/' + ID + '.img') then
-    Entry := GetImgEntry('Mob001.wz/' + ID + '.img/')
-  else
-    Entry := GetImgEntry('Mob2.wz/' + ID + '.img/');
+  if HasImgFile('Mob/' + ID + '.img') then
+    Entry := GetImgEntry('Mob/' + ID + '.img/');
+
 
   DumpData(Entry, EquipData, EquipImages);
 
@@ -450,8 +447,8 @@ begin
   begin
     TruncMove := True;
     Tag := 1;
-    var TagNum := GetImgEntry('Character.WZ/Ring/' + ItemID + '.img/info').Get('nameTag', '');
-    Entry := GetImgEntry('UI.wz/NameTag.img/' + string(TagNum));
+    var TagNum := GetImgEntry('Character/Ring/' + ItemID + '.img/info').Get('nameTag', '');
+    Entry := GetImgEntry('UI/NameTag.img/' + string(TagNum));
     DumpData(Entry, EquipData, EquipImages);
     InitData;
   end;

@@ -8,13 +8,15 @@ interface
 {$IFEND}
 
 uses
-  PXT.Types, Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
-  Vcl.Graphics, Vcl.Grids, AdvObj, BaseGrid, AdvGrid, Vcl.ComCtrls, Vcl.StdCtrls, Vcl.Buttons,
-  scControls, scExtControls, Vcl.Controls, AdvGroupBox, Vcl.ExtCtrls, ToolPanels, Vcl.Forms,
-  Vcl.Dialogs, ToolWin, Generics.Collections, WZIMGFile, KeyHandler, WZReader, StrUtils, PngImage,
-  Jpeg, {, Reactor,}
-  Footholds, BassHandler, MapPortal, AdvUtil, Mob2, Npc, MapleCharacter, AsphyreTimer, PXT.Sprites,
-  AsphyreKeyboard, DirectInput, Global, MapleMap, WzUtils, System.Types, PXT.Graphics, PXT.Headers;
+  PXT.Types, Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Vcl.Graphics, Vcl.Grids, AdvObj, BaseGrid, AdvGrid,
+  Vcl.ComCtrls, Vcl.StdCtrls, Vcl.Buttons, scControls, scExtControls,
+  Vcl.Controls, AdvGroupBox, Vcl.ExtCtrls, ToolPanels, Vcl.Forms, Vcl.Dialogs,
+  ToolWin, Generics.Collections, WZIMGFile, KeyHandler, WZReader, StrUtils,
+  PngImage, Jpeg, {, Reactor,}
+  Footholds, BassHandler, MapPortal, AdvUtil, Mob2, Npc, MapleCharacter,
+  AsphyreTimer, PXT.Sprites, AsphyreKeyboard, DirectInput, Global, MapleMap,
+  WzUtils, System.Types, PXT.Graphics, PXT.Headers;
 
 type
   TScreenMode = (smNormal, smScale, smFullScreen);
@@ -133,15 +135,13 @@ type
     ScrollingBarX: Single;
     procedure TimerEvent(Sender: TObject);
     procedure RenderEvent;
-    procedure CirCleMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y:
-      Integer);
+    procedure CirCleMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     { Private declarations }
   public
     ScreenMode: TScreenMode;
     FullScreenTexture: TTexture;
     CheckBoardtexture: TTexture;
-    procedure CreateTexture(var Texture: TTexture; Width, Height: Integer; PremultipliedAlpha:
-      Boolean);
+    procedure CreateTexture(var Texture: TTexture; Width, Height: Integer; PremultipliedAlpha: Boolean);
     { Public declarations }
   end;
 
@@ -151,21 +151,22 @@ var
 implementation
 
 uses
-  MobFormUnit, SaveMapFormUnit, ImageInfoUnit, RenderFormUnit, MapBack, MobInfo, ShowOptionUnit,
-  Tools, NpcFormUnit, ChairformUnit, MorphFormUnit, MedalTagFormUnit, NickNameTagFormUnit,
-  DamageSkinFormUnit, WorldMapFormUnit, CashFormUnit, TamingMobFormUnit, MapleEffect, TamingMob,
-  MapleChair, LabelRingFormUnit, PetFormUnit, Pet, FamiliarFormUnit, MonsterFamiliar, SkillFormUnit,
-  Skill, OptionsFormUnit, AvatarFormUnit, AndroidFormUnit, Android, ACtrlEngine, SetScreenFormUnit,
-  ConsumeFormUnit, CashForm2Unit, EtcFormUnit, PlayActionFormUnit, UI.Utils, acontrols,
-  UI.StatusBar3.Chat, UI.UIWindow2.UserInfo, UI.UIWindow2.Item, SelectFolderFormUnit,
-  TotemEffectFormUnit, SoulEffectFormUnit, ReactorFormUnit, ChatRingFormUnit,EffectRingFormUnit, ChatBalloon,
-  PXT.TypesEx;
+  MobFormUnit, SaveMapFormUnit, ImageInfoUnit, RenderFormUnit, MapBack, MobInfo,
+  ShowOptionUnit, Tools, NpcFormUnit, ChairformUnit, MorphFormUnit,
+  MedalTagFormUnit, NickNameTagFormUnit, DamageSkinFormUnit, WorldMapFormUnit,
+  CashFormUnit, TamingMobFormUnit, MapleEffect, TamingMob, MapleChair,
+  LabelRingFormUnit, PetFormUnit, Pet, FamiliarFormUnit, MonsterFamiliar,
+  SkillFormUnit, Skill, OptionsFormUnit, AvatarFormUnit, AndroidFormUnit,
+  Android, ACtrlEngine, SetScreenFormUnit, ConsumeFormUnit, CashForm2Unit,
+  EtcFormUnit, PlayActionFormUnit, UI.Utils, acontrols, UI.StatusBar3.Chat,
+  UI.UIWindow2.UserInfo, UI.UIWindow2.Item, SelectFolderFormUnit,
+  TotemEffectFormUnit, SoulEffectFormUnit, ReactorFormUnit, ChatRingFormUnit,
+  EffectRingFormUnit, ChatBalloon, PXT.TypesEx;
 {$R *.dfm}
 
 procedure TMainForm.FamiliarButtonClick(Sender: TObject);
 begin
-  if (not HasImgFile('String.wz/FamiliarSkill.img')) and (not HasImgFile('String.wz/Familiar.img'))
-    then
+  if (not HasImgFile('String/FamiliarSkill.img')) and (not HasImgFile('String/Familiar.img')) then
   begin
     MessageDlg('Older versions of .wz are not supported', mtInformation, [mbOK], 0);
     Exit;
@@ -303,8 +304,7 @@ begin
     ActiveEdit.KeyPress(Key);
 end;
 
-procedure TMainForm.FormMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y:
-  Integer);
+procedure TMainForm.FormMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 begin
   MoveOn := True;
   OldX := X;
@@ -338,14 +338,11 @@ begin
   DisplaySize := Point2i(1024, 768);
   GameMode := gmPlay;
 
-  FDevice := DeviceInit(TDeviceBackend.Default, RenderForm.Handle, Point2i(1024, 768), PXT.Types.TPixelFormat.BGRA8,
-    PXT.Types.TPixelFormat.Unknown, 0, DeviceAttributes([TDeviceAttribute.VSync]));
-  GameDevice2 := DeviceInitShared(FDevice, AvatarForm.Panel1.Handle, Point2i(260, 200), PXT.Types.TPixelFormat.BGRA8,
-    PXT.Types.TPixelFormat.Unknown, 0, DeviceAttributes([TDeviceAttribute.VSync]));
+  FDevice := DeviceInit(TDeviceBackend.Default, RenderForm.Handle, Point2i(1024, 768), PXT.Types.TPixelFormat.BGRA8, PXT.Types.TPixelFormat.Unknown, 0, DeviceAttributes([TDeviceAttribute.VSync]));
+  GameDevice2 := DeviceInitShared(FDevice, AvatarForm.Panel1.Handle, Point2i(260, 200), PXT.Types.TPixelFormat.BGRA8, PXT.Types.TPixelFormat.Unknown, 0, DeviceAttributes([TDeviceAttribute.VSync]));
   GameDevice2.Resize(Point2i(260, 200));
 
-  GameDevice3 := DeviceInitShared(FDevice, AvatarForm.Panel2.Handle, Point2i(512, 512), PXT.Types.TPixelFormat.BGRA8,
-    PXT.Types.TPixelFormat.Unknown, 0, DeviceAttributes([TDeviceAttribute.VSync]));
+  GameDevice3 := DeviceInitShared(FDevice, AvatarForm.Panel2.Handle, Point2i(512, 512), PXT.Types.TPixelFormat.BGRA8, PXT.Types.TPixelFormat.Unknown, 0, DeviceAttributes([TDeviceAttribute.VSync]));
   GameDevice3.Resize(Point2i(512, 512));
   if Screen.MonitorCount > 0 then
   begin
@@ -431,10 +428,7 @@ begin
 
   if ComboBox1.Items.Count <= 2 then
   begin
-    var List := ['800X600', '1024X768', '1152X864', '1280X720', '1280X768', '1280X800', '1280X960',
-      '1280X1024', '1360X768', '1366X768', '1600X900', '1600X1024', '1600X1200', '1680X1050',
-      '1920X1080', '1440X900', '1400X1050', '2560X1080', '2560X1440', '3440X1440', '3840X1080',
-      '3840X1600', '3840X2160'];
+    var List := ['800X600', '1024X768', '1152X864', '1280X720', '1280X768', '1280X800', '1280X960', '1280X1024', '1360X768', '1366X768', '1600X900', '1600X1024', '1600X1200', '1680X1050', '1920X1080', '1440X900', '1400X1050', '2560X1080', '2560X1440', '3440X1440', '3840X1080', '3840X1600', '3840X2160'];
     for var I in List do
       ComboBox1.Items.Add(i);
   end;
@@ -610,8 +604,7 @@ begin
       var Y := AvatarForm.TrackBarY.Position;
       var Width := AvatarForm.TrackBarW.Position;
       var Height := AvatarForm.TrackBarH.Position;
-      GameCanvas.DrawPortion(AvatarPanelTexture, 100, 150, WX2, WY2, WX2 + 250, WY2 + 230, False,
-        $FFFFFFFF);
+      GameCanvas.DrawPortion(AvatarPanelTexture, 100, 150, WX2, WY2, WX2 + 250, WY2 + 230, False, $FFFFFFFF);
       Gamecanvas.FrameRect(FloatRect(100 + X, 150 + Y, Width, Height), ColorRect($FFFF0000), 2);
       GameCanvas.EndScene;
       GameDevice3.EndScene;
@@ -696,7 +689,7 @@ begin
     end
     else
     begin
-       GameCursor.Draw;
+      GameCursor.Draw;
     end;
   end;
 
@@ -710,8 +703,7 @@ begin
       FontSettings := TFontSettings.Create('Arial', 12, TFontWeight.Normal);
     FontSettings.Effect.BorderType := TFontBorder.None;
     GameFont.FontSettings := FontSettings;
-    GameFont.DrawAlignedByPixels(Point2f(ScrollingBarX, 2), TMap.ScrollingMessage, ColorPair($FF00FFFF),
-      TTextAlignment.Start, TTextAlignment.Start);
+    GameFont.DrawAlignedByPixels(Point2f(ScrollingBarX, 2), TMap.ScrollingMessage, ColorPair($FF00FFFF), TTextAlignment.Start, TTextAlignment.Start);
     ScrollingBarX := ScrollingBarX + 1;
     if ScrollingBarX > DisplaySize.X then
       ScrollingBarX := -GameFont.ExtentByPixels(TMap.ScrollingMessage).Right;
@@ -734,16 +726,8 @@ begin
     Exit;
   var LeftNum := LeftStr(ID, 1);
 
-  if TMap.Has002Wz then
-  begin
-    if not HasImgFile('Map002.wz/Map/Map' + LeftNum + '/' + ID + '.img') then
-      Exit;
-  end
-  else
-  begin
-    if not HasImgFile('Map.wz/Map/Map' + LeftNum + '/' + ID + '.img') then
-      Exit;
-  end;
+  if not HasImgFile('Map/Map/Map' + LeftNum + '/' + ID + '.img') then
+    Exit;
 
   WorldMapForm.Canvas.Font.Size := 18;
   WorldMapForm.Canvas.TextOut(150, 150, 'Loading...');
@@ -832,7 +816,7 @@ begin
   if not WorldMapForm.Showing then
     WorldMapForm.Show;
 
-  var Entry := GetImgEntry('Map.wz/WorldMap/' + WorldMapGrid.Cells[0, ARow] + '/');
+  var Entry := GetImgEntry('Map/WorldMap/' + WorldMapGrid.Cells[0, ARow] + '/');
   var Bmp := Entry.Get('BaseImg/0').Canvas.DumpBmp;
   var W, H: Integer;
   W := Bmp.Width;
@@ -1119,8 +1103,7 @@ begin
   ChatRingForm.Show;
 end;
 
-procedure TMainForm.CreateTexture(var Texture: TTexture; Width, Height: Integer; PremultipliedAlpha:
-  Boolean);
+procedure TMainForm.CreateTexture(var Texture: TTexture; Width, Height: Integer; PremultipliedAlpha: Boolean);
 begin
   var Parameters: TTextureParameters;
   FillChar(Parameters, SizeOf(TTextureParameters), 0);
@@ -1218,10 +1201,9 @@ var
 begin
   MapID := LeftStr(Grid.Rows[ARow].Text, 9);
   LeftNum := LeftStr(MapID, 1);
-  if TMap.Has002Wz then
-    Entry := GetImgEntry('Map002.wz/Map/Map' + LeftNum + '/' + MapID + '.img/info/link')
-  else
-    Entry := GetImgEntry('Map.wz/Map/Map' + LeftNum + '/' + MapID + '.img/info/link');
+
+  Entry := GetImgEntry('Map/Map/Map' + LeftNum + '/' + MapID + '.img/info/link');
+
   if Entry = nil then
     TMap.ID := MapID
   else
@@ -1229,44 +1211,24 @@ begin
 
   LeftNum := LeftStr(TMap.ID, 1);
   Image1.Picture := nil;
-  if TMap.Has002Wz then
-    Entry := GetImgEntry('Map002.wz/Map/Map' + LeftNum + '/' + TMap.ID + '.img/miniMap')
-  else
-    Entry := GetImgEntry('Map.wz/Map/Map' + LeftNum + '/' + TMap.ID + '.img/miniMap');
+  Entry := GetImgEntry('Map/Map/Map' + LeftNum + '/' + TMap.ID + '.img/miniMap');
 
   if Entry <> nil then
   begin
     TMap.HasMiniMap := True;
-    if (TMap.Has002Wz) and (Entry.Get('canvas/_outlink') <> nil) then
+
+    if (Entry.Get('canvas/_outlink') <> nil) then
     begin
-      if (Entry.Get('canvas/_outlink') <> nil) then
-      begin
-        var Data: string := Entry.Get('canvas/_outlink').Data;
-        var S: TArray<string> := Data.Split(['/']);
-        TMap.MiniMapEntry := GetImgEntry('Map002.wz/Map/' + S[2] + '/' + S[3] + '/' + S[4]);
-        Bmp := TMap.MiniMapEntry.Get('canvas').Canvas.DumpBmp;
-      end
-      else
-      begin
-        TMap.MiniMapEntry := Entry;
-        Bmp := Entry.Get2('canvas').Canvas.DumpBmp;
-      end;
+      var Data: string := Entry.Get('canvas/_outlink').Data;
+      TMap.MiniMapEntry := GetImgEntry(Data);
+      Bmp := GetImgEntry(Data).Canvas.DumpBmp;
     end
     else
     begin
-      if (Entry.Get('canvas/_outlink') <> nil) then
-      begin
-        var Data: string := Entry.Get('canvas/_outlink').Data;
-        var S: TArray<string> := Data.Split(['/']);
-        TMap.MiniMapEntry := GetImgEntry('Map.wz/Map/' + S[2] + '/' + S[3] + '/' + S[4]);
-        Bmp := TMap.MiniMapEntry.Get('canvas').Canvas.DumpBmp;
-      end
-      else
-      begin
-        TMap.MiniMapEntry := Entry;
-        Bmp := Entry.Get2('canvas').Canvas.DumpBmp;
-      end;
+      TMap.MiniMapEntry := Entry.Get('canvas');
+      Bmp := Entry.Get2('canvas').Canvas.DumpBmp;
     end;
+
     Image1.Picture.Assign(Bmp);
     TMap.MiniMapWidth := Bmp.Width;
     TMap.MiniMapHeight := Bmp.Height;
@@ -1278,7 +1240,6 @@ begin
 end;
 
 initialization
-
 
 end.
 

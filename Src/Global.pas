@@ -3,11 +3,9 @@ unit Global;
 interface
 
 uses
-  Windows, SysUtils, StrUtils, PXT.Sprites, WZArchive, Generics.Collections, WZIMGFile,
-  WZDirectory, Classes, Math,  BassHandler,
-  AsphyreKeyboard, Tools,
-  System.Types, ACtrlEngine,PXT.Types,
-  PXT.Graphics,PXT.Canvas;
+  Windows, SysUtils, StrUtils, PXT.Sprites, WZArchive, Generics.Collections,
+  WZIMGFile, WZDirectory, Classes, Math, BassHandler, AsphyreKeyboard, Tools,
+  System.Types, ACtrlEngine, PXT.Types, PXT.Graphics, PXT.Canvas;
 
 type
   TGameMode = (gmPlay, gmView);
@@ -23,7 +21,9 @@ type
   end;
 
 var
-  WzList:TList<TWZArchive>;
+  WzList: TList<TWZArchive>;
+  //list 64 bit Character wz files
+  WzList2:TDictionary<string,string>;
   Is64Bit: Boolean;
   WzPath: string;
   FDevice: TDevice;
@@ -39,8 +39,7 @@ var
   BackEngine: array[0..1] of TSpriteEngine;
  // FontsAlt: TAsphyreFontsAlt;
   Keyboard: TAsphyreKeyboard;
-  MobWZ, Mob2WZ, Mob001WZ,Mob002Wz, NPCWZ, MapWz, Map2Wz, Map001Wz,Map002Wz, MorphWz, StringWZ, SoundWZ, Sound2Wz, Sound002Wz,
-    CharacterWZ, BaseWZ, UIWZ, ReactorWz, EffectWz, SkillWZ, Skill001Wz, ItemWZ, EtcWZ: TWZArchive;
+  MobWZ, Mob2WZ, Mob001WZ, Mob002Wz, NPCWZ, MapWz, Map2Wz, Map001Wz, Map002Wz, MorphWz, StringWZ, SoundWZ, Sound2Wz, Sound002Wz, CharacterWZ, BaseWZ, UIWZ, ReactorWz, EffectWz, SkillWZ, Skill001Wz, ItemWZ, EtcWZ: TWZArchive;
   GameMode: TGameMode;
   Sounds: TObjectList<TBassHandler>;
   Damage: Integer;
@@ -50,12 +49,12 @@ var
   EquipData, WzData: TObjectDictionary<string, TWZIMGEntry>;
   Images: TDictionary<TWZIMGEntry, TTexture>;
   EquipImages: TDictionary<TWZIMGEntry, TTexture>;
-function LeftPad(Value:Integer; Length:integer=8): string;
+
+function LeftPad(Value: Integer; Length: integer = 8): string;
 
 function IsNumber(AStr: string): Boolean;
 
 procedure PlaySounds(Img, Path: string);
-
 
 function TrimS(Stemp: string): string;
 
@@ -67,12 +66,15 @@ function Add9(Name: string): string;
 
 implementation
 
+uses
+  WzUtils;
+
 var
   CosTable256: array[0..255] of Double;
 
-function LeftPad(Value:Integer; Length:integer=8): string;
+function LeftPad(Value: Integer; Length: integer = 8): string;
 begin
-  Result := RightStr(StringOfChar('0',Length) + Value.ToString, Length );
+  Result := RightStr(StringOfChar('0', Length) + Value.ToString, Length);
 end;
 
 function IsNumber(AStr: string): Boolean;
@@ -108,7 +110,7 @@ var
   NewSound: TBassHandler;
   Entry: TWZIMGEntry;
 begin
-  Entry := SoundWZ.GetImgFile(Img + '.img').Root.Get(Path);
+  Entry := GetImgFile('Sound/' + Img + '.img').Root.Get(Path);
   if Entry = nil then
     Exit;
 
@@ -118,13 +120,22 @@ begin
     if Entry.DataType = mdtUOL then
       Entry := TWZIMGEntry(Entry.Parent).Get(Entry.Data);
   end;
-
-  NewSound := TBassHandler.Create(SoundWZ.Reader.Stream, Entry.Sound.Offset, Entry.Sound.DataLength);
+  var WZ: TWzarchive;
+  for var I in WzList do
+  begin
+    if LeftStr(i.PathName,5)='Sound' then
+    begin
+     if I.GetImgFile(Img + '.img') <> nil then
+     begin
+       WZ := I;
+       break;
+     end;
+    end;
+  end;
+  NewSound := TBassHandler.Create(WZ.Reader.Stream, Entry.Sound.Offset, Entry.Sound.DataLength);
   NewSound.Play;
   Sounds.Add(NewSound);
-
 end;
-
 
 function IDToInt(ID: string): string;
 var
@@ -183,6 +194,7 @@ initialization
   EquipData := TObjectDictionary<string, TWZIMGEntry>.Create;
   CharData := TDictionary<string, Variant>.Create;
   Data := TDictionary<string, Variant>.Create;
+
 
 finalization
   TTimers.TimerList.Free;

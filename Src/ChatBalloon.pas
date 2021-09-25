@@ -154,9 +154,9 @@ begin
   Directory := Dir;
   FStyle := BalloonStyle;
   if Directory = '' then
-    Entry := GetImgEntry('UI.wz/ChatBalloon.img/' + FStyle.ToString)
+    Entry := GetImgEntry('UI/ChatBalloon.img/' + FStyle.ToString)
   else
-    Entry := GetImgEntry('UI.wz/ChatBalloon.img/' + Directory + '/' + FStyle.ToString);
+    Entry := GetImgEntry('UI/ChatBalloon.img/' + Directory + '/' + FStyle.ToString);
   DumpData(Entry, WzData, Images);
   GameCanvas.DrawTarget(TargetTexture, 150, 512,
     procedure

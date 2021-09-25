@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, AdvObj,
-  BaseGrid, AdvGrid, Generics.Collections, Vcl.StdCtrls;
+  BaseGrid, AdvGrid, Generics.Collections, Vcl.StdCtrls, AdvUtil;
 
 type
   TMorphForm = class(TForm)
@@ -82,17 +82,18 @@ begin
   Dict := TDictionary<string, TRec>.Create;
   imgs := TList<string>.Create;
 
-  for Iter in StringWZ.GetImgFile('Consume.img').Root.Children do
+  for Iter in GetImgFile('String/Consume.img').Root.Children do
   begin
     Rec.Desc := Iter.Get('desc', '');
     Rec.Name := Iter.Get('name', '');
     Dict.Add(Iter.Name, Rec);
   end;
 
-  for img in MorphWz.Root.Files do
+  var ImgList:=GetImgList('Morph');
+  for img in ImgList do
     imgs.Add(LeftStr(img.Name, 4));
-
-  for Iter in ItemWZ.GetImgFile('Consume/0221.img').Root.Children do
+   ImgList.Free;
+  for Iter in GetImgFile('Item/Consume/0221.img').Root.Children do
   begin
     Inc(Row);
     MorphGrid.RowCount := Row + 1;
@@ -112,7 +113,7 @@ begin
     if imgs.contains(MorphID) then
     begin
       MorphGrid.Cells[4, Row] := MorphID + '.img';
-      Bmp := MorphWz.GetImgFile(MorphID + '.img').Root.Get2('walk/0').Canvas.DumpBmp;
+      Bmp := GetImgFile('Morph/'+MorphID + '.img').Root.Get2('walk/0').Canvas.DumpBmp;
       if (Bmp.Height > 100) then
       begin
         MorphGrid.RowHeights[Row] := 100;

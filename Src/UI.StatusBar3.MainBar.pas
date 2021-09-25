@@ -49,7 +49,7 @@ end;
 
 procedure TEXPBar.ReDraw(ReDumpData: Boolean = False);
 begin
-  var Entry := GetImgEntry('UI.wz/StatusBar3.img/mainBar/EXPBar');
+  var Entry := GetImgEntry('UI/StatusBar3.img/mainBar/EXPBar');
   if ReDumpData then
     DumpData(Entry, UIData, UIImages);
   var Entry1: TWzIMGEntry;
@@ -105,7 +105,7 @@ end;
 procedure TStatusBar3MainBar.NumberTextout(X, Y: Integer; NumberStr: string);
 begin
   var Char: string;
-  var GraphicNumber := GetImgEntry('UI.wz/StatusBar3.img/mainBar/status/gauge/number');
+  var GraphicNumber := GetImgEntry('UI/StatusBar3.img/mainBar/status/gauge/number');
   var W: Integer;
 
   var Middle := -60 + (Length(NumberStr) * 7) div 2;
@@ -120,7 +120,7 @@ end;
 
 procedure TStatusBar3MainBar.ReDraw(ReDumpData: Boolean = False);
 begin
-  var Entry := GetImgEntry('UI.wz/StatusBar3.img/mainBar/status');
+  var Entry := GetImgEntry('UI/StatusBar3.img/mainBar/status');
   if ReDumpData then
     DumpData(Entry, UIData, UIImages);
   Width := 205;
@@ -167,7 +167,7 @@ end;
 procedure HideForms(Forms: array of string);
 begin
   for var i := 0 to High(Forms) do
-    UIForm['UI.wz/StatusBar3.img/mainBar/submenu/title/' + Forms[i]].Visible := False;
+    UIForm['UI/StatusBar3.img/mainBar/submenu/title/' + Forms[i]].Visible := False;
 end;
 
 class procedure TStatusBar3MainBar.CreateUI;
@@ -179,12 +179,12 @@ begin
     Top := 0 + 1000;
     CanMove := False;
   end;
-  CreateEmptyForm('UI.wz/StatusBar3.img/mainBar/menu', 617, 720, 200, 30, false);
+  CreateEmptyForm('UI/StatusBar3.img/mainBar/menu', 617, 720, 200, 30, false);
 
-  CreateButtons('UI.wz/StatusBar3.img/mainBar/menu', ['button:CashShop', 'button:Event',
+  CreateButtons('UI/StatusBar3.img/mainBar/menu', ['button:CashShop', 'button:Event',
     'button:Character', 'button:Community', 'button:setting', 'button:Menu']);
 
-  var Path := 'UI.wz/StatusBar3.img/mainBar/submenu/';
+  var Path := 'UI/StatusBar3.img/mainBar/submenu/';
   //event
   CreateEmptyForm(Path + 'title/event', 610, 630, 100, 100);
   CreateImage('event0', Path + 'backgrnd/0', 1, 1, 0, 0);
@@ -204,41 +204,41 @@ begin
     procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
     begin
       CreateStatForm;
-      UIForm['UI.wz/StatusBar3.img/mainBar/submenu/title/character'].Visible := False;
+      UIForm['UI/StatusBar3.img/mainBar/submenu/title/character'].Visible := False;
     end;
 
   UIButton[Path + 'character/button:character'].OnMouseDown :=
     procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
     begin
       CreateUserInfoForm;
-      UIForm['UI.wz/StatusBar3.img/mainBar/submenu/title/character'].Visible := False;
+      UIForm['UI/StatusBar3.img/mainBar/submenu/title/character'].Visible := False;
     end;
 
   UIButton[Path + 'character/button:Item'].OnMouseDown :=
     procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
     begin
       CreateItemForm;
-      UIForm['UI.wz/StatusBar3.img/mainBar/submenu/title/character'].Visible := False;
+      UIForm['UI/StatusBar3.img/mainBar/submenu/title/character'].Visible := False;
     end;
   UIButton[Path + 'character/button:Skill'].OnMouseDown :=
     procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
     begin
       CreateSkillForm;
-      UIForm['UI.wz/StatusBar3.img/mainBar/submenu/title/character'].Visible := False;
+      UIForm['UI/StatusBar3.img/mainBar/submenu/title/character'].Visible := False;
     end;
 
   UIButton[Path + 'character/button:Equip'].OnMouseDown :=
     procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
     begin
       CreateEquipForm;
-      UIForm['UI.wz/StatusBar3.img/mainBar/submenu/title/character'].Visible := False;
+      UIForm['UI/StatusBar3.img/mainBar/submenu/title/character'].Visible := False;
     end;
 
   UIButton[Path + 'event/button:schedule'].OnMouseDown :=
     procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
     begin
       CreateEventListForm;
-      UIForm['UI.wz/StatusBar3.img/mainBar/submenu/title/event'].Visible := False;
+      UIForm['UI/StatusBar3.img/mainBar/submenu/title/event'].Visible := False;
     end;
 
   //community
@@ -278,12 +278,12 @@ begin
     Redraw(True);
   end;
   HideForms(['character', 'menu', 'event', 'setting', 'community']);
-  var PathButton := 'UI.wz/StatusBar3.img/mainBar/menu/button:';
+  var PathButton := 'UI/StatusBar3.img/mainBar/menu/button:';
 
   UIButton[PathButton + 'Event'].OnMouseDown :=
     procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
     begin
-      const Path = 'UI.wz/StatusBar3.img/mainBar/submenu/title/event';
+      const Path = 'UI/StatusBar3.img/mainBar/submenu/title/event';
       HideForms(['character', 'menu', 'community', 'setting']);
       UIForm[Path].Visible := not UIForm[Path].Visible;
     end;
@@ -291,14 +291,14 @@ begin
   UIButton[PathButton + 'Character'].OnMouseDown :=
     procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
     begin
-      const Path = 'UI.wz/StatusBar3.img/mainBar/submenu/title/character';
+      const Path = 'UI/StatusBar3.img/mainBar/submenu/title/character';
       HideForms(['event', 'menu', 'community', 'setting']);
       UIForm[Path].Visible := not UIForm[Path].Visible;
     end;
   UIButton[PathButton + 'Community'].OnMouseDown :=
     procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
     begin
-      const Path = 'UI.wz/StatusBar3.img/mainBar/submenu/title/community';
+      const Path = 'UI/StatusBar3.img/mainBar/submenu/title/community';
       HideForms(['character', 'menu', 'event', 'setting']);
       UIForm[Path].Visible := not UIForm[Path].Visible;
     end;
@@ -306,7 +306,7 @@ begin
   UIButton[PathButton + 'setting'].OnMouseDown :=
     procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
     begin
-      const Path = 'UI.wz/StatusBar3.img/mainBar/submenu/title/setting';
+      const Path = 'UI/StatusBar3.img/mainBar/submenu/title/setting';
       HideForms(['character', 'menu', 'event', 'community']);
       UIForm[Path].Visible := not UIForm[Path].Visible;
     end;
@@ -314,15 +314,15 @@ begin
   UIButton[PathButton + 'Menu'].OnMouseDown :=
     procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
     begin
-      const Path = 'UI.wz/StatusBar3.img/mainBar/submenu/title/menu';
+      const Path = 'UI/StatusBar3.img/mainBar/submenu/title/menu';
       HideForms(['character', 'setting', 'event', 'community']);
       UIForm[Path].Visible := not UIForm[Path].Visible;
     end;
-  CreateEmptyForm('UI.wz/StatusBar3.img/mainBar/quickSlot/backgrnd', 577, 73, 800, 120);
-  UIForm['UI.wz/StatusBar3.img/mainBar/quickSlot/backgrnd'].CanMove := False;
-  CreateImage('UI.wz/StatusBar3.img/mainBar/quickSlot/backgrnd',1,1,15,0);
-  CreateImage('UI.wz/StatusBar3.img/mainBar/quickSlot/layer:cover',1,1,15,0);
-  const KeyPath = 'UI.wz/StatusBar3.img/Keyconfig/key/';
+  CreateEmptyForm('UI/StatusBar3.img/mainBar/quickSlot/backgrnd', 577, 73, 800, 120);
+  UIForm['UI/StatusBar3.img/mainBar/quickSlot/backgrnd'].CanMove := False;
+  CreateImage('UI/StatusBar3.img/mainBar/quickSlot/backgrnd',1,1,15,0);
+  CreateImage('UI/StatusBar3.img/mainBar/quickSlot/layer:cover',1,1,15,0);
+  const KeyPath = 'UI/StatusBar3.img/Keyconfig/key/';
   var key1 := ['42', '82', '71', '73', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '37',
     '38'];
   var key2 := ['29', '83', '79', '81', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25',
@@ -332,7 +332,7 @@ begin
     CreateImage(KeyPath + key1[i], 1, 1, 29 + i * 35, 6);
     CreateImage(KeyPath + key2[i], 1, 1, 29 + i * 35, 42);
   end;
-  CreateButton('UI.wz/StatusBar3.img/mainBar/quickSlot/button:Extend',15);
+  CreateButton('UI/StatusBar3.img/mainBar/quickSlot/button:Extend',15);
 
 end;
 

@@ -67,14 +67,14 @@ begin
   DumpList := TList<string>.Create;
   Randomize;
 
-  Entry := GetImgEntry('Npc.wz/' + ID + '.img/info/link');
-  NpcEntry := GetImgEntry('Npc.wz/' + ID + '.img/');
+  Entry := GetImgEntry('Npc/' + ID + '.img/info/link');
+  NpcEntry := GetImgEntry('Npc/' + ID + '.img/');
   if not DumpList.contains(ID) then
   begin
     DumpList.Add(ID);
     DumpData(NpcEntry, WzData, Images);
     if Entry <> nil then
-      DumpData(NPCWZ.GetImgFile(Entry.Data + '.img').Root, WzData, Images);
+      DumpData(GetImgFile('Npc/'+Entry.Data + '.img').Root, WzData, Images);
   end;
 
   with TNpc.Create(SpriteEngine) do
@@ -88,7 +88,7 @@ begin
     Frame := 0;
     Actions := TList<string>.Create;
 
-    for Iter2 in NPCWZ.GetImgFile(SpriteID + '.img').Root.Children do
+    for Iter2 in GetImgFile('Npc/'+SpriteID + '.img').Root.Children do
       if (Iter2.Name <> 'info') and (LeftStr(Iter2.Name, 9) <> 'condition') and (Iter2.Get('0', '-1')
         <> '-1') then
         Actions.Add(Iter2.Name);
@@ -121,7 +121,7 @@ begin
     //FIDWidth := FontsAlt[0].TextWidth('ID: ' + LocalID);
     FIDWidth := Round(GameFont.ExtentByPixels('ID: ' + LocalID).Right);
     ImageLib := Images;
-    ImagePath := 'Npc.wz/' + SpriteID + '.img/' + Action + '/0';
+    ImagePath := 'Npc/' + SpriteID + '.img/' + Action + '/0';
     ImageEntry := WzData[ImagePath];
     Pos := TFootholdTree.This.FindBelow(Point(Round(PosX), Round(PosY - 3)), BelowFH);
     X := Pos.X;
@@ -133,7 +133,7 @@ begin
     TruncMove := True;
 
     Msgs := TList<string>.Create;
-    for Iter2 in StringWZ.GetImgFile('Npc.img').Root.Get(IDToInt(SpriteID)).Children do
+    for Iter2 in GetImgFile('String/Npc.img').Root.Get(IDToInt(SpriteID)).Children do
       if IsNumber(Iter2.Name, 2) then
         Msgs.Add(Iter2.Data);
 
@@ -147,7 +147,7 @@ begin
     end;
     Counter := Random(750);
 
-    Entry := NPCWZ.GetImgFile(SpriteID + '.img').Root;
+    Entry := GetImgFile('Npc/'+SpriteID + '.img').Root;
     if Entry.Get('info/MapleTV', '0') = 1 then
     begin
       msgX := Entry.Get('info/MapleTVmsgX', '0');
@@ -208,7 +208,7 @@ begin
         TargetEvent;
       end);
 
-  ImagePath := 'Npc.wz/' + SpriteID + '.img/' + Action + '/' + Frame.ToString;
+  ImagePath := 'Npc/' + SpriteID + '.img/' + Action + '/' + Frame.ToString;
   ImageEntry := WzData[ImagePath];
   AnimDelay := WzData[ImagePath].Get('delay', '100');
 
@@ -216,7 +216,7 @@ begin
   if FTime > AnimDelay then
   begin
     Frame := Frame + 1;
-    if not WzData.ContainsKey('Npc.wz/' + SpriteID + '.img/' + Action + '/' + Frame.ToString) then
+    if not WzData.ContainsKey('Npc/' + SpriteID + '.img/' + Action + '/' + Frame.ToString) then
     begin
       Frame := 0;
       if Actions.Count > 1 then

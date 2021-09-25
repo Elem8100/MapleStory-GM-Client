@@ -76,7 +76,7 @@ begin
     Pet.Dead;
     Pet := nil;
     for var Iter in EquipImages.Keys do
-      if LeftStr(Iter.GetPath, 11) = 'Item.wz/Pet' then
+      if LeftStr(Iter.GetPath, 11) = 'Item/Pet' then
       begin
         EquipImages.Remove(Iter);
        // EquipData.Remove(Iter.GetPath);
@@ -87,7 +87,7 @@ end;
 class procedure TPet.Create(ID: string);
 begin
 
-  var Entry := GetImgEntry('Item.wz/Pet/' + ID + '.img/');
+  var Entry := GetImgEntry('Item/Pet/' + ID + '.img/');
   DumpData(Entry, EquipData, EquipImages);
 
   for var Iter in EquipData[Entry.GetPath].Children do
@@ -470,17 +470,17 @@ begin
   begin
     TruncMove := True;
     Tag := 1;
-    var TagNum := GetImgEntry('Item.wz/Pet/' + ItemID + '.img/info').Get('nameTag', '3');
-    Entry := GetImgEntry('UI.wz/NameTag.img/pet/' + string(TagNum));
+    var TagNum := GetImgEntry('Item/Pet/' + ItemID + '.img/info').Get('nameTag', '3');
+    Entry := GetImgEntry('UI/NameTag.img/pet/' + string(TagNum));
     if Entry = nil then
-      Entry := GetImgEntry('UI.wz/NameTag.img/pet/38');
+      Entry := GetImgEntry('UI/NameTag.img/pet/38');
 
     if Entry.Get('c/_inlink') <> nil then
     begin
       var Data := Entry.Get('c/_inlink').Data;
       Data := StringReplace(Data, '/c', '', [rfReplaceAll]);
       Data := StringReplace(Data, 'pet/', '', [rfReplaceAll]);
-      Entry := GetImgEntry('UI.wz/NameTag.img/pet/' + string(Data));
+      Entry := GetImgEntry('UI/NameTag.img/pet/' + string(Data));
     end;
     DumpData(Entry, EquipData, EquipImages);
     InitData;
@@ -490,7 +490,7 @@ end;
 
 class procedure TPetEquip.Create(ID: string);
 begin
-  var Entry := GetImgEntry('Character.wz/PetEquip/' + ID + '.img/');
+  var Entry := GetImgEntry('Character/PetEquip/' + ID + '.img/');
 
   DumpData(Entry, EquipData, EquipImages);
 
@@ -559,7 +559,7 @@ begin
     PetEquip.Dead;
     PetEquip := nil;
     for var Iter in EquipImages.Keys do
-      if LeftStr(Iter.GetPath, 21) = 'Character.wz/PetEquip' then
+      if LeftStr(Iter.GetPath, 21) = 'Character/PetEquip' then
       begin
         EquipImages.Remove(Iter);
        // EquipData.Remove(Iter.GetPath);

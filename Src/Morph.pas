@@ -45,7 +45,7 @@ begin
       Iter.Dead;
 
   for var Iter in EquipImages.Keys do
-    if LeftStr(Iter.GetPath, 8)= 'Morph.wz'  then
+    if LeftStr(Iter.GetPath, 8)= 'Morph'  then
     begin
        EquipImages.Remove(Iter);
        EquipData.Remove(Iter.GetPath);
@@ -56,7 +56,7 @@ end;
 
 class procedure TMorph.Create(MorphNum: string);
 begin
-  Entry := GetImgEntry('Morph.wz/' + MorphNum + '/');
+  Entry := GetImgEntry('Morph/' + MorphNum + '/');
   DumpData(Entry, EquipData, EquipImages);
 
   for var Iter in EquipData[Entry.GetPath].Children do

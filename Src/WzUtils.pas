@@ -10,15 +10,12 @@ function NoIMG(const Name: string): string; inline;
 
 function GetImgEntry(Path: string; UseGet2: Boolean = False): TWZIMGEntry;
 
-function GetImgEntry64(Path: string; UseGet2: Boolean = False): TWZIMGEntry;
-
 function HasImgEntry(Path: string): Boolean;
 
 function GetEntryPath(Entry: TWZIMGEntry): string;
 
 function GetImgFile(Path: string): TWZIMGFile;
-
-function GetImgFile64(Path: string): TWZIMGFile;
+function GetImgList(PathName: string):  TList<TWZFile>;
 
 function HasImgFile(Path: string): Boolean;
 
@@ -32,7 +29,6 @@ procedure DumpData(Entry: TWZIMGEntry; ToData: TDictionary<string, TWZIMGEntry>;
 
 implementation
 
-
 type
   TNodeInfo = record
     OriNode: string;
@@ -42,68 +38,6 @@ type
 
 var
   NodeList1, NodeList2: TList<TNodeInfo>;
-
-function SelectWz(Path: string): TWZArchive;
-begin
-  case Path[2] of
-    'a':
-
-      if Path[4] = '2' then
-        Result := Map2Wz
-      else if Path[6] = '1' then
-        Result := Map001Wz
-      else if Path[6] = '2' then
-        Result := Map002Wz
-      else
-        Result := MapWz;
-
-    'o':
-      begin
-        if LeftStr(Path, 3) = 'Mob' then
-          Result := Mobwz;
-        if LeftStr(Path, 6) = 'Mob001' then
-          Result := Mob001Wz;
-        if LeftStr(Path, 6) = 'Mob002' then
-          Result := Mob002Wz;
-        if LeftStr(Path, 4) = 'Mob2' then
-          Result := Mob2Wz;
-
-        if Path[1] = 'S' then
-          Result := SoundWZ
-        else if Path[3] = 'r' then
-          Result := MorphWz;
-     // else if Path[4] = '2' then
-       // Result := Mob2WZ
-    //  else if Path[4] = '0' then
-      //  Result := Mob001WZ
-    //  else
-       // Result := MobWZ;
-      end;
-
-    'p':
-      Result := NPCWZ;
-    'h':
-      Result := CharacterWZ;
-    'k':
-      if Path[6] = '0' then
-        Result := Skill001Wz
-      else
-        Result := SkillWZ;
-    'I':
-      Result := UIWZ;
-    'e':
-      Result := ReactorWz;
-    'f':
-      Result := EffectWz;
-    't':
-      if Path[1] = 'I' then
-        Result := ItemWZ
-      else if Path[3] = 'c' then
-        Result := EtcWZ
-      else
-        Result := StringWZ;
-  end;
-end;
 
 function NoIMG(const Name: string): string; inline;
 begin
@@ -119,72 +53,88 @@ end;
 function GetImgEntry(Path: string; UseGet2: Boolean = False): TWZIMGEntry;
 var
   S: TStringArray;
-  ImgName: string;
-  WZ: TWZArchive;
-  Len: Integer;
-begin
-  WZ := SelectWz(Path);
-  S := Explode('.img/', Path);
-  Len := Pos('/', S[0]) + 1;
-  ImgName := MidStr(S[0], Len, 100) + '.img';
-  if UseGet2 then
-    Result := WZ.GetImgFile(ImgName).Root.Get2(S[1])
-  else
-    Result := WZ.GetImgFile(ImgName).Root.Get(S[1]);
-end;
-
-function GetImgEntry64(Path: string; UseGet2: Boolean = False): TWZIMGEntry;
-var
-  S: TStringArray;
 begin
   S := Explode('.img/', Path);
   if UseGet2 then
-    Result := GetImgFile64(S[0] + '.img').Root.Get2_64(S[1])
+    Result := GetImgFile(S[0] + '.img').Root.Get2_64(S[1])
   else
-    Result := GetImgFile64(S[0] + '.img').Root.Get(S[1]);
+    Result := GetImgFile(S[0] + '.img').Root.Get(S[1]);
 end;
 
 function GetImgFile(Path: string): TWZIMGFile;
-var
-  S: TStringArray;
-  ImgName: string;
-  WZ: TWZArchive;
-  Len: Integer;
-begin
-  WZ := SelectWz(Path);
-  S := Explode('.img/', Path);
-  Len := Pos('/', S[0]) + 1;
-  ImgName := MidStr(S[0], Len, 100) + '.img';
-  Result := WZ.GetImgFile(ImgName);
-end;
-
-function GetImgFile64(Path: string): TWZIMGFile;
 begin
   var Split := Explode('/', Path);
-
-  var imgName: string;
-  for var iter in Split do
+  if Is64Bit then
   begin
-    if RightStr(iter, 4) = '.img' then
-      imgName := iter;
-  end;
+    var imgName := Split[High(Split)];
+    var Str := '';
+    for var I := 0 to High(Split) - 1 do
+      Str := Str + Split[i] + '/';
+    Delete(Str, Length(Str), 1);
+    var Len := Length(Str);
 
-  var Str := '';
-  for var I := 0 to High(Split) - 1 do
-    Str := Str + Split[i] + '/';
-  Delete(Str, Length(Str), 1);
-  var Len := Length(Str);
-
-  for var I in WzList do
-  begin
-    if Leftstr(I.path, Len) = LeftStr(Path, Len) then
+    for var WZ in WzList do
     begin
-      if i.GetImgFile(imgName) <> nil then
-        Exit(I.GetImgFile(imgName));
+      if Leftstr(WZ.path, Len) = LeftStr(Path, Len) then
+      begin
+        if WZ.GetImgFile(imgName) <> nil then
+          Exit(WZ.GetImgFile(imgName));
 
+      end;
+    end;
+  end
+  else
+  begin
+    var Str := '';
+    for var I := 1 to High(Split) do
+      Str := Str + Split[i] + '/';
+    Delete(Str, Length(Str), 1);
+    for var WZ in WzList do
+    begin
+      if Leftstr(WZ.Name, 2) = LeftStr(Path, 2) then
+      begin
+        if WZ.GetImgFile(Str) <> nil then
+          Exit(WZ.GetImgFile(Str));
+      end;
     end;
   end;
 end;
+
+function GetImgList(PathName: string): TList<TWZFile>;
+begin
+  Result := TList<TWZFile>.Create;
+  var Str := PathName.Split(['/']);
+  for var Wz in WzList do
+  begin
+    if Is64Bit then
+    begin
+      if Wz.PathName = PathName then
+      begin
+        for var Iter in Wz.Root.Files do
+        begin
+          Result.Add(Iter);
+        end;
+      end;
+    end
+    else
+    begin
+      if Wz.PathName = Str[0] then
+      begin
+       if High(Str)>0 then
+       begin
+        if TWZDirectory(Wz.Root.Entry[Str[1]]) <> nil then
+          for var Iter in TWZDirectory(Wz.Root.Entry[Str[1]]).Files do
+            Result.Add(Iter);
+       end
+       else
+         for var Iter in Wz.Root.Files do
+             Result.Add(Iter);
+      end;
+    end;
+  end;
+
+end;
+
 
 function HasImgEntry(Path: string): Boolean;
 begin

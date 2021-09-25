@@ -3,9 +3,9 @@ unit WorldMapFormUnit;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls,
-  Generics.collections;
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
+  Vcl.ExtCtrls, Generics.collections;
 
 type
   TWorldMapForm = class(TForm)
@@ -28,13 +28,13 @@ implementation
 
 {$R *.dfm}
 uses
-  MainUnit, WZDirectory, WzUtils, Global;
+  MainUnit, WZDirectory, WzUtils, Global, WZArchive, WzImgFile;
 
 procedure TWorldMapForm.FormActivate(Sender: TObject);
 begin
   if HasLoad then
     Exit;
-  WorldMapForm.Top:=-2500;
+  WorldMapForm.Top := -2500;
   HasLoad := True;
   var WorldMapGrid := MainForm.WorldMapGrid;
   WorldMapGrid.ColWidths[0] := 0;
@@ -121,18 +121,21 @@ begin
   Dict.Add('WorldMap200.img', 'Verdel');
   Dict.Add('WorldMap210.img', 'Cheong-woon');
   Dict.Add('WorldMap220.img', ' Ristonia');
-
   var Row := -1;
-  for var Iter in TWZDirectory(MapWz.Root.Entry['WorldMap']).Files do
+  var ImgList := GetImgList('Map/WorldMap');
+  for var Img in ImgList do
   begin
     Inc(Row);
     WorldMapGrid.RowCount := Row + 1;
-    WorldMapGrid.Cells[0, Row] := Iter.Name;
-    if Dict.ContainsKey(Iter.Name) then
-      WorldMapGrid.Cells[1, Row] := Dict[Iter.Name]
+    WorldMapGrid.Cells[0, Row] := Img.Name;
+    if Dict.ContainsKey(Img.Name) then
+      WorldMapGrid.Cells[1, Row] := Dict[Img.Name]
     else
-      WorldMapGrid.Cells[1, Row] := Iter.Name;
+      WorldMapGrid.Cells[1, Row] := Img.Name;
+
   end;
+  ImgList.Free;
+
   WorldMapGrid.SortByColumn(0);
   Dict.Free;
 end;

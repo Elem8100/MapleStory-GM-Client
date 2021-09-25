@@ -38,13 +38,13 @@ begin
     if UseNewDamage then
     begin
        //style='1/NoRed1'
-      if TMap.Has002Wz then
-        ImageEntry := EquipData['Effect.wz/DamageSkin.img/' + Style + '/' + Char]
+      if EquipData.ContainsKey('Effect/DamageSkin.img/'+ Style + '/' + Char) then
+        ImageEntry := EquipData['Effect/DamageSkin.img/' + Style + '/' + Char]
       else
-        ImageEntry := EquipData['Effect.wz/BasicEff.img/damageSkin/' + Style + '/' + Char];
+        ImageEntry := EquipData['Effect/BasicEff.img/damageSkin/' + Style + '/' + Char];
     end
     else
-      ImageEntry := EquipData['Effect.wz/BasicEff.img/' + Style + '/' + Char];
+      ImageEntry := EquipData['Effect/BasicEff.img/' + Style + '/' + Char];
     GameCanvas.DrawColor1(EquipImages[ImageEntry], X + I * 29 - ImageEntry.Get('origin').Vector.X - Engine.WorldX,
       Y - ImageEntry.Get('origin').Vector.Y - Engine.WorldY,  False,ARGB(Alpha,255,255,255));
   end;
@@ -66,12 +66,12 @@ const
   StyleList: array[0..7] of string = ('NoBlue0', 'NoBlue1', 'NoCri0', 'NoCri1', 'NoRed0', 'NoRed1',
     'NoViolet0', 'NoViolet1');
 begin
-  var Entry := GetImgEntry('Effect.wz/BasicEff.img/');
+  var Entry := GetImgEntry('Effect/BasicEff.img/');
   if UseNewDamage then
   begin
     //num=1/NoRed1
-    if TMap.Has002Wz then
-      DumpData(GetImgEntry('Effect.wz/DamageSkin.img/' + Num), EquipData, EquipImages)
+    if GetImgEntry('Effect/DamageSkin.img/' + Num) <> nil then
+      DumpData(GetImgEntry('Effect/DamageSkin.img/' + Num), EquipData, EquipImages)
     else
       DumpData(Entry.Get2('damageSkin/' + Num), EquipData, EquipImages);
   end

@@ -46,12 +46,10 @@ type
     procedure FormDestroy(Sender: TObject);
   private
     MobID: string;
-    WZ: TWZArchive;
     HasLoad: Boolean;
     HasLoadBoss1: Boolean;
     HasLoadBoss2: Boolean;
     SelectRow: Integer;
-    Path:string;
     SpriteID:string;
     MobName:string;
     RowList: TStringList;
@@ -107,57 +105,19 @@ var
 begin
   Image1.Picture := nil;
 
- if MobWZ.GetImgFile(MobID + '.img') <> nil then
-  begin
-    Path := 'Mob/';
-    WZ := MobWZ;
-  end
-  else if Mob001WZ.GetImgFile(MobID + '.img') <> nil then
-  begin
-    Path := 'Mob001/';
-    WZ := Mob001WZ;
-  end
-  else  if(Mob2Wz<> nil)  then
-  begin
-    if Mob2WZ.GetImgFile(MobID + '.img') <> nil then
-    begin
-      Path := 'Mob2/';
-      WZ := Mob2WZ;
-    end;
-  end
-  else  if Mob002WZ.GetImgFile(MobID + '.img') <> nil then
-  begin
-    Path := 'Mob002/';
-    WZ := Mob002WZ;
-  end;
-  if WZ.GetImgFile(MobID + '.img') = nil then
+  if GetImgFile('Mob/'+MobID + '.img') = nil then
     Exit;
 
-  Entry := GetImgEntry(Path + MobID + '.img/info/link');
+  Entry := GetImgEntry('Mob/'+ MobID + '.img/info/link');
   if Entry <> nil then
-  begin
-    SpriteID := Entry.Data;
-    if MobWZ.GetImgFile(SpriteID + '.img') <> nil then
-      Path := 'Mob/'
-    else if Mob001WZ.GetImgFile(SpriteID + '.img') <> nil then
-      Path := 'Mob001/'
-    else if (Mob2Wz<> nil) then
-    begin
-      if Mob2WZ.GetImgFile(SpriteID + '.img') <> nil then
-       Path := 'Mob2/';
-    end
-    else
-    begin
-      Path:='Mob002/';
-    end;
-  end
+     SpriteID := Entry.Data
   else
     SpriteID := MobID;
 
-  if GetImgEntry(Path + SpriteID + '.img/stand/0') <> nil then
-    Bmp := GetImgEntry(Path + SpriteID + '.img/stand/0', True).Canvas.DumpBmp
-  else if GetImgEntry(Path + SpriteID + '.img/fly/0') <> nil then
-    Bmp := GetImgEntry(Path + SpriteID + '.img/fly/0', True).Canvas.DumpBmp
+  if GetImgEntry('Mob/' + SpriteID + '.img/stand/0') <> nil then
+    Bmp := GetImgEntry('Mob/' + SpriteID + '.img/stand/0', True).Canvas.DumpBmp
+  else if GetImgEntry('Mob/' + SpriteID + '.img/fly/0') <> nil then
+    Bmp := GetImgEntry('Mob/' + SpriteID + '.img/fly/0', True).Canvas.DumpBmp
   else
     Exit;
 
@@ -187,8 +147,8 @@ begin
     RowList.Clear;
     RowList.Add('ID='+SpriteID);
     RowList.Add('Name='+MobName);
-    Dump2(GetImgEntry(Path + SpriteID + '.img/'));
-    var S := GetImgEntry(Path + SpriteID + '.img/').GetPathD + '.';
+    Dump2(GetImgEntry('Mob/' + SpriteID + '.img/'));
+    var S := GetImgEntry('Mob/' + SpriteID + '.img/').GetPathD + '.';
     for var i := 0 to Rowlist.Count - 1 do
     begin
       Rowlist[i] := StringReplace(RowList[i], S, '', [rfReplaceAll]);
@@ -235,7 +195,7 @@ begin
 
   Randomize;
 
-  if WZ.GetImgFile(MobID + '.img') = nil then
+  if GetImgFile('Mob/'+MobID + '.img') = nil then
     Exit;
   if (IsNumber(Edit1.Text)) and (Edit1.Text <> '') then
     for I := 0 to StrToInt(Edit1.Text) - 1 do
@@ -329,54 +289,14 @@ end;
 procedure TAddMobForm.SetMobColor(Row: Integer);
 var
   Entry: TWZIMGEntry;
-  Path1, PathW: string;
-  WZ: TWZArchive;
 begin
-   if MobWZ.GetImgFile(MobID + '.img') <> nil then
-  begin
-    Path1 := 'Mob/';
-    PathW := 'Mob.wz/';
-    WZ := MobWZ;
-  end
-  else if Mob001WZ.GetImgFile(MobID + '.img') <> nil then
-  begin
-    Path1 := 'Mob001/';
-    PathW := 'Mob001.wz/';
-    WZ := Mob001WZ;
-  end
-  else if Mob2Wz<> nil then
-  begin
-    if Mob2WZ.GetImgFile(MobID + '.img') <> nil then
-    begin
-      Path1 := 'Mob2/';
-      PathW := 'Mob2.wz/';
-      WZ := Mob2WZ;
-    end
-  end
-  else if Mob002WZ.GetImgFile(MobID + '.img') <> nil then
-  begin
-    Path1 := 'Mob002/';
-    PathW := 'Mob002.wz/';
-    WZ := Mob002WZ;
-  end;
-  TColorFunc.SetSpriteColor<TWZIMGEntry>(WZ.GetImgFile(MobID + '.img').Root, Row);
-  Entry := GetImgEntry(Path1 + MobID + '.img/info/link');
+
+  TColorFunc.SetSpriteColor<TWZIMGEntry>(GetImgFile('Mob/'+MobID + '.img').Root, Row);
+  Entry := GetImgEntry('Mob/' + MobID + '.img/info/link');
   if Entry <> nil then
   begin
-   var EntryID: string := Entry.Data;
-    if MobWZ.GetImgFile(EntryID + '.img') <> nil then
-      WZ := MobWZ
-    else if Mob001WZ.GetImgFile(EntryID + '.img') <> nil then
-      WZ := Mob001WZ
-    else  if Mob2Wz<> nil then
-    begin
-      if Mob2WZ.GetImgFile(EntryID + '.img') <> nil then
-        WZ := Mob2WZ;
-    end
-    else if Mob002WZ.GetImgFile(EntryID + '.img') <> nil then
-      WZ := Mob002WZ;
-
-    TColorFunc.SetSpriteColor<TWZIMGEntry>(WZ.GetImgFile(Entry.Data + '.img').Root, Row);
+    var EntryID: string := Entry.Data;
+    TColorFunc.SetSpriteColor<TWZIMGEntry>(GetImgFile('Mob/'+Entry.Data + '.img').Root, Row);
   end;
 end;
 
@@ -405,7 +325,7 @@ begin
 
   var RowCount := -1;
   MobGrid.BeginUpdate;
-  for var Iter in StringWZ.GetImgFile('Mob.img').Root.Children do
+  for var Iter in GetImgFile('String/Mob.img').Root.Children do
   begin
     Inc(RowCount);
     MobGrid.RowCount := RowCount + 1;

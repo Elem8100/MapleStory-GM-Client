@@ -165,7 +165,7 @@ begin
 
   TAvatarParts.ZMap := TList<string>.Create;
 
-  for Iter in BaseWZ.GetImgFile('zmap.img').Root.Children do
+  for Iter in GetImgFile('Base/zmap.img').Root.Children do
     TAvatarParts.ZMap.Add(Iter.Name);
 
   for I := 2000 to 2011 do
@@ -205,14 +205,14 @@ var
 begin
   Dir := GetDir(EquipID);
   Part := GetPart(EquipID);
-  Entry := CharacterWZ.GetImgFile(Dir + EquipID + '.img').Root;
+  Entry := GetImgFile('Character/'+Dir + EquipID + '.img').Root;
 
   if not EquipDumpList.contains(EquipID) then
   begin
     DumpData(Entry, EquipData, EquipImages);
     EquipDumpList.Add(EquipID);
   end;
-  var LPath := 'Character.wz/Weapon/';
+  var LPath := 'Character/Weapon/';
 
   case Part of
     Weapon:
@@ -235,7 +235,7 @@ begin
     Cap:
       begin
         DressCap := True;
-        var Data := GetImgEntry('Character.wz/Cap/' + EquipID + '.img/info/vslot').Data;
+        var Data := GetImgEntry('Character/Cap/' + EquipID + '.img/info/vslot').Data;
         //no Cover
         if (Data = 'Cp') or (Data = 'CpH5') then
           CapType := 0;
@@ -272,7 +272,7 @@ begin
         AttackActions.Clear;
         AttackOFs.Clear;
         AfterImageStr := GetAfterImageStr('01' + WeaponNum + '1234');
-        for Iter in GetImgEntry('Character.wz/Afterimage/' + AfterImageStr + '.img/0').Children do
+        for Iter in GetImgEntry('Character/Afterimage/' + AfterImageStr + '.img/0').Children do
           if (LeftStr(Iter.Name, 4) = 'stab') or (LeftStr(Iter.Name, 5) = 'swing') then
           begin
             if (RightStr(Iter.Name, 2) <> 'D1') and (RightStr(Iter.Name, 2) <> 'D2') then
@@ -285,7 +285,7 @@ begin
           end;
 
         TAfterImage.Load(AfterImageStr, '0');
-        Entry := GetImgEntry('Character.wz/' + Dir + EquipID + '.img/' + WeaponNum);
+        Entry := GetImgEntry('Character/' + Dir + EquipID + '.img/' + WeaponNum);
       end;
 
   end;
@@ -1041,7 +1041,7 @@ var
   Part: TPartName;
   SkillAction: string;
 const
-  C = 'Character.wz/';
+  C = 'Character/';
 begin
   Part := GetPart(ID);
 
@@ -1052,7 +1052,7 @@ begin
 
   if (not AvatarForm.SaveSingleFrame) and ((Part = Weapon) or (Part = CashWeapon)) and (FTime = 0) then
   begin
-    AfterImagePath := 'Character.wz/Afterimage/' + Owner.AfterImageStr + '.img/0/' + State + '/' + IntToStr(Frame) + '/0';
+    AfterImagePath := 'Character/Afterimage/' + Owner.AfterImageStr + '.img/0/' + State + '/' + IntToStr(Frame) + '/0';
     if HasEntry(AfterImagePath) then
     begin
       PlaySounds('Weapon', 'swordL/Attack');
@@ -1062,9 +1062,9 @@ begin
 
   if (Image = 'head') and (FTime = 0) then
     ChangeFrame := True;
-  if HasEntry('Character.wz/00002000.img/' + State + '/' + IntToStr(Frame) + '/move') then
+  if HasEntry('Character/00002000.img/' + State + '/' + IntToStr(Frame) + '/move') then
   begin
-    MoveOffset := EquipData['Character.wz/00002000.img/' + State + '/' + IntToStr(Frame) + '/move'].Vector;
+    MoveOffset := EquipData['Character/00002000.img/' + State + '/' + IntToStr(Frame) + '/move'].Vector;
   end
   else
   begin

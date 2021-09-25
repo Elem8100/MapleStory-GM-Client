@@ -3,8 +3,8 @@ unit MapleMap;
 interface
 
 uses
-  Types, Generics.Collections, Generics.Defaults, WZDirectory, WZIMGFile, Global, SysUtils, StrUtils,
-  Bass, BassHandler, WZArchive;
+  Types, Generics.Collections, Generics.Defaults, WZDirectory, WZIMGFile, Global,
+  SysUtils, StrUtils, Bass, BassHandler, WZArchive;
 
 type
   TFadeScreen = record
@@ -67,9 +67,10 @@ type
 implementation
 
 uses
-  MainUnit, Mob2, MapBack, MapPortal, Npc, MapTile, MapObj, MapleCharacter, Footholds, LadderRopes,
-  MobInfo, NameTag, Boss, Skill, MapleCharacterEx,
-  Android, minimap, WZUtils, UI.StatusBar3.MainBar, UI.StatusBar3.Chat, UI.Utils, Graphics;
+  MainUnit, Mob2, MapBack, MapPortal, Npc, MapTile, MapObj, MapleCharacter,
+  Footholds, LadderRopes, MobInfo, NameTag, Boss, Skill, MapleCharacterEx,
+  Android, minimap, WZUtils, UI.StatusBar3.MainBar, UI.StatusBar3.Chat, UI.Utils,
+  Graphics;
 
 class procedure TMap.LoadMap(ID: string);
 var
@@ -105,10 +106,7 @@ begin
     images[n].Free;
 
   Images.Clear;
-  if TMap.Has002Wz then
-    TMap.ImgFile := Map002Wz.GetImgFile('Map/Map' + LeftStr(ID, 1) + '/' + ID + '.img').Root
-  else
-    TMap.ImgFile := MapWz.GetImgFile('Map/Map' + LeftStr(ID, 1) + '/' + ID + '.img').Root;
+  TMap.ImgFile := GetImgFile('Map/Map/Map' + LeftStr(ID, 1) + '/' + ID + '.img').Root;
   for Iter in TMap.ImgFile.Child['info'].Children do
     TMap.Info.Add(Iter.Name, Iter.Data);
 
@@ -119,7 +117,9 @@ begin
   TFootholdTree.CreateFHs;
   TLadderRope.Create;
   TMapPortal.Create;
+
   TMapObj.Create;
+
   TMapTile.Create;
   if TMap.Info.ContainsKey('VRLeft') then
   begin
@@ -149,6 +149,7 @@ begin
     SpriteEngine.WorldY := TMap.Bottom;
   end;
   TMob.CreateMapMobs;
+
   DropBoss;
   TNpc.Create;
   TNPC.ReDrawTarget := True;
@@ -160,6 +161,7 @@ begin
    // TLabelRingTag.Create('01112101');
     TNameTag.Create('SuperGM');
     FDevice.EndScene;
+
     if UIVersion = 3 then
     begin
       TStatusBar3MainBar.CreateUI;
@@ -172,14 +174,14 @@ begin
         Top := 150 + 1000;
       end;
       CreateUIStatusBar3Chat;
-      DumpData(GetImgEntry('UI.wz/Basic.img/Cursor/2'), UIData, UIImages);
-      DumpData(GetImgEntry('UI.wz/Basic.img/Cursor/0'), UIData, UIImages);
-      DumpData(GetImgEntry('UI.wz/Basic.img/Cursor/12'), UIData, UIImages);
-      DumpData(GetImgEntry('UI.wz/Basic.img/Cursor/67'), UIData, UIImages);
+      DumpData(GetImgEntry('UI/Basic.img/Cursor/2'), UIData, UIImages);
+      DumpData(GetImgEntry('UI/Basic.img/Cursor/0'), UIData, UIImages);
+      DumpData(GetImgEntry('UI/Basic.img/Cursor/12'), UIData, UIImages);
+      DumpData(GetImgEntry('UI/Basic.img/Cursor/67'), UIData, UIImages);
     end;
     if UIVersion = 1 then
     begin
-       AMiniMap := TMiniMap.Create(UIEngine.Root);
+      AMiniMap := TMiniMap.Create(UIEngine.Root);
       with AMiniMap do
       begin
         Width := TMap.MiniMapWidth + 125;
@@ -187,8 +189,8 @@ begin
         Left := 150 + 1000;
         Top := 150 + 1000;
       end;
-       DumpData(GetImgEntry('UI.wz/Basic.img/Cursor/0'), UIData, UIImages);
-      DumpData(GetImgEntry('UI.wz/Basic.img/Cursor/12'), UIData, UIImages);
+      DumpData(GetImgEntry('UI/Basic.img/Cursor/0'), UIData, UIImages);
+      DumpData(GetImgEntry('UI/Basic.img/Cursor/12'), UIData, UIImages);
     end;
 
     SpriteEngine.Move(1);
@@ -200,10 +202,8 @@ begin
     var MapID: string;
 
     var LeftNum := LeftStr(ID, 1);
-    if TMap.Has002Wz then
-      Entry := GetImgEntry('Map002.wz/Map/Map' + LeftNum + '/' + ID + '.img/info/link')
-    else
-      Entry := GetImgEntry('Map.wz/Map/Map' + LeftNum + '/' + ID + '.img/info/link');
+
+    Entry := GetImgEntry('Map/Map/Map' + LeftNum + '/' + ID + '.img/info/link');
     if Entry = nil then
       MapID := ID
     else
@@ -211,58 +211,38 @@ begin
 
     LeftNum := LeftStr(MapID, 1);
 
-    if TMap.Has002Wz then
-      Entry := GetImgEntry('Map002.wz/Map/Map' + LeftNum + '/' + MapID + '.img/miniMap')
-    else
-      Entry := GetImgEntry('Map.wz/Map/Map' + LeftNum + '/' + MapID + '.img/miniMap');
+    Entry := GetImgEntry('Map/Map/Map' + LeftNum + '/' + MapID + '.img/miniMap');
     if Entry = nil then
       Exit;
+
     if Entry <> nil then
     begin
       TMap.HasMiniMap := True;
-      if (TMap.Has002Wz) and (Entry.Get('canvas/_outlink') <> nil) then
+      if (Entry.Get('canvas/_outlink') <> nil) then
       begin
-        if (Entry.Get('canvas/_outlink') <> nil) then
-        begin
-          var Data: string := Entry.Get('canvas/_outlink').Data;
-          var S: TArray<string> := Data.Split(['/']);
-          TMap.MiniMapEntry := GetImgEntry('Map002.wz/Map/' + S[2] + '/' + S[3] + '/' + S[4]);
-          Bmp := TMap.MiniMapEntry.Get('canvas').Canvas.DumpBmp;
-        end
-        else
-        begin
-          TMap.MiniMapEntry := Entry;
-          Bmp := Entry.Get2('canvas').Canvas.DumpBmp;
-        end;
+        var Data: string := Entry.Get('canvas/_outlink').Data;
+        TMap.MiniMapEntry := GetImgEntry(Data);
+        Bmp := GetImgEntry(Data).Canvas.DumpBmp;
       end
       else
       begin
-        if (Entry.Get('canvas/_outlink') <> nil) then
-        begin
-          var Data: string := Entry.Get('canvas/_outlink').Data;
-          var S: TArray<string> := Data.Split(['/']);
-          TMap.MiniMapEntry := GetImgEntry('Map.wz/Map/' + S[2] + '/' + S[3] + '/' + S[4]);
-          Bmp := TMap.MiniMapEntry.Get('canvas').Canvas.DumpBmp;
-        end
-        else
-        begin
-          TMap.MiniMapEntry := Entry;
-          Bmp := Entry.Get2('canvas').Canvas.DumpBmp;
-        end;
+        TMap.MiniMapEntry := Entry.Get('canvas');
+        Bmp := Entry.Get2('canvas').Canvas.DumpBmp;
       end;
+
       MiniMapWidth := Bmp.Width;
       MiniMapHeight := Bmp.Height;
       Bmp.Free;
     end;
+
   end;
-  //if UIVersion = 3 then
-    AMiniMap.ReDraw;
+ // if UIVersion = 3 then
+   AMiniMap.ReDraw;
   //TNameTag.Create('SuperGM');
 
   TMap.FirstLoad := True;
   TMapBack.Create;
   // CreateReactor;
-
   TMap.PlayMusic;
   TMapBack.ResetPos := True;
   TMobInfo.ReDrawTarget;
@@ -292,25 +272,23 @@ begin
   BgmIMG := LeftStr(TMap.BgmPath, CPos) + '.img';
   BgmName := RightStr(TMap.BgmPath, Length(TMap.BgmPath) - CPos - 1);
 
-  var WZ: TWZArchive;
-  if SoundWZ.GetImgFile(BgmIMG) <> nil then
-  begin
-    Entry := SoundWZ.GetImgFile(BgmIMG).Root.Child[BgmName];
-    WZ := SoundWZ;
-  end
-  else if Sound2Wz.GetImgFile(BgmIMG) <> nil then
-  begin
-    Entry := Sound2Wz.GetImgFile(BgmIMG).Root.Child[BgmName];
-    WZ := Sound2Wz;
-  end
-   else if Sound002Wz.GetImgFile(BgmIMG) <> nil then
-  begin
-    Entry := Sound002Wz.GetImgFile(BgmIMG).Root.Child[BgmName];
-    WZ := Sound002Wz;
-  end
-
+  if GetImgFile('Sound/' + BgmIMG) <> nil then
+    Entry := GetImgFile('Sound/' + BgmIMG).Root.Child[BgmName]
   else
     Exit;
+
+  var WZ: TWZArchive;
+  for var I in WzList do
+  begin
+    if LeftStr(I.PathName, 5) = 'Sound' then
+    begin
+      if I.GetImgFile(BgmIMG) <> nil then
+      begin
+        WZ := I;
+        break;
+      end;
+    end;
+  end;
 
   if Entry.DataType = mdtSound then
   begin
@@ -338,7 +316,9 @@ initialization
   TMap.ShowMiniMap := True;
   TMap.ShowNpcName := True;
   TMap.ShowNpcChat := True;
-  TMap.ScrollingMessage:='Welcome to MapleStory GM Client';
+  TMap.ScrollingMessage := 'Welcome to MapleStory GM Client';
+
+
 finalization
   BassFree;
   TMap.ActiveBass.Free;

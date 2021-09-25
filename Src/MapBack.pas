@@ -69,13 +69,7 @@ begin
       Continue;
     if Ani = 0 then
     begin
-      if MapWz.GetImgFile('Back/' + bS + '.img') <> nil then
-        Entry := GetImgEntry('Map/Back/' + bS + '.img/back/' + No)
-
-      else if Map001Wz.GetImgFile('Back/' + bS + '.img') <> nil then
-        Entry := GetImgEntry('Map001/Back/' + bS + '.img/back/' + No)
-      else
-        Entry := GetImgEntry('Map2/Back/' + bS + '.img/back/' + No);
+       Entry := GetImgEntry('Map/Back/' + bS + '.img/back/' + No);
 
       if Entry = nil then
         Continue;
@@ -89,12 +83,7 @@ begin
 
     if Ani = 1 then
     begin
-      if MapWz.GetImgFile('Back/' + bS + '.img') <> nil then
-        AniEntry := GetImgEntry('Map/Back/' + bS + '.img/ani/' + No)
-      else if Map001Wz.GetImgFile('Back/' + bS + '.img') <> nil then
-        AniEntry := GetImgEntry('Map001/Back/' + bS + '.img/ani/' + No)
-      else
-        AniEntry := GetImgEntry('Map2/Back/' + bS + '.img/ani/' + No);
+       AniEntry := GetImgEntry('Map/Back/' + bS + '.img/ani/' + No);
 
       if AniEntry = nil then
         Continue;
