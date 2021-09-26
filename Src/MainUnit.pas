@@ -190,42 +190,19 @@ begin
   TFootholdTree.This.Free;
   Keyboard.Free;
   FreeAndNil(CharData);
-  MapWz.Free;
-  if Map2Wz <> nil then
-    Map2Wz.Free;
-  if Map001Wz <> nil then
-    Map001Wz.Free;
-  if Map002Wz <> nil then
-    Map002Wz.Free;
-  NPCWZ.Free;
-  StringWZ.Free;
-  UIWZ.Free;
-  SkillWZ.Free;
-  if Skill001Wz <> nil then
-    Skill001Wz.Free;
-  MobWZ.Free;
-  if Mob2WZ <> nil then
-    Mob2WZ.Free;
-  if Mob001WZ <> nil then
-    Mob001WZ.Free;
 
-  ItemWZ.Free;
-  CharacterWZ.Free;
-  EffectWz.Free;
-  ReactorWz.Free;
-  SoundWZ.Free;
-  MorphWz.Free;
-  BaseWZ.Free;
-  EtcWZ.Free;
   Images.Free;
   EquipImages.Free;
   EquipData.Free;
   WzData.Free;
   CharData.Free;
   Sounds.Free;
-  Sound2Wz.Free;
   Data.Free;
   CircleList.Free;
+  ItemWZListA.Free;
+  ItemWZList.Free;
+  WzList.Free;
+  WzList2.Free;
   {
   AvatarPanelTexture.Free;
   FullScreenTexture.Free;
@@ -238,7 +215,7 @@ begin
    }
   //UIEngine.Free;
   // DropList
- // ReportMemoryLeaksOnShutdown := True;
+  //ReportMemoryLeaksOnShutdown := True;
 end;
 
 procedure TMainForm.FormKeyDown(Sender: TObject; var KEY: Word; Shift: TShiftState);

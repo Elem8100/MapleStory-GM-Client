@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids,
-  AdvObj, BaseGrid, AdvGrid, Vcl.StdCtrls;
+  AdvObj, BaseGrid, AdvGrid, Vcl.StdCtrls, AdvUtil;
 
 type
   TTotemEffectForm = class(TForm)
@@ -50,7 +50,7 @@ begin
 
   var RowCount := -1;
   TotemEffectGrid.BeginUpdate;
-  for var Iter in EffectWZ.GetImgFile('ItemEff.img').Root.Children do
+  for var Iter in GetImgFile('Effect/ItemEff.img').Root.Children do
   begin
     if LeftStr(Iter.Name, 2) = '12' then
     begin
@@ -58,13 +58,13 @@ begin
       TotemEffectGrid.RowCount := RowCount + 1;
       var ID := '0' + Iter.Name;
       TotemEffectGrid.Cells[1, RowCount] := ID;
-      if GetImgEntry('Character.wz/Totem/' + ID + '.img' + '/info/icon') <> nil then
+      if GetImgEntry('Character/Totem/' + ID + '.img' + '/info/icon') <> nil then
       begin
-        var Bmp := GetImgEntry('Character.wz/Totem/' + ID + '.img' + '/info/icon', True).Canvas.DumpBmp;
+        var Bmp := GetImgEntry('Character/Totem/' + ID + '.img' + '/info/icon', True).Canvas.DumpBmp;
         TotemEffectGrid.CreateBitmap(2, RowCount, False, haCenter, vaCenter).Assign(Bmp);
         Bmp.Free;
       end;
-      TotemEffectGrid.Cells[3, RowCount] := StringWZ.GetImgFile('Eqp.img').Root.Get('Eqp/Accessory/' + IDToInt(ID) + '/name', '');
+      TotemEffectGrid.Cells[3, RowCount] := GetImgFile('String/Eqp.img').Root.Get('Eqp/Accessory/' + IDToInt(ID) + '/name', '');
     end;
   end;
   TotemEffectGrid.SortByColumn(1);

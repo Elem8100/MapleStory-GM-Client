@@ -137,11 +137,13 @@ begin
   SkillGrid.Cells[1, SkillGrid.RowCount] := SelectGrid.Cells[1, SelectRow];
   var ID := SelectGrid.Cells[1, SelectRow];
   var Entry: TWZIMGEntry;
-  if HasImgFile('Skill.wz/' + GetJobID(ID) + '.img') then
-    Entry := GetImgEntry('Skill.wz/' + GetJobID(ID) + '.img/skill/' + ID);
+  if HasImgFile('Skill/' + GetJobID(ID) + '.img') then
+    Entry := GetImgEntry('Skill/' + GetJobID(ID) + '.img/skill/' + ID);
  // else
   //  Entry := GetImgEntry('Skill001.wz/' + GetJobID(ID) + '.img/skill/' + ID);
-  var Bmp := Entry.Get('icon').Canvas.DumpBmp;
+  var Bmp := Entry.Get2('icon').Canvas.DumpBmp;
+
+
   var RowCount := SkillGrid.RowCount;
   SkillGrid.CreateBitmap(2, RowCount, False, haCenter, vaCenter).Assign(Bmp);
   SkillGrid.Cells[3, RowCount] := SelectGrid.Cells[3, SelectRow];

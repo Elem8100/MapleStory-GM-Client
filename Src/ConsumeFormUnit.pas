@@ -3,10 +3,11 @@ unit ConsumeFormUnit;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, CurvyControls, Vcl.Grids, AdvObj,
-  BaseGrid, AdvGrid, Vcl.ComCtrls,
-  ieview, iemview, PNGMapleCanvasEx, Generics.Collections, Generics.Defaults, WZArchive;
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
+  Vcl.StdCtrls, Vcl.ExtCtrls, CurvyControls, Vcl.Grids, AdvObj, BaseGrid,
+  AdvGrid, Vcl.ComCtrls, ieview, iemview, PNGMapleCanvasEx, Generics.Collections,
+  Generics.Defaults, WZArchive, AdvUtil;
 
 type
   TConsumeForm = class(TForm)
@@ -46,11 +47,9 @@ type
     procedure ImageGridSelect(Sender: TObject; idx: Integer);
     { Private declarations }
   public
-    procedure ImageAssignIcon(AID, DirName: string; AIDLabel, ANameLabel: TLabel; AImage: TImage;
-      IsEtc: Boolean = False);
+    procedure ImageAssignIcon(AID, DirName: string; AIDLabel, ANameLabel: TLabel; AImage: TImage; IsEtc: Boolean = False);
     procedure CreateImageGrid(var AImageGrid: TImageEnMView; AOwner: TComponent; AParent: TWinControl);
-    procedure DumpIcons(AImageGrid: TImageEnMView; DirName: string; var AWZ: TWZArchive; var
-      AIconList: TObjectList<TBmpEx>);
+    procedure DumpIcons(AImageGrid: TImageEnMView; DirName: string; var AWZ: TWZArchive; var AIconList: TObjectList<TBmpEx>);
     { Public declarations }
   end;
 
@@ -85,22 +84,21 @@ begin
   AImageGrid.SelectionColor := clRed;
 end;
 
-procedure TConsumeForm.ImageAssignIcon(AID, DirName: string; AIDLabel, ANameLabel: TLabel; Aimage:
-  TImage; IsEtc: Boolean = False);
+procedure TConsumeForm.ImageAssignIcon(AID, DirName: string; AIDLabel, ANameLabel: TLabel; Aimage: TImage; IsEtc: Boolean = False);
 begin
 
   var Left4 := LeftStr(AID, 4);
-  if GetImgEntry('Item.wz/' + DirName + '/' + Left4 + '.img/' + AID + '/info/icon') <> nil then
+  if GetImgEntry('Item/' + DirName + '/' + Left4 + '.img/' + AID + '/info/icon') <> nil then
   begin
-    var PNG := GetImgEntry('Item.wz/' + DirName + '/' + Left4 + '.img/' + AID + '/info/icon', True).Canvas.DumpPNG;
+    var PNG := GetImgEntry('Item/' + DirName + '/' + Left4 + '.img/' + AID + '/info/icon', True).Canvas.DumpPNG;
     Aimage.Picture.Assign(PNG);
     PNG.Free;
   end;
   AIDLabel.Caption := AID;
   if IsEtc then
-    ANameLabel.Caption := StringWZ.GetImgFile(DirName + '.img').Root.Get('Etc/' + IDToInt(AID) + '/name', '')
+    ANameLabel.Caption := GetImgFile('String/' + DirName + '.img').Root.Get('Etc/' + IDToInt(AID) + '/name', '')
   else
-    ANameLabel.Caption := StringWZ.GetImgFile(DirName + '.img').Root.Get(IDToInt(AID) + '/name', '');
+    ANameLabel.Caption := GetImgFile('String/' + DirName + '.img').Root.Get(IDToInt(AID) + '/name', '');
 end;
 
 procedure TConsumeForm.Button1Click(Sender: TObject);
@@ -141,38 +139,73 @@ begin
   ActiveControl := nil;
 end;
 
-procedure TConsumeForm.DumpIcons(AImageGrid: TImageEnMView; DirName: string; var AWZ: TWZArchive;
-  var AIconList: TObjectList<TBmpEx>);
+procedure TConsumeForm.DumpIcons(AImageGrid: TImageEnMView; DirName: string; var AWZ: TWZArchive; var AIconList: TObjectList<TBmpEx>);
 begin
   with AImageGrid.GetCanvas do
   begin
     Font.Size := 24;
     TextOut(100, 100, 'Loading...')
   end;
-  AWZ := TWZArchive.Create(WzPath + '\Item.wz');
-  var Dir := TWZDirectory(AWZ.Root.Entry[DirName]);
+
   AIconList := TObjectList<TBmpEx>.Create;
-  for var img in Dir.Files do
-  begin
-    if not IsNumber(img.Name[1]) then
-      Continue;
-    with AWZ.ParseFile(img) do
+  if Is64Bit then
+    for var Files in ItemWzList do
     begin
-      for var Iter in Root.Children do
+      if Files.Value = 'Item/' + DirName then
       begin
-        if not IsNumber(Iter.Name) then
-          Continue;
-        if Iter.Get('info/icon') <> nil then
+        var WZ := TWZArchive.Create(Files.Key);
+        ItemWZListA.Add(WZ);
+        for var img in WZ.Root.Files do
         begin
-          var Bmp := Iter.Get2('info/icon').Canvas.DumpBmpEx;
-          Bmp.ID := Iter.Name;
+          if not IsNumber(img.Name[1]) then
+            Continue;
+          with WZ.ParseFile(img) do
+          begin
+            for var Iter in Root.Children do
+            begin
+              if not IsNumber(Iter.Name) then
+                Continue;
+              if Iter.Get('info/icon') <> nil then
+              begin
+                var Bmp := Iter.Get2('info/icon').Canvas.DumpBmpEx;
+                Bmp.ID := Iter.Name;
           //Bmp.Name := Name;
-          AIconList.Add(Bmp);
+                AIconList.Add(Bmp);
+              end;
+            end;
+            Free;
+          end;
         end;
       end;
-      Free;
+    end;
+
+  if not is64Bit then
+  begin
+    AWZ := TWZArchive.Create(WzPath + '\Item.wz');
+    var Dir := TWZDirectory(AWZ.Root.Entry[DirName]);
+    for var img in Dir.Files do
+    begin
+      if not IsNumber(img.Name[1]) then
+        Continue;
+      with AWZ.ParseFile(img) do
+      begin
+        for var Iter in Root.Children do
+        begin
+          if not IsNumber(Iter.Name) then
+            Continue;
+          if Iter.Get('info/icon') <> nil then
+          begin
+            var Bmp := Iter.Get2('info/icon').Canvas.DumpBmpEx;
+            Bmp.ID := Iter.Name;
+          //Bmp.Name := Name;
+            AIconList.Add(Bmp);
+          end;
+        end;
+        Free;
+      end;
     end;
   end;
+
   AIconList.Sort(TComparer<TBmpEx>.Construct(
     function(const Left, Right: TBmpEx): Integer
     begin
@@ -198,7 +231,7 @@ begin
   if HasLoad then
     Exit;
   HasLoad := True;
-  DumpIcons(ImageGrid, 'Consume', Wz, IconList);
+  DumpIcons(ImageGrid, 'Consume', WZ, IconList);
 end;
 
 procedure TConsumeForm.FormClick(Sender: TObject);
@@ -231,7 +264,7 @@ begin
 
   var RowCount := -1;
   ConsumeGrid.BeginUpdate;
-  for var Iter in StringWZ.GetImgFile('Consume.img').Root.Children do
+  for var Iter in GetImgFile('String/Consume.img').Root.Children do
   begin
     Inc(RowCount);
     ConsumeGrid.RowCount := RowCount + 1;
@@ -252,7 +285,7 @@ begin
 
   var RowCount := -1;
   ConsumeEffectGrid.BeginUpdate;
-  for var Iter in EffectWZ.GetImgFile('ItemEff.img').Root.Children do
+  for var Iter in GetImgFile('Effect/ItemEff.img').Root.Children do
   begin
     if LeftStr(Iter.Name, 1) = '2' then
     begin
@@ -262,13 +295,13 @@ begin
       ConsumeEffectGrid.Cells[1, RowCount] := ID;
       var Left4 := LeftStr(ID, 4);
 
-      if GetImgEntry('Item.wz/Consume/' + Left4 + '.img/' + ID + '/info/icon') <> nil then
+      if GetImgEntry('Item/Consume/' + Left4 + '.img/' + ID + '/info/icon') <> nil then
       begin
-        var Bmp := GetImgEntry('Item.wz/Consume/' + Left4 + '.img/' + ID + '/info/icon', True).Canvas.DumpBmp;
+        var Bmp := GetImgEntry('Item/Consume/' + Left4 + '.img/' + ID + '/info/icon', True).Canvas.DumpBmp;
         ConsumeEffectGrid.CreateBitmap(2, RowCount, False, haCenter, vaCenter).Assign(Bmp);
         Bmp.Free;
       end;
-      ConsumeEffectGrid.Cells[3, RowCount] := StringWZ.GetImgFile('Consume.img').Root.Get(IDToInt(ID) + '/name', '');
+      ConsumeEffectGrid.Cells[3, RowCount] := GetImgFile('String/Consume.img').Root.Get(IDToInt(ID) + '/name', '');
     end;
   end;
   ConsumeEffectGrid.SortByColumn(1);
@@ -277,7 +310,8 @@ end;
 
 procedure TConsumeForm.FormDestroy(Sender: TObject);
 begin
-  Wz.Free;
+  if WZ <> nil then
+    WZ.Free;
   IconList.Free;
 end;
 

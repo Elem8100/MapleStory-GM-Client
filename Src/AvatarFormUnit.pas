@@ -114,6 +114,7 @@ type
     RowList2: TDictionary<Integer, string>;
     Row1, Row2: Integer;
     HasSound2WZ: Boolean;
+    WzListObj:TObjectList<TWZArchive>;
     procedure DumpData2(Entry: TWZIMGEntry);
     procedure Dump2(Entry: TWZIMGEntry);
     procedure ImageGridSelect(Sender: TObject; idx: Integer);
@@ -653,6 +654,7 @@ end;
 procedure TAvatarForm.FormCreate(Sender: TObject);
 begin
   IconList := TObjectDictionary<string, TObjectList<TBmpEx>>.Create([doOwnsValues]);
+  WzListObj:=TObjectList<TWZArchive>.Create;
   Left := (Screen.Width - Width) div 2;
   Top := (Screen.Height - Height) div 2;
   HasLoaded := TList<Integer>.Create;
@@ -730,11 +732,12 @@ end;
 procedure TAvatarForm.FormDestroy(Sender: TObject);
 begin
   IconList.Free;
-  if Wz <> nil then
-    Wz.Free;
+ // if Wz <> nil then
+  //  Wz.Free;
   RowList2.Free;
   ColList2.Free;
   HasLoaded.Free;
+   WzListObj.Free;
 end;
 
 procedure TAvatarForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -951,14 +954,15 @@ begin
   if is64Bit then
     if not IconList.ContainsKey(Part) then
     begin
-      if Wz <> nil then
-        Wz.Free;
+     // if Wz <> nil then
+     //   Wz.Free;
       var List := TObjectList<TBmpEx>.Create;
       for var Files in WzList2 do
       begin
         if Files.Value = 'Character/' + CharacterDir then
         begin
           Wz := TWzArchive.Create(Files.Key);
+          WZListObj.Add(Wz);
           for img in WZ.Root.Files do
           begin
             if not IsNumber(img.Name[1]) then
@@ -1068,9 +1072,10 @@ begin
   if not IS64Bit then
     if not IconList.ContainsKey(Part) then
     begin
-      if Wz <> nil then
-        Wz.Free;
+      //if Wz <> nil then
+       // Wz.Free;
       Wz := TWZArchive.Create(WzPath + '\Character.wz');
+      WZListObj.Add(Wz);
       var List := TObjectList<TBmpEx>.Create;
    // Dir := TWZDirectory(Wz.Root.Entry[CharacterDir]);
 

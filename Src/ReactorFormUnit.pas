@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, AdvObj, BaseGrid, AdvGrid, Vcl.ExtCtrls,
-  Vcl.StdCtrls;
+  Vcl.StdCtrls, AdvUtil;
 
 type
   TReactorForm = class(TForm)
@@ -61,10 +61,11 @@ begin
 
   var RowCount := -1;
   ReactorGrid.BeginUpdate;
-  for var img in ReactorWZ.Root.Files do
+  var ImgList:=GetImgList('Reactor');
+  for var img in ImgList do
   begin
 
-    var Entry := ReactorWZ.GetImgFile(img.Name).Root;
+    var Entry := GetImgFile('Reactor/'+img.Name).Root;
 
     if (Entry.Get('0') = nil) or (Entry.Get('0/0') = nil) then
       Continue;
@@ -85,6 +86,7 @@ begin
   end;
   ReactorGrid.SortByColumn(1);
   ReactorGrid.EndUpdate;
+  ImgList.Free;
 end;
 
 procedure TReactorForm.FormClick(Sender: TObject);
@@ -107,10 +109,10 @@ end;
 procedure TReactorForm.ReactorGridClickCell(Sender: TObject; ARow, ACol: Integer);
 begin
   ReactorID := ReactorGrid.Cells[1, ARow];
-  var Entry := GetImgEntry('Reactor.wz/' + ReactorID + '.img/0/0');
+  var Entry := GetImgEntry('Reactor/' + ReactorID + '.img/0/0');
   if Entry <> nil then
   begin
-    var Bmp := GetImgEntry('Reactor.wz/' + ReactorID + '.img/0/0', True).Canvas.DumpBmp;
+    var Bmp := GetImgEntry('Reactor/' + ReactorID + '.img/0/0', True).Canvas.DumpBmp;
     Image1.Picture.Assign(Bmp);
     Bmp.Free;
   end;

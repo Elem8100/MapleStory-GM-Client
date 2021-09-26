@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, AdvObj, BaseGrid, AdvGrid, Vcl.StdCtrls,
-  Vcl.ComCtrls, iemview;
+  Vcl.ComCtrls, iemview, AdvUtil;
 
 type
   TAndroidForm = class(TForm)
@@ -87,9 +87,9 @@ begin
   var IDList := TList<string>.Create;
 
   var AndroidID := AndroidGrid.Cells[1, ARow];
-  var Num := GetImgEntry('Character.wz/Android/' + AndroidID + '.img/' + 'info/android').Data;
+  var Num := GetImgEntry('Character/Android/' + AndroidID + '.img/' + 'info/android').Data;
   var ImgNum := Add4(Num) + '.img';
-  for var Iter in EtcWZ.GetImgFile('Android/' + ImgNum).Root.Children do
+  for var Iter in GetImgFile('Etc/Android/' + ImgNum).Root.Children do
   begin
     if (Iter.name = 'basic') then
     begin
@@ -182,7 +182,9 @@ begin
 
   var RowCount := -1;
   AndroidGrid.BeginUpdate;
-  for var img in TWZDirectory(CharacterWZ.Root.Entry['Android']).Files do
+  var ImgList:=GetImgList('Character/Android');
+
+  for var img in ImgList do
   begin
     if LeftStr(img.Name, 4) = '0167' then
       Continue;
@@ -191,10 +193,10 @@ begin
     Inc(RowCount);
     AndroidGrid.RowCount := RowCount + 1;
     AndroidGrid.Cells[1, RowCount] := ID;
-    if HasImgEntry('String.wz/Eqp.img/Eqp/android/' + IDToInt(ID)) then
-      AndroidGrid.Cells[3, RowCount] := GetImgEntry('String.wz/Eqp.img/Eqp/android/' + IDToInt(ID)).Get('Name', '');
+    if HasImgEntry('String/Eqp.img/Eqp/android/' + IDToInt(ID)) then
+      AndroidGrid.Cells[3, RowCount] := GetImgEntry('String/Eqp.img/Eqp/android/' + IDToInt(ID)).Get('Name', '');
 
-    var Entry := GetImgEntry('Character.WZ/Android/' + img.Name + '/info/iconD', True);
+    var Entry := GetImgEntry('Character/Android/' + img.Name + '/info/iconD', True);
     if Entry <> nil then
     begin
       var Bmp := Entry.Canvas.DumpBmp;
@@ -203,7 +205,7 @@ begin
     end;
 
   end;
-
+  ImgList.Free;
   AndroidGrid.SortByColumn(1);
   AndroidGrid.EndUpdate;
 end;

@@ -254,7 +254,7 @@ begin
               Row := AddMobForm.boss2grid.RowCount - 1;
               ID := NoIMG(Iter.Parent.parent.Name);
               AddMobForm.Boss2grid.Cells[1, Row] := ID;
-              AddMobForm.Boss2grid.Cells[2, Row] := StringWZ.GetImgFile('Mob.img').Root.Get(IDToInt(ID)
+              AddMobForm.Boss2grid.Cells[2, Row] := GetImgFile('String/Mob.img').Root.Get(IDToInt(ID)
                 + '/name', '');
             end
             else if (Iter2.Name = 'maxHP') and (Length(Iter2.data) <= 9) then
@@ -263,7 +263,7 @@ begin
               Row := AddMobForm.boss1grid.RowCount - 1;
               ID := NoIMG(Iter.Parent.parent.Name);
               AddMobForm.Boss1Grid.Cells[1, Row] := ID;
-              AddMobForm.Boss1Grid.Cells[2, Row] := StringWZ.GetImgFile('Mob.img').Root.Get(IDToInt(ID)
+              AddMobForm.Boss1Grid.Cells[2, Row] := GetImgFile('String/Mob.img').Root.Get(IDToInt(ID)
                 + '/name', '');
             end;
           end;
@@ -277,9 +277,9 @@ end;
 
 procedure TAddMobForm.DumpBossIDButtonClick(Sender: TObject);
 begin
-  DumpBossID(MobWZ);
-  DumpBossID(Mob001WZ);
-  DumpBossID(Mob2WZ);
+ // DumpBossID(MobWZ);
+ // DumpBossID(Mob001WZ);
+  //DumpBossID(Mob2WZ);
   Boss1Grid.SortByColumn(1);
   Boss2Grid.SortByColumn(1);
   Boss1Grid.SaveToCSV(ExtractFilePath(ParamStr(0)) + 'Boss1.txt');

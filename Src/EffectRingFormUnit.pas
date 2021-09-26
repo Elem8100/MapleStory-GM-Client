@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, AdvObj, BaseGrid, AdvGrid,
-  Vcl.StdCtrls;
+  Vcl.StdCtrls, AdvUtil;
 
 type
   TEffectRingForm = class(TForm)
@@ -73,23 +73,23 @@ begin
   var RowCount := -1;
   EffectRingGrid.BeginUpdate;
 
-  for var Iter in EffectWz.GetImgFile('ItemEff.img').Root.Children do
+  for var Iter in GetImgFile('Effect/ItemEff.img').Root.Children do
   begin
     if LeftStr(Iter.Name, 3) <> '111' then
       Continue;
 
     var ID := '0' + Iter.Name;
-    if not HasImgFile('Character.WZ/Ring/' + ID + '.img') then
+    if not HasImgFile('Character/Ring/' + ID + '.img') then
       Continue;
     Inc(RowCount);
     EffectRingGrid.RowCount := RowCount + 1;
     EffectRingGrid.Cells[1, RowCount] := ID;
 
-    if HasImgEntry('String.wz/Eqp.img/Eqp/Ring/' + IDToInt(ID)) then
-      EffectRingGrid.Cells[3, RowCount] := GetImgEntry('String.wz/Eqp.img/Eqp/Ring/' + IDToInt(ID)).Get
+    if HasImgEntry('String/Eqp.img/Eqp/Ring/' + IDToInt(ID)) then
+      EffectRingGrid.Cells[3, RowCount] := GetImgEntry('String/Eqp.img/Eqp/Ring/' + IDToInt(ID)).Get
         ('Name', '');
 
-    var Entry := GetImgEntry('Character.WZ/Ring/' + ID + '.img' + '/info/icon', True);
+    var Entry := GetImgEntry('Character/Ring/' + ID + '.img' + '/info/icon', True);
     if Entry <> nil then
     begin
       var Bmp := Entry.Canvas.DumpBmp;
@@ -98,7 +98,7 @@ begin
     end;
   end;
 
-  for var Iter in EffectWz.GetImgFile('SetEff.img').Root.Children do
+  for var Iter in GetImgFile('Effect/SetEff.img').Root.Children do
     for var Iter2 in Iter.Children do
       if Iter2.Name = 'info' then
         for var Iter3 in Iter2.Children do
@@ -106,17 +106,17 @@ begin
             if LeftStr(Iter4.Data, 3) = '111' then
             begin
               var ID := '0' + string(Iter4.Data);
-              if not HasImgFile('Character.WZ/Ring/' + ID + '.img') then
+              if not HasImgFile('Character/Ring/' + ID + '.img') then
                 Continue;
               Inc(RowCount);
               EffectRingGrid.RowCount := RowCount + 1;
               EffectRingGrid.Cells[1, RowCount] := ID;
 
-              if HasImgEntry('String.wz/Eqp.img/Eqp/Ring/' + IDToInt(ID)) then
-                EffectRingGrid.Cells[3, RowCount] := GetImgEntry('String.wz/Eqp.img/Eqp/Ring/' +
+              if HasImgEntry('String/Eqp.img/Eqp/Ring/' + IDToInt(ID)) then
+                EffectRingGrid.Cells[3, RowCount] := GetImgEntry('String/Eqp.img/Eqp/Ring/' +
                   IDToInt(ID)).Get('Name', '');
 
-              var Entry := GetImgEntry('Character.WZ/Ring/' + ID + '.img' + '/info/icon', True);
+              var Entry := GetImgEntry('Character/Ring/' + ID + '.img' + '/info/icon', True);
               if Entry <> nil then
               begin
                 var Bmp := Entry.Canvas.DumpBmp;

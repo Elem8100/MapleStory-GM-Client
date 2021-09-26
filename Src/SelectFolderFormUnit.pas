@@ -3,9 +3,10 @@
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, FolderDialog, Vcl.Grids, AdvObj, BaseGrid, AdvGrid,
-  Vcl.StdCtrls, Generics.Collections, AdvUtil;
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
+  FolderDialog, Vcl.Grids, AdvObj, BaseGrid, AdvGrid, Vcl.StdCtrls,
+  Generics.Collections, AdvUtil;
 
 type
   TSelectFolderForm = class(TForm)
@@ -32,13 +33,16 @@ var
 implementation
 
 uses
-  MainUnit, WZArchive, WZDirectory, WZIMGFile, KeyHandler, Global, Npc, MapleMap, WzUtils, UI.Utils,
-  Skill, MapleEffect, TamingMob, StrUtils;
+  MainUnit, WZArchive, WZDirectory, WZIMGFile, KeyHandler, Global, Npc, MapleMap,
+  WzUtils, UI.Utils, Skill, MapleEffect, TamingMob, StrUtils;
 
 {$R *.dfm}
+var
+  FileListObj: TObjectList<TStringList>;
 
 procedure TSelectFolderForm.FormCreate(Sender: TObject);
 begin
+  FileListObj := TObjectList<TStringList>.Create;
   DirList := TList<string>.Create;
   Left := (Screen.Width - Width) div 2 - 150;
   Top := (Screen.Height - Height) div 2 - 100;
@@ -71,7 +75,7 @@ var
   sch: TSearchRec;
 begin
   Result := TStringlist.Create;
-
+  FileListObj.Add(Result);
   if RightStr(Trim(Path), 1) <> '\' then
     Path := Trim(Path) + '\'
   else
@@ -95,8 +99,7 @@ begin
       end
       else
       begin
-        if (UpperCase(extractfileext(Path + sch.Name)) = UpperCase(FileExt)) or (FileExt = '.*')
-          then
+        if (UpperCase(extractfileext(Path + sch.Name)) = UpperCase(FileExt)) or (FileExt = '.*') then
           Result.Add(Path + sch.Name);
       end;
     until FindNext(sch) <> 0;
@@ -120,8 +123,10 @@ begin
   end;
   if FileList.Count > 200 then
     Is64Bit := True;
-  WZList := TList<TWZarchive>.Create;
+  WZList := TObjectList<TWZarchive>.Create;
   WzList2 := TDictionary<string, string>.Create;
+  ItemWzList := TDictionary<string, string>.Create;
+  ItemWZListA := TObjectList<TWZArchive>.Create;
   for var i in FileList do
   begin
     if RightStr(i, 7) = 'Data.wz' then
@@ -139,7 +144,12 @@ begin
       Path := 'Character/';
     if LeftStr(Path, 9) = 'Character' then
       WzList2.Add(i, Path);
+     //
+
+    if LeftStr(Path, 4) = 'Item' then
+      ItemWzList.Add(i, Path);
   end;
+  FileListObj.Free;
   SelectFolderForm.Close;
   if not DirList.Contains(FolderPath) then
     Dirlist.Insert(0, FolderPath);

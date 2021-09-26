@@ -229,7 +229,7 @@ begin
   else
     begin
       Dir := GetDir(ID);
-      Entry := CharacterWZ.GetImgFile(Dir + ID + '.img').Root.Get('info/icon');
+      Entry := GetImgFile('Character/'+Dir + ID + '.img').Root.Get('info/icon');
     end;
   end;
 

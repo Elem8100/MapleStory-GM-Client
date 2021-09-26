@@ -117,9 +117,7 @@ begin
   TFootholdTree.CreateFHs;
   TLadderRope.Create;
   TMapPortal.Create;
-
   TMapObj.Create;
-
   TMapTile.Create;
   if TMap.Info.ContainsKey('VRLeft') then
   begin
@@ -200,9 +198,7 @@ begin
     var Entry: TWZIMGEntry;
     var Bmp: TBitmap;
     var MapID: string;
-
     var LeftNum := LeftStr(ID, 1);
-
     Entry := GetImgEntry('Map/Map/Map' + LeftNum + '/' + ID + '.img/info/link');
     if Entry = nil then
       MapID := ID
@@ -210,7 +206,6 @@ begin
       MapID := Entry.Data;
 
     LeftNum := LeftStr(MapID, 1);
-
     Entry := GetImgEntry('Map/Map/Map' + LeftNum + '/' + MapID + '.img/miniMap');
     if Entry = nil then
       Exit;

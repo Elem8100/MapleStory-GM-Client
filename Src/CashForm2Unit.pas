@@ -6,7 +6,8 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, CurvyControls, Vcl.Grids, AdvObj,
   BaseGrid, AdvGrid, Vcl.ComCtrls,
-  iemview, PNGMapleCanvasEx, Generics.Collections, Generics.Defaults, WZArchive;
+  iemview, PNGMapleCanvasEx, Generics.Collections, Generics.Defaults, WZArchive,
+  AdvUtil;
 
 type
   TCashForm2 = class(TForm)
@@ -47,7 +48,7 @@ var
 implementation
 
 uses
-  ConsumeFormUnit, Global, StrUtils, WZDirectory, MobDrop, MapleCharacter;
+  ConsumeFormUnit, Global, StrUtils, WZDirectory, MobDrop, MapleCharacter,WzUtils;
 {$R *.dfm}
 
 procedure TCashForm2.ImageGridSelect(Sender: TObject; idx: Integer);
@@ -68,7 +69,7 @@ begin
 
   var RowCount := -1;
   CashGrid.BeginUpdate;
-  for var Iter in StringWZ.GetImgFile('Cash.img').Root.Children do
+  for var Iter in GetImgFile('String/Cash.img').Root.Children do
   begin
     Inc(RowCount);
     CashGrid.RowCount := RowCount + 1;
@@ -104,7 +105,7 @@ begin
   if HasLoad then
     Exit;
   HasLoad := True;
-  ConsumeForm.DumpIcons(ImageGrid, 'Cash', Wz, IconList);
+  ConsumeForm.DumpIcons(ImageGrid, 'Cash',WZ,  IconList);
 end;
 
 procedure TCashForm2.FormClick(Sender: TObject);

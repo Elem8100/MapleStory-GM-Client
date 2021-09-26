@@ -139,13 +139,14 @@ begin
 
   ChairGrid.BeginUpdate;
   var Entry: TWZIMGEntry;
+  var ImgList:=GetImgList('Item/Install');
 
-  for var img in TWZDirectory(ItemWZ.Root.Entry['Install']).Files do
+  for var img in ImgList do
   begin
     if (LeftStr(img.Name, 4) <> '0301') and (LeftStr(img.Name, 4) <> '0302') then
       Continue;
 
-    for var Iter in ItemWZ.GetImgFile('Install/' + img.Name).Root.Children do
+    for var Iter in GetImgFile('Item/Install/' + img.Name).Root.Children do
     begin
       if Iter.Name = '03018051' then
         Continue;
@@ -166,7 +167,7 @@ begin
     end;
 
   end;
-
+  ImgList.Free;
   ChairGrid.SortByColumn(1);
   ChairGrid.EndUpdate;
 

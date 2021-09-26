@@ -44,14 +44,14 @@ begin
       s := nil;
     end;
   for var Iter in EquipImages.Keys do
-    if LeftStr(Iter.GetPath, 20) = 'Item.wz/Install/0301' then
+    if LeftStr(Iter.GetPath, 20) = 'Item/Install/0301' then
     begin
       EquipImages.Remove(Iter);
       EquipData.Remove(Iter.GetPath);
     end;
 
   for var Iter in EquipImages.Keys do
-    if LeftStr(Iter.GetPath, 27) = 'Character.wz/TamingMob/0198' then
+    if LeftStr(Iter.GetPath, 27) = 'Character/TamingMob/0198' then
     begin
       EquipImages.Remove(Iter);
       EquipData.Remove(Iter.GetPath);
@@ -115,22 +115,22 @@ begin
   HasSitAction := False;
   UseTamingNavel := False;
   var Entry: TWZIMGEntry;
-  if ItemWZ.GetImgFile('Install/0301.img') <> nil then
-    Entry := GetImgEntry('Item.wz/Install/0301.img/')
+  if GetImgFile('Item/Install/0301.img') <> nil then
+    Entry := GetImgEntry('Item/Install/0301.img/')
   else
   begin
     if LeftStr(ID, 4) = '0302' then
-      Entry := GetImgEntry('Item.wz/Install/0302.img/')
+      Entry := GetImgEntry('Item/Install/0302.img/')
     else
       case ID[5] of
         '0', '1', '2', '3', '4', '6', '7', '8':
-          Entry := GetImgEntry('Item.wz/Install/0301' + ID[5] + '.img/');
+          Entry := GetImgEntry('Item/Install/0301' + ID[5] + '.img/');
 
         '5':
           begin
             case ID[6] of
               '0'..'9':
-                Entry := GetImgEntry('Item.wz/Install/03015' + ID[6] + '.img/');
+                Entry := GetImgEntry('Item/Install/03015' + ID[6] + '.img/');
             end;
           end;
 
@@ -145,20 +145,20 @@ begin
       TamingMobID := Entry.Get(ID + '/info/tamingMob/0').Data
     else
       TamingMobID := Entry.Get(ID + '/info/tamingMob').Data;
-    if HasImgEntry('Character.wz/TamingMob/' + '0' + TamingMobID + '.img/sit/0') then
+    if HasImgEntry('Character/TamingMob/' + '0' + TamingMobID + '.img/sit/0') then
     begin
-      if HasImgEntry('Character.wz/TamingMob/' + '0' + TamingMobID + '.img/sit/0/0') then
-        if GetImgEntry('Character.wz/TamingMob/' + '0' + TamingMobID + '.img/sit/0/0').Canvas.Width
+      if HasImgEntry('Character/TamingMob/' + '0' + TamingMobID + '.img/sit/0/0') then
+        if GetImgEntry('Character/TamingMob/' + '0' + TamingMobID + '.img/sit/0/0').Canvas.Width
           = 4 then
           UseTamingNavel := True;
 
       TTamingMob.IsChairTaming := True;
       TTamingMob.Create('0' + TamingMobID, ColorEffect, Value);
-      if HasImgEntry('Character.wz/TamingMob/' + '0' + TamingMobID + '.img/characterAction/sit')
+      if HasImgEntry('Character/TamingMob/' + '0' + TamingMobID + '.img/characterAction/sit')
         then
       begin
         HasSitAction := True;
-        CharacterAction := GetImgEntry('Character.wz/TamingMob/' + '0' + TamingMobID +
+        CharacterAction := GetImgEntry('Character/TamingMob/' + '0' + TamingMobID +
           '.img/characterAction/sit').Data
       end
       else

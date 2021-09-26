@@ -4,7 +4,8 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, AdvObj, BaseGrid, AdvGrid, Vcl.StdCtrls;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, AdvObj, BaseGrid, AdvGrid, Vcl.StdCtrls,
+  AdvUtil;
 
 type
   TChatRingForm = class(TForm)
@@ -48,7 +49,7 @@ end;
 procedure TChatRingForm.ChatRingGridClickCell(Sender: TObject; ARow, ACol: Integer);
 begin
   TChatRingBalloon.IsUse := True;
-  TChatRingBalloon.TagNum := GetImgEntry('Character.WZ/Ring/' + ChatRingGrid.Cells[1, ARow] + '.img'
+  TChatRingBalloon.TagNum := GetImgEntry('Character/Ring/' + ChatRingGrid.Cells[1, ARow] + '.img'
     + '/info/chatBalloon').Data;
   Label3.Caption := ChatRingGrid.Cells[3, ARow];
 
@@ -69,27 +70,28 @@ begin
   ChatRingGrid.Canvas.TextOut(90, 100, 'Loading...');
 
   var RowCount := -1;
+  var ImgList:=GetImgList('Character/Ring');
   ChatRingGrid.BeginUpdate;
-  for var img in TWZDirectory(CharacterWZ.Root.Entry['Ring']).Files do
+  for var img in ImgList do
   begin
     if (LeftStr(img.Name, 6) <> '011122') and (LeftStr(img.Name, 6) <> '011150') and (LeftStr(img.Name,
       6) <> '011152') then
       Continue;
-    if GetImgEntry('Character.WZ/Ring/' + img.Name + '/info/chatBalloon') = nil then
+    if GetImgEntry('Character/Ring/' + img.Name + '/info/chatBalloon') = nil then
       Continue;
-    var TagNum := GetImgEntry('Character.WZ/Ring/' + img.Name + '/info/chatBalloon').Data;
-    if GetImgEntry('UI.wz/ChatBalloon.img/' + string(TagNum)) = nil then
+    var TagNum := GetImgEntry('Character/Ring/' + img.Name + '/info/chatBalloon').Data;
+    if GetImgEntry('UI/ChatBalloon.img/' + string(TagNum)) = nil then
       Continue;
 
     var ID := NoIMG(img.Name);
     Inc(RowCount);
     ChatRingGrid.RowCount := RowCount + 1;
     ChatRingGrid.Cells[1, RowCount] := ID;
-    if HasImgEntry('String.wz/Eqp.img/Eqp/Ring/' + IDToInt(ID)) then
-      ChatRingGrid.Cells[3, RowCount] := GetImgEntry('String.wz/Eqp.img/Eqp/Ring/' + IDToInt(ID)).Get
+    if HasImgEntry('String/Eqp.img/Eqp/Ring/' + IDToInt(ID)) then
+      ChatRingGrid.Cells[3, RowCount] := GetImgEntry('String/Eqp.img/Eqp/Ring/' + IDToInt(ID)).Get
         ('Name', '');
 
-    var Entry := GetImgEntry('Character.WZ/Ring/' + img.Name + '/info/icon', True);
+    var Entry := GetImgEntry('Character/Ring/' + img.Name + '/info/icon', True);
     if Entry <> nil then
     begin
       var Bmp := Entry.Canvas.DumpBmp;
@@ -100,7 +102,7 @@ begin
   end;
   ChatRingGrid.SortByColumn(1);
   ChatRingGrid.EndUpdate;
-
+  ImgList.Free;
 end;
 
 procedure TChatRingForm.FormClick(Sender: TObject);

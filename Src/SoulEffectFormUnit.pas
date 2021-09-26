@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids,
-  AdvObj, BaseGrid, AdvGrid, Vcl.StdCtrls;
+  AdvObj, BaseGrid, AdvGrid, Vcl.StdCtrls, AdvUtil;
 
 type
   TSoulEffectForm = class(TForm)
@@ -50,19 +50,19 @@ begin
 
   var RowCount := -1;
   SoulEffectGrid.BeginUpdate;
-  for var Iter in EtcWZ.GetImgFile('SoulCollection.img').Root.Children do
+  for var Iter in GetImgFile('Etc/SoulCollection.img').Root.Children do
   begin
     Inc(RowCount);
     SoulEffectGrid.RowCount := RowCount + 1;
     var ID: string := Iter.Get('soulList/0/0').Data;
     SoulEffectGrid.Cells[1, RowCount] := '0' + ID;
     SoulEffectGrid.Cells[4, RowCount] := Iter.Get('soulSkill').Data;
-    if GetImgEntry('Item.wz/Consume/0259.img/' + '0' + ID + '/info/icon') <> nil then
+    if GetImgEntry('Item/Consume/0259.img/' + '0' + ID + '/info/icon') <> nil then
     begin
-      var Bmp := GetImgEntry('Item.wz/Consume/0259.img/' + '0' + ID + '/info/icon', True).Canvas.DumpBmp;
+      var Bmp := GetImgEntry('Item/Consume/0259.img/' + '0' + ID + '/info/icon', True).Canvas.DumpBmp;
       SoulEffectGrid.CreateBitmap(2, RowCount, False, haCenter, vaCenter).Assign(Bmp);
       Bmp.Free;
-      SoulEffectGrid.Cells[3, RowCount] := StringWZ.GetImgFile('Consume.img').Root.Get(ID + '/name', '');
+      SoulEffectGrid.Cells[3, RowCount] := GetImgFile('String/Consume.img').Root.Get(ID + '/name', '');
     end;
   end;
   SoulEffectGrid.SortByColumn(1);

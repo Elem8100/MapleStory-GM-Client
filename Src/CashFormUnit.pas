@@ -4,7 +4,8 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, AdvObj, BaseGrid, AdvGrid, Vcl.StdCtrls;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, AdvObj, BaseGrid, AdvGrid, Vcl.StdCtrls,
+  AdvUtil;
 
 type
   TCashForm = class(TForm)
@@ -76,7 +77,7 @@ begin
   CashGrid.Canvas.Font.Size := 18;
   CashGrid.Canvas.TextOut(60, 0, 'Loading...');
 
-  var Entry := GetImgEntry('Item.wz/Cash/0501.img/');
+  var Entry := GetImgEntry('Item/Cash/0501.img/');
   var RowCount := -1;
 
   for var Iter in Entry.Children do
@@ -93,8 +94,8 @@ begin
     Inc(RowCount);
     CashGrid.RowCount := RowCount + 1;
     CashGrid.Cells[1, RowCount] := Iter.Name;
-    if HasImgEntry('String.wz/Cash.img/' + IDToInt(Iter.Name)) then
-      CashGrid.Cells[3, RowCount] := GetImgEntry('String.wz/Cash.img/' + IDToInt(Iter.Name)).Get('Name', '');
+    if HasImgEntry('String/Cash.img/' + IDToInt(Iter.Name)) then
+      CashGrid.Cells[3, RowCount] := GetImgEntry('String/Cash.img/' + IDToInt(Iter.Name)).Get('Name', '');
     if Iter.Get('info/icon') <> nil then
     begin
       var Bmp := Iter.Get2('info/icon').Canvas.DumpBmp;

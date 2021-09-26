@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, iemview, PNGMapleCanvasEx,
   Generics.Collections, Generics.Defaults, WZArchive, Vcl.StdCtrls, Vcl.ExtCtrls, CurvyControls,
-  Vcl.Grids, AdvObj, BaseGrid, AdvGrid, Vcl.ComCtrls;
+  Vcl.Grids, AdvObj, BaseGrid, AdvGrid, Vcl.ComCtrls, AdvUtil;
 
 type
   TEtcForm = class(TForm)
@@ -48,7 +48,7 @@ var
 implementation
 
 uses
-  ConsumeFormUnit, Global, StrUtils, WZDirectory, MobDrop, MapleCharacter;
+  ConsumeFormUnit, Global, StrUtils, WZDirectory, MobDrop, MapleCharacter,WzUtils;
 {$R *.dfm}
 
 procedure TEtcForm.ImageGridSelect(Sender: TObject; idx: Integer);
@@ -68,7 +68,7 @@ begin
 
   var RowCount := -1;
   EtcGrid.BeginUpdate;
-  for var Iter in StringWZ.GetImgFile('Etc.img').Root.Child['Etc'].Children do
+  for var Iter in GetImgFile('String/Etc.img').Root.Child['Etc'].Children do
   begin
     Inc(RowCount);
     EtcGrid.RowCount := RowCount + 1;
@@ -104,7 +104,7 @@ begin
   if HasLoad then
     Exit;
   HasLoad := True;
-  ConsumeForm.DumpIcons(ImageGrid, 'Etc', Wz, IconList);
+  ConsumeForm.DumpIcons(ImageGrid, 'Etc', WZ, IconList);
 end;
 
 procedure TEtcForm.FormClick(Sender: TObject);

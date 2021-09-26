@@ -25,7 +25,7 @@ var
   ACount: Integer;
   Entry, Iter: TWZImgEntry;
 begin
-  if UIWz.GetImgFile('MapleTV.img') = nil then
+  if GetImgFile('UI/MapleTV.img') = nil then
     Exit;
   Entry := GetImgEntry('UI/MapleTV.img/TVbasic/0');
   DumpData(Entry, WzData, Images);

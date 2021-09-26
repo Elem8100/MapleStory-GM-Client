@@ -35,7 +35,7 @@ var
   LEntry: TWZIMGEntry;
   Pos: TPoint;
 begin
-  LEntry := GetImgEntry('Reactor.wz/' + ID + '.img/');
+  LEntry := GetImgEntry('Reactor/' + ID + '.img/');
   if LEntry.Get('0') = nil then
     Exit;
   if not EquipData.ContainsKey(LEntry.GetPath) then

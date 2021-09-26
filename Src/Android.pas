@@ -384,16 +384,16 @@ begin
     TruncMove := True;
     Tag := 1;
     var TagNum := GetImgEntry('Etc/Android/' + ItemID + '/info').Get('nameTag', '38');
-    Entry := GetImgEntry('UI.wz/NameTag.img/pet/' + string(TagNum));
+    Entry := GetImgEntry('UI/NameTag.img/pet/' + string(TagNum));
     if Entry = nil then
-      Entry := GetImgEntry('UI.wz/NameTag.img/pet/38');
+      Entry := GetImgEntry('UI/NameTag.img/pet/38');
 
     if Entry.Get('c/_inlink') <> nil then
     begin
       var Data := Entry.Get('c/_inlink').Data;
       Data := StringReplace(Data, '/c', '', [rfReplaceAll]);
       Data := StringReplace(Data, 'pet/', '', [rfReplaceAll]);
-      Entry := GetImgEntry('UI.wz/NameTag.img/pet/' + string(Data));
+      Entry := GetImgEntry('UI/NameTag.img/pet/' + string(Data));
     end;
     DumpData(Entry, EquipData, EquipImages);
     InitData;

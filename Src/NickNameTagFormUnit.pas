@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, AdvObj,
-  BaseGrid, AdvGrid, Vcl.StdCtrls;
+  BaseGrid, AdvGrid, Vcl.StdCtrls, AdvUtil;
 
 type
   TNickNameForm = class(TForm)
@@ -57,7 +57,7 @@ begin
   NickNameGrid.Canvas.TextOut(90, 100, 'Loading...');
   var RowCount := -1;
   NickNameGrid.BeginUpdate;
-  for var Iter in GetImgEntry('Item.wz/Install/0370.img/').Children do
+  for var Iter in GetImgEntry('Item/Install/0370.img/').Children do
   begin
 
     //  if GetImgEntry('Character.WZ/Accessory/' + img.Name + '/info/medalTag') = nil then
@@ -69,8 +69,8 @@ begin
     Inc(RowCount);
     NickNameGrid.RowCount := RowCount + 1;
     NickNameGrid.Cells[1, RowCount] := ID;
-    if HasImgEntry('String.wz/Ins.img/' + IDToInt(ID)) then
-      NickNameGrid.Cells[3, RowCount] := GetImgEntry('String.wz/Ins.img/' + IDToInt(ID)).Get('Name', '');
+    if HasImgEntry('String/Ins.img/' + IDToInt(ID)) then
+      NickNameGrid.Cells[3, RowCount] := GetImgEntry('String/Ins.img/' + IDToInt(ID)).Get('Name', '');
 
     var Entry := Iter.Get2('info/icon');
     if Entry <> nil then
@@ -112,8 +112,8 @@ procedure TNickNameForm.NickNameGridClickCell(Sender: TObject; ARow, ACol: Integ
 begin
   TNickNameTag.Delete;
   var ID := NickNameGrid.Cells[1, ARow];
-  var TagNum := GetImgEntry('Item.wz/Install/0370.img/' + ID + '/info').Get('nickTag', '');
-  if GetImgEntry('UI.wz/NameTag.img/nick/' + string(TagNum)) <> nil then
+  var TagNum := GetImgEntry('Item/Install/0370.img/' + ID + '/info').Get('nickTag', '');
+  if GetImgEntry('UI/NameTag.img/nick/' + string(TagNum)) <> nil then
     TNickNameTag.Create(ID);
   ActiveControl := nil;
 end;
