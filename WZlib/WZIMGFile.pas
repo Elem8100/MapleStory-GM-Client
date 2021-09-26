@@ -363,7 +363,7 @@ begin
       Result := Result.Child[Split[i]];
 
     if not Assigned(Result) then
-      Exit(GetImgEntry64('Character/00002000.img/alert/0/arm'));
+      Exit(GetImgEntry('Character/00002000.img/alert/0/arm'));
 
   end;
 
@@ -388,11 +388,11 @@ begin
             Delete(s2, Length(s2), 1);
             Child := GetImgEntry(StringReplace(s1, RightStr(s1, Length(s2)), s2, [rfReplaceAll]));
             if Child = nil then
-              Exit(GetImgEntry64('Character/00002000.img/alert/0/arm'));
+              Exit(GetImgEntry('Character/00002000.img/alert/0/arm'));
 
           end
           else
-            Child := GetImgEntry64('Character/00002000.img/alert/0/arm');
+            Child := GetImgEntry('Character/00002000.img/alert/0/arm');
         end;
 
         if Child <> nil then
@@ -408,7 +408,7 @@ begin
                 if Child.Child['_inlink'] <> nil then
                   Child := GetTopEntry(Child).Get(Child.Child['_inlink'].Data)
                 else if Child.Child['_outlink'] <> nil then
-                  Child := GetImgEntry64(Child.Child['_outlink'].Data, True);
+                  Child := GetImgEntry(Child.Child['_outlink'].Data, True);
               end;
           end;
 
@@ -420,16 +420,16 @@ begin
         if Result.Child['_outlink'] <> nil then
         begin
           OutLink := Result.Child['_outlink'].Data;
-          Result := GetImgEntry64(OutLink, True);
+          Result := GetImgEntry(OutLink, True);
         end
         else if Result.Child['_inlink'] <> nil then
         begin
           Result := GetTopEntry(Result).Get(Result.Child['_inlink'].Data);
           if Result = nil then
-            Exit(GetImgEntry64('Character/00002000.img/alert/0/arm'));
+            Exit(GetImgEntry('Character/00002000.img/alert/0/arm'));
         end
         else if Result.Child['source'] <> nil then
-          Result := GetImgEntry64(Result.Child['source'].Data, True);
+          Result := GetImgEntry(Result.Child['source'].Data, True);
       end;
   end;
 

@@ -2,8 +2,8 @@ unit WZArchive;
 
 interface
 
-uses Classes, SysUtils, WZReader, WZDirectory, WZIMGFile,
-     Tools;
+uses
+  Classes, SysUtils, WZReader, WZDirectory, WZIMGFile, Tools, StrUtils;
 
 type
   TWZArchive = class
@@ -11,29 +11,25 @@ type
     FReader: TWZReader;
     FRoot: TWZDirectory;
     FFileSize, FHeaderSize, FVersion: Integer;
-    FName, FPKG, FCopyright,FPath: string;
-
+    FName, FPKG, FCopyright, FPath, FPathName: string;
     procedure Load;
     procedure GetOffsets(Dir: TWZDirectory; var StartOffset: Int64);
     procedure ParseDirectory(Dir: TWZDirectory);
-
     function DecodeVersion(Encoded: Smallint): Integer;
   public
     constructor Create(Filename: string; LoadToMem: Boolean = False);
     destructor Destroy; override;
-
     function GetImgFile(const Path: string): TWZIMGFile;
     function ResolveFullPath(P: string): TWZIMGEntry;
     function ParseFile(F: TWZFile): TWZIMGFile;
-
     property Reader: TWZReader read FReader;
     property Root: TWZDirectory read FRoot;
-
     property Copyright: string read FCopyright;
     property FileSize: Integer read FFileSize;
     property HeaderSize: Integer read FHeaderSize;
     property Name: string read FName;
     property Path: string read FPath write FPath;
+    property PathName: string read FPathName write FPathName;
     property PKG: string read FPKG;
     property Version: Integer read FVersion;
   end;
@@ -55,14 +51,60 @@ begin
   Result := GetImgFile(Split[0] + '.img').Root.Get(Split[1]);
 end;
 
-
-constructor TWZArchive.Create(Filename: string; LoadToMem: Boolean = False);
+constructor TWZArchive.Create(FileName: string; LoadToMem: Boolean = False);
 begin
-  FReader := TWZReader.Create(Filename, LoadToMem);
+  FReader := TWZReader.Create(FileName, LoadToMem);
 
-  FName := ExtractFileName(Filename);
+  FName := ExtractFileName(FileName);
+  var Split := FileName.Split(['Data']);
 
-  FRoot := TWZDirectory.Create(ExtractFileName(Filename), 0, 0,0, nil);
+  if High(Split) = 0 then
+  begin
+    case FName[2] of
+      'a':
+        PathName := 'Map';
+
+      'o':
+        begin
+          if LeftStr(FName, 3) = 'Mob' then
+            PathName := 'Mob';
+          if FName[1] = 'S' then
+            PathName := 'Sound'
+          else if FName[3] = 'r' then
+            PathName := 'Morph';
+
+        end;
+      'p':
+        PathName := 'Npc';
+      'h':
+        PathName := 'Character';
+      'k':
+        PathName := 'Skill';
+      'I':
+        PathName := 'UI';
+      'e':
+        PathName := 'Reactor';
+      'f':
+        PathName := 'Effect';
+      't':
+        if FName[1] = 'I' then
+          PathName := 'Item'
+        else if FName[3] = 'c' then
+          PathName := 'Etc'
+        else
+          PathName := 'String';
+    end;
+  end
+  else
+  begin
+    var Split1 := FileName.Split(['Data\']);
+    Split1[1] := Split1[1].Replace('\', '/');
+    var Split2 := Split1[1].Split(FName);
+    Delete(Split2[0], Length(Split2[0]), 1);
+    PathName := Split2[0];
+  end;
+
+  FRoot := TWZDirectory.Create(ExtractFileName(PathName), 0, 0, 0, nil);
   FRoot.Archive := Self;
 
   Load;
@@ -94,16 +136,16 @@ end;
 function FastHash(a, b, c: Integer): Integer; register;
 asm   // Borland FastCall: eax -> a, edx -> b, ecx -> c
 {$IFDEF CPUX86}
-  push eax  // so that it becomes available as [esp]
-  shr ecx, 24
-  shr edx, 16
-  shr eax, 8
-  xor cl, dl
-  xor cl, al
-  xor cl, [esp]
-  not cl
-  movzx eax,cl
-  pop ecx  // don't overwrite eax
+        push    eax  // so that it becomes available as [esp]
+        SHR     ecx, 24
+        SHR     edx, 16
+        SHR     eax, 8
+        XOR     cl, dl
+        XOR     cl, al
+        XOR     cl, [esp]
+        NOT     cl
+        movzx   eax, cl
+        pop     ecx  // don't overwrite eax
 {$ELSE}  // ECX: A; EDX: B; R8: C
 {
   push rcx  // so that it becomes available as [rsp]
@@ -158,45 +200,45 @@ begin
 
     case Marker of
       $01, $02:
-      begin
-        Name := FReader.ReadDecodedStringAtOffsetAndReset(FReader.ReadInt + FHeaderSize + 1);
-        Size := FReader.ReadValue;
-        Checksum := FReader.ReadValue;
-        FReader.ReadInt;       // Dummy
+        begin
+          Name := FReader.ReadDecodedStringAtOffsetAndReset(FReader.ReadInt + FHeaderSize + 1);
+          Size := FReader.ReadValue;
+          Checksum := FReader.ReadValue;
+          FReader.ReadInt;       // Dummy
 
-        if Marker = 1 then
-        begin
-          E := TWZDirectory.Create(Name, Size, Checksum,0, Dir);
-          Dir.AddDirectory(TWZDirectory(E));
-        end
-        else
-        begin
-          E := TWZFile.Create(Name, Size, Checksum,0, Dir);
-          Dir.AddFile(TWZFile(E));
+          if Marker = 1 then
+          begin
+            E := TWZDirectory.Create(Name, Size, Checksum, 0, Dir);
+            Dir.AddDirectory(TWZDirectory(E));
+          end
+          else
+          begin
+            E := TWZFile.Create(Name, Size, Checksum, 0, Dir);
+            Dir.AddFile(TWZFile(E));
+          end;
         end;
-      end;
 
       $03, $04:
-      begin
-        Name := FReader.ReadDecodedString;
-        Size := FReader.ReadValue;
-        Checksum := FReader.ReadValue;
-        FReader.ReadInt;     // Dummy
+        begin
+          Name := FReader.ReadDecodedString;
+          Size := FReader.ReadValue;
+          Checksum := FReader.ReadValue;
+          FReader.ReadInt;     // Dummy
 
-        if Marker = 3 then
-        begin
-          E := TWZDirectory.Create(Name, Size, Checksum,0, Dir);
-          Dir.AddDirectory(TWZDirectory(E));
-        end
-        else
-        begin
-          E := TWZFile.Create(Name, Size, Checksum,0, Dir);
-          Dir.AddFile(TWZFile(E));
+          if Marker = 3 then
+          begin
+            E := TWZDirectory.Create(Name, Size, Checksum, 0, Dir);
+            Dir.AddDirectory(TWZDirectory(E));
+          end
+          else
+          begin
+            E := TWZFile.Create(Name, Size, Checksum, 0, Dir);
+            Dir.AddFile(TWZFile(E));
+          end;
         end;
-      end;
 
-      else raise Exception.CreateFmt('Unknown Marker at ParseDirectory(%s): ' + sLineBreak +
-           'i = %d; Marker %d', [Dir.Name, i, Marker]);
+    else
+      raise Exception.CreateFmt('Unknown Marker at ParseDirectory(%s): ' + sLineBreak + 'i = %d; Marker %d', [Dir.Name, i, Marker]);
     end;
   end;
 
@@ -220,7 +262,7 @@ begin
 
     if Dir = nil then
    //  Exit(mainunit1.CharacterWZ.GetImgFile('Cap/01000000.img'));
-     Exit(nil);
+      Exit(nil);
 
   end;
 
@@ -262,3 +304,4 @@ begin
 end;
 
 end.
+
