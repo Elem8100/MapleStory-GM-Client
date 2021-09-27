@@ -715,10 +715,10 @@ begin
   Inventory.ColumnHeaders.Add('Del');
   Inventory.RowHeights[0] := 22;
   }
-  Inventory.ColWidths[0] := 80;
-  Inventory.ColWidths[1] := 40;  //icon
-  Inventory.ColWidths[2] := 105;
-  Inventory.ColWidths[3] := 47;
+  Inventory.ColWidths[0] := 75;
+  Inventory.ColWidths[1] := 50;  //icon
+  Inventory.ColWidths[2] := 140;
+  Inventory.ColWidths[3] := 32;
   for var i := 0 to Inventory.ColCount - 1 do
   begin
     Inventory.CellProperties[i, 0].Alignment := taCenter;

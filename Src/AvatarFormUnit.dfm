@@ -2550,9 +2550,9 @@ object AvatarForm: TAvatarForm
   end
   object Inventory: TAdvStringGrid
     AlignWithMargins = True
-    Left = 823
+    Left = 793
     Top = 4
-    Width = 270
+    Width = 300
     Height = 943
     Cursor = crDefault
     Margins.Left = 4
@@ -2562,7 +2562,7 @@ object AvatarForm: TAvatarForm
     Align = alRight
     Color = clWhite
     ColCount = 4
-    DefaultRowHeight = 35
+    DefaultRowHeight = 50
     DrawingStyle = gdsClassic
     FixedCols = 0
     RowCount = 8
@@ -2572,11 +2572,10 @@ object AvatarForm: TAvatarForm
     Font.Height = -15
     Font.Name = 'Tahoma'
     Font.Style = []
-    Options = [goHorzLine, goEditing, goRowSelect]
+    Options = [goVertLine, goHorzLine, goEditing, goRowSelect]
     ParentFont = False
     ScrollBars = ssNone
     TabOrder = 1
-    GridLineColor = clBtnFace
     GridFixedLineColor = 15987699
     HoverRowCells = [hcNormal, hcSelected]
     OnButtonClick = InventoryButtonClick
@@ -2622,7 +2621,7 @@ object AvatarForm: TAvatarForm
       'Larger than'
       'Smaller than'
       'Clear')
-    FixedRowHeight = 35
+    FixedRowHeight = 50
     FixedFont.Charset = DEFAULT_CHARSET
     FixedFont.Color = clBlack
     FixedFont.Height = -11
@@ -2674,21 +2673,12 @@ object AvatarForm: TAvatarForm
     SelectionColor = clWhite
     ShowDesignHelper = False
     SortSettings.DefaultFormat = ssAutomatic
-    Version = '8.4.2.2'
+    Version = '8.4.7.0'
     ColWidths = (
       64
       64
       64
       64)
-    RowHeights = (
-      35
-      35
-      35
-      35
-      35
-      35
-      35
-      35)
   end
   object SaveButton: TButton
     Left = 220
@@ -2720,7 +2710,7 @@ object AvatarForm: TAvatarForm
     AlignWithMargins = True
     Left = 7
     Top = 260
-    Width = 809
+    Width = 779
     Height = 688
     Margins.Left = 7
     Margins.Top = 260
@@ -2735,6 +2725,7 @@ object AvatarForm: TAvatarForm
     ParentFont = False
     TabOrder = 4
     OnChange = PageControl1Change
+    ExplicitWidth = 809
     object TabSheet1: TTabSheet
       Caption = 'Equip'
     end
@@ -2748,7 +2739,7 @@ object AvatarForm: TAvatarForm
       object ColorGrid: TAdvStringGrid
         Left = 0
         Top = 0
-        Width = 801
+        Width = 771
         Height = 655
         Cursor = crDefault
         Align = alClient
@@ -2867,7 +2858,8 @@ object AvatarForm: TAvatarForm
         SelectionColor = clGradientInactiveCaption
         ShowDesignHelper = False
         SortSettings.DefaultFormat = ssAutomatic
-        Version = '8.4.2.2'
+        Version = '8.4.7.0'
+        ExplicitWidth = 801
         ColWidths = (
           40
           40
@@ -2954,6 +2946,7 @@ object AvatarForm: TAvatarForm
         ParentFont = False
         ScrollBars = ssVertical
         TabOrder = 0
+        GridLineColor = 15987699
         GridFixedLineColor = 15987699
         HoverRowCells = [hcNormal, hcSelected]
         OnClickCell = SearchGridClickCell
@@ -3052,7 +3045,7 @@ object AvatarForm: TAvatarForm
         SearchFooter.ResultFormat = '(%d of %d)'
         ShowDesignHelper = False
         SortSettings.DefaultFormat = ssAutomatic
-        Version = '8.4.2.2'
+        Version = '8.4.7.0'
         ColWidths = (
           10
           91
@@ -3319,7 +3312,7 @@ object AvatarForm: TAvatarForm
         AlignWithMargins = True
         Left = 4
         Top = 4
-        Width = 787
+        Width = 757
         Height = 643
         Cursor = crDefault
         Margins.Left = 4
@@ -3344,6 +3337,7 @@ object AvatarForm: TAvatarForm
         ParentFont = False
         ScrollBars = ssVertical
         TabOrder = 0
+        GridLineColor = 15987699
         GridFixedLineColor = 15987699
         HoverRowCells = [hcNormal, hcSelected]
         OnButtonClick = InventoryButtonClick
@@ -3443,7 +3437,8 @@ object AvatarForm: TAvatarForm
         SelectionColor = clWhite
         ShowDesignHelper = False
         SortSettings.DefaultFormat = ssAutomatic
-        Version = '8.4.2.2'
+        Version = '8.4.7.0'
+        ExplicitWidth = 787
       end
     end
   end

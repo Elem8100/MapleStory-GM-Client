@@ -56,7 +56,7 @@ var
 begin
   S := Explode('.img/', Path);
   if UseGet2 then
-    Result := GetImgFile(S[0] + '.img').Root.Get2_64(S[1])
+    Result := GetImgFile(S[0] + '.img').Root.Get2(S[1])
   else
     Result := GetImgFile(S[0] + '.img').Root.Get(S[1]);
 end;
