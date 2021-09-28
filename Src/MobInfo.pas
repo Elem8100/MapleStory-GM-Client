@@ -96,7 +96,7 @@ begin
 
   
 
-    for Iter in Wz.GetImgFile('Mob/'+TMob.Moblist[I] + '.img').Root.Get('info').Children do
+    for Iter in GetImgFile('Mob/'+TMob.Moblist[I] + '.img').Root.Get('info').Children do
     begin
       if (Iter.Name = 'category') and (Category.ContainsKey(Iter.Data)) then
         mData := Category[Iter.Data]

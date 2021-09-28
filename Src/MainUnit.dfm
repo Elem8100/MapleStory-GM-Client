@@ -3,7 +3,7 @@ object MainForm: TMainForm
   Top = 77
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
-  Caption = 'MapleStoryGM  v3.4'
+  Caption = 'MapleStoryGM  v3.7'
   ClientHeight = 711
   ClientWidth = 2424
   Color = clBtnFace
@@ -116,7 +116,7 @@ object MainForm: TMainForm
     ColorTo = clSkyBlue
     GradientDirection = gdVertical
     DockDots = True
-    Caption = #169' 2020 Elem '
+    Caption = #169' 2021 Elem '
     CaptionGradientDirection = gdVertical
     FocusCaptionFontColor = clBlack
     FocusCaptionColor = 9758459
@@ -156,7 +156,7 @@ object MainForm: TMainForm
     ShowClose = False
     ShowLock = False
     Style = esCustom
-    Version = '1.6.0.2'
+    Version = '1.7.1.0'
     OnClick = AdvToolPanel1Click
   end
   object AdvGroupBox2: TAdvGroupBox
@@ -257,6 +257,7 @@ object MainForm: TMainForm
       Margins.Right = 0
       Margins.Bottom = 0
       Align = alClient
+      FluentUIOpaque = False
       TabOrder = 2
       StyleKind = scspsPanel
       ScrollButtonWidth = 15
@@ -268,6 +269,8 @@ object MainForm: TMainForm
       ScrollOffset = 50
       ScrollTimerInterval = 50
       StorePaintBuffer = False
+      HorzScrollDirection = scspssdLeftToRight
+      VertScrollDirection = scspssdTopToBottom
       TouchScroll = False
       ExplicitWidth = 2040
       object PicInfoButton: TSpeedButton
@@ -3429,6 +3432,7 @@ object MainForm: TMainForm
         Height = 469
         Cursor = crDefault
         Align = alClient
+        Color = clWhite
         ColCount = 1
         DefaultColWidth = 180
         DefaultRowHeight = 15
@@ -3438,14 +3442,17 @@ object MainForm: TMainForm
         RowCount = 1
         FixedRows = 0
         Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
+        Font.Color = clBlack
         Font.Height = -12
         Font.Name = 'Tahoma'
         Font.Style = []
         GridLineWidth = 0
+        Options = [goVertLine, goHorzLine, goRangeSelect, goFixedRowDefAlign]
         ParentFont = False
         ScrollBars = ssVertical
         TabOrder = 0
+        GridLineColor = 15987699
+        GridFixedLineColor = 15987699
         HoverRowCells = [hcNormal, hcSelected]
         OnClickCell = GridClickCell
         ActiveCellFont.Charset = DEFAULT_CHARSET
@@ -3493,7 +3500,7 @@ object MainForm: TMainForm
         FixedColWidth = 180
         FixedRowHeight = 0
         FixedFont.Charset = DEFAULT_CHARSET
-        FixedFont.Color = clWindowText
+        FixedFont.Color = clBlack
         FixedFont.Height = -11
         FixedFont.Name = 'Tahoma'
         FixedFont.Style = [fsBold]
@@ -3527,6 +3534,7 @@ object MainForm: TMainForm
         PrintSettings.PageNumSep = '/'
         ScrollSynch = True
         ScrollWidth = 21
+        SearchFooter.ColorTo = clWhite
         SearchFooter.FindNextCaption = 'Find &next'
         SearchFooter.FindPrevCaption = 'Find &previous'
         SearchFooter.Font.Charset = DEFAULT_CHARSET
@@ -3543,7 +3551,7 @@ object MainForm: TMainForm
         SearchFooter.ResultFormat = '(%d of %d)'
         ShowDesignHelper = False
         SortSettings.DefaultFormat = ssAutomatic
-        Version = '8.4.2.2'
+        Version = '8.4.7.0'
         ColWidths = (
           180)
         RowHeights = (
@@ -3560,6 +3568,7 @@ object MainForm: TMainForm
         Height = 469
         Cursor = crDefault
         Align = alClient
+        Color = clWhite
         ColCount = 2
         DefaultColWidth = 180
         DefaultRowHeight = 17
@@ -3568,14 +3577,17 @@ object MainForm: TMainForm
         RowCount = 1
         FixedRows = 0
         Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
+        Font.Color = clBlack
         Font.Height = -13
         Font.Name = 'Tahoma'
         Font.Style = []
         GridLineWidth = 0
+        Options = [goVertLine, goHorzLine, goRangeSelect, goFixedRowDefAlign]
         ParentFont = False
         ScrollBars = ssVertical
         TabOrder = 0
+        GridLineColor = 15987699
+        GridFixedLineColor = 15987699
         HoverRowCells = [hcNormal, hcSelected]
         OnClickCell = WorldMapGridClickCell
         ActiveCellFont.Charset = DEFAULT_CHARSET
@@ -3623,7 +3635,7 @@ object MainForm: TMainForm
         FixedColWidth = 180
         FixedRowHeight = 17
         FixedFont.Charset = DEFAULT_CHARSET
-        FixedFont.Color = clWindowText
+        FixedFont.Color = clBlack
         FixedFont.Height = -11
         FixedFont.Name = 'Tahoma'
         FixedFont.Style = [fsBold]
@@ -3656,6 +3668,7 @@ object MainForm: TMainForm
         PrintSettings.PageNumSep = '/'
         ScrollSynch = True
         ScrollWidth = 21
+        SearchFooter.ColorTo = clWhite
         SearchFooter.FindNextCaption = 'Find &next'
         SearchFooter.FindPrevCaption = 'Find &previous'
         SearchFooter.Font.Charset = DEFAULT_CHARSET
@@ -3672,7 +3685,7 @@ object MainForm: TMainForm
         SearchFooter.ResultFormat = '(%d of %d)'
         ShowDesignHelper = False
         SortSettings.DefaultFormat = ssAutomatic
-        Version = '8.4.2.2'
+        Version = '8.4.7.0'
         ColWidths = (
           180
           180)

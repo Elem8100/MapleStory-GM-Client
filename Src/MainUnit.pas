@@ -775,7 +775,9 @@ begin
     OpenMSFolder.Enabled := False;
     ComboKey.Enabled := False;
   end;
-
+  RenderForm.FormResize(Sender);
+  if (TMAp.ShowUI) then
+    RenderForm.Cursor := crNone;
   ActiveControl := nil;
 
 end;

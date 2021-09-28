@@ -2725,7 +2725,6 @@ object AvatarForm: TAvatarForm
     ParentFont = False
     TabOrder = 4
     OnChange = PageControl1Change
-    ExplicitWidth = 809
     object TabSheet1: TTabSheet
       Caption = 'Equip'
     end
@@ -2859,7 +2858,6 @@ object AvatarForm: TAvatarForm
         ShowDesignHelper = False
         SortSettings.DefaultFormat = ssAutomatic
         Version = '8.4.7.0'
-        ExplicitWidth = 801
         ColWidths = (
           40
           40
@@ -3438,7 +3436,6 @@ object AvatarForm: TAvatarForm
         ShowDesignHelper = False
         SortSettings.DefaultFormat = ssAutomatic
         Version = '8.4.7.0'
-        ExplicitWidth = 787
       end
     end
   end

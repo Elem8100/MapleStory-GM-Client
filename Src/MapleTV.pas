@@ -56,7 +56,7 @@ begin
   with TMapleTV.Create(SpriteEngine) do
   begin
     ImageLib := Images;
-    ImagePath := 'UI.wz/MapleTV.img/TVmedia/0/0';
+    ImagePath := 'UI/MapleTV.img/TVmedia/0/0';
     ImageEntry := GetImgEntry('UI/MapleTV.img/TVmedia/0/0');
     X := PosX + adX;
     Y := PosY + adY + PatternHeight;
@@ -73,7 +73,7 @@ procedure TMapleTV.DoMove(const Movecount: Single);
 var
   Delay: Integer;
 const
-  S1 = 'UI.wz/MapleTV.img/TVmedia/';
+  S1 = 'UI/MapleTV.img/TVmedia/';
 begin
   inherited;
   ImagePath := S1 + IntToStr(AD) + '/' + IntToStr(Frame);

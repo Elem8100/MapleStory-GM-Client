@@ -113,7 +113,6 @@ type
     ColList2: TStringList;
     RowList2: TDictionary<Integer, string>;
     Row1, Row2: Integer;
-    HasSound2WZ: Boolean;
     WzListObj:TObjectList<TWZArchive>;
     procedure DumpData2(Entry: TWZIMGEntry);
     procedure Dump2(Entry: TWZIMGEntry);
@@ -719,12 +718,6 @@ begin
   Inventory.ColWidths[1] := 50;  //icon
   Inventory.ColWidths[2] := 140;
   Inventory.ColWidths[3] := 32;
-  for var i := 0 to Inventory.ColCount - 1 do
-  begin
-    Inventory.CellProperties[i, 0].Alignment := taCenter;
-    Inventory.CellProperties[i, 0].FontSize := 15;
-  end;
-  //
 
   DumpRowCount := -1;
 end;
