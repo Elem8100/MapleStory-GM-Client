@@ -21,7 +21,7 @@ procedure SelectTab(Index: Integer);
 var
   I: Integer;
 begin
-  const Path = 'UI.wz/UIWindow2.img/Skill/main/';
+  const Path = 'UI/UIWindow2.img/Skill/main/';
   for I := 0 to 5 do
     UIImage[Path + 'Tab/enabled/' + I.ToString].Visible := False;
   UIImage[Path + 'Tab/enabled/' + Index.ToString].Visible := True;
@@ -49,9 +49,9 @@ end;
 
 procedure CreateSkillForm;
 begin
-  const Path = 'UI.wz/UIWindow2.img/Skill/main/';
+  const Path = 'UI/UIWindow2.img/Skill/main/';
   CreateForm(Path + 'backgrnd', 417, 220);
-  CreateButton('SkillFormClose', 'UI.wz/Basic.img/BtClose3', 295, 7);
+  CreateButton('SkillFormClose', 'UI/Basic.img/BtClose3', 295, 7);
 
   CreateImage(Path + 'backgrnd2');
   CreateImage(Path + 'backgrnd3');
@@ -64,10 +64,10 @@ begin
   UIButton['SkillFormClose'].OnMouseDown :=
     procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
     begin
-      UIForm['UI.wz/UIWindow2.img/Skill/main/backgrnd'].Visible := False;
+      UIForm['UI/UIWindow2.img/Skill/main/backgrnd'].Visible := False;
     end;
 
-  CreateButtons('UI.wz/UIWindow2.img/Skill/main', ['BtHyper', 'BtGuildSkill', 'BtRide', 'BtMacro']);
+  CreateButtons('UI/UIWindow2.img/Skill/main', ['BtHyper', 'BtGuildSkill', 'BtRide', 'BtMacro']);
 
   if not HasLoad then
   begin

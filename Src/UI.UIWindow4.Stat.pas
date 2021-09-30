@@ -3,9 +3,10 @@
 interface
 
 uses
-  PXT.Types, Windows, Messages, SysUtils, Classes, Controls, Forms, Dialogs, Graphics, ACtrlImages,
-  StdCtrls, WZIMGFile, WZArchive, StrUtils, Generics.Collections, WzUtils, AControls, ACtrlEngine,
-  ACtrlForms, ACtrlButtons, Global, PXT.Canvas, PXT.Graphics;
+  PXT.Types, Windows, Messages, SysUtils, Classes, Controls, Forms, Dialogs,
+  Graphics, ACtrlImages, StdCtrls, WZIMGFile, WZArchive, StrUtils,
+  Generics.Collections, WzUtils, AControls, ACtrlEngine, ACtrlForms,
+  ACtrlButtons, Global, PXT.Canvas, PXT.Graphics;
 
 procedure CreateStatForm;
 
@@ -16,15 +17,15 @@ uses
 
 var
   HyperValues: array[0..18] of Integer;
-  HyperStatPoint:Integer;
+  HyperStatPoint: Integer;
 
 procedure CreateStatForm;
 var
   HyperImages: array[0..18] of TAImage;
 begin
-  const Path = 'UI.wz/UIWindow4.img/Stat/main/';
+  const Path = 'UI/UIWindow4.img/Stat/main/';
   CreateForm(Path + 'backgrnd', 417, 200);
-  CreateButton('StatFormClose', 'UI.wz/Basic.img/BtClose3', 190, 7);
+  CreateButton('StatFormClose', 'UI/Basic.img/BtClose3', 190, 7);
   CreateImage(Path + 'backgrnd2');
   CreateImage(Path + 'backgrnd3');
   CreateButton(Path + 'BtAuto');
@@ -43,14 +44,24 @@ begin
   CreateButton(Path + 'BtDetailOpen');
   CreateButton(Path + 'BtHyperStatOpen');
   //stat detail
-  CreateAttachForm('UI.wz/UIWindow4.img/Stat/detail/backgrnd', Path + 'backgrnd', 212, 0);
-  CreateImage('UI.wz/UIWindow4.img/Stat/detail/backgrnd2');
-  CreateImage('UI.wz/UIWindow4.img/Stat/detail/backgrnd3');
-  CreateImage('UI.wz/UIWindow4.img/Stat/detail/abilityTitle/rare/0');
-  CreateImage('UI.wz/UIWindow4.img/Stat/detail/backgrnd4');
-  CreateImage('UI.wz/UIWindow4.img/Stat/detail/metierLine/activated/0');
-  CreateImage('UI.wz/UIWindow4.img/Stat/detail/metierLine/activated/1');
-  CreateImage('UI.wz/UIWindow4.img/Stat/detail/metierLine/activated/2');
+  CreateAttachForm('UI/UIWindow4.img/Stat/detail/backgrnd', Path + 'backgrnd', 212, 0);
+  CreateImage('UI/UIWindow4.img/Stat/detail/backgrnd2');
+  CreateImage('UI/UIWindow4.img/Stat/detail/backgrnd3');
+  CreateImage('UI/UIWindow4.img/Stat/detail/abilityTitle/rare/0');
+  CreateImage('UI/UIWindow4.img/Stat/detail/backgrnd4');
+
+  if HasImgEntry('UI/UIWindow4.img/Stat/detail/metierLine/activated/0/rare/0') then
+  begin
+    CreateImage('UI/UIWindow4.img/Stat/detail/metierLine/activated/0/rare/0');
+    CreateImage('UI/UIWindow4.img/Stat/detail/metierLine/activated/1/rare/0');
+    CreateImage('UI/UIWindow4.img/Stat/detail/metierLine/activated/2/rare/0');
+  end
+  else
+  begin
+    CreateImage('UI/UIWindow4.img/Stat/detail/metierLine/activated/0');
+    CreateImage('UI/UIWindow4.img/Stat/detail/metierLine/activated/1');
+    CreateImage('UI/UIWindow4.img/Stat/detail/metierLine/activated/2');
+  end;
   CreateLabel('detailStat/Damage', '226845', 76, 42);
   CreateLabel('detail/DamageBonus', '69%', 76, 60, lcRed);
   CreateLabel('detail/BossDamage', '54%', 170, 60);
@@ -67,42 +78,41 @@ begin
   CreateLabel('metierLine1', 'STR +10, DEX +10', 23, 245, lcWhite);
   CreateLabel('metierline2', 'Mesos obtained +999%', 23, 264, lcWhite);
   CreateLabel('detail/HonorExp', '8371', 76, 287);
-  CreateButton('UI.wz/UIWindow4.img/Stat/detail/BtAbility');
-  CreateButton('UI.wz/UIWindow4.img/Stat/detail/BtHpUp');
+  CreateButton('UI/UIWindow4.img/Stat/detail/BtAbility');
+  CreateButton('UI/UIWindow4.img/Stat/detail/BtHpUp');
 
-   UIButton['UI.wz/UIWindow4.img/Stat/detail/BtHpUp'].OnMouseDown :=
+  UIButton['UI/UIWindow4.img/Stat/detail/BtHpUp'].OnMouseDown :=
     procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
     begin
-       UIForm['UI.wz/UIWindow4.img/Stat/detail/backgrnd'].Visible := False;
+      UIForm['UI/UIWindow4.img/Stat/detail/backgrnd'].Visible := False;
     end;
-
 
   UIButton[Path + 'BtDetailOpen'].OnMouseDown :=
     procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
     begin
-      const Path = 'UI.wz/UIWindow4.img/Stat/detail/backgrnd';
+      const Path = 'UI/UIWindow4.img/Stat/detail/backgrnd';
       UIForm[Path].Visible := not UIForm[Path].Visible;
     end;
   //hyper stat
-  CreateAttachForm('UI.wz/UIWindow4.img/HyperStat/Window/backgrnd', Path + 'backgrnd', -188, 0);
-  CreateImage('UI.wz/UIWindow4.img/HyperStat/Window/backgrnd2');
-  CreateImage('UI.wz/UIWindow4.img/HyperStat/Window/backgrnd3');
+  CreateAttachForm('UI/UIWindow4.img/HyperStat/Window/backgrnd', Path + 'backgrnd', -188, 0);
+  CreateImage('UI/UIWindow4.img/HyperStat/Window/backgrnd2');
+  CreateImage('UI/UIWindow4.img/HyperStat/Window/backgrnd3');
 
   UIButton[Path + 'BtHyperStatOpen'].OnMouseDown :=
     procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
     begin
-      const Path = 'UI.wz/UIWindow4.img/HyperStat/Window/backgrnd';
+      const Path = 'UI/UIWindow4.img/HyperStat/Window/backgrnd';
       UIForm[Path].Visible := not UIForm[Path].Visible;
     end;
 
   for var i := 0 to 18 do
   begin
-    CreateImage('UI.wz/UIWindow4.img/HyperStat/Window/statList/800004' + LeftPad(i, 2), 1, 1, 15, 43 + i * 18);
-    HyperImages[i] := UIImage['UI.wz/UIWindow4.img/HyperStat/Window/statList/800004' + LeftPad(i, 2)];
+    CreateImage('UI/UIWindow4.img/HyperStat/Window/statList/800004' + LeftPad(i, 2), 1, 1, 15, 43 + i * 18);
+    HyperImages[i] := UIImage['UI/UIWindow4.img/HyperStat/Window/statList/800004' + LeftPad(i, 2)];
     if (HyperImages[i].Top < 30) or (HyperImages[i].Top > 250) then
       HyperImages[i].Visible := False;
     CreateLabel('HyperValue' + i.ToString, '0', 130, 42 + i * 18);
-    CreateButton('HyperButton' + i.ToString, 'UI.wz/UIWindow4.img/HyperStat/Window/BtLVup', 147, 43 + i * 18);
+    CreateButton('HyperButton' + i.ToString, 'UI/UIWindow4.img/HyperStat/Window/BtLVup', 147, 43 + i * 18);
     UIButton['HyperButton' + i.ToString].Visible := HyperImages[i].Visible;
     UILabel['HyperValue' + i.ToString].Visible := HyperImages[i].Visible;
     UIButton['HyperButton' + i.ToString].Tag := i;
@@ -113,23 +123,23 @@ begin
         HyperValues[ButtonTag] := UILabel['HyperValue' + ButtonTag.ToString].Text.ToInteger;
         Inc(HyperValues[ButtonTag]);
         UILabel['HyperValue' + ButtonTag.ToString].Text := HyperValues[ButtonTag].ToString;
-        HyperStatPoint:=UILabel['HyperStatPoint'].Text.ToInteger;
+        HyperStatPoint := UILabel['HyperStatPoint'].Text.ToInteger;
         Dec(HyperStatPoint);
-        UILabel['HyperStatPoint'].Text:=HyperStatPoint.ToString;
+        UILabel['HyperStatPoint'].Text := HyperStatPoint.ToString;
       end;
   end;
-  CreateImage('HyperStatVScr', 'UI.wz/Basic.img/VScr9/enabled/base', 1, 17.7, 163, 42);
-  CreateImage('HyperStatVScr/prev0', 'UI.wz/Basic.img/VScr9/enabled/prev0', 1, 1, 163, 42);
-  CreateImage('HyperStatVScr/next0', 'UI.wz/Basic.img/VScr9/enabled/next0', 1, 1, 163, 242);
-  CreateImage('HyperStatVScr/thumb0', 'UI.wz/Basic.img/VScr9/enabled/thumb0', 1, 1, 163, 53);
+  CreateImage('HyperStatVScr', 'UI/Basic.img/VScr9/enabled/base', 1, 17.7, 163, 42);
+  CreateImage('HyperStatVScr/prev0', 'UI/Basic.img/VScr9/enabled/prev0', 1, 1, 163, 42);
+  CreateImage('HyperStatVScr/next0', 'UI/Basic.img/VScr9/enabled/next0', 1, 1, 163, 242);
+  CreateImage('HyperStatVScr/thumb0', 'UI/Basic.img/VScr9/enabled/thumb0', 1, 1, 163, 53);
   UIImage['HyperStatVScr/thumb0'].Width := 11;
   UIImage['HyperStatVScr/thumb0'].Height := 26;
   UIButton['StatFormClose'].OnMouseDown :=
     procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
     begin
-      UIForm['UI.wz/UIWindow4.img/Stat/main/backgrnd'].Visible := False;
-      UIForm['UI.wz/UIWindow4.img/Stat/detail/backgrnd'].Visible := False;
-      UIForm['UI.wz/UIWindow4.img/HyperStat/Window/backgrnd'].Visible := False;
+      UIForm['UI/UIWindow4.img/Stat/main/backgrnd'].Visible := False;
+      UIForm['UI/UIWindow4.img/Stat/detail/backgrnd'].Visible := False;
+      UIForm['UI/UIWindow4.img/HyperStat/Window/backgrnd'].Visible := False;
     end;
   var OnDrag: Boolean;
   UIImage['HyperStatVScr/thumb0'].OnMouseDown :=
@@ -160,24 +170,23 @@ begin
             HyperImages[i].Visible := True
           else
             HyperImages[i].Visible := False;
-          UIButton['HyperButton' + i.ToString].Top := HyperImages[i].Top-1;
+          UIButton['HyperButton' + i.ToString].Top := HyperImages[i].Top - 1;
           UILabel['HyperValue' + i.ToString].Top := HyperImages[i].Top - 2;
           UIButton['HyperButton' + i.ToString].Visible := HyperImages[i].Visible;
           UILabel['HyperValue' + i.ToString].Visible := HyperImages[i].Visible;
         end;
       end;
     end;
-   CreateButton('UI.wz/UIWindow4.img/HyperStat/Window/BtReduce');
-   UIButton['UI.wz/UIWindow4.img/HyperStat/Window/BtReduce'].OnMouseDown :=
+  CreateButton('UI/UIWindow4.img/HyperStat/Window/BtReduce');
+  UIButton['UI/UIWindow4.img/HyperStat/Window/BtReduce'].OnMouseDown :=
     procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
     begin
-      UIForm['UI.wz/UIWindow4.img/HyperStat/Window/backgrnd'].Visible := False;
+      UIForm['UI/UIWindow4.img/HyperStat/Window/backgrnd'].Visible := False;
     end;
 
-   CreateButton('UI.wz/UIWindow4.img/HyperStat/Window/BtReset');
-   CreateLabel('HyperStatPoint', '99', 156, 266);
+  CreateButton('UI/UIWindow4.img/HyperStat/Window/BtReset');
+  CreateLabel('HyperStatPoint', '99', 156, 266);
 end;
-
 
 end.
 
