@@ -103,8 +103,7 @@ type
   public
     class var
       ZMap: TList<string>;
-      property
-      AnimDelay: Integer Read FAnimDelay Write FAnimDelay;
+    property AnimDelay: Integer read FAnimDelay write FAnimDelay;
     function IsAttack: Boolean;
     procedure UpdateFrame;
     procedure DoMove(const Movecount: Single); override;
@@ -205,7 +204,7 @@ var
 begin
   Dir := GetDir(EquipID);
   Part := GetPart(EquipID);
-  Entry := GetImgFile('Character/'+Dir + EquipID + '.img').Root;
+  Entry := GetImgFile('Character/' + Dir + EquipID + '.img').Root;
 
   if not EquipDumpList.contains(EquipID) then
   begin
@@ -246,9 +245,9 @@ begin
         if Length(Data) > 12 then
         begin
           if LeftStr(Data, 6) = 'CpH1H3' then
-            CapType := 1
+            CapType := 2
           else
-            CapType := 2;
+            CapType := 3;
         end;
       end;
     Hair:
@@ -442,7 +441,7 @@ begin
       Result := '';
     2, 5:
       Result := 'Face/';
-    3, 4,6:
+    3, 4, 6:
       Result := 'Hair/';
     101, 102, 103:
       Result := 'Accessory/';
@@ -478,7 +477,7 @@ begin
       Result := Head;
     2, 5:
       Result := Face;
-    3, 4,6:
+    3, 4, 6:
       Result := Hair;
     101:
       Result := FaceAcc;
@@ -563,7 +562,7 @@ begin
     57:
       Result := 'swordZL';
     59:
-     Result:='ancientBow';
+      Result := 'ancientBow';
   end;
 end;
 
@@ -955,8 +954,7 @@ begin
   end;
 
   if (Keyboard.Key[DIK_LMENU]) then
-    if (Keyboard.Key[DIK_DOWN]) and (JumpState = jsNone) and (not InLadder)
-    { and (FHGE.Input_GetKeyState(HGEK_Down)) } then
+    if (Keyboard.Key[DIK_DOWN]) and (JumpState = jsNone) and (not InLadder)    { and (FHGE.Input_GetKeyState(HGEK_Down)) } then
     begin
       FallFlag := False;
       Below := TFootholdTree.This.FindBelow(Point(Round(X), Round(Y + 4)), BelowFH);
@@ -1228,6 +1226,11 @@ begin
               Self.Visible := False;
           end;
         2:
+          begin
+            if (Image = 'hairOverHead') or (Image = 'backHair') or (Image = 'hairBelowBody') or (Image = 'backHairBelowCap') then
+              Self.Visible := False;
+          end;
+        3:
           Visible := False;
       end;
   end;
@@ -1761,6 +1764,7 @@ end;
 initialization
   PlayerEqpList := TList<string>.Create;
   TPlayer.EquipDumpList := TList<string>.Create;
+
 
 finalization
   PlayerEqpList.Free;

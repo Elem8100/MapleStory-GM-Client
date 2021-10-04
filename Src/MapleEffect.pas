@@ -3,8 +3,8 @@ unit MapleEffect;
 interface
 
 uses
-  Windows, SysUtils, StrUtils, PXT.Sprites, Generics.Collections, WZIMGFile, Classes, Global,
-  WzUtils;
+  Windows, SysUtils, StrUtils, PXT.Sprites, Generics.Collections, WZIMGFile,
+  Classes, Global, WzUtils;
 
 type
   TEffectType = (Cash, Chair, Equip, Consume, Totem, Soul, Ring);
@@ -16,7 +16,7 @@ type
     Delay: Integer;
     Origin: TPoint;
     Default: Integer;
-    DoWalk:Boolean;
+    DoWalk: Boolean;
     class var
       AllList: TDictionary<string, string>;
       UseList: TDictionary<string, TSetEffect>;
@@ -76,8 +76,8 @@ begin
     for var Iter in Entry.Children do
       for var Iter2 in Iter.Children do
       begin
-        if (Iter2.Name='walk1')  then
-           DoWalk:=True;
+        if (Iter2.Name = 'walk1') then
+          DoWalk := True;
         if (Iter2.Name[1] in ['0'..'9']) and (Iter2.DataType = mdtCanvas) then
         begin
           Path := TWZIMGEntry(Iter2.Parent).GetPath;
@@ -119,10 +119,10 @@ begin
 
   if DoWalk then
   begin
-   if (Player.Action='walk1') or (Player.Action='walk2') then
-      Visible:=True
-   else
-      Visible:=False;
+    if (Player.Action = 'walk1') or (Player.Action = 'walk2') then
+      Visible := True
+    else
+      Visible := False;
   end;
   Delay := ImageEntry.Get('delay', '100');
   FTime := FTime + 17;
@@ -266,14 +266,24 @@ begin
 
   X := Trunc(Player.X - 10);
   Pos := TWZIMGEntry(ImageEntry.Parent).Get('pos', '-1');
-  if (Pos=0) or (Pos=1) then
-    X:= Trunc(Player.X -10)
+  if (Pos = 0) or (Pos = 1) then
+    X := Trunc(Player.X - 10)
   else
   begin
     if MirrorX then
-      X:= Trunc(Player.X)-19
+    begin
+      if Player.InLadder then
+        X := Trunc(Player.X) - 12
+      else
+        X := Trunc(Player.X) - 19
+    end
     else
-      X:= Trunc(Player.X);
+    begin
+      if Player.InLadder then
+        X := Trunc(Player.X) - 5
+      else
+        X := Trunc(Player.X);
+    end;
   end;
   if EffType <> Totem then
   begin
@@ -332,7 +342,7 @@ begin
   case EffectType of
     Cash:
       Entry := GetImgEntry('Item/Cash/0501.img/' + ID);
-    Chair, Equip, Consume, Totem,Ring:
+    Chair, Equip, Consume, Totem, Ring:
       Entry := GetImgEntry('Effect/ItemEff.img/' + IDToInt(ID));
     Soul:
       Entry := GetImgEntry('Effect/BasicEff.img/SoulSkillReadied/Repeat/' + ID);
@@ -341,7 +351,7 @@ begin
   DumpData(Entry, EquipData, EquipImages);
   if (LeftStr(ID, 4) = '0111') or (LeftStr(ID, 4) = '0301') then
   begin
-    if (LeftStr(ID, 6) = '011129') or (LeftStr(ID, 6) = '011132')then
+    if (LeftStr(ID, 6) = '011129') or (LeftStr(ID, 6) = '011132') then
       with TItemEffect.Create(SpriteEngine) do
       begin
         EffType := Ring;
@@ -450,6 +460,7 @@ initialization
 
   TItemEffect.AllList := TList<string>.Create;
   TItemEffect.UseList := TDictionary<string, TItemEffect>.Create;
+
 
 finalization
   TSetEffect.AllList.Free;
