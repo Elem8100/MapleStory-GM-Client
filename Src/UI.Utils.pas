@@ -3,11 +3,11 @@ unit UI.Utils;
 interface
 
 uses
-  Windows, System.Types, messages, controls, SysUtils, StrUtils,  Generics.Collections,
-  WZIMGFile, Math,  WZArchive, ACtrlEditBoxes,  AControls,
-  ACtrlEngine, ACtrlForms, ACtrlButtons, TypInfo, ACtrlImages, ACtrlDropPanels, ACtrlLabels, Tools,
-  WZDirectory, WZReader, KeyHandler, Global, Classes,  ACtrlTypes, PXT.Graphics,
-  PXT.Canvas, PXT.Types;
+  Windows, System.Types, messages, controls, SysUtils, StrUtils,
+  Generics.Collections, WZIMGFile, Math, WZArchive, ACtrlEditBoxes, AControls,
+  ACtrlEngine, ACtrlForms, ACtrlButtons, TypInfo, ACtrlImages, ACtrlDropPanels,
+  ACtrlLabels, Tools, WZDirectory, WZReader, KeyHandler, Global, Classes,
+  ACtrlTypes, PXT.Graphics, PXT.Canvas, PXT.Types;
 
 type
   TLabelColor = (lcBlack, lcRed, lcWhite);
@@ -28,14 +28,14 @@ procedure CreateButtonAll(EntryName: string; IgnoreDir: array of string; X, Y: I
 
 procedure CreateImages(Dir: string; ImageName: array of string);
 
-procedure CreateForm(ImageEntry: string; X, Y: Integer);
+procedure CreateForm(ImageEntry: string; X, Y: Integer);overload;
+procedure CreateForm(FormName,ImageEntry: string; X, Y: Integer;CanMove:Boolean=False);overload;
 
 procedure CreateEmptyForm(EntryName: string; X, Y, AWidth, AHeight: Integer; ACanMove: Boolean = True);
 
 procedure CreateAttachForm(ImageEntry, AAttachFormName: string; X, Y: Integer; AVisible: Boolean = False);
 
-procedure CreateEmptyAttachForm(FormName, AAttachFormName: string; X, Y, AWidth, AHeight: Integer;
-  AVisible: Boolean = False);
+procedure CreateEmptyAttachForm(FormName, AAttachFormName: string; X, Y, AWidth, AHeight: Integer; AVisible: Boolean = False);
 
 procedure CreateFormEx(EntryName: string; X, Y: Integer);
 
@@ -43,11 +43,9 @@ procedure CreateEdit(EditName: string; X, Y, AWidth: Integer; AFontColor, ATicCo
 
 procedure CreateLabel(EntryName, AText: string; X, Y: Integer; LabelColor: TLabelColor = lcBlack);
 
-procedure CreateImage(ImageEntry: string; AScaleX: Single = 1; AScaleY: Single = 1; X: Integer = 0;
-  Y: Integer = 0); overload;
+procedure CreateImage(ImageEntry: string; AScaleX: Single = 1; AScaleY: Single = 1; X: Integer = 0; Y: Integer = 0); overload;
 
-procedure CreateImage(UIName, ImageEntry: string; AScaleX: Single = 1; AScaleY: Single = 1; X:
-  Integer = 0; Y: Integer = 0); overload;
+procedure CreateImage(UIName, ImageEntry: string; AScaleX: Single = 1; AScaleY: Single = 1; X: Integer = 0; Y: Integer = 0); overload;
 
 procedure CreateGrid(AImagePath: string; X, Y, Col, Row: Integer; OwnerName: string);
 
@@ -182,10 +180,51 @@ begin
     ImageEntry := Entry;
     Width := Entry.Canvas.Width;
     Height := Entry.Canvas.Height;
-    Left := X + -Entry.Child['origin'].Vector.X + 1000;
-    Top := Y + -Entry.Child['origin'].Vector.Y + 1000;
+    if Entry.Child['origin'] <> nil then
+    begin
+      Left := X + -Entry.Child['origin'].Vector.X + 1000;
+      Top := Y + -Entry.Child['origin'].Vector.Y + 1000;
+    end
+    else
+    begin
+      Left := X + 1000;
+      Top := Y + 1000;
+    end;
   end;
   UIForm.Add(ImageEntry, Form);
+end;
+
+procedure CreateForm(FormName,ImageEntry: string; X, Y: Integer;CanMove:Boolean=False);
+var
+  Entry: TWZIMGEntry;
+  Form: TAForm;
+begin
+  if UIForm.ContainsKey(FormName) then
+  begin
+    UIForm[FormName].Show;
+    Exit;
+  end;
+  Entry := GetImgEntry(ImageEntry);
+  if not UIData.ContainsKey(Entry.GetPath) then
+    DumpData(Entry, UIData, UIImages);
+  Form := TAForm.Create(UIEngine.Root);
+  with Form do
+  begin
+    ImageEntry := Entry;
+    Width := Entry.Canvas.Width;
+    Height := Entry.Canvas.Height;
+    if Entry.Child['origin'] <> nil then
+    begin
+      Left := X + -Entry.Child['origin'].Vector.X + 1000;
+      Top := Y + -Entry.Child['origin'].Vector.Y + 1000;
+    end
+    else
+    begin
+      Left := X + 1000;
+      Top := Y + 1000;
+    end;
+  end;
+  UIForm.Add(FormName, Form);
 end;
 
 procedure CreateAttachForm(ImageEntry, AAttachFormName: string; X, Y: Integer; AVisible: Boolean = False);
@@ -212,8 +251,7 @@ begin
   UIForm.Add(ImageEntry, Form);
 end;
 
-procedure CreateEmptyAttachForm(FormName, AAttachFormName: string; X, Y, Awidth, Aheight: Integer;
-  AVisible: Boolean = False);
+procedure CreateEmptyAttachForm(FormName, AAttachFormName: string; X, Y, Awidth, Aheight: Integer; AVisible: Boolean = False);
 begin
   if UIForm.ContainsKey(FormName) then
   begin
@@ -349,8 +387,16 @@ begin
     ImageEntry := Entry;
     Width := Entry.Canvas.Width;
     Height := Entry.Canvas.Height;
-    Left := X + -Entry.Child['origin'].Vector.X;
-    Top := Y + -Entry.Child['origin'].Vector.Y;
+    if Entry.Child['origin'] <> nil then
+    begin
+      Left := X + -Entry.Child['origin'].Vector.X;
+      Top := Y + -Entry.Child['origin'].Vector.Y;
+    end
+    else
+    begin
+      Left := X;
+      Top := Y;
+    end;
     ScaleX := AScaleX;
     ScaleY := AScaleY;
     CanMoveHandle := False;
@@ -358,8 +404,7 @@ begin
   UIImage.AddOrSetValue(ImageEntry, Image);
 end;
 
-procedure CreateImage(UIName, ImageEntry: string; AScaleX: Single = 1; AScaleY: Single = 1; X:
-  Integer = 0; Y: Integer = 0);
+procedure CreateImage(UIName, ImageEntry: string; AScaleX: Single = 1; AScaleY: Single = 1; X: Integer = 0; Y: Integer = 0);
 begin
   if UIImage.ContainsKey(UIName) then
     Exit;
@@ -372,8 +417,16 @@ begin
     ImageEntry := Entry;
     Width := Entry.Canvas.Width;
     Height := Entry.Canvas.Height;
-    Left := X + -Entry.Child['origin'].Vector.X;
-    Top := Y + -Entry.Child['origin'].Vector.Y;
+    if Entry.Child['origin'] <> nil then
+    begin
+      Left := X + -Entry.Child['origin'].Vector.X;
+      Top := Y + -Entry.Child['origin'].Vector.Y;
+    end
+    else
+    begin
+      Left := X;
+      Top := Y;
+    end;
     ScaleX := AScaleX;
     ScaleY := AScaleY;
     CanMoveHandle := False;
@@ -386,7 +439,7 @@ var
   I: Integer;
 begin
   for I := 0 to High(ImageName) do
-    CreateImage(Dir +'/'+ ImageName[I]);
+    CreateImage(Dir + '/' + ImageName[I]);
 end;
 
 procedure CreateUIs(EntryName: string; X, Y: Integer; wClose: Boolean = True);
@@ -435,8 +488,7 @@ begin
           if (Iter.Name = IgnoreDir[0]) or (Iter.Name = IgnoreDir[1]) or (Iter.Name = IgnoreDir[2]) then
             Continue;
         3:
-          if (Iter.Name = IgnoreDir[0]) or (Iter.Name = IgnoreDir[1]) or (Iter.Name = IgnoreDir[2])
-            or (Iter.Name = IgnoreDir[3]) then
+          if (Iter.Name = IgnoreDir[0]) or (Iter.Name = IgnoreDir[1]) or (Iter.Name = IgnoreDir[2]) or (Iter.Name = IgnoreDir[3]) then
             Continue;
       end;
       CreateButton(Iter.GetPath, X, Y);
@@ -580,6 +632,8 @@ initialization
   //UITab := TDictionary<string, TUITab>.Create;
   GameCursor := TGameCursor.Create;
   GameCursor.CursorNumber := '0';
+
+
 finalization
   UIData.Free;
   UIImages.Free;
@@ -590,5 +644,6 @@ finalization
   UIEdit.Free;
   GameCursor.Free;
   UIEngine.Free;
+
 end.
 
