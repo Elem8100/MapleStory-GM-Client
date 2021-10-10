@@ -28,8 +28,9 @@ procedure CreateButtonAll(EntryName: string; IgnoreDir: array of string; X, Y: I
 
 procedure CreateImages(Dir: string; ImageName: array of string);
 
-procedure CreateForm(ImageEntry: string; X, Y: Integer);overload;
-procedure CreateForm(FormName,ImageEntry: string; X, Y: Integer;CanMove:Boolean=False);overload;
+procedure CreateForm(ImageEntry: string; X, Y: Integer); overload;
+
+procedure CreateForm(FormName, ImageEntry: string; X, Y: Integer; ACanMove: Boolean = False); overload;
 
 procedure CreateEmptyForm(EntryName: string; X, Y, AWidth, AHeight: Integer; ACanMove: Boolean = True);
 
@@ -194,7 +195,7 @@ begin
   UIForm.Add(ImageEntry, Form);
 end;
 
-procedure CreateForm(FormName,ImageEntry: string; X, Y: Integer;CanMove:Boolean=False);
+procedure CreateForm(FormName, ImageEntry: string; X, Y: Integer; ACanMove: Boolean = False);
 var
   Entry: TWZIMGEntry;
   Form: TAForm;
@@ -213,6 +214,7 @@ begin
     ImageEntry := Entry;
     Width := Entry.Canvas.Width;
     Height := Entry.Canvas.Height;
+    CanMove := ACanMove;
     if Entry.Child['origin'] <> nil then
     begin
       Left := X + -Entry.Child['origin'].Vector.X + 1000;

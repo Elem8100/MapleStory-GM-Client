@@ -69,7 +69,7 @@ implementation
 uses
   MainUnit, Mob2, MapBack, MapPortal, Npc, MapTile, MapObj, MapleCharacter,
   Footholds, LadderRopes, MobInfo, NameTag, Boss, Skill, MapleCharacterEx,
-  Android, minimap, WZUtils, UI.StatusBar3.MainBar, UI.StatusBar3.Chat, UI.Utils,
+  Android, minimap, WZUtils, UI.StatusBar3.MainBar, UI.StatusBar3.Chat,UI.StatusBar, UI.Utils,
   Graphics;
 
 class procedure TMap.LoadMap(ID: string);
@@ -179,6 +179,7 @@ begin
     end;
     if UIVersion = 1 then
     begin
+     TStatusBar.CreateUI;
       AMiniMap := TMiniMap.Create(UIEngine.Root);
       with AMiniMap do
       begin

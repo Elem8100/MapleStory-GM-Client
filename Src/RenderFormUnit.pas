@@ -3,8 +3,8 @@ unit RenderFormUnit;
 interface
 
 uses
-  PXT.Types, Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs;
+  PXT.Types, Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs;
 
 type
   TRenderForm = class(TForm)
@@ -26,18 +26,16 @@ uses
   Global, UI.Utils, UI.StatusBar3.MainBar, UI.StatusBar3.Chat;
 {$R *.dfm}
 
-procedure TRenderForm.FormMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y:
-  Integer);
+procedure TRenderForm.FormMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 begin
   if UIData.Count = 0 then
     Exit;
   if UIVersion = 3 then
-     UIForm['StatusBar3Chat'].SendToBack;
+    UIForm['StatusBar3Chat'].SendToBack;
   GameCursor.Change('12');
 end;
 
-procedure TRenderForm.FormMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y:
-  Integer);
+procedure TRenderForm.FormMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 begin
   if UIData.Count = 0 then
     Exit;
@@ -48,7 +46,12 @@ procedure TRenderForm.FormResize(Sender: TObject);
 begin
   if FDevice.Initialized then
     FDevice.Resize(Point2i(ClientWidth, ClientHeight));
-
+  if UIVersion = 1 then
+  begin
+    UIForm['UI/StatusBar.img/base/backgrnd00'].Top := 1000 + DisplaySize.Y - 70;
+    UIForm['UI/StatusBar.img/base/backgrnd11'].Top := 1000 + DisplaySize.Y - 70;
+    UIForm['UI/StatusBar.img/base/backgrnd22'].Top := 1000 + DisplaySize.Y - 70;
+  end;
   var Path := 'UI/StatusBar3.img/mainBar/menu';
   if UIForm.ContainsKey(Path) then
   begin
@@ -90,10 +93,9 @@ begin
       UIForm['StatusBar3Chat'].Top := UIForm[Path].Top - 540;
     TEXPBar.Instance.ReDraw;
 
-    const quickSlot='UI/StatusBar3.img/mainBar/quickSlot/backgrnd';
+    const quickSlot = 'UI/StatusBar3.img/mainBar/quickSlot/backgrnd';
     UIForm[quickSlot].Left := UIForm[Path].Left + 200;
-    UIForm[quickSlot].Top := UIForm[Path].Top-37;
-
+    UIForm[quickSlot].Top := UIForm[Path].Top - 37;
 
   end;
 
