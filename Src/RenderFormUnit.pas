@@ -51,6 +51,8 @@ begin
     UIForm['UI/StatusBar.img/base/backgrnd00'].Top := 1000 + DisplaySize.Y - 70;
     UIForm['UI/StatusBar.img/base/backgrnd11'].Top := 1000 + DisplaySize.Y - 70;
     UIForm['UI/StatusBar.img/base/backgrnd22'].Top := 1000 + DisplaySize.Y - 70;
+    UIForm['UI/StatusBar.img/mainBar'].Top  :=1000 + DisplaySize.Y - 70;
+    UIForm['UI/StatusBar.img/Right'].Top  :=1000 + DisplaySize.Y - 70;
   end;
   var Path := 'UI/StatusBar3.img/mainBar/menu';
   if UIForm.ContainsKey(Path) then
