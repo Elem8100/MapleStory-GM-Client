@@ -23,7 +23,6 @@ type
       Instance: TStatusBar;
   end;
 
-
 implementation
 
 uses
@@ -110,12 +109,11 @@ begin
       NumberTextout(290, 44, '[7322/7322]');
       NumberTextout(345, 44, '567899[99.98%]');
 
-
       var OffX: Integer;
       if Length(Level.ToString) = 3 then
         OffX := 25
       else
-        OffX :=30;
+        OffX := 30;
       for var I := 1 to Length(Level.ToString) do
       begin
         var Char := MidStr(Level.ToString, I, 1);
@@ -130,7 +128,7 @@ begin
 
       FontSettings.Effect.BorderType := TFontBorder.None;
       GameFont.FontSettings := FontSettings;
-      GameFont.Draw(Point2f(90, 42),'Hunter', $FFFFFFFF);
+      GameFont.Draw(Point2f(90, 42), 'Hunter', $FFFFFFFF);
       GameFont.Draw(Point2f(90, 55), ShowOptionForm.Edit1.Text, $FFFFFFFF);
 
     end);
@@ -155,6 +153,9 @@ begin
   CreateForm('UI/StatusBar.img/base/backgrnd00', 'UI/StatusBar.img/base/backgrnd', 798, 698);
   CreateForm('UI/StatusBar.img/base/backgrnd11', 'UI/StatusBar.img/base/backgrnd', 1598, 698);
   CreateForm('UI/StatusBar.img/base/backgrnd22', 'UI/StatusBar.img/base/backgrnd', 2398, 698);
+  UIForm['UI/StatusBar.img/base/backgrnd00'].Width := 0;
+  UIForm['UI/StatusBar.img/base/backgrnd11'].Width := 0;
+  UIForm['UI/StatusBar.img/base/backgrnd22'].Width := 0;
 
   Instance := TStatusBar.Create(UIEngine.Root);
   with Instance do
@@ -164,26 +165,27 @@ begin
     CanMove := False;
   end;
   CreateEmptyForm('UI/StatusBar.img/mainBar', 0, 698, 800, 72, false);
-  CreateImage('UI/StatusBar.img/base/chatTarget',1,1,1,9);
-  CreateLabel('UI/chatTarget','To All',5,11,lcWhite);
-  CreateButton('BtMin11','UI/Basic.img/BtMin',535,12);
-  CreateEmptyForm('UI/StatusBar.img/Right',570,698,500,72,False);
-  CreateImage('UI/StatusBar.img/base/box',1,1,0,8);
-  CreateButton('UI/StatusBar.img/BtClaim',0,8);
-  CreateImage('UI/StatusBar.img/base/iconMemo',1,1,26,12);
+  CreateImage('UI/StatusBar.img/base/chatTarget', 1, 1, 1, 9);
+  CreateLabel('UI/chatTarget', 'To All', 5, 11, lcWhite);
+  CreateButton('BtMin11', 'UI/Basic.img/BtMin', 535, 12);
+  CreateEmptyForm('UI/StatusBar.img/Right', 570, 698, 500, 72, False);
+  CreateImage('UI/StatusBar.img/base/box', 1, 1, 0, 8);
+  CreateButton('UI/StatusBar.img/BtClaim', 0, 8);
+  CreateImage('UI/StatusBar.img/base/iconMemo', 1, 1, 26, 12);
   //
-  CreateButton('UI/StatusBar.img/EquipKey',45,8);
-  CreateButton('UI/StatusBar.img/InvenKey',75,8);
-  CreateButton('UI/StatusBar.img/StatKey',105,8);
-  CreateButton('UI/StatusBar.img/SkillKey',135,8);
-  CreateButton('UI/StatusBar.img/KeySet',165,8);
-  CreateButton('UI/StatusBar.img/QuickSlotD',195,8);
+  CreateButton('UI/StatusBar.img/EquipKey', 45, 8);
+  CreateButton('UI/StatusBar.img/InvenKey', 75, 8);
+  CreateButton('UI/StatusBar.img/StatKey', 105, 8);
+  CreateButton('UI/StatusBar.img/SkillKey', 135, 8);
+  CreateButton('UI/StatusBar.img/KeySet', 165, 8);
+  CreateButton('UI/StatusBar.img/QuickSlotD', 195, 8);
   //
-  CreateButton('UI/StatusBar.img/BtShop',0,36);
-  CreateButton('UI/StatusBar.img/BtNPT',58,36);
-  CreateButton('UI/StatusBar.img/BtMenu',114,36);
-  CreateButton('UI/StatusBar.img/BtShort',170,36);
-
+  CreateButton('UI/StatusBar.img/BtShop', 0, 36);
+  CreateButton('UI/StatusBar.img/BtNPT', 58, 36);
+  CreateButton('UI/StatusBar.img/BtMenu', 114, 36);
+  CreateButton('UI/StatusBar.img/BtShort', 170, 36);
+  CreateForm('UI/StatusBar.img/base/quickSlot', 875, 622);
+  UIForm['UI/StatusBar.img/base/quickSlot'].CanMove:=False;
 end;
 
 end.
