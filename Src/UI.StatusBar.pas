@@ -26,7 +26,7 @@ type
 implementation
 
 uses
-  UI.Utils, ShowOptionUnit;
+  UI.Utils,UI.UIWindow.Equip, ShowOptionUnit;
 
 procedure TStatusBar.Paint(DC: HDC);
 begin
@@ -150,6 +150,7 @@ end;
 
 class procedure TStatusBar.CreateUI;
 begin
+  CreateEquipForm;
   CreateForm('UI/StatusBar.img/base/backgrnd00', 'UI/StatusBar.img/base/backgrnd', 798, 698);
   CreateForm('UI/StatusBar.img/base/backgrnd11', 'UI/StatusBar.img/base/backgrnd', 1598, 698);
   CreateForm('UI/StatusBar.img/base/backgrnd22', 'UI/StatusBar.img/base/backgrnd', 2398, 698);
@@ -174,6 +175,15 @@ begin
   CreateImage('UI/StatusBar.img/base/iconMemo', 1, 1, 26, 12);
   //
   CreateButton('UI/StatusBar.img/EquipKey', 45, 8);
+
+  UIButton['UI/StatusBar.img/EquipKey'].OnMouseDown :=
+    procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
+    begin
+      const Path = 'UI/UIWindow.img/Equip/backgrnd';
+      UIForm[Path].Visible := not UIForm[Path].Visible;
+    end;
+
+
   CreateButton('UI/StatusBar.img/InvenKey', 75, 8);
   CreateButton('UI/StatusBar.img/StatKey', 105, 8);
   CreateButton('UI/StatusBar.img/SkillKey', 135, 8);
