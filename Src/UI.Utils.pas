@@ -91,10 +91,23 @@ var
   UIVersion: Integer;
   ActiveEdit: TAEditBox;
 
+function GetButton(ButtonName: string): TAButton;
+
 implementation
 
 uses
   WzUtils, ColorUtils, minimap, RenderFormUnit;
+
+function GetButton(ButtonName: string): TAButton;
+begin
+  if UIButton.ContainsKey(ButtonName) then
+    Result := UIButton[ButtonName]
+  else
+  begin
+    CreateButton('dummy', 'UI/Basic.img/BtClose', 10000, 10000);
+    Result := UIButton['dummy'];
+  end;
+end;
 
 function GetMouseDownY(UIName: string; MouseY: Integer): Integer;
 begin
