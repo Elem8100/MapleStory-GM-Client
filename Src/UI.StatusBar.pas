@@ -26,7 +26,7 @@ type
 implementation
 
 uses
-  UI.Utils,UI.UIWindow.Equip, ShowOptionUnit;
+  UI.Utils,UI.UIWindow.Equip, UI.UIWindow.Stat,ShowOptionUnit;
 
 procedure TStatusBar.Paint(DC: HDC);
 begin
@@ -186,6 +186,12 @@ begin
 
   CreateButton('UI/StatusBar.img/InvenKey', 75, 8);
   CreateButton('UI/StatusBar.img/StatKey', 105, 8);
+  UIButton['UI/StatusBar.img/StatKey'].OnMouseDown :=
+    procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
+    begin
+      CreateStatForm;
+    end;
+
   CreateButton('UI/StatusBar.img/SkillKey', 135, 8);
   CreateButton('UI/StatusBar.img/KeySet', 165, 8);
   CreateButton('UI/StatusBar.img/QuickSlotD', 195, 8);
