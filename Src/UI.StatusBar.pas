@@ -26,7 +26,7 @@ type
 implementation
 
 uses
-  UI.Utils,UI.UIWindow.Equip, UI.UIWindow.Stat,ShowOptionUnit;
+  UI.Utils, UI.UIWindow.Equip, UI.UIWindow.Stat, ShowOptionUnit;
 
 procedure TStatusBar.Paint(DC: HDC);
 begin
@@ -183,13 +183,16 @@ begin
       UIForm[Path].Visible := not UIForm[Path].Visible;
     end;
 
-
   CreateButton('UI/StatusBar.img/InvenKey', 75, 8);
   CreateButton('UI/StatusBar.img/StatKey', 105, 8);
   UIButton['UI/StatusBar.img/StatKey'].OnMouseDown :=
     procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
     begin
-      CreateStatForm;
+      const Path = 'UI/UIWindow.img/Stat/backgrnd';
+      if not UIForm.ContainsKey(Path) then
+        CreateStatForm
+      else
+        UIForm[Path].Visible := not UIForm[Path].Visible;
     end;
 
   CreateButton('UI/StatusBar.img/SkillKey', 135, 8);
@@ -201,7 +204,7 @@ begin
   CreateButton('UI/StatusBar.img/BtMenu', 114, 36);
   CreateButton('UI/StatusBar.img/BtShort', 170, 36);
   CreateForm('UI/StatusBar.img/base/quickSlot', 875, 622);
-  UIForm['UI/StatusBar.img/base/quickSlot'].CanMove:=False;
+  UIForm['UI/StatusBar.img/base/quickSlot'].CanMove := False;
 end;
 
 end.
