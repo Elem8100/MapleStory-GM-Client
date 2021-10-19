@@ -39,9 +39,7 @@ var
   UIEngine: TControlEngine = nil;
   SpriteEngine: TSpriteEngine;
   BackEngine: array[0..1] of TSpriteEngine;
- // FontsAlt: TAsphyreFontsAlt;
   Keyboard: TAsphyreKeyboard;
-
   GameMode: TGameMode;
   Sounds: TObjectList<TBassHandler>;
   Damage: Integer;

@@ -65,10 +65,6 @@ begin
       if HasImgFile('Map/Obj/' + oS + '.img') then
         Entry := GetImgEntry('Map/Obj/' + oS + '.img/' + L0 + '/' + L1 + '/' + L2);
 
-     // else if HasImgFile('Map001.wz/Obj/' + oS + '.img') then
-      //  Entry := GetImgEntry('Map001.wz/Obj/' + oS + '.img/' + L0 + '/' + L1 + '/' + L2)
-     // else
-       // Entry := GetImgEntry('Map2.wz/Obj/' + oS + '.img/' + L0 + '/' + L1 + '/' + L2);
       if not WzData.ContainsKey(Entry.GetPath) then
         DumpData(Entry, WzData, Images);
 

@@ -70,8 +70,6 @@ uses
   Mob2, MapleCharacter, MobInfo, Global, ColorUtils, WZDirectory;
 {$R *.dfm}
 
-
-
 procedure TAddMobForm.Dump2(Entry: TWZIMGEntry);
 var
   E: TWZIMGEntry;
@@ -135,7 +133,6 @@ begin
   MobName:=  MobGrid.Cells[2, ARow];
   SelectMob;
   TColorFunc.SetGridColor(Image1.Picture.Bitmap, DyeGrid);
-
 end;
 
 procedure TAddMobForm.PageControl1Change(Sender: TObject);

@@ -31,7 +31,6 @@ var
   I: Integer;
   Char: string;
 begin
-  //var ImageEntry :=
   for I := 1 to Length(Number.ToString) do
   begin
     Char := MidStr(Number.ToString, I, 1);

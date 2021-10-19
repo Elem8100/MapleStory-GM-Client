@@ -151,9 +151,7 @@ begin
         Offset.X := Origin.X;
     end;
     Offset.Y := Origin.Y;
-
-
-   // if Offset.X < 0 then
+    // if Offset.X < 0 then
    //   Offset.X := 0;
    //  if Offset.X > Width then
    //  Offset.X := Width;
@@ -348,10 +346,6 @@ begin
 
     if FTime > 0 then
       Alpha := Trunc(AniAlpha);
-
-
-
-
 
     if ImageEntry.Get('origin') <> nil then
       Origin := ImageEntry.Get('origin').Vector;

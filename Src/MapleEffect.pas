@@ -334,12 +334,7 @@ begin
     Exit;
   if ID = '01049000' then
     Exit;
- // if ItemEff then
-   // Entry := GetImgEntry('Effect.wz/ItemEff.img/' + IDToInt(ID))
- // else
-    //Entry := GetImgEntry('Item.wz/Cash/0501.img/' + ID);
-
-  case EffectType of
+   case EffectType of
     Cash:
       Entry := GetImgEntry('Item/Cash/0501.img/' + ID);
     Chair, Equip, Consume, Totem, Ring:
