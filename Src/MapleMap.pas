@@ -124,11 +124,11 @@ begin
     SpriteEngine.WorldX := TMap.Info['VRLeft'];
     SpriteEngine.WorldY := TMap.Info['VRBottom']; // - DisplaySize.y;
     TMap.Left := TMap.Info['VRLeft'];
-    TMap.Bottom := TMap.Info['VRBottom'];
+    TMap.Bottom := TMap.Info['VRBottom']+15;
     if TMap.ImgFile.Get('miniMap') <> nil then
     begin
       Bottom2 := -TMap.Info['centerY'] + TMap.Info['MapHeight'] - 55;
-      if Abs(TMap.Bottom - Bottom2) > 70 then
+      if (TMap.Bottom < Bottom2-100)  then
         TMap.Bottom := Bottom2;
     end;
     TMap.Top := TMap.Info['VRTop'];
