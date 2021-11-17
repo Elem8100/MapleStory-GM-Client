@@ -23,9 +23,9 @@ type
 var
   WzList: TObjectList<TWZArchive>;
   //list 64 bit Character wz files
-  WzList2:TDictionary<string,string>;
-  ItemWzList:TDictionary<string,string>;
-  ItemWZListA:TObjectList<TWZArchive>;
+  WzList2: TDictionary<string, string>;
+  ItemWzList: TDictionary<string, string>;
+  ItemWZListA: TObjectList<TWZArchive>;
   Is64Bit: Boolean;
   WzPath: string;
   FDevice: TDevice;
@@ -120,19 +120,8 @@ begin
     if Entry.DataType = mdtUOL then
       Entry := TWZIMGEntry(Entry.Parent).Get(Entry.Data);
   end;
-  var WZ: TWzarchive;
-  for var I in WzList do
-  begin
-    if LeftStr(i.PathName,5)='Sound' then
-    begin
-     if I.GetImgFile(Img + '.img') <> nil then
-     begin
-       WZ := I;
-       break;
-     end;
-    end;
-  end;
-  NewSound := TBassHandler.Create(WZ.Reader.Stream, Entry.Sound.Offset, Entry.Sound.DataLength);
+
+  NewSound := TBassHandler.Create(Entry.Sound);
   NewSound.Play;
   Sounds.Add(NewSound);
 end;

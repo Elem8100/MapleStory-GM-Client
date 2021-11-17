@@ -215,7 +215,7 @@ begin
    }
   //UIEngine.Free;
   // DropList
-  //ReportMemoryLeaksOnShutdown := True;
+ // ReportMemoryLeaksOnShutdown := True;
 end;
 
 procedure TMainForm.FormKeyDown(Sender: TObject; var KEY: Word; Shift: TShiftState);

@@ -69,8 +69,8 @@ implementation
 uses
   MainUnit, Mob2, MapBack, MapPortal, Npc, MapTile, MapObj, MapleCharacter,
   Footholds, LadderRopes, MobInfo, NameTag, Boss, Skill, MapleCharacterEx,
-  Android, minimap, WZUtils, UI.StatusBar3.MainBar, UI.StatusBar3.Chat,UI.StatusBar, UI.Utils,
-  Graphics;
+  Android, minimap, WZUtils, UI.StatusBar3.MainBar, UI.StatusBar3.Chat,
+  UI.StatusBar, UI.Utils, Graphics;
 
 class procedure TMap.LoadMap(ID: string);
 var
@@ -124,11 +124,11 @@ begin
     SpriteEngine.WorldX := TMap.Info['VRLeft'];
     SpriteEngine.WorldY := TMap.Info['VRBottom']; // - DisplaySize.y;
     TMap.Left := TMap.Info['VRLeft'];
-    TMap.Bottom := TMap.Info['VRBottom']+15;
+    TMap.Bottom := TMap.Info['VRBottom'] + 15;
     if TMap.ImgFile.Get('miniMap') <> nil then
     begin
       Bottom2 := -TMap.Info['centerY'] + TMap.Info['MapHeight'] - 55;
-      if (TMap.Bottom < Bottom2-100)  then
+      if (TMap.Bottom < Bottom2 - 100) then
         TMap.Bottom := Bottom2;
     end;
     TMap.Top := TMap.Info['VRTop'];
@@ -179,7 +179,7 @@ begin
     end;
     if UIVersion = 1 then
     begin
-     TStatusBar.CreateUI;
+      TStatusBar.CreateUI;
       AMiniMap := TMiniMap.Create(UIEngine.Root);
       with AMiniMap do
       begin
@@ -233,7 +233,7 @@ begin
 
   end;
  // if UIVersion = 3 then
-   AMiniMap.ReDraw;
+  AMiniMap.ReDraw;
   //TNameTag.Create('SuperGM');
 
   TMap.FirstLoad := True;
@@ -273,24 +273,11 @@ begin
   else
     Exit;
 
-  var WZ: TWZArchive;
-  for var I in WzList do
-  begin
-    if LeftStr(I.PathName, 5) = 'Sound' then
-    begin
-      if I.GetImgFile(BgmIMG) <> nil then
-      begin
-        WZ := I;
-        break;
-      end;
-    end;
-  end;
-
   if Entry.DataType = mdtSound then
   begin
     if Assigned(ActiveBass) then
       FreeAndNil(ActiveBass);
-    ActiveBass := TBassHandler.Create(WZ.Reader.Stream, Entry.Sound.Offset, Entry.Sound.DataLength);
+    ActiveBass := TBassHandler.Create(Entry.Sound);
     ActiveBass.PlayLoop;
   end;
 end;
