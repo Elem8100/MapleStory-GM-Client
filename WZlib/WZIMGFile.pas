@@ -17,7 +17,7 @@ type
     FData: Variant;
     FCanvas: TPNGMapleCanvas;
     FVector: TPoint;
-    FSound: TMP3MapleSound;
+    FSound: TWzSound;
     FChildren: TObjectList<TWZIMGEntry>;
     function GetChild(const Name: string): TWZIMGEntry;
   public
@@ -34,7 +34,7 @@ type
     property Data: Variant read FData write FData;
     property Canvas: TPNGMapleCanvas read FCanvas write FCanvas;
     property Vector: TPoint read FVector write FVector;
-    property Sound: TMP3MapleSound read FSound write FSound;
+    property Sound: TwzSound read FSound write FSound;
     property Child[const Name: string]: TWZIMGEntry read GetChild;
     property Children: TObjectList<TWZIMGEntry> read FChildren; // read-only
   end;
@@ -394,7 +394,7 @@ var
   dType: string;
   Children, i: Integer;
   ChildEntry: TWZIMGEntry;
-  Width, Height, Format, Format2, DataLength, X, Y: Integer;
+ Duration, Width, Height, Format, Format2, DataLength, X, Y: Integer;
 begin
   Marker := WZ.ReadByte;
 
@@ -478,9 +478,8 @@ begin
     Entry.DataType := mdtSound;
     WZ.ReadByte;
     DataLength := WZ.ReadValue;
-    WZ.ReadValue; // no clue what this is
-
-    Entry.Sound := TMP3MapleSound.Create(DataLength, WZ.Position, WZ);
+    Duration := WZ.ReadValue; // millisecondsWZ.ReadValue;
+    Entry.Sound := TWZSound.Create(DataLength, Duration, EndOfExtendedBlock - WZ.Position - DataLength, WZ);
     WZ.Seek(EndOfExtendedBlock, soBeginning);
   end
   else if dType = 'UOL' then

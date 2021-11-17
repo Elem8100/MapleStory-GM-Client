@@ -3,13 +3,15 @@ unit BassHandler;
 interface
 
 uses
-  Windows, Classes, SysUtils, Bass;
+  Windows, Classes, SysUtils, Bass,MP3MapleSound;
 
 type
   TBassHandler = class
   private
-    MWND: HSTREAM;
+    FChannel: HCHANNEL;
     MS: TMemoryStream;
+    FSample: HSAMPLE;
+    FStream: HSTREAM;
     FStart: Boolean;
     Volume: FLOAT;
    //procedure BassInit;
@@ -17,8 +19,7 @@ type
     function GetPosition: Double;
     function GetLength: Double;
   public
-    constructor Create(Media: TMemoryStream); overload;
-    constructor Create(Media: TStream; Offset, SIZE: Int64); overload;
+    constructor Create(Sound: TWZSound);
     destructor Destroy; override;
     procedure Play;
     procedure PlayLoop;
@@ -52,48 +53,55 @@ begin
   BASS_Free;
 end;
 
-constructor TBassHandler.Create(Media: TMemoryStream);
+
+constructor TBassHandler.Create(Sound: TWZSound);
 begin
  // BassInit;
 
-  MS := Media;
+  MS := Sound.Dump;
 
-  MWND := BASS_StreamCreateFile(True, MS.Memory, 0, MS.Size, BASS_STREAM_PRESCAN);
+  if Sound.IsMP3 then
+  begin
+    FStream := BASS_StreamCreateFile(True, MS.Memory, 0, MS.Size, BASS_STREAM_PRESCAN);
+    FChannel := FStream;
+  end
+  else if Sound.PCMFormat.FormatTag = 1 then // PCM
+  begin
+    FSample := BASS_SampleCreate(MS.Size, Sound.PCMFormat.SamplesPerSec, Sound.PCMFormat.Channels, 1, 0);
+    if FSample = 0 then
+      raise Exception.Create('Creating BASS sample failed');
 
-end;
-
-constructor TBassHandler.Create(Media: TStream; Offset, Size: Int64);
-{ Direct playing from archive, faster than first dumping the Media }
-begin
- // BassInit;
-
-  MS := TMemoryStream.Create;
-  Media.Seek(Offset, soBeginning);
-  MS.CopyFrom(Media, Size);
-
-  MWND := BASS_StreamCreateFile(True, MS.Memory, Offset, Size, BASS_STREAM_PRESCAN);
+    BASS_SampleSetData(FSample, MS.Memory);
+    FChannel := BASS_SampleGetChannel(FSample, False);
+    FStream := 0;
+  end
+  else
+  begin
+    raise Exception.Create('Unsupported format: ' + IntToStr(Sound.PCMFormat.FormatTag));
+  end;
 end;
 
 destructor TBassHandler.Destroy;
 begin
-  BASS_ChannelStop(MWND);
-  BASS_StreamFree(MWND);
-  //BASS_Free;
-  FreeAndNil(MS);
-  MWND := 0;
-
+  BASS_ChannelStop(FChannel);
+  if FStream <> 0 then
+    BASS_StreamFree(FStream)
+  else
+    BASS_SampleFree(FSample);
+  // BASS_Free;
+  MS.Free;
   inherited;
 end;
 
 procedure TBassHandler.Play;
 begin
-  BASS_ChannelPlay(MWND, True);
+  BASS_ChannelPlay(FChannel, True);
 end;
 
 procedure TBassHandler.PlayLoop;
 begin
-  BASS_ChannelPlay(MWND, False);
-  BASS_ChannelFlags(MWND, BASS_SAMPLE_LOOP, BASS_SAMPLE_LOOP);
+  BASS_ChannelPlay(FChannel, False);
+  BASS_ChannelFlags(FChannel, BASS_SAMPLE_LOOP, BASS_SAMPLE_LOOP);
 end;
 
 procedure TBassHandler.Mute;
@@ -110,33 +118,30 @@ end;
 function TBassHandler.GetLength: Double;
 var
   ByteLen: Int64;
-  Seconds: Double;
 begin
-  ByteLen := BASS_ChannelGetLength(MWND, BASS_POS_BYTE);
+  ByteLen := BASS_ChannelGetLength(FChannel, BASS_POS_BYTE);
   if ByteLen = -1 then
     raise Exception.Create('BASS_ERROR: ' + IntToStr(BASS_ErrorGetCode));
 
-  Seconds := BASS_ChannelBytes2Seconds(MWND, ByteLen);
-  Result := Seconds;
+  Result := BASS_ChannelBytes2Seconds(FChannel, ByteLen);
 end;
 
 function TBassHandler.GetPosition: Double;
 var
   BytePos: Int64;
-  Seconds: Double;
 begin
-  BytePos := BASS_ChannelGetPosition(MWND, BASS_POS_BYTE);
+  BytePos := BASS_ChannelGetPosition(FChannel, BASS_POS_BYTE);
   if BytePos = -1 then
     raise Exception.Create('BASS_ERROR: ' + IntToStr(BASS_ErrorGetCode));
 
-  Seconds := BASS_ChannelBytes2Seconds(MWND, BytePos);
-  Result := Seconds;
+  Result := BASS_ChannelBytes2Seconds(FChannel, BytePos);
 end;
+
 
 function TBassHandler.GetIsPlaying;
 begin
   Result := False;
-  if BASS_ChannelIsActive(MWND) = BASS_ACTIVE_PLAYING then
+  if BASS_ChannelIsActive(FChannel) = BASS_ACTIVE_PLAYING then
     Result := True;
 
 end;
