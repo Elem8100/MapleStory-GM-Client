@@ -973,9 +973,6 @@ begin
               Continue;
             if Left4 = '0160' then
               Continue;
-      //skip format 257 Hair
-            if ID.ToInteger div 10 = 4773 then
-              Continue;
 
             Name := GetImgFile('String/Eqp.img').Root.Get('Eqp/' + CharacterDir + '/' + IDToInt(ID) + '/name', '');
             if PartIndex in [4, 5, 13, 14, 15, 16] then
@@ -1093,9 +1090,6 @@ begin
         if Left4 = '0151' then
           Continue;
         if Left4 = '0160' then
-          Continue;
-      //skip format 257 Hair
-        if ID.ToInteger div 10 = 4773 then
           Continue;
 
         Name := GetImgFile('String/Eqp.img').Root.Get('Eqp/' + CharacterDir + '/' + IDToInt(ID) + '/name', '');

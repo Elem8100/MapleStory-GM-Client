@@ -35,6 +35,7 @@ type
     function Parse2050Bmp(Input: TMemoryStream): TBitmap;
     function Parse1BmpEx(Input: TMemoryStream): TBmpEx;
     function Parse2BmpEx(Input: TMemoryStream): TBmpEx;
+    function Parse257BmpEx(Input: TMemoryStream): TBmpEx;
     function Parse1PNG(Input: TMemoryStream): TPngImage;
     function Parse2PNG(Input: TMemoryStream): TPngImage;
     function Parse257PNG(Input: TMemoryStream): TPngImage;
@@ -279,6 +280,8 @@ begin
         Result := Parse1BmpEx(Decompressed);
       2:
         Result := Parse2BmpEx(Decompressed);
+      257:
+       Result := Parse257BmpEx(Decompressed);
 
     end;
   finally
@@ -755,6 +758,43 @@ begin
       Line[x].R := b3;
       Line[x].G := b2;
       Line[x].B := b1;
+    end;
+  end;
+end;
+
+function TPNGMapleCanvas.Parse257BmpEx(Input: TMemoryStream): TBmpEx;
+var
+  x, y: Integer;
+  b1, b2: Byte;
+  Pix, A, R, G, B: Word;
+  Line: PRGB32Array;
+begin
+  Result := TBmpEx.Create;
+  Result.PixelFormat := ie32RGB;
+  Result.Width := FWidth;
+  Result.Height := FHeight;
+
+  for y := 0 to FHeight - 1 do
+  begin
+    Line := Result.Scanline[y];
+    for x := 0 to FWidth - 1 do
+    begin
+      Input.Read(Pix, 2);
+      B := (Pix and $1F) shl 3;
+      B := B or (B shr 5);
+      G := ((Pix shr 5) and $1F) shl 3;
+      G := G or (G shr 5);
+      R := ((Pix shr 10) and $1F) shl 3;
+      R := R or (R shr 5);
+      // 1 -> 8
+      A := Pix shr 15;
+      A := -Ord(A <> 0);
+
+      Line[x].B := B;
+      Line[x].G := G;
+      Line[x].R := R;
+      // Line[x].A := A;
+      Result.Alpha[x, y] := A;
     end;
   end;
 end;
