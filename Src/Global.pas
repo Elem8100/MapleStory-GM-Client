@@ -51,7 +51,7 @@ var
   EquipImages: TDictionary<TWZIMGEntry, TTexture>;
 
 function LeftPad(Value: Integer; Length: integer = 8): string;
-
+function GetJobImg(ID: string): string;
 function IsNumber(AStr: string): Boolean;
 
 procedure PlaySounds(Img, Path: string);
@@ -75,6 +75,14 @@ var
 function LeftPad(Value: Integer; Length: integer = 8): string;
 begin
   Result := RightStr(StringOfChar('0', Length) + Value.ToString, Length);
+end;
+
+function GetJobImg(ID: string): string;
+begin
+  if (LeftStr(ID, 3) = '800') and (Length(ID) = 8) then
+    Result := (ID.ToInteger div 100).ToString
+  else
+    Result := (ID.ToInteger div 10000).ToString;
 end;
 
 function IsNumber(AStr: string): Boolean;

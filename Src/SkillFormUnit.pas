@@ -3,9 +3,10 @@ unit SkillFormUnit;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, AdvObj, BaseGrid, AdvGrid, Vcl.StdCtrls,
-  WZIMGFile, Vcl.Mask, scControls, scAdvancedControls, AdvUtil;
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids,
+  AdvObj, BaseGrid, AdvGrid, Vcl.StdCtrls, WZIMGFile, Vcl.Mask, scControls,
+  scAdvancedControls, AdvUtil, Generics.Collections, WZArchive, WZDirectory;
 
 type
   TSkillForm = class(TForm)
@@ -22,7 +23,7 @@ type
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
   private
     HasLoaded: Boolean;
-    IDs: array of string;
+
     SelectRow: Integer;
     { Private declarations }
   public
@@ -35,13 +36,8 @@ var
 implementation
 
 uses
-  Skill, WzUtils, Global;
+  Skill, WzUtils, Global, StrUtils;
 {$R *.dfm}
-
-function GetJobID(ID: string): string;
-begin
-  Result := (ID.ToInteger div 10000).toString;
-end;
 
 function KeyNameToInt(Key: string): Integer;
 begin
@@ -137,12 +133,11 @@ begin
   SkillGrid.Cells[1, SkillGrid.RowCount] := SelectGrid.Cells[1, SelectRow];
   var ID := SelectGrid.Cells[1, SelectRow];
   var Entry: TWZIMGEntry;
-  if HasImgFile('Skill/' + GetJobID(ID) + '.img') then
-    Entry := GetImgEntry('Skill/' + GetJobID(ID) + '.img/skill/' + ID);
+  if HasImgFile('Skill/' + GetJobImg(ID) + '.img') then
+    Entry := GetImgEntry('Skill/' + GetJobImg(ID) + '.img/skill/' + ID);
  // else
   //  Entry := GetImgEntry('Skill001.wz/' + GetJobID(ID) + '.img/skill/' + ID);
   var Bmp := Entry.Get2('icon').Canvas.DumpBmp;
-
 
   var RowCount := SkillGrid.RowCount;
   SkillGrid.CreateBitmap(2, RowCount, False, haCenter, vaCenter).Assign(Bmp);
@@ -181,35 +176,72 @@ begin
     Tag := 1;
   end;
 
-  IDs := ['2321008', '2121007', '2221007', '2301005', '1121008', '21120005', '21110006', '155111211',
-    '2211010', '36121052', '36121011', '400041021', '101110202', '101120102', '101120202',
-    '101100100', '15121052', '15121002', '15111022', '31221052', '31221002', '142121031', '5221052',
-    '400051040', '5221026', '400001014', '61121052', '61121104', '61121105', '61111101', '27111303',
-    '27121202', '27111101', '101110203', '400021002', '2211002', '1311012', '1321012', '32121004',
-    '25121005', '25121007', '1121015', '1001005', '11101008', '65121002', '65121100', '65111100',
-    '65121008', '3121015', '400051042', '5121017', '5121052', '5121013', '5121016', '5101004',
-    '5321000', '400040006', '400041024', '4341052', '4341011', '41121018', '41121017', '41121052'];
+  {
+  TSkill.AllIDs := TDictionary<string, string>.Create;
+  TSkill.AllIDs.Add('2321008', ',100,0,0');
+  TSkill.AllIDs.Add('2121007', '100,0,0');
+  TSkill.AllIDs.Add('2221007', '100,0,0');
+  TSkill.AllIDs.Add('2301005', '100,0,0');
+  TSkill.AllIDs.Add('1121008', '100,0,0');
+  TSkill.AllIDs.Add('21120005', '100,0,0');
+  TSkill.AllIDs.Add('21110006', '100,0,0');
+  TSkill.AllIDs.Add('155111211', '100,0,0');
+  TSkill.AllIDs.Add('2211010', '100,0,0');
+  TSkill.AllIDs.Add('36121052', '100,0,0');
+  TSkill.AllIDs.Add('36121011', '100,0,0');
+  TSkill.AllIDs.Add('400041021', '100,0,0');
+  TSkill.AllIDs.Add('101110202', '100,0,0');
+  TSkill.AllIDs.Add('101120102', '100,0,0');
+  TSkill.AllIDs.Add('101120202', '100,0,0');
+  TSkill.AllIDs.Add('101100100', '100,0,0');
+  TSkill.AllIDs.Add('15121052', '100,0,0');
+  TSkill.AllIDs.Add('15121002', '100,0,0');
+  TSkill.AllIDs.Add('15111002', '100,0,0');
+  TSkill.AllIDs.Add('31221052', '100,0,0');
+  TSkill.AllIDs.Add('31221002', '100,0,0');
+  TSkill.AllIDs.Add('142121031', '100,0,0');
+  TSkill.AllIDs.Add('5221052', '100,0,0');
+  TSkill.AllIDs.Add('400051040', '100,0,0');
+  TSkill.AllIDs.Add('5221026', '100,0,0');
+  TSkill.AllIDs.Add('400001014', '100,0,0');
+  TSkill.AllIDs.Add('61121052', '100,0,0');
+  TSkill.AllIDs.Add('61121104', '100,0,0');
+   }
+
+  var ImgList: TList<TWZFile> := GetImgList('Skill');
   var RowCount := -1;
   SelectGrid.BeginUpdate;
-
-  for var ID in IDs do
+  for var Img in ImgList do
   begin
-    if HasImgFile('Skill/' + GetJobID(ID) + '.img') and HasImgEntry('Skill/' + GetJobID(ID) +
-      '.img/skill/' + ID) then
+    if not IsNumber(Img.Name[1]) then
+      Continue;
+    if Img.Name[1] = '0' then
+      Continue;
+
+    if not HasImgEntry('Skill/' + Img.Name + '/skill') then
+      Continue;
+    for var IDs in GetImgEntry('Skill/' + img.Name + '/skill/').Children do
     begin
+      if IDs.Child['hit'] = nil then
+        Continue;
+      if IDs.Child['common'] = nil then
+        Continue;
+      if IDs.Child['common'].Child['lt'] = nil then
+        continue;
+      if IDs.Child['effect'] = nil then
+        Continue;
       Inc(RowCount);
       SelectGrid.RowCount := RowCount + 1;
-      SelectGrid.Cells[1, RowCount] := ID;
-      var Entry := GetImgEntry('Skill/' + GetJobID(ID) + '.img/skill/' + ID);
+
+      var Entry := GetImgEntry('Skill/' + GetJobImg(IDs.Name) + '.img/skill/' + IDs.Name);
       var Bmp := Entry.Get2('icon').Canvas.DumpBmp;
       SelectGrid.CreateBitmap(2, RowCount, False, haCenter, vaCenter).Assign(Bmp);
       Bmp.Free;
-      if HasImgEntry('String/Skill.img/' + ID) then
-        SelectGrid.Cells[3, RowCount] := GetImgEntry('String/Skill.img/' + ID).Get('name', '');
-
+      if HasImgEntry('String/Skill.img/' + IDs.Name) then
+        SelectGrid.Cells[3, RowCount] := GetImgEntry('String/Skill.img/' + IDs.Name).Get('name', '');
+      SelectGrid.Cells[1, RowCount] := Ids.Name;
     end;
   end;
-
   SelectGrid.SortByColumn(1);
   SelectGrid.EndUpdate;
   SkillGrid.Cells[1, 0] := 'ID';

@@ -3,18 +3,18 @@ unit Skill;
 interface
 
 uses
-  Windows, System.Types, SysUtils, StrUtils, PXT.Sprites, Generics.Collections, WZIMGFile, Global,
-  DamageNumber, Footholds, Tools, WzUtils;
+  Windows, System.Types, SysUtils, StrUtils, PXT.Sprites, Generics.Collections,
+  WZIMGFile, Global, DamageNumber, Footholds, Tools, WzUtils;
 
 type
   TSkill = class(TSprite)
   public
     class var
       HotKeyList: TDictionary<Cardinal, string>;
+      AllIDs: TDictionary<string, string>;
       LoadedList: TList<string>;
       PlayEnded: Boolean;
       Start: Boolean;
-      Has001Wz: Boolean;
       Entry: TWZIMGEntry;
       ID: string;
       MultiStrike: Boolean;
@@ -60,12 +60,7 @@ type
 implementation
 
 uses
-   MapleCharacter, Mob2, MapleMap;
-
-function GetJobID(ID: string): string;
-begin
-  Result := IntToStr(StrToInt(ID) div 10000);
-end;
+  MapleCharacter, Mob2, MapleMap;
 
 function IsSkillAttack: Boolean;
 begin
@@ -77,7 +72,8 @@ end;
 
 procedure TSkill.DoMove(const Movecount: Single);
 begin
-  if (TSkill.PlayEnded) {and (not IsSkillAttack)}                and (not Player.InLadder) {and (player.sTime = 0)} then
+  if (TSkill.PlayEnded) {and (not IsSkillAttack)}                 and (not
+    Player.InLadder) {and (player.sTime = 0)} then
   begin
     for var KeyName in TSkill.HotKeyList.Keys do
       if Keyboard.Key[KeyName] then
@@ -93,9 +89,8 @@ class procedure TSkill.Load(ID: string);
 var
   Iter, Entry: TWZIMGEntry;
 begin
-  if HasImgFile('Skill/' + GetJobID(ID) + '.img') then
-    Entry := GetImgEntry('Skill/' + GetJobID(ID) + '.img/skill/' + ID);
-
+  if HasImgFile('Skill/' + GetJobImg(ID) + '.img') then
+    Entry := GetImgEntry('Skill/' + GetJobImg(ID) + '.img/skill/' + ID);
 
   DumpData(Entry, EquipData, EquipImages);
   for Iter in Entry.Children do
@@ -160,7 +155,8 @@ begin
 
     36121052:
       Result := 160;
-
+  else
+    Result := 10;
   end;
 
 end;
@@ -172,16 +168,16 @@ var
   Below: TPoint;
   BelowFH: TFoothold;
 const
-  Effects: array[0..10] of string = ('effect', 'effect0', 'effect1', 'effect2', 'effect3', 'screen',
-    'screen0', 'ball', 'keydown', 'keydown0', 'keydowned');
+  Effects: array[0..10] of string = ('effect', 'effect0', 'effect1', 'effect2',
+    'effect3', 'screen', 'screen0', 'ball', 'keydown', 'keydown0', 'keydowned');
 begin
   Randomize;
   TSkill.ID := ID;
   TSkill.PlayEnded := False;
   PlaySounds('Skill', ID + '/Use');
  // Entry := GetImgEntry('Skill/' + GetJobID(AID) + '.img/skill/' + AID);
-  if HasImgFile('Skill/' + GetJobID(ID) + '.img') then
-    Entry := GetImgEntry('Skill/' + GetJobID(ID) + '.img/skill/' + ID);
+  if HasImgFile('Skill/' + GetJobImg(ID) + '.img') then
+    Entry := GetImgEntry('Skill/' + GetJobImg(ID) + '.img/skill/' + ID);
 
   TSkill.Entry := Entry;
 
@@ -235,6 +231,11 @@ begin
 
   for var i := 0 to 10 do
   begin
+    if Entry.Get(Effects[i] + '/0') = nil then
+    begin
+      Exit;
+
+    end;
     if Entry.Get(Effects[i]) <> nil then
       with TSkillSprite.Create(SpriteEngine) do
       begin
@@ -278,6 +279,10 @@ begin
 
   if Entry.Get('tile') <> nil then // ' + '/0/0') then
   begin
+    if Entry.Get('tile/0') = nil then
+      Exit;
+    if Entry.Get('tile/0/0') = nil then
+      Exit;
     for var i := 0 to 6 do
     begin
       MoveY := 20;
@@ -440,7 +445,7 @@ begin
         else if HasImgEntry('Sound/Mob.img/' + SelfID + '/Hit1') then
           PlaySounds('Mob', SelfID + '/Hit1');
                // if can pushed
-        if WzData.ContainsKey('Mob/' + SelfID + '.img/hit1')  then
+        if WzData.ContainsKey('Mob/' + SelfID + '.img/hit1') then
           GetHit1 := True;
 
       end;
@@ -465,6 +470,7 @@ initialization
   TSkill.LoadedList := TList<string>.Create;
 
   TSkill.PlayEnded := True;
+
 
 finalization
   TSkill.HotKeyList.Free;
