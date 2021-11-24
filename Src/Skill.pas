@@ -231,7 +231,7 @@ begin
 
   for var i := 0 to 10 do
   begin
-    if Entry.Get(Effects[i] + '/0') = nil then
+    if Entry.Get('Effect/0') = nil then
     begin
       Exit;
 
