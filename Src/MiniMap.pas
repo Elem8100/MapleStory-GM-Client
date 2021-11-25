@@ -18,6 +18,7 @@ type
     LWidth: integer;
     PlayerMark: TWZIMGEntry;
     HasMiniMap: Boolean;
+    HasMark: Boolean;
     AddHeight, AddWidth: Integer;
     procedure DrawUIVersion1;
     procedure DrawUIVersion3;
@@ -49,7 +50,13 @@ begin
     px := Round(Player.X + cx) div 16;
     py := Round(Player.Y + cy) div 16;
     if UIVersion = 1 then
-      AEngine.Canvas.Draw(UIImages[PlayerMark], x + px + OffX + 2 + 8, y + py + OffY + 50 + 15)
+    begin
+      if HasMark then
+        AEngine.Canvas.Draw(UIImages[PlayerMark], x + px + OffX + 2 + 8, y + py + OffY + 50 + 15)
+      else
+        AEngine.Canvas.FillRect(FloatRect(x + px + OffX + 2 + 8, y + py + OffY +
+          50 + 17, 5, 5), ARGB(255, 255, 255, 0));
+    end
     else
       AEngine.Canvas.Draw(UIImages[PlayerMark], x + px + OffX + 2, y + py + OffY + 50);
   end;
@@ -68,7 +75,7 @@ begin
   begin
     cx := TMap.ImgFile.Get('miniMap/centerX').Data;
     cy := TMap.ImgFile.Get('miniMap/centerY').Data;
-    MiniMap := TMap.MiniMapEntry;//.Get('canvas');
+    MiniMap := TMap.MiniMapEntry; //.Get('canvas');
     DumpData(MiniMap, UIData, UIImages);
     PicHeight := MiniMap.Canvas.Height;
     PicWidth := lwidth;
@@ -106,19 +113,39 @@ begin
   AEngine.Canvas.Draw(UIImages[Entry.Get('ne')], PicWidth + 18, 0); //right top
   AEngine.Canvas.Draw(UIImages[Entry.Get('sw')], 1, PicHeight + 72); // right bottom
   AEngine.Canvas.Draw(UIImages[Entry.Get('se')], PicWidth + 18, PicHeight + 72); // left botton
+  if HasImgEntry('Map/MapHelper.img/minimap') then
+    HasMark := True;
 
-  DumpData(GetImgEntry('Map/MapHelper.img/minimap'), UIData, UIImages);
-
-  var NpcMark := GetImgEntry('Map/MapHelper.img/minimap/npc');
-  for var iter in TMap.ImgFile.Get('life').Children do
+  if HasMark then
   begin
-    if (iter.Get('type', '') = 'n') and (iter.Get('hide', '') <> '1') then
-      AEngine.Canvas.Draw(UIImages[NpcMark], ((iter.Get('x').Data + cx) div 16) + OffX + 12, ((iter.Get('y').Data + cy) div 16) + 65);
+    DumpData(GetImgEntry('Map/MapHelper.img/minimap'), UIData, UIImages);
+    var NpcMark := GetImgEntry('Map/MapHelper.img/minimap/npc');
+    for var iter in TMap.ImgFile.Get('life').Children do
+    begin
+      if (iter.Get('type', '') = 'n') and (iter.Get('hide', '') <> '1') then
+        AEngine.Canvas.Draw(UIImages[NpcMark], ((iter.Get('x').Data + cx) div 16)
+          + OffX + 12, ((iter.Get('y').Data + cy) div 16) + 65);
+    end;
+    var PortalMark := GetImgEntry('Map/MapHelper.img/minimap/portal');
+    for var iter in TMap.ImgFile.Get('portal').Children do
+      if (iter.Get('pt').Data = 2) or (iter.Get('pt').Data = 7) then
+        AEngine.Canvas.Draw(UIImages[PortalMark], ((iter.Get('x').Data + cx) div
+          16) + OffX + 10, ((iter.Get('y').Data + cy) div 16) + 63);
+    PlayerMark := GetImgEntry('Map/MapHelper.img/minimap/user');
+  end
+  else
+  begin
+    for var iter in TMap.ImgFile.Get('portal').Children do
+    begin
+      if (iter.Get('pt').Data = 2) or (iter.Get('pt').Data = 7) then
+      begin
+        var x := ((iter.Get('x').Data + cx) div 16) + OffX + 10;
+        var y := ((iter.Get('y').Data + cy) div 16) + 67;
+        AEngine.Canvas.FillRect(FloatRect(x, y, 5, 5), ARGB(255, 132, 216, 243));
+      end;
+    end;
   end;
-  var PortalMark := GetImgEntry('Map/MapHelper.img/minimap/portal');
-  for var iter in TMap.ImgFile.Get('portal').Children do
-    if (iter.Get('pt').Data = 2) or (iter.Get('pt').Data = 7) then
-      AEngine.Canvas.Draw(UIImages[PortalMark], ((iter.Get('x').Data + cx) div 16) + OffX + 10, ((iter.Get('y').Data + cy) div 16) + 63);
+
   var MapMarkName := TMap.ImgFile.Get('info/mapMark').Data;
   if MapMarkName <> 'None' then
   begin
@@ -126,7 +153,6 @@ begin
     DumpData(MapMarkPic, UIData, UIImages);
     AEngine.Canvas.Draw(UIImages[MapMarkPic], 7, 22);
   end;
-  PlayerMark := GetImgEntry('Map/MapHelper.img/minimap/user');
 
   var FontSetting: TFontSettings;
 
@@ -157,7 +183,7 @@ begin
   begin
     cx := TMap.ImgFile.Get('miniMap/centerX').Data;
     cy := TMap.ImgFile.Get('miniMap/centerY').Data;
-    MiniMap := TMap.MiniMapEntry;//.Get('canvas');
+    MiniMap := TMap.MiniMapEntry; //.Get('canvas');
     DumpData(MiniMap, UIData, UIImages);
     PicHeight := MiniMap.Canvas.Height;
     PicWidth := lwidth;
@@ -196,12 +222,14 @@ begin
   for var iter in TMap.ImgFile.Get('life').Children do
   begin
     if (iter.Get('type', '') = 'n') and (iter.Get('hide', '') <> '1') then
-      AEngine.Canvas.Draw(UIImages[NpcMark], ((iter.Get('x').Data + cx) div 16) + OffX + 4, ((iter.Get('y').Data + cy) div 16) + 50);
+      AEngine.Canvas.Draw(UIImages[NpcMark], ((iter.Get('x').Data + cx) div 16)
+        + OffX + 4, ((iter.Get('y').Data + cy) div 16) + 50);
   end;
   var PortalMark := GetImgEntry('Map/MapHelper.img/minimap/portal');
   for var iter in TMap.ImgFile.Get('portal').Children do
     if (iter.Get('pt').Data = 2) or (iter.Get('pt').Data = 7) then
-      AEngine.Canvas.Draw(UIImages[PortalMark], ((iter.Get('x').Data + cx) div 16) + OffX + 2, ((iter.Get('y').Data + cy) div 16) + 48);
+      AEngine.Canvas.Draw(UIImages[PortalMark], ((iter.Get('x').Data + cx) div
+        16) + OffX + 2, ((iter.Get('y').Data + cy) div 16) + 48);
   var MapMarkName := TMap.ImgFile.Get('info/mapMark').Data;
   if MapMarkName <> 'None' then
   begin
@@ -288,13 +316,13 @@ begin
       UIImage[Path + 'title'].Top := 5;
 
     CreateButton(Path + 'BtMap', 0, 6);
-    UIButton[Path + 'BtMap'].Left := Lwidth-18;
+    UIButton[Path + 'BtMap'].Left := Lwidth - 18;
 
     CreateButton('UI/Basic.img/BtMax', 0, 6);
-    UIButton['UI/Basic.img/BtMax'].Left := Lwidth-32;
+    UIButton['UI/Basic.img/BtMax'].Left := Lwidth - 32;
 
     CreateButton('UI/Basic.img/BtMin', 0, 6);
-    UIButton['UI/Basic.img/BtMin'].Left := Lwidth-45;
+    UIButton['UI/Basic.img/BtMin'].Left := Lwidth - 45;
 
   end;
 
