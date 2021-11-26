@@ -60,6 +60,8 @@ type
       MiniMapEntry: TWZIMGEntry;
       MiniMapWidth, MiniMapHeight: Integer;
       ScrollingMessage: string;
+      BackColor: cardinal;
+      BackTopHeight: Integer;
     class procedure PlayMusic; static;
     class procedure LoadMap(ID: string); static;
   end;
@@ -232,17 +234,67 @@ begin
     end;
 
   end;
- // if UIVersion = 3 then
+
   AMiniMap.ReDraw;
-  //TNameTag.Create('SuperGM');
 
   TMap.FirstLoad := True;
+  case ID.ToInteger of
+    224000002, 224000012, 224000013, 224000014:
+      BackColor := $FFFF801A;
+
+    308000160, 308000170, 308000180, 308000190:
+      BackColor := $FF795117;
+    310050000:
+      begin
+        BackTopHeight := 170;
+        BackColor := $FF000000;
+      end;
+    310050100, 310050200, 310050300, 310050400, 310050500:
+      begin
+        BackTopHeight := 218;
+        BackColor := $FF110505;
+      end;
+
+    261020400:
+      begin
+        BackTopHeight := 370;
+        BackColor := $FF000000;
+      end;
+
+    260000302, 260000301, 260000303:
+      BackColor := $FF381F34;
+
+    260020400, 260020401:
+      begin
+        BackColor := $FF0E1673;
+        BackTopHeight := 230;
+      end;
+    141030300:
+      BackColor := $FF201003;
+    211042101:
+      begin
+        BackTopHeight := 400;
+        BackColor := $FF050505;
+      end;
+    240050500:
+      begin
+        BackTopHeight := 230;
+        BackColor := $FF281212;
+      end;
+  else
+    begin
+      BackColor := $FF000000;
+      BackTopHeight := 5000;
+    end;
+  end;
+
   TMapBack.Create;
   // CreateReactor;
   TMap.PlayMusic;
   TMapBack.ResetPos := True;
   TMobInfo.ReDrawTarget;
   TSkill.PlayEnded := True;
+
 end;
 
 class procedure TMap.PlayMusic;

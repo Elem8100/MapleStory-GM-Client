@@ -50,6 +50,10 @@ begin
   for Iter in TMap.ImgFile.Child['back'].Children do
   begin
     bS := Iter.Get('bS', '');
+    if bS ='grassySoil_new'then
+      TMap.BackColor:=$FFFF6502;
+    if bS ='YumYum'then
+      TMap.BackColor:=$FFF7CF3A;
     No := Iter.Get('no', '0');
 
     _Front := Iter.Get('front', '0');

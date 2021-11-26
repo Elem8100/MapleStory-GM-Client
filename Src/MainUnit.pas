@@ -315,11 +315,14 @@ begin
   DisplaySize := Point2i(1024, 768);
   GameMode := gmPlay;
 
-  FDevice := DeviceInit(TDeviceBackend.Default, RenderForm.Handle, Point2i(1024, 768), PXT.Types.TPixelFormat.BGRA8, PXT.Types.TPixelFormat.Unknown, 0, DeviceAttributes([TDeviceAttribute.VSync]));
-  GameDevice2 := DeviceInitShared(FDevice, AvatarForm.Panel1.Handle, Point2i(260, 200), PXT.Types.TPixelFormat.BGRA8, PXT.Types.TPixelFormat.Unknown, 0, DeviceAttributes([TDeviceAttribute.VSync]));
+  FDevice := DeviceInit(TDeviceBackend.Default, RenderForm.Handle, Point2i(1024,
+    768), PXT.Types.TPixelFormat.BGRA8, PXT.Types.TPixelFormat.Unknown, 0, DeviceAttributes([TDeviceAttribute.VSync]));
+  GameDevice2 := DeviceInitShared(FDevice, AvatarForm.Panel1.Handle, Point2i(260,
+    200), PXT.Types.TPixelFormat.BGRA8, PXT.Types.TPixelFormat.Unknown, 0, DeviceAttributes([TDeviceAttribute.VSync]));
   GameDevice2.Resize(Point2i(260, 200));
 
-  GameDevice3 := DeviceInitShared(FDevice, AvatarForm.Panel2.Handle, Point2i(512, 512), PXT.Types.TPixelFormat.BGRA8, PXT.Types.TPixelFormat.Unknown, 0, DeviceAttributes([TDeviceAttribute.VSync]));
+  GameDevice3 := DeviceInitShared(FDevice, AvatarForm.Panel2.Handle, Point2i(512,
+    512), PXT.Types.TPixelFormat.BGRA8, PXT.Types.TPixelFormat.Unknown, 0, DeviceAttributes([TDeviceAttribute.VSync]));
   GameDevice3.Resize(Point2i(512, 512));
   if Screen.MonitorCount > 0 then
   begin
@@ -405,7 +408,10 @@ begin
 
   if ComboBox1.Items.Count <= 2 then
   begin
-    var List := ['800X600', '1024X768', '1152X864', '1280X720', '1280X768', '1280X800', '1280X960', '1280X1024', '1360X768', '1366X768', '1600X900', '1600X1024', '1600X1200', '1680X1050', '1920X1080', '1440X900', '1400X1050', '2560X1080', '2560X1440', '3440X1440', '3840X1080', '3840X1600', '3840X2160'];
+    var List := ['800X600', '1024X768', '1152X864', '1280X720', '1280X768',
+      '1280X800', '1280X960', '1280X1024', '1360X768', '1366X768', '1600X900',
+      '1600X1024', '1600X1200', '1680X1050', '1920X1080', '1440X900',
+      '1400X1050', '2560X1080', '2560X1440', '3440X1440', '3840X1080', '3840X1600', '3840X2160'];
     for var I in List do
       ComboBox1.Items.Add(i);
   end;
@@ -512,7 +518,7 @@ begin
         FullScreenTexture.EndScene;
 
         FDevice.BeginScene;
-        FDevice.Clear([TClearLayer.Color], FloatColor($0));
+        FDevice.Clear([TClearLayer.Color], floatcolor(TMap.BackColor));
         GameCanvas.BeginScene;
         GameCanvas.DrawStretch(FullScreenTexture, 0, 0, RenderForm.ClientWidth, RenderForm.ClientHeight);
         if SetScreenForm.ScanlineCheckBox.Checked then
@@ -530,7 +536,7 @@ begin
         FullScreenTexture.EndScene;
 
         FDevice.BeginScene;
-        FDevice.Clear([TClearLayer.Color], FloatColor($FFFFC800));
+        FDevice.Clear([TClearLayer.Color], FloatColor(TMap.BackColor));
         GameCanvas.BeginScene;
         GameCanvas.DrawStretch(FullScreenTexture, 0, 0, MonitorWidth, MonitorHeight);
         if SetScreenForm.ScanlineCheckBox.Checked then
@@ -541,7 +547,8 @@ begin
     smNormal:
       begin
         FDevice.BeginScene;
-        FDevice.Clear([TClearLayer.Color], FloatColor($FFFFC800));
+      //  FDevice.Clear([TClearLayer.Color], FloatColor($FFFFC800));
+        FDevice.Clear([TClearLayer.Color], FloatColor(TMap.BackColor));
         GameCanvas.BeginScene;
         RenderEvent;
         if SetScreenForm.ScanlineCheckBox.Checked then
@@ -650,6 +657,8 @@ begin
     GameFont.FontSettings := FontSettings;
     GameFont.Draw(Point2f(10, 50), 'BGM: ' + TMap.BgmPath, $FFFF0000);
   end;
+  if TMap.BackTopHeight <> 5000 then
+    GameCanvas.FillRect(FloatRect(0, 0, DisplaySize.X,DisplaySize.Y-(1000-TMap.BackTopHeight) ),TMap.BackColor);
 
   if TMap.ShowUI then
   begin
@@ -680,7 +689,8 @@ begin
       FontSettings := TFontSettings.Create('Arial', 12, TFontWeight.Normal);
     FontSettings.Effect.BorderType := TFontBorder.None;
     GameFont.FontSettings := FontSettings;
-    GameFont.DrawAlignedByPixels(Point2f(ScrollingBarX, 2), TMap.ScrollingMessage, ColorPair($FF00FFFF), TTextAlignment.Start, TTextAlignment.Start);
+    GameFont.DrawAlignedByPixels(Point2f(ScrollingBarX, 2), TMap.ScrollingMessage,
+      ColorPair($FF00FFFF), TTextAlignment.Start, TTextAlignment.Start);
     ScrollingBarX := ScrollingBarX + 1;
     if ScrollingBarX > DisplaySize.X then
       ScrollingBarX := -GameFont.ExtentByPixels(TMap.ScrollingMessage).Right;
