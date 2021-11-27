@@ -54,7 +54,13 @@ begin
       TMap.BackColor:=$FFFF6502;
     if bS ='YumYum'then
       TMap.BackColor:=$FFF7CF3A;
+    if bS ='glacierExplorer'then
+      TMap.BackColor:=$FFF87B19;
+    if bS ='colossus'then
+      TMap.BackColor:=$FFFF4905;
     No := Iter.Get('no', '0');
+    if (bS='critias') and (No='2') then
+      No:='1';
 
     _Front := Iter.Get('front', '0');
     Flip := Iter.Get('f', '0');

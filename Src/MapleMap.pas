@@ -239,6 +239,21 @@ begin
 
   TMap.FirstLoad := True;
   case ID.ToInteger of
+    326025000:
+    begin
+       BackTopHeight := 425;
+       BackColor := $FF000000;
+    end;
+    326046000:
+    begin
+       BackTopHeight := 300;
+       BackColor := $FF000000;
+    end;
+    280020000,280020001:
+      begin
+        BackTopHeight := 340;
+        BackColor := $FF000000;
+      end;
     224000002, 224000012, 224000013, 224000014:
       BackColor := $FFFF801A;
 
