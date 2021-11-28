@@ -21,6 +21,8 @@ type
   TMap = record
     class var
       MapNameList: TDictionary<string, TMapNameRec>;
+      BackPatch: TDictionary<string, string>;
+      LoadedPatch: Boolean;
       Info: TDictionary<string, Variant>;
       SaveMap: Boolean;
       SaveMapID: string;
@@ -238,69 +240,99 @@ begin
   AMiniMap.ReDraw;
 
   TMap.FirstLoad := True;
-  case ID.ToInteger of
-    326025000:
-    begin
-       BackTopHeight := 425;
-       BackColor := $FF000000;
-    end;
-    326046000:
-    begin
-       BackTopHeight := 300;
-       BackColor := $FF000000;
-    end;
-    280020000,280020001:
-      begin
-        BackTopHeight := 340;
-        BackColor := $FF000000;
-      end;
-    224000002, 224000012, 224000013, 224000014:
-      BackColor := $FFFF801A;
+  if not LoadedPatch then
+  begin
+    BackPatch.Add('326025000', '$FF000000,425');
+    BackPatch.Add('326046000', '$FF000000,300');
+    BackPatch.Add('280020000', '$FF000000,340');
+    BackPatch.Add('280020001', '$FF000000,340');
+    BackPatch.Add('224000002', '$FFFF801A,-1');
+    BackPatch.Add('224000012', '$FFFF801A,-1');
+    BackPatch.Add('224000013', '$FFFF801A,-1');
+    BackPatch.Add('224000014', '$FFFF801A,-1');
+    BackPatch.Add('308000160', '$FF795117,-1');
+    BackPatch.Add('308000170', '$FF795117,-1');
+    BackPatch.Add('308000180', '$FF795117,-1');
+    BackPatch.Add('308000190', '$FF795117,-1');
+    BackPatch.Add('310050000', '$FF000000,170');
+    BackPatch.Add('310050100', '$FF110505,218');
+    BackPatch.Add('310050200', '$FF110505,218');
+    BackPatch.Add('310050300', '$FF110505,218');
+    BackPatch.Add('310050400', '$FF110505,218');
+    BackPatch.Add('310050500', '$FF110505,218');
+    BackPatch.Add('261020400', '$FF000000,370');
+    BackPatch.Add('260000301', '$FF381F34,-1');
+    BackPatch.Add('260000302', '$FF381F34,-1');
+    BackPatch.Add('260000303', '$FF381F34,-1');
+    BackPatch.Add('260020400', '$FF0E1673,230');
+    BackPatch.Add('260020401', '$FF0E1673,230');
+    BackPatch.Add('141030300', '$FF201003,-1');
+    BackPatch.Add('211042101', '$FF050505,400');
+    BackPatch.Add('240050500', '$FF281212,230');
+    BackPatch.Add('410003010', '$FF943000,-1');
+    BackPatch.Add('410003020', '$FF943000,-1');
+    BackPatch.Add('410003030', '$FF943000,-1');
+    BackPatch.Add('410003040', '$FF943000,-1');
+    BackPatch.Add('410003050', '$FF943000,-1');
+    BackPatch.Add('410003060', '$FF943000,-1');
+    BackPatch.Add('410003070', '$FF943000,-1');
+    BackPatch.Add('410003080', '$FF943000,-1');
+    BackPatch.Add('410003090', '$FF392520,-1');
+    BackPatch.Add('410003100', '$FF392520,-1');
+    BackPatch.Add('410003110', '$FF392520,-1');
+    BackPatch.Add('410003120', '$FF392520,-1');
+    BackPatch.Add('410003130', '$FF392520,-1');
+    BackPatch.Add('410003140', '$FF392520,-1');
+    BackPatch.Add('410003150', '$FF943000,-1');
+    BackPatch.Add('410003160', '$FF943000,-1');
+    BackPatch.Add('410003170', '$FF943000,-1');
+    BackPatch.Add('410003180', '$FF943000,-1');
+    BackPatch.Add('410003190', '$FF943000,-1');
+    BackPatch.Add('410003200', '$FF943000,-1');
+    BackPatch.Add('410003210', '$FF943000,-1');
+    BackPatch.Add('450001000', '$af090000,185');
+    BackPatch.Add('450015190', '$FF6D636F,-1');
+    BackPatch.Add('450015200', '$FF6D636F,-1');
+    BackPatch.Add('450015210', '$FF6D636F,-1');
+    BackPatch.Add('450015220', '$FF6D636F,-1');
+    BackPatch.Add('450015230', '$FF6D636F,-1');
+    BackPatch.Add('450015240', '$FF6D636F,-1');
+    BackPatch.Add('450015250', '$FF6D636F,-1');
+    BackPatch.Add('450015260', '$FF6D636F,-1');
+    BackPatch.Add('450015270', '$FF6D636F,-1');
+    BackPatch.Add('450015300', '$FF6D636F,-1');
+    BackPatch.Add('101070000', '$FF2C1807,214');
+    BackPatch.Add('101070001', '$FF2C1807,212');
+    BackPatch.Add('101070010', '$FF2C1807,215');
+    BackPatch.Add('101070100', '$FF2C1807,222');
+    BackPatch.Add('101070200', '$FF2C1807,217');
+    BackPatch.Add('101070300', '$FF2C1807,212');
+    BackPatch.Add('101073000', '$FF2c1807,212');
+    BackPatch.Add('101071000', '$FF2C1807,188');
+    BackPatch.Add('101071100', '$FF2C1807,188');
+    BackPatch.Add('101071200', '$FF2C1807,207');
+    BackPatch.Add('101071300', '$FF2C1807,222');
+    BackPatch.Add('101072000', '$FF2C1807,212');
+    BackPatch.Add('101073010', '$FF2C1807,223');
+    BackPatch.Add('101073100', '$FF2C1807,223');
+    BackPatch.Add('101073110', '$FF2C1807,223');
+    BackPatch.Add('101073111', '$FF2C1807,223');
+    BackPatch.Add('101073112', '$FF2C1807,223');
+    BackPatch.Add('101073113', '$FF2C1807,223');
+    BackPatch.Add('101073114', '$FF2C1807,223');
+    LoadedPatch := True;
+  end;
 
-    308000160, 308000170, 308000180, 308000190:
-      BackColor := $FF795117;
-    310050000:
-      begin
-        BackTopHeight := 170;
-        BackColor := $FF000000;
-      end;
-    310050100, 310050200, 310050300, 310050400, 310050500:
-      begin
-        BackTopHeight := 218;
-        BackColor := $FF110505;
-      end;
-
-    261020400:
-      begin
-        BackTopHeight := 370;
-        BackColor := $FF000000;
-      end;
-
-    260000302, 260000301, 260000303:
-      BackColor := $FF381F34;
-
-    260020400, 260020401:
-      begin
-        BackColor := $FF0E1673;
-        BackTopHeight := 230;
-      end;
-    141030300:
-      BackColor := $FF201003;
-    211042101:
-      begin
-        BackTopHeight := 400;
-        BackColor := $FF050505;
-      end;
-    240050500:
-      begin
-        BackTopHeight := 230;
-        BackColor := $FF281212;
-      end;
+  if BackPatch.ContainsKey(ID) then
+  begin
+    var Split := BackPatch[ID].Split([',']);
+    BackColor := Split[0].ToInt64;
+    BackTopHeight := Split[1].ToInteger;
+  end
   else
-    begin
-      BackColor := $FF000000;
-      BackTopHeight := 5000;
-    end;
+  begin
+    BackColor := $FF000000;
+    BackTopHeight := -1;
   end;
 
   TMapBack.Create;
@@ -352,6 +384,7 @@ end;
 initialization
   BassInit;
   TMap.MapNameList := TDictionary<string, TMapNameRec>.Create;
+  TMap.BackPatch := TDictionary<string, string>.Create;
   TMap.BgmList := TList<string>.Create;
   TMap.Info := TDictionary<string, Variant>.Create;
   TMap.ShowTile := True;
@@ -375,6 +408,7 @@ finalization
   TMap.Info.Free;
   TMap.BgmList.Free;
   TMap.MapNameList.Free;
+  TMap.BackPatch.Free;
 
 end.
 

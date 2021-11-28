@@ -639,6 +639,8 @@ begin
 
   if TMap.ShowBack then
     BackEngine[0].Draw;
+  if TMap.BackTopHeight <> -1 then
+    GameCanvas.FillRect(FloatRect(0, 0, DisplaySize.X, DisplaySize.Y - (1000 - TMap.BackTopHeight)), TMap.BackColor);
   SpriteEngine.Draw;
   if TMap.ShowFront then
     BackEngine[1].Draw;
@@ -657,8 +659,6 @@ begin
     GameFont.FontSettings := FontSettings;
     GameFont.Draw(Point2f(10, 50), 'BGM: ' + TMap.BgmPath, $FFFF0000);
   end;
-  if TMap.BackTopHeight <> 5000 then
-    GameCanvas.FillRect(FloatRect(0, 0, DisplaySize.X,DisplaySize.Y-(1000-TMap.BackTopHeight) ),TMap.BackColor);
 
   if TMap.ShowUI then
   begin

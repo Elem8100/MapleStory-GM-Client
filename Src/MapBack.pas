@@ -61,6 +61,8 @@ begin
     No := Iter.Get('no', '0');
     if (bS='critias') and (No='2') then
       No:='1';
+   if (bS='Arks2') and (No='21') then
+      continue;
 
     _Front := Iter.Get('front', '0');
     Flip := Iter.Get('f', '0');
