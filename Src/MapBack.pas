@@ -3,8 +3,8 @@ unit MapBack;
 interface
 
 uses
-  Windows, SysUtils, StrUtils, PXT.Sprites, Generics.Collections, WZIMGFile, Global,
-  Tools, MapleCharacter, MapleMap, WzUtils, System.Types,PXT.Types,
+  Windows, SysUtils, StrUtils, PXT.Sprites, Generics.Collections, WZIMGFile,
+  Global, Tools, MapleCharacter, MapleMap, WzUtils, System.Types, PXT.Types,
   PXT.Graphics;
 
 type
@@ -23,8 +23,8 @@ type
     MoveR: Integer;
     MoveType: Integer;
     Origin: TPoint;
-    AX, AY:Single;
-    MoveP, MoveW, MoveH:Integer;
+    AX, AY: Single;
+    MoveP, MoveW, MoveH: Integer;
   public
     procedure DoMove(const Movecount: Single); override;
     procedure DoDraw; override;
@@ -50,23 +50,34 @@ begin
   for Iter in TMap.ImgFile.Child['back'].Children do
   begin
     bS := Iter.Get('bS', '');
-    if bS ='grassySoil_new'then
-      TMap.BackColor:=$FFFF6502;
-    if bS ='YumYum'then
-      TMap.BackColor:=$FFF7CF3A;
-    if bS ='glacierExplorer'then
-      TMap.BackColor:=$FFF87B19;
-    if bS ='colossus'then
-      TMap.BackColor:=$FFFF4905;
-    No := Iter.Get('no', '0');
-    if (bS='critias') and (No='2') then
-      No:='1';
-   if (bS='Arks2') and (No='21') then
-      continue;
-
     _Front := Iter.Get('front', '0');
     Flip := Iter.Get('f', '0');
     Ani := Iter.Get('ani', '0');
+    if bS = 'grassySoil_new' then
+      TMap.BackColor := $FFFF6502;
+    if bS = 'YumYum' then
+      TMap.BackColor := $FFF7CF3A;
+    if bS = 'glacierExplorer' then
+      TMap.BackColor := $FFF87B19;
+    if bS = 'colossus' then
+      TMap.BackColor := $FFFF4905;
+    No := Iter.Get('no', '0');
+    if (bS = 'critias') and (Ani = 0) and (No = '2') then
+      No := '1';
+    if (bS = 'Arks2') and (No = '21') then
+      continue;
+    if (bS = 'nightDesert') and (Ani = 0) and (No = '0') then
+    begin
+      TMap.BackColor := $FF1F0B06;
+      Continue;
+    end;
+    if (bS = 'extinction') and (Ani = 0) and (No = '0') then
+    begin
+      TMap.BackColor := $FF291b11;
+      Continue;
+    end;
+ 
+
     if Ani > 1 then
       Ani := 0;
 
@@ -81,7 +92,7 @@ begin
       Continue;
     if Ani = 0 then
     begin
-       Entry := GetImgEntry('Map/Back/' + bS + '.img/back/' + No);
+      Entry := GetImgEntry('Map/Back/' + bS + '.img/back/' + No);
 
       if Entry = nil then
         Continue;
@@ -95,7 +106,7 @@ begin
 
     if Ani = 1 then
     begin
-       AniEntry := GetImgEntry('Map/Back/' + bS + '.img/ani/' + No);
+      AniEntry := GetImgEntry('Map/Back/' + bS + '.img/ani/' + No);
 
       if AniEntry = nil then
         Continue;
@@ -139,30 +150,30 @@ begin
         ImageEntry := WzData[InfoPath + '/0'];
       end;
 
-     MoveType := ImageEntry.Get('moveType', '0');
+      MoveType := ImageEntry.Get('moveType', '0');
       MoveR := ImageEntry.Get('moveR', '0');
-     if ImageEntry.Get('moveP', '0') then
-         MoveP:= ImageEntry.Get('moveP').Data;
-     if ImageEntry.Get('moveW', '0') then
-        MoveW:= ImageEntry.Get('moveW').Data;
-     if ImageEntry.Get('moveH', '0') then
-        MoveH:= ImageEntry.Get('moveH').Data;
+      if ImageEntry.Get('moveP', '0') then
+        MoveP := ImageEntry.Get('moveP').Data;
+      if ImageEntry.Get('moveW', '0') then
+        MoveW := ImageEntry.Get('moveW').Data;
+      if ImageEntry.Get('moveH', '0') then
+        MoveH := ImageEntry.Get('moveH').Data;
 
       Width := PatternWidth;
       Height := PatternHeight;
 
       //Offset.X := ImageEntry.Get('origin').Vector.X;
       //Offset.Y := ImageEntry.Get('origin').Vector.Y;
-    if ImageEntry.Get('origin') <> nil then
-       Origin := ImageEntry.Get('origin').Vector;
+      if ImageEntry.Get('origin') <> nil then
+        Origin := ImageEntry.Get('origin').Vector;
 
-    case MirrorX of
-      True:
-        Offset.X := -Origin.X + PatternWidth;
-      False:
-        Offset.X := Origin.X;
-    end;
-    Offset.Y := Origin.Y;
+      case MirrorX of
+        True:
+          Offset.X := -Origin.X + PatternWidth;
+        False:
+          Offset.X := Origin.X;
+      end;
+      Offset.Y := Origin.Y;
     // if Offset.X < 0 then
    //   Offset.X := 0;
    //  if Offset.X > Width then
@@ -185,8 +196,8 @@ begin
       Y := -PosY - (100 + RY) / 100 * (WY + DisplaySize.Y / 2) + WY;
       Z := ZLayer;
 
-      AX:=X;
-      AY:=Y;
+      AX := X;
+      AY := Y;
 
       case BackType of
         // no tile
@@ -248,7 +259,7 @@ end;
 
 procedure TMapBack.DoMove(const Movecount: Single);
 var
-  a0, a1, Delay,  OffSetY: Integer;
+  a0, a1, Delay, OffSetY: Integer;
   AniAlpha: Single;
 begin
 
@@ -299,11 +310,11 @@ begin
     else
     begin
       if TMap.Info.ContainsKey('VRLeft') then
-        Y := -PosY - (100 + RY * StrToFloat(SaveMapForm.ComboBox2.Text)) / 100 * (TMap.Bottom - 600
-          + (600 / 2)) + TMap.Top - StrToInt(SaveMapForm.ComboBox1.Text)
+        Y := -PosY - (100 + RY * StrToFloat(SaveMapForm.ComboBox2.Text)) / 100 *
+          (TMap.Bottom - 600 + (600 / 2)) + TMap.Top - StrToInt(SaveMapForm.ComboBox1.Text)
       else
-        Y := -PosY - (100 + RY * StrToFloat(SaveMapForm.ComboBox2.Text)) / 100 * (TMap.SaveMapBottom
-          - 600 + (600 / 2) - 100) + TMap.Top - StrToInt(SaveMapForm.ComboBox1.Text);
+        Y := -PosY - (100 + RY * StrToFloat(SaveMapForm.ComboBox2.Text)) / 100 *
+          (TMap.SaveMapBottom - 600 + (600 / 2) - 100) + TMap.Top - StrToInt(SaveMapForm.ComboBox1.Text);
     end;
   end;
 
@@ -314,27 +325,26 @@ begin
       1:
         begin
           if Boolean(MoveP) then
-            X := AX + MoveW * Cos(FDelta * 1000 * 2 * Pi /MoveP)/60
+            X := AX + MoveW * Cos(FDelta * 1000 * 2 * Pi / MoveP) / 60
           else
-            X := AX + MoveW * Cos(FDelta)/60;
+            X := AX + MoveW * Cos(FDelta) / 60;
         end;
       2:
         begin
           if Boolean(MoveP) then
-            Y := Y + MoveH * Cos(FDelta * 2 * Pi * 1000 / MoveP)/60
+            Y := Y + MoveH * Cos(FDelta * 2 * Pi * 1000 / MoveP) / 60
           else
-            Y := Y + MoveH * Cos(FDelta)/60;
+            Y := Y + MoveH * Cos(FDelta) / 60;
         end;
       3:
         begin
-            DrawMode := 1;
-            Angle := Angle + (17 / MoveR) * Pi * 2;
-            Offset.X := 0;
-            Offset.Y := 0;
+          DrawMode := 1;
+          Angle := Angle + (17 / MoveR) * Pi * 2;
+          Offset.X := 0;
+          Offset.Y := 0;
         end;
     end;
   end;
-
 
   if FHasAnim then
   begin

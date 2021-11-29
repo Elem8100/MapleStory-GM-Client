@@ -77,8 +77,8 @@ begin
   FDevice.BeginScene;
   SaveTexture.BeginScene;
   GameCanvas.BeginScene;
-  if TMap.ShowBack then
-    BackEngine[0].Draw;
+  //if TMap.ShowBack then
+    //BackEngine[0].Draw;
   SpriteEngine.Draw;
 //  if TMap.ShowFront then
  //   BackEngine[1].Draw;

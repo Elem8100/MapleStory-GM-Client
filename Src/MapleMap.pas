@@ -290,7 +290,6 @@ begin
     BackPatch.Add('410003190', '$FF943000,-1');
     BackPatch.Add('410003200', '$FF943000,-1');
     BackPatch.Add('410003210', '$FF943000,-1');
-    BackPatch.Add('450001000', '$af090000,185');
     BackPatch.Add('450015190', '$FF6D636F,-1');
     BackPatch.Add('450015200', '$FF6D636F,-1');
     BackPatch.Add('450015210', '$FF6D636F,-1');
@@ -320,6 +319,10 @@ begin
     BackPatch.Add('101073112', '$FF2C1807,223');
     BackPatch.Add('101073113', '$FF2C1807,223');
     BackPatch.Add('101073114', '$FF2C1807,223');
+    BackPatch.Add('104000000', '$FF964B1D,228');
+    BackPatch.Add('104010000', '$FF964B1D,230');
+    BackPatch.Add('104010100', '$FF964B1D,228');
+    BackPatch.Add('104010200', '$FF964B1D,228');
     LoadedPatch := True;
   end;
 
