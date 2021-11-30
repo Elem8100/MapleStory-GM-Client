@@ -3,9 +3,10 @@ unit MonsterFamiliar;
 interface
 
 uses
-  Windows, System.Types, SysUtils, StrUtils, PXT.Sprites, Generics.Collections, WZIMGFile, Math,
-  Footholds, LadderRopes,  WZArchive, ChatBalloon, MapPortal,
-  MapleCharacter, DamageNumber, MobDrop, Global, Tools, WzUtils, MapleMap, NameTag;
+  Windows, System.Types, SysUtils, StrUtils, PXT.Sprites, Generics.Collections,
+  WZIMGFile, Math, Footholds, LadderRopes, WZArchive, ChatBalloon, MapPortal,
+  MapleCharacter, DamageNumber, MobDrop, Global, Tools, WzUtils, MapleMap,
+  NameTag, PXT.Graphics;
 
 type
   TMoveDirection = (mdLeft, mdRight, mdNone);
@@ -45,20 +46,27 @@ type
     class procedure Create(ID: string); overload;
   end;
 
-  TFamiliarNameTag = class(TLabelRingTag)
+  TFamiliarNameTag = class(TSpriteEx)
   public
-    TagName: string;
     class var
+      ReDraw: Boolean;
+      CanUse: Boolean;
+      MobName: string;
+      NameWidth: Integer;
       FamiliarNameTag: TFamiliarNameTag;
-    class procedure ReDraw; override;
+      TargetTexture: TTexture;
+      IsUse: Boolean;
     procedure DoMove(const Movecount: Single); override;
     procedure DoDraw; override;
-    class procedure Delete; override;
-    class procedure Create(ItemID: string); overload; override;
+    class procedure Create(Name: string); overload;
+    class procedure Delete;
   end;
 
 implementation
-      uses PXT.Canvas,PXT.TypesEx;
+
+uses
+  PXT.Canvas, PXT.Types, PXT.TypesEx;
+
 class procedure TMonsterFamiliar.Delete;
 begin
   if MonsterFamiliar <> nil then
@@ -79,7 +87,6 @@ begin
   var Entry: TWZIMGEntry;
   if HasImgFile('Mob/' + ID + '.img') then
     Entry := GetImgEntry('Mob/' + ID + '.img/');
-
 
   DumpData(Entry, EquipData, EquipImages);
 
@@ -409,50 +416,79 @@ end;
 
 procedure TFamiliarNameTag.DoMove(const MoveCount: Single);
 begin
-  if IsReDraw then
-    GameCanvas.DrawTarget(TargetTexture,300,100,procedure
-    begin
-     TargetEvent;
-    end);
+  inherited;
+  if ReDraw then
+  begin
+    NameWidth := Round(GameFont.ExtentByPixels(MobName).Right);
+    GameCanvas.DrawTarget(TargetTexture, NameWidth + 10, 25,
+      procedure
+      begin
+        var FontSettings: TFontSettings;
+        if ISKMS then
+          FontSettings := TFontSettings.Create('Tahoma', 10, TFontWeight.Normal)
+        else
+          FontSettings := TFontSettings.Create('Arial', 11, TFontWeight.Normal);
+
+        FontSettings.Effect.BorderType := TFontBorder.None;
+        GameFont.FontSettings := FontSettings;
+
+        var NamePos := NameWidth div 2;
+        if TMap.ShowChar then
+        begin
+          GameCanvas.FillRoundRect(FloatRect(0, 2, NameWidth + 8, 15), cRGB1(0, 0, 0, 150), 3, 6);
+          GameFont.Draw(Point2f(3, 2), MobName, $FFFFFFFF);
+        end;
+      end);
+  end;
   X := TMonsterFamiliar.MonsterFamiliar.X;
   y := TMonsterFamiliar.MonsterFamiliar.Y;
   Z := TMonsterFamiliar.MonsterFamiliar.Z;
 end;
 
-class procedure TFamiliarNameTag.ReDraw;
-begin
-  if FamiliarNameTag <> nil then
-    FamiliarNameTag.IsReDraw := True;
-end;
-
 procedure TFamiliarNameTag.DoDraw;
 var
-  WX, WY: Integer;
+  WX, WY, NamePos: Integer;
 begin
+
   if TMap.ShowChar then
   begin
     WX := Round(TMonsterFamiliar.MonsterFamiliar.X) - Round(Engine.WorldX);
     WY := Round(TMonsterFamiliar.MonsterFamiliar.Y) - Round(Engine.WorldY);
-    GameCanvas.Draw(TargetTexture, WX - 150, WY - 28);
+    NamePos := NameWidth div 2;
+    GameCanvas.Draw(TargetTexture, WX - NamePos - 8, WY);
   end;
-  if IsReDraw then
-    IsReDraw := False;
+  if ReDraw then
+    ReDraw := False;
 end;
 
-class procedure TFamiliarNameTag.Create(ItemID: string);
+class procedure TFamiliarNameTag.Create(Name: string);
 begin
-  FamiliarNameTag := TFamiliarNameTag.Create(SpriteEngine);
+  MobName := Name;
+  NameWidth := Round(GameFont.ExtentByPixels(MobName).Right);
+  GameCanvas.DrawTarget(TargetTexture, NameWidth + 10, 25,
+    procedure
+    begin
+      var NamePos := NameWidth div 2;
+      if TMap.ShowChar then
+      begin
+        GameCanvas.FillRoundRect(FloatRect(0, 2, NameWidth + 8, 15), cRGB1(0, 0, 0, 150), 3, 6);
+        var FontSettings: TFontSettings;
+        if ISKMS then
+          FontSettings := TFontSettings.Create('Tahoma', 10, TFontWeight.Normal)
+        else
+          FontSettings := TFontSettings.Create('Arial', 11, TFontWeight.Normal);
+        FontSettings.Effect.BorderType := TFontBorder.None;
+        GameFont.FontSettings := FontSettings;
+        GameFont.Draw(Point2f(3, 2), MobName, $FFFFFFFF);
+      end;
+    end);
 
+  FamiliarNameTag := TFamiliarNameTag.Create(SpriteEngine);
   with FamiliarNameTag do
   begin
-    TruncMove := True;
     Tag := 1;
-    var TagNum := GetImgEntry('Character/Ring/' + ItemID + '.img/info').Get('nameTag', '');
-    Entry := GetImgEntry('UI/NameTag.img/' + string(TagNum));
-    DumpData(Entry, EquipData, EquipImages);
-    InitData;
+    TruncMove := True;
   end;
-
 end;
 
 end.

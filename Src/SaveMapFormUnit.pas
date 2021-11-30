@@ -30,7 +30,7 @@ var
 implementation
 
 uses
-  Global, MapBack, PXT.Graphics, PXT.Types;
+  Global,ShowOptionUnit, MapBack, PXT.Graphics, PXT.Types;
 {$R *.dfm}
 
 function StrReplace(const oldChars, newChars: array of Char; const str: string): string;
@@ -75,12 +75,14 @@ begin
   SaveTexture := TextureInit(FDevice, Params);
 
   FDevice.BeginScene;
+
   SaveTexture.BeginScene;
   GameCanvas.BeginScene;
+
   //if TMap.ShowBack then
     //BackEngine[0].Draw;
   SpriteEngine.Draw;
-//  if TMap.ShowFront then
+ // if TMap.ShowFront then
  //   BackEngine[1].Draw;
   BackEngine[0].Move(1);
   BackEngine[1].Move(1);
@@ -91,6 +93,8 @@ begin
   FDevice.BeginScene;
   SaveTexture.BeginScene;
   GameCanvas.BeginScene;
+  if ShowOptionForm.CheckBox4.Checked then
+    FDevice.Clear([TClearLayer.Color], FloatColor(TMap.BackColor));
   if TMap.ShowBack then
     BackEngine[0].Draw;
   SpriteEngine.Draw;

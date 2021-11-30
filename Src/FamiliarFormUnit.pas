@@ -3,9 +3,9 @@ unit FamiliarFormUnit;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, AdvObj, BaseGrid, AdvGrid, Vcl.StdCtrls,
-  Vcl.ComCtrls, AdvUtil;
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids,
+  AdvObj, BaseGrid, AdvGrid, Vcl.StdCtrls, Vcl.ComCtrls, AdvUtil;
 
 type
   TFamiliarForm = class(TForm)
@@ -84,13 +84,11 @@ begin
   TMonsterFamiliar.Create(FamiliarID);
 
   TFamiliarNameTag.Delete;
-  TFamiliarNameTag.Create('01112146');
-  TFamiliarNameTag.FamiliarNameTag.MedalName := GetImgFile('String/Mob.img').Root.Get(FamiliarID +
-    '/name', '');
-  TFamiliarNameTag.FamiliarNameTag.InitData;
-  TFamiliarNameTag.ReDraw;
-  if  FamiliarGrid.CellTypes[2, ARow] = ctBitmap   then
-  TColorFunc.SetGridColor(FamiliarGrid.CellGraphics[2, ARow].CellBitmap, DyeGrid);
+  TFamiliarNameTag.Create('');
+  TFamiliarNameTag.FamiliarNameTag.MobName := GetImgFile('String/Mob.img').Root.Get(FamiliarID + '/name', FamiliarID);
+  TFamiliarNameTag.ReDraw := True;
+  if FamiliarGrid.CellTypes[2, ARow] = ctBitmap then
+    TColorFunc.SetGridColor(FamiliarGrid.CellGraphics[2, ARow].CellBitmap, DyeGrid);
   ActiveControl := nil;
 end;
 
@@ -109,7 +107,7 @@ begin
 
   var RowCount := -1;
   FamiliarGrid.BeginUpdate;
-  var ImgList:=GetImgList('Character/Familiar');
+  var ImgList := GetImgList('Character/Familiar');
 
   for var img in ImgList do
   begin
@@ -137,8 +135,7 @@ begin
     end;
 
     if HasImgEntry('String/Consume.img/' + CardID) then
-      FamiliarGrid.Cells[3, RowCount] := GetImgEntry('String/Consume.img/' + CardID).Get('Name',
-        '');
+      FamiliarGrid.Cells[3, RowCount] := GetImgEntry('String/Consume.img/' + CardID).Get('Name', '');
 
     if GetImgEntry('Item/Consume/0287.img/' + '0' + CardID + '/info/icon') <> nil then
     begin
