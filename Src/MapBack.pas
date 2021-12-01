@@ -61,6 +61,13 @@ begin
       TMap.BackColor := $FFF87B19;
     if bS = 'colossus' then
       TMap.BackColor := $FFFF4905;
+    if bS = 'grandisPantheon' then
+      TMap.BackColor := $FFCC6835;
+    if bS = 'Wz2_Mukhyun' then
+      TMap.BackColor := $FFffeedd;
+    if bS = 'kain' then
+      TMap.BackColor := $FF4f2200;
+
     No := Iter.Get('no', '0');
     if (bS = 'critias') and (Ani = 0) and (No = '2') then
       No := '1';
