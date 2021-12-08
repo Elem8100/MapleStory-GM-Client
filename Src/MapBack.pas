@@ -36,7 +36,7 @@ type
 implementation
 
 uses
-  SaveMapFormUnit;
+  SaveMapFormUnit,UI.Utils;
 
 class procedure TMapBack.Create;
 var
@@ -205,6 +205,12 @@ begin
 
       AX := X;
       AY := Y;
+
+      if UIVersion=1 then
+      begin
+        if (bS='dryRock') and (No='1') then
+          BackType:=1;
+      end;
 
       case BackType of
         // no tile
