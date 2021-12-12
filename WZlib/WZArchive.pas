@@ -12,6 +12,7 @@ type
     FRoot: TWZDirectory;
     FFileSize, FHeaderSize, FVersion: Integer;
     FName, FPKG, FCopyright, FPath, FPathName: string;
+    Is64Bit: Boolean;
     procedure Load;
     procedure GetOffsets(Dir: TWZDirectory; var StartOffset: Int64);
     procedure ParseDirectory(Dir: TWZDirectory);
@@ -97,6 +98,7 @@ begin
   end
   else
   begin
+    Is64Bit := True;
     var Split1 := FileName.Split(['Data\']);
     Split1[1] := Split1[1].Replace('\', '/');
     var Split2 := Split1[1].Split(FName);
@@ -126,7 +128,8 @@ begin
   FFileSize := FReader.ReadUInt64;
   FHeaderSize := FReader.ReadInt;
   FCopyright := FReader.ReadNullTerminatedString;
-  FVersion := DecodeVersion(FReader.ReadShort);
+  if not Is64Bit then
+    FVersion := DecodeVersion(FReader.ReadShort);
 
   ParseDirectory(FRoot);
   Off := FReader.Position;
@@ -238,7 +241,8 @@ begin
         end;
 
     else
-      raise Exception.CreateFmt('Unknown Marker at ParseDirectory(%s): ' + sLineBreak + 'i = %d; Marker %d', [Dir.Name, i, Marker]);
+      raise Exception.CreateFmt('Unknown Marker at ParseDirectory(%s): ' +
+        sLineBreak + 'i = %d; Marker %d', [Dir.Name, i, Marker]);
     end;
   end;
 
