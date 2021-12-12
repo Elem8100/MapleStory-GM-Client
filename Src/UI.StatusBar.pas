@@ -199,10 +199,20 @@ begin
   CreateButton('UI/StatusBar.img/KeySet', 165, 8);
   CreateButton('UI/StatusBar.img/QuickSlotD', 195, 8);
   //
-  CreateButton('UI/StatusBar.img/BtShop', 0, 36);
-  CreateButton('UI/StatusBar.img/BtNPT', 58, 36);
-  CreateButton('UI/StatusBar.img/BtMenu', 114, 36);
-  CreateButton('UI/StatusBar.img/BtShort', 170, 36);
+  if GetImgEntry('UI/StatusBar.img/BtShop/normal/0').Canvas.Width = 43 then
+  begin
+    CreateButton('UI/StatusBar.img/BtShop', 70, 53);
+    CreateButton('UI/StatusBar.img/BtNPT', 115, 53);
+    CreateButton('UI/StatusBar.img/BtMenu', 158, 53);
+    CreateButton('UI/StatusBar.img/BtShort', 181, 36);
+  end
+  else
+  begin
+    CreateButton('UI/StatusBar.img/BtShop', 0, 36);
+    CreateButton('UI/StatusBar.img/BtNPT', 58, 36);
+    CreateButton('UI/StatusBar.img/BtMenu', 114, 36);
+    CreateButton('UI/StatusBar.img/BtShort', 170, 36);
+  end;
   CreateForm('UI/StatusBar.img/base/quickSlot', 875, 622);
   UIForm['UI/StatusBar.img/base/quickSlot'].CanMove := False;
 end;

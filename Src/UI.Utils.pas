@@ -36,7 +36,8 @@ procedure CreateEmptyForm(EntryName: string; X, Y, AWidth, AHeight: Integer; ACa
 
 procedure CreateAttachForm(ImageEntry, AAttachFormName: string; X, Y: Integer; AVisible: Boolean = False);
 
-procedure CreateEmptyAttachForm(FormName, AAttachFormName: string; X, Y, AWidth, AHeight: Integer; AVisible: Boolean = False);
+procedure CreateEmptyAttachForm(FormName, AAttachFormName: string; X, Y, AWidth,
+  AHeight: Integer; AVisible: Boolean = False);
 
 procedure CreateFormEx(EntryName: string; X, Y: Integer);
 
@@ -44,9 +45,11 @@ procedure CreateEdit(EditName: string; X, Y, AWidth: Integer; AFontColor, ATicCo
 
 procedure CreateLabel(EntryName, AText: string; X, Y: Integer; LabelColor: TLabelColor = lcBlack);
 
-procedure CreateImage(ImageEntry: string; AScaleX: Single = 1; AScaleY: Single = 1; X: Integer = 0; Y: Integer = 0); overload;
+procedure CreateImage(ImageEntry: string; AScaleX: Single = 1; AScaleY: Single =
+  1; X: Integer = 0; Y: Integer = 0); overload;
 
-procedure CreateImage(UIName, ImageEntry: string; AScaleX: Single = 1; AScaleY: Single = 1; X: Integer = 0; Y: Integer = 0); overload;
+procedure CreateImage(UIName, ImageEntry: string; AScaleX: Single = 1; AScaleY:
+  Single = 1; X: Integer = 0; Y: Integer = 0); overload;
 
 procedure CreateGrid(AImagePath: string; X, Y, Col, Row: Integer; OwnerName: string);
 
@@ -266,7 +269,8 @@ begin
   UIForm.Add(ImageEntry, Form);
 end;
 
-procedure CreateEmptyAttachForm(FormName, AAttachFormName: string; X, Y, Awidth, Aheight: Integer; AVisible: Boolean = False);
+procedure CreateEmptyAttachForm(FormName, AAttachFormName: string; X, Y, Awidth,
+  Aheight: Integer; AVisible: Boolean = False);
 begin
   if UIForm.ContainsKey(FormName) then
   begin
@@ -346,8 +350,16 @@ begin
     ImageEntry := Entry.Get('normal/0');
     Width := Entry.Get2('normal/0').Canvas.Width;
     Height := Entry.Get2('normal/0').Canvas.Height;
-    Left := X + -Entry.Get('normal/0/origin').Vector.X;
-    Top := Y + -Entry.Get('normal/0/origin').Vector.Y;
+    if Entry.Get('normal/0/origin') <> nil then
+    begin
+      Left := X + -Entry.Get('normal/0/origin').Vector.X;
+      Top := Y + -Entry.Get('normal/0/origin').Vector.Y;
+    end
+    else
+    begin
+      Left := X;
+      Top := Y;
+    end;
     ImageHover := Entry.Get('mouseOver/0');
     ImagePressed := Entry.Get('pressed/0');
     ImageDisabled := Entry.Get('disabled/0');
@@ -419,7 +431,8 @@ begin
   UIImage.AddOrSetValue(ImageEntry, Image);
 end;
 
-procedure CreateImage(UIName, ImageEntry: string; AScaleX: Single = 1; AScaleY: Single = 1; X: Integer = 0; Y: Integer = 0);
+procedure CreateImage(UIName, ImageEntry: string; AScaleX: Single = 1; AScaleY:
+  Single = 1; X: Integer = 0; Y: Integer = 0);
 begin
   if UIImage.ContainsKey(UIName) then
     Exit;
@@ -503,7 +516,8 @@ begin
           if (Iter.Name = IgnoreDir[0]) or (Iter.Name = IgnoreDir[1]) or (Iter.Name = IgnoreDir[2]) then
             Continue;
         3:
-          if (Iter.Name = IgnoreDir[0]) or (Iter.Name = IgnoreDir[1]) or (Iter.Name = IgnoreDir[2]) or (Iter.Name = IgnoreDir[3]) then
+          if (Iter.Name = IgnoreDir[0]) or (Iter.Name = IgnoreDir[1]) or (Iter.Name
+            = IgnoreDir[2]) or (Iter.Name = IgnoreDir[3]) then
             Continue;
       end;
       CreateButton(Iter.GetPath, X, Y);
