@@ -45,7 +45,11 @@ begin
   EditBox.Text := '  ';
   EdiTbox.SelStart := 0;
   Pos := TChatViewImage.StrList.Count * 13;
-  TChatViewImage.Y1 := 465 - Round(UIImage['UI/StatusBar3.img/chat/ingame/view/min/center'].ScaleY);
+  if HasImgEntry('UI/StatusBar3.img/chat/ingame') then
+    TChatViewImage.Y1 := 465 - Round(UIImage['UI/StatusBar3.img/chat/ingame/view/min/center'].ScaleY)
+  else
+    TChatViewImage.Y1 := 465 - Round(UIImage['UI/StatusBar3.img/chat/min/center'].ScaleY);
+
   GameCanvas.DrawTargetStatic(TChatViewImage.TargetTexture, 410, 595,
     procedure
     begin
@@ -71,27 +75,42 @@ begin
   CreateButton('UI/StatusBar3.img/chat/common/chatTarget/friend', 106, 420);
   CreateButton('UI/StatusBar3.img/chat/common/chatTarget/guild', 156, 420);
   CreateButton('UI/StatusBar3.img/chat/common/chatTarget/association', 206, 420);
-  CreateImage('UI/StatusBar3.img/chat/ingame/view/min/top', 1, 1, 0, 451);
-  CreateImage('UI/StatusBar3.img/chat/ingame/view/min/center', 1, 80, 0, 451);
-  CreateImage('UI/StatusBar3.img/chat/ingame/view/min/bottom', 1, 1, 0, 531);
+  var ChatTopPath, ChatCenterPath: string;
+  if HasImgEntry('UI/StatusBar3.img/chat/ingame') then
+  begin
+    ChatTopPath := 'UI/StatusBar3.img/chat/ingame/view/min/top';
+    ChatCenterPath := 'UI/StatusBar3.img/chat/ingame/view/min/center';
+    CreateImage('UI/StatusBar3.img/chat/ingame/view/min/top', 1, 1, 0, 451);
+    CreateImage('UI/StatusBar3.img/chat/ingame/view/min/center', 1, 80, 0, 451);
+    CreateImage('UI/StatusBar3.img/chat/ingame/view/min/bottom', 1, 1, 0, 531);
 
+  end
+  else
+  begin
+    ChatTopPath := 'UI/StatusBar3.img/chat/min/top';
+    ChatCenterPath := 'UI/StatusBar3.img/chat/min/center';
+    CreateImage('UI/StatusBar3.img/chat/min/top', 1, 1, 0, 451);
+    CreateImage('UI/StatusBar3.img/chat/min/center', 1, 80, 0, 451);
+    CreateImage('UI/StatusBar3.img/chat/min/bottom', 1, 1, 0, 531);
+  end;
   var OnDrag: Boolean;
   var MouseDownY: Integer;
-  UIImage['UI/StatusBar3.img/chat/ingame/view/min/top'].OnMouseDown :=
+
+  UIImage[ChatTopPath].OnMouseDown :=
     procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
     begin
-      MouseDownY := GetMouseDownY('UI/StatusBar3.img/chat/ingame/view/min/top', Y);
+      MouseDownY := GetMouseDownY(ChatTopPath, Y);
       GameCursor.Change('67');
       OnDrag := True;
     end;
 
-  UIImage['UI/StatusBar3.img/chat/ingame/view/min/top'].OnMouseEnter :=
+  UIImage[ChatTopPath].OnMouseEnter :=
     procedure(Sender: TObject)
     begin
       GameCursor.Change('67');
     end;
 
-  UIImage['UI/StatusBar3.img/chat/ingame/view/min/top'].OnMouseLeave :=
+  UIImage[ChatTopPath].OnMouseLeave :=
     procedure(Sender: TObject)
     begin
       GameCursor.Change('0');
@@ -109,29 +128,29 @@ begin
     UIImage.Add('ChatViewImage', TChatViewImage.Instance);
   end;
 
-  UIImage['UI/StatusBar3.img/chat/ingame/view/min/top'].OnMouseMove :=
+  UIImage[ChatTopPath].OnMouseMove :=
     procedure(Sender: TObject; Shift: TShiftState; X, Y: Integer)
     begin
       if OnDrag then
       begin
-        const Top = 'UI/StatusBar3.img/chat/ingame/view/min/top';
-        const Center = 'UI/StatusBar3.img/chat/ingame/view/min/center';
-        MoveImage(Top, Y, MouseDownY);
-        if UIImage[Top].Top < 50 then
-          UIImage[Top].Top := 50;
+       // const Top =  ChatTopPath;// 'UI/StatusBar3.img/chat/ingame/view/min/top';
+       // const Center = 'UI/StatusBar3.img/chat/ingame/view/min/center';
+        MoveImage(ChatTopPath, Y, MouseDownY);
+        if UIImage[ChatTopPath].Top < 50 then
+          UIImage[ChatTopPath].Top := 50;
 
-        if UIImage[Top].Top > 495 then
-          UIImage[Top].Top := 495;
-        UIImage[Center].Top := UIImage[Top].Top + 15;
-        UIImage[Center].ScaleY := 516 - UIImage[Top].Top;
+        if UIImage[ChatTopPath].Top > 495 then
+          UIImage[ChatTopPath].Top := 495;
+        UIImage[ChatCenterPath].Top := UIImage[ChatTopPath].Top + 15;
+        UIImage[ChatCenterPath].ScaleY := 516 - UIImage[ChatTopPath].Top;
         const buttons =['all', 'party', 'friend', 'guild', 'association'];
         for var i := 0 to 4 do
-          UIButton['UI/StatusBar3.img/chat/common/chatTarget/' + Buttons[i]].Top := UIImage[Top].Top - 16;
-        TChatViewImage.Y1 := 465 - Round(UIImage['UI/StatusBar3.img/chat/ingame/view/min/center'].ScaleY);
+          UIButton['UI/StatusBar3.img/chat/common/chatTarget/' + Buttons[i]].Top := UIImage[ChatTopPath].Top - 16;
+        TChatViewImage.Y1 := 465 - Round(UIImage[ChatCenterPath].ScaleY);
       end;
     end;
 
-  UIImage['UI/StatusBar3.img/chat/ingame/view/min/top'].OnMouseUp :=
+  UIImage[ChatTopPath].OnMouseUp :=
     procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer)
     begin
       GameCursor.Change('67');
@@ -139,30 +158,48 @@ begin
     end;
 
   CreateEmptyAttachForm('Input/ChatEnter', 'StatusBar3Chat', 0, 500, 410, 80, True);
-  CreateImage('ChatTop', 'UI/StatusBar3.img/chat/ingame/view/min/top', 1, 1, 0, 61);
-  CreateImage('ChatBottom', 'UI/StatusBar3.img/chat/ingame/view/min/bottom', 1, 1, 0, 61);
-  CreateImage('UI/StatusBar3.img/chat/ingame/input/layer:chatEnter', 0.52, 1.18, 2, 45);
-  const Path = 'UI/StatusBar3.img/chat/ingame/input/layer:chatEnter';
-  if UIData.ContainsKey(Path) then
+  CreateImage('ChatTop', ChatTopPath, 1, 1, 0, 61);
+
+  if HasImgEntry('UI/StatusBar3.img/chat/ingame') then
   begin
-    if UIData[Path].Canvas.Width = 450 then
-      UIImage[Path].ScaleX := 0.52 //GMS
+    CreateImage('ChatBottom', 'UI/StatusBar3.img/chat/ingame/view/min/bottom', 1, 1, 0, 61);
+    CreateImage('UI/StatusBar3.img/chat/ingame/input/layer:chatEnter', 0.52, 1.18, 2, 45);
+    const Path = 'UI/StatusBar3.img/chat/ingame/input/layer:chatEnter';
+    if UIData.ContainsKey(Path) then
+    begin
+      if UIData[Path].Canvas.Width = 450 then
+        UIImage[Path].ScaleX := 0.52 //GMS
+      else
+        UIImage[Path].ScaleX := 0.546; //TMS
+    end;
+    CreateButton('ChatAll', 'UI/StatusBar3.img/chat/common/chatTarget/all', 7, 52);
+    CreateButton('UI/StatusBar3.img/chat/ingame/input/button:chat', 295, 52);
+    CreateButton('UI/StatusBar3.img/chat/ingame/input/button:itemLink', 316, 52);
+    if HasImgEntry('UI/StatusBar3.img/chat/ingame/input/button:chatEmoticon') then
+    begin
+      CreateButton('UI/StatusBar3.img/chat/ingame/input/button:chatEmoticon', 337, 52);
+      CreateButton('UI/StatusBar3.img/chat/ingame/input/button:help', 358, 52);
+      CreateButton('UI/StatusBar3.img/chat/ingame/input/button:outChat', 379, 52);
+    end
     else
-      UIImage[Path].ScaleX := 0.546; //TMS
-  end;
-  CreateButton('ChatAll', 'UI/StatusBar3.img/chat/common/chatTarget/all', 7, 52);
-  CreateButton('UI/StatusBar3.img/chat/ingame/input/button:chat', 295, 52);
-  CreateButton('UI/StatusBar3.img/chat/ingame/input/button:itemLink', 316, 52);
-  if HasImgEntry('UI/StatusBar3.img/chat/ingame/input/button:chatEmoticon') then
-  begin
-    CreateButton('UI/StatusBar3.img/chat/ingame/input/button:chatEmoticon', 337, 52);
-    CreateButton('UI/StatusBar3.img/chat/ingame/input/button:help', 358, 52);
-    CreateButton('UI/StatusBar3.img/chat/ingame/input/button:outChat', 379, 52);
+    begin
+      CreateButton('UI/StatusBar3.img/chat/ingame/input/button:help', 337, 52);
+      CreateButton('UI/StatusBar3.img/chat/ingame/input/button:outChat', 358, 52);
+    end;
   end
   else
   begin
-    CreateButton('UI/StatusBar3.img/chat/ingame/input/button:help', 337, 52);
-    CreateButton('UI/StatusBar3.img/chat/ingame/input/button:outChat', 358, 52);
+    CreateImage('ChatBottom', 'UI/StatusBar3.img/chat/min/bottom', 1, 1, 0, 61);
+    CreateImage('UI/StatusBar3.img/chat/min/chatEnter', 0.52, 1.18, 2, 45);
+    const Path = 'UI/StatusBar3.img/chat/min/chatEnter';
+    if UIData.ContainsKey(Path) then
+    begin
+      if UIData[Path].Canvas.Width = 450 then
+        UIImage[Path].ScaleX := 0.52 //GMS
+      else
+        UIImage[Path].ScaleX := 0.546; //TMS
+    end;
+
   end;
   CreateEdit('StatusBar3/Chat', 62, 53, 230, $FFFFFFFF, $FFFFFFFF);
 
@@ -174,6 +211,7 @@ end;
 
 initialization
   TChatViewImage.StrList := TList<string>.Create;
+
 
 finalization
   TChatViewImage.StrList.Free;
