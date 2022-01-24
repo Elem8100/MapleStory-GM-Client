@@ -51,7 +51,7 @@ var
 implementation
 
 uses
-  MapleMap, MobInfo, NameTag, UI.Utils, UI.StatusBar3.MainBar;
+  MapleMap, MobInfo, NameTag, UI.Utils,UI.StatusBar, UI.StatusBar3.MainBar;
 {$R *.dfm}
 
 procedure TShowOptionForm.Button1Click(Sender: TObject);
@@ -64,7 +64,12 @@ begin
   end;
   TNameTag.PlayerName := Edit1.Text;
   TNameTag.ReDraw:=True;
-  TStatusBar3MainBar.Instance.ReDraw;
+   if(UiVersion=1) then
+    TStatusBar.Instance.ReDraw;
+  if(UiVersion=3) then
+    TStatusBar3MainBar.Instance.ReDraw;
+
+
   if UILabel.ContainsKey('UserInfoName') then
     UILabel['UserInfoName'].Text := Edit1.Text;
 
