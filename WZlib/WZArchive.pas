@@ -128,8 +128,8 @@ begin
   FFileSize := FReader.ReadUInt64;
   FHeaderSize := FReader.ReadInt;
   FCopyright := FReader.ReadNullTerminatedString;
-  if not Is64Bit then
-    FVersion := DecodeVersion(FReader.ReadShort);
+ // if not Is64Bit then
+  FVersion := DecodeVersion(FReader.ReadShort);
 
   ParseDirectory(FRoot);
   Off := FReader.Position;
