@@ -3,7 +3,7 @@ object MainForm: TMainForm
   Top = 77
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
-  Caption = 'MapleStoryGM  v3.81'
+  Caption = 'MapleStoryGM  v3.91'
   ClientHeight = 711
   ClientWidth = 2424
   Color = clBtnFace
@@ -116,7 +116,7 @@ object MainForm: TMainForm
     ColorTo = clSkyBlue
     GradientDirection = gdVertical
     DockDots = True
-    Caption = #169' 2021 Elem '
+    Caption = #169' 2022 Elem '
     CaptionGradientDirection = gdVertical
     FocusCaptionFontColor = clBlack
     FocusCaptionColor = 9758459
@@ -3400,11 +3400,12 @@ object MainForm: TMainForm
     ItemIndex = 0
     ParentBiDiMode = False
     TabOrder = 5
-    Text = 'GMS/KMS/BMS(new)'
+    Text = 'KMS/Sea/BMS(new)'
     OnChange = ComboKeyChange
     OnCloseUp = ComboKeyCloseUp
     Items.Strings = (
-      'GMS/KMS/BMS(new)'
+      'KMS/Sea/BMS(new)'
+      'GMS(new)'
       'GMS(old)'
       'EMS/KMS(old)')
   end

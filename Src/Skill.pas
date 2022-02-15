@@ -438,7 +438,7 @@ begin
       if HP > 0 then
       begin
         Hit := True;
-        Damage := 500000 + Random(700000);
+        Damage := 50000 + Random(700000);
         HP := HP - Damage;
         if HasImgEntry('Sound/Mob.img/' + SelfID + '/Damage') then
           PlaySounds('Mob', SelfID + '/Damage')

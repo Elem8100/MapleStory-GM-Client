@@ -1167,11 +1167,12 @@ end;
 procedure TMainForm.ComboKeyChange(Sender: TObject);
 begin
   case ComboKey.ItemIndex of
-    0:
+    0,1:
       TWZReader.EncryptionIV := 0;
-    1:
-      TWZReader.EncryptionIV := GMS_IV;
+
     2:
+      TWZReader.EncryptionIV := GMS_IV;
+    3:
       TWZReader.EncryptionIV := GENERAL_IV;
   end;
   ActiveControl := nil;

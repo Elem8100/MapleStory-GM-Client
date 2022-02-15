@@ -255,7 +255,7 @@ begin
     else
       HP := Entry.Get('maxHP').Data;
 
-    if HP < 2000000 then
+   // if HP < 2000000 then
       HP := 2000000;
 
     Level := Entry.Get('level', '1');
@@ -973,7 +973,7 @@ begin
         if Index = 0 then
           HeadX := Head.X;
         Hit := True;
-        Damage := 500000 + Random(70000);
+        Damage := 50000 + Random(550000);
         HP := HP - Damage;
         if HasImgEntry('Sound/Mob.img/' + SelfID + '/Damage') then
           PlaySounds('Mob', SelfID + '/Damage')
