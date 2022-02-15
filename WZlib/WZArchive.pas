@@ -40,6 +40,9 @@ var
 
 implementation
 
+uses
+  MainUnit;
+
 function TWZArchive.ResolveFullPath(P: string): TWZIMGEntry;
 var
   Split: TArray<string>;
@@ -129,7 +132,9 @@ begin
   FHeaderSize := FReader.ReadInt;
   FCopyright := FReader.ReadNullTerminatedString;
  // if not Is64Bit then
-  FVersion := DecodeVersion(FReader.ReadShort);
+
+  if (MainForm.ComboKey.ItemIndex = 0) or (MainForm.ComboKey.ItemIndex = 2) or (MainForm.ComboKey.ItemIndex = 3) then
+    FVersion := DecodeVersion(FReader.ReadShort);
 
   ParseDirectory(FRoot);
   Off := FReader.Position;
