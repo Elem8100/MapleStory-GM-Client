@@ -821,7 +821,7 @@ begin
 
   DestX := DisplaySize.X / 2 - X + Engine.WorldX;
   if Abs(DestX) > 1 then
-    Engine.WorldX := Engine.WorldX - DestX * (12 / DisplaySize.X);
+    Engine.WorldX := Engine.WorldX - DestX * (12 / 800);
 
   DestY := (DisplaySize.Y / 2) + (TMap.OffsetY + 60) - Y;
   if Abs(DestY + Engine.WorldY) > 1 then
