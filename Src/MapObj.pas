@@ -54,6 +54,9 @@ begin
     for Iter in TMap.ImgFile.Child[Layer.ToString].Child['obj'].Children do
     begin
       oS := Iter.Get('oS', '');
+      if not HasImgFile('Map/Obj/'+oS+'.img') then
+       Continue;
+
       L0 := Iter.Get('l0', '');
       L1 := Iter.Get('l1', '');
       L2 := Iter.Get('l2', '');
