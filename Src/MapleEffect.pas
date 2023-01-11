@@ -238,6 +238,7 @@ begin
   end
   else
     Visible := False;
+  if ImageEntry=nil then Exit;
   Delay := ImageEntry.Get('delay', '100');
 
   FTime := FTime + 17;

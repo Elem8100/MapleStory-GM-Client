@@ -3,9 +3,9 @@ unit PetFormUnit;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, AdvObj, BaseGrid, AdvGrid, Vcl.StdCtrls,
-  Vcl.ComCtrls, AdvUtil;
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids,
+  AdvObj, BaseGrid, AdvGrid, Vcl.StdCtrls, Vcl.ComCtrls, AdvUtil;
 
 type
   TPetForm = class(TForm)
@@ -142,10 +142,18 @@ begin
   TPetEquip.Delete;
   TPet.Create(PetID);
 
-  TPetNameTag.Create(PetID);
-  TPetNameTag.PetNameTag.MedalName := PetGrid.Cells[3, ARow];
-  TPetNameTag.PetNameTag.InitData;
-  TPetNameTag.ReDraw;
+  case PetID.ToInteger() of
+    5002120, 5002125, 5002126, 5002189, 5002190:
+      Exit;
+  else
+    begin
+      TPetNameTag.Create(PetID);
+      TPetNameTag.PetNameTag.MedalName := PetGrid.Cells[3, ARow];
+      TPetNameTag.PetNameTag.InitData;
+      TPetNameTag.ReDraw;
+    end;
+  end;
+
   TColorFunc.SetGridColor(PetGrid.CellGraphics[2, ARow].CellBitmap, DyeGrid);
 
   PetEquipGrid.ClearAll;
@@ -164,8 +172,7 @@ begin
         PetEquipGrid.Cells[1, RowCount] := ID;
 
         if HasImgEntry('String/Eqp.img/Eqp/PetEquip/' + IDToInt(ID)) then
-          PetEquipGrid.Cells[3, RowCount] := GetImgEntry('String/Eqp.img/Eqp/PetEquip/' + IDToInt
-            (ID)).Get('name', '');
+          PetEquipGrid.Cells[3, RowCount] := GetImgEntry('String/Eqp.img/Eqp/PetEquip/' + IDToInt(ID)).Get('name', '');
 
         var Entry := GetImgEntry('Character/PetEquip/' + img.Name + '/info/icon', True);
         if Entry <> nil then
