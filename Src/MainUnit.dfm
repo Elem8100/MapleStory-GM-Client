@@ -3,7 +3,7 @@ object MainForm: TMainForm
   Top = 77
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
-  Caption = 'MapleStoryGM  v4.0'
+  Caption = 'MapleStoryGM  v4.1'
   ClientHeight = 711
   ClientWidth = 2424
   Color = clBtnFace
