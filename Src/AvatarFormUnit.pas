@@ -997,16 +997,16 @@ begin
                 if not InRange(1004, 1006) then
                   Continue;
               13: // Hair1
-                if not InRange(30, 36) then
+                if not InRange(30, 56) then
                   Continue;
               14: // Hair2
-                if not InRange(37, 65) then
+                if not InRange(57, 85) then
                   Continue;
               15: // Face1
                 if not InRange(20, 23) then
                   Continue;
               16: // Face2
-                if not InRange(24, 55) then
+                if not InRange(24, 58) then
                   Continue;
               17:
                 if Left4 <> '0101' then

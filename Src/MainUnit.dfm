@@ -116,7 +116,7 @@ object MainForm: TMainForm
     ColorTo = clSkyBlue
     GradientDirection = gdVertical
     DockDots = True
-    Caption = #169' 2022 Elem '
+    Caption = #169' 2023 Elem '
     CaptionGradientDirection = gdVertical
     FocusCaptionFontColor = clBlack
     FocusCaptionColor = 9758459

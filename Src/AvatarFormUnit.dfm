@@ -2576,6 +2576,7 @@ object AvatarForm: TAvatarForm
     ParentFont = False
     ScrollBars = ssNone
     TabOrder = 1
+    GridLineColor = 15987699
     GridFixedLineColor = 15987699
     HoverRowCells = [hcNormal, hcSelected]
     OnButtonClick = InventoryButtonClick

@@ -123,7 +123,7 @@ begin
       Entry := GetImgEntry('Item/Install/0302.img/')
     else
       case ID[5] of
-        '0', '1', '2', '3', '4', '6', '7', '8':
+        '0', '1', '2', '3', '4', '6', '7', '8','9':
           Entry := GetImgEntry('Item/Install/0301' + ID[5] + '.img/');
 
         '5':
