@@ -85,8 +85,8 @@ begin
     end;
  
 
-    if Ani > 1 then
-      Ani := 0;
+    if Ani =2 then
+      continue;
 
     CX := Iter.Get('cx', '0');
     CY := Iter.Get('cy', '0');
