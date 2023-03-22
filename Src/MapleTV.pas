@@ -39,7 +39,7 @@ begin
     else
       X := PosX + msgX + adX;
     Y := PosY + msgY + PatternHeight;
-    Z := 20000;
+    Z := ZLayer+1;
     Width := PatternWidth;
     Height := PatternHeight;
     Offset.X := -Entry.Child['origin'].Vector.X;
