@@ -137,7 +137,7 @@ begin
     end;
     TMap.Top := TMap.Info['VRTop'];
     TMap.Right := TMap.Info['VRRight'];
-    TMap.Info.AddOrSetValue('MapWidth', Abs(TMap.Left) + Abs(TMap.Right));
+    TMap.Info.AddOrSetValue('MapWidth', TMap.Right- TMap.Left);
   end
   else
   begin
@@ -146,7 +146,7 @@ begin
     TMap.SaveMapBottom := TMap.Bottom - 55;
     TMap.Top := -TMap.Info['centerY'] + 50;
     TMap.Right := TFootholdTree.MaxX2.Last;
-    TMap.Info.AddOrSetValue('MapWidth', Abs(TMap.Left) + Abs(TMap.Right));
+    TMap.Info.AddOrSetValue('MapWidth', TMap.Right- TMap.Left);
     SpriteEngine.WorldX := TMap.Left;
     SpriteEngine.WorldY := TMap.Bottom;
   end;
