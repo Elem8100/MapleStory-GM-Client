@@ -552,7 +552,12 @@ begin
   if Length(ID) > 2 then
   begin
     var Dir := GetDir(ID);
-    var Entry := GetImgFile('Character/' + Dir + ID + '.img').Root;
+    var Entry :TWZImgEntry;
+
+    if TItemEffect.AllList.Contains(ID)  then
+       Entry :=  GetImgEntry('Effect/ItemEff.img/' + IDToInt(ID))
+    else
+       Entry := GetImgFile('Character/' + Dir + ID + '.img').Root;
 
     case ACol of
       0:
