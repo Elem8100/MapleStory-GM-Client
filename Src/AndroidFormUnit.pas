@@ -147,6 +147,12 @@ begin
     AndroidPlayer.SpawnNew;
   var ImageName := ExtractFileName(AvatarView.ImageFileName[idx]);
   AndroidPlayer.Spawn(ImageName);
+  TAndroidNameTag.Delete;
+  TAndroidNameTag.Create('0001.img');
+  TAndroidNameTag.AndroidNameTag.MedalName:='Android';
+  TAndroidNameTag.AndroidNameTag.InitData;
+  TAndroidNameTag.ReDraw;
+
   ActiveControl := nil;
 end;
 
