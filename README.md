@@ -1,9 +1,9 @@
 # MapleStory-GM-Client
-2023/11/16 Announcement: 
+2023/11/16 Announcement:   
 This project has been ported to C# and no longer update.   
 https://github.com/Elem8100/MapleNecrocer
 
-2023/11/16 公告: 
+2023/11/16 公告:   
 這工具已經移植到C#版 以後不會更新了   
 https://github.com/Elem8100/MapleNecrocer 
 
