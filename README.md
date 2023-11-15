@@ -12,12 +12,9 @@ Compiler:
 Delphi 10.3 or later
 
 Installing third party components:                                 
-1.TMS Components Pack https://www.tmssoftware.com/site/tmsvcluipack.asp    
-2.ImageEn https://www.imageen.com/                                                                                       
-3.StyleControl   http://www.almdev.com/                                                
-
-
-However,above link are demo version, Just google it you'll find register(crack) version or check this site: http://bbs.2ccc.com/
+1.TMS Components Pack 
+2.ImageEn https                                                                                 
+3.StyleControl                                           
 
 Delphi library  path settings->
 Tools/Options/Language/Delphi/Library/Library Path                                  
